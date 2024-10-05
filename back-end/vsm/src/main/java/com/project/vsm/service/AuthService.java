@@ -15,7 +15,7 @@ import com.project.vsm.controller.model.LoginResponse;
 import com.project.vsm.controller.model.AccountEntity;
 import com.project.vsm.dto.RegisterUserDto;
 import com.project.vsm.dto.VerifyUserDto;
-import com.project.vsm.repository.UserRepository;
+import com.project.vsm.repository.AccountRepository;
 import com.project.vsm.sercurity.JwtIssuer;
 import com.project.vsm.sercurity.UserPrinciple;
 
@@ -29,7 +29,7 @@ public class AuthService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	@Autowired
-	private UserRepository userRepository;
+	private AccountRepository userRepository;
 	@Autowired
 	private EmailService emailService;
 	@Autowired

@@ -9,6 +9,6 @@ import com.project.vsm.controller.model.AccountEntity;
 
 
 @Repository
-public interface UserRepository extends JpaRepository<AccountEntity, Long> {
+public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
 	Optional<AccountEntity> findByEmail(String email);
 }

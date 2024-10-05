@@ -11,20 +11,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Parking")
+@Table(name = "Parking_Lot")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ParkingEntity {
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "parking_id")
-    private long id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "parking_id")
+	private long id;
 
-    private String location;
+	private String name;
+	private String location;
 
-    private int capacity;
-
-    @Column(name = "is_empty", columnDefinition = "TINYINT(1)")
-    private boolean empty;
+	private int capacity;
+	@Column(name = "number_car")
+	private int numCar;
+	@Column(name = "is_empty", columnDefinition = "TINYINT(1)")
+	private boolean empty;
 }

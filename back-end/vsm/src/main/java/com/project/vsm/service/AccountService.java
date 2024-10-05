@@ -6,14 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.vsm.controller.model.AccountEntity;
-import com.project.vsm.repository.UserRepository;
+import com.project.vsm.repository.AccountRepository;
 
 
 
 @Service
-public class UserService {
+public class AccountService {
 	@Autowired
-	private UserRepository userRepository;
+	private AccountRepository userRepository;
 
 	public Optional<AccountEntity> findByEmail(String email) {
 
