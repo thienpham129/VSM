@@ -12,7 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.project.vsm.controller.model.LoginResponse;
-import com.project.vsm.controller.model.UserEntity;
+import com.project.vsm.controller.model.AccountEntity;
 import com.project.vsm.dto.RegisterUserDto;
 import com.project.vsm.dto.VerifyUserDto;
 import com.project.vsm.repository.UserRepository;
@@ -38,7 +38,7 @@ public class AuthService {
 	private AuthenticationManager authenticationManager;
 
 	public LoginResponse login(String email, String password) {
-		UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+		AccountEntity user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
 		if (!user.isEnabled()) {
 			throw new RuntimeException("Account not verified. Please verify your account.");
@@ -58,8 +58,8 @@ public class AuthService {
 		return LoginResponse.builder().accessToken(token).build();
 	}
 
-	public UserEntity signup(RegisterUserDto input) {
-		UserEntity user = new UserEntity(input.getEmail(), passwordEncoder.encode(input.getPassword()));
+	public AccountEntity signup(RegisterUserDto input) {
+		AccountEntity user = new AccountEntity(input.getEmail(), passwordEncoder.encode(input.getPassword()));
 		user.setVerificationCode(generateVerificationCode());
 		user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
 		user.setEnabled(false);
@@ -70,9 +70,9 @@ public class AuthService {
 	}
 
 	public void verifyUser(VerifyUserDto input) {
-		Optional<UserEntity> optionalUser = userRepository.findByEmail(input.getEmail());
+		Optional<AccountEntity> optionalUser = userRepository.findByEmail(input.getEmail());
 		if (optionalUser.isPresent()) {
-			UserEntity user = optionalUser.get();
+			AccountEntity user = optionalUser.get();
 			if (user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
 				throw new RuntimeException("Verification code has expired");
 			}
@@ -89,7 +89,7 @@ public class AuthService {
 		}
 	}
 
-	private void sendVerificationEmail(UserEntity user) {
+	private void sendVerificationEmail(AccountEntity user) {
 		String subject = "Account Verification";
 		String verificationCode = "VERIFICATION CODE " + user.getVerificationCode();
 		String htmlMessage = "<html>" + "<body style=\"font-family: Arial, sans-serif;\">"
@@ -115,9 +115,9 @@ public class AuthService {
 	}
 	
 	 public void resendVerificationCode(String email) {
-	        Optional<UserEntity> optionalUser = userRepository.findByEmail(email);
+	        Optional<AccountEntity> optionalUser = userRepository.findByEmail(email);
 	        if (optionalUser.isPresent()) {
-	        	UserEntity user = optionalUser.get();
+	        	AccountEntity user = optionalUser.get();
 	            if (user.isEnabled()) {
 	                throw new RuntimeException("Account is already verified");
 	            }
