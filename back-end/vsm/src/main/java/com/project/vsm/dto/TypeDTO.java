@@ -1,6 +1,6 @@
 package com.project.vsm.dto;
 
-import com.project.vsm.controller.model.TypeEntity;
+import com.project.vsm.model.TypeEntity;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

@@ -5,9 +5,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.project.vsm.controller.model.TypeEntity;
 import com.project.vsm.dto.TypeDTO;
 import com.project.vsm.exception.NotFoundException;
+import com.project.vsm.model.TypeEntity;
 import com.project.vsm.repository.TypeRepository;
 
 @Service

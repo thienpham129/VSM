@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.vsm.controller.model.ParkingEntity;
 import com.project.vsm.dto.ParkingDTO;
+import com.project.vsm.model.ParkingEntity;
 import com.project.vsm.service.ParkingService;
 
 import jakarta.validation.Valid;

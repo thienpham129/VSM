@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.vsm.controller.model.TypeEntity;
 import com.project.vsm.dto.TypeDTO;
+import com.project.vsm.model.TypeEntity;
 import com.project.vsm.service.TypeService;
 
 import jakarta.validation.Valid;

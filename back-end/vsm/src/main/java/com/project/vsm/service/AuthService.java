@@ -11,10 +11,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.project.vsm.controller.model.LoginResponse;
-import com.project.vsm.controller.model.AccountEntity;
 import com.project.vsm.dto.RegisterUserDto;
 import com.project.vsm.dto.VerifyUserDto;
+import com.project.vsm.model.AccountEntity;
+import com.project.vsm.model.LoginResponse;
 import com.project.vsm.repository.AccountRepository;
 import com.project.vsm.sercurity.JwtIssuer;
 import com.project.vsm.sercurity.UserPrinciple;
@@ -36,9 +36,12 @@ public class AuthService {
 	private JwtIssuer jwtIssuer;
 	@Autowired
 	private AuthenticationManager authenticationManager;
+	@Autowired
+	private UserService userService;
 
 	public LoginResponse login(String email, String password) {
-		AccountEntity user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+		AccountEntity user = userRepository.findByEmail(email)
+				.orElseThrow(() -> new RuntimeException("User not found"));
 
 		if (!user.isEnabled()) {
 			throw new RuntimeException("Account not verified. Please verify your account.");
@@ -59,14 +62,16 @@ public class AuthService {
 	}
 
 	public AccountEntity signup(RegisterUserDto input) {
-		AccountEntity user = new AccountEntity(input.getEmail(), passwordEncoder.encode(input.getPassword()));
-		user.setVerificationCode(generateVerificationCode());
-		user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
-		user.setEnabled(false);
-		user.setRole("ROLE_USER");
-		user.setCreateDate(LocalDateTime.now());
-		sendVerificationEmail(user);
-		return userRepository.save(user);
+		AccountEntity account = new AccountEntity(input.getEmail(), passwordEncoder.encode(input.getPassword()));
+		account.setVerificationCode(generateVerificationCode());
+		account.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+		account.setEnabled(false);
+		account.setRole("ROLE_USER");
+		account.setCreateDate(LocalDateTime.now());
+		sendVerificationEmail(account);
+
+		userService.createUser(account); // create new user
+		return userRepository.save(account);
 	}
 
 	public void verifyUser(VerifyUserDto input) {
@@ -113,20 +118,20 @@ public class AuthService {
 		int code = random.nextInt(900000) + 100000;
 		return String.valueOf(code);
 	}
-	
-	 public void resendVerificationCode(String email) {
-	        Optional<AccountEntity> optionalUser = userRepository.findByEmail(email);
-	        if (optionalUser.isPresent()) {
-	        	AccountEntity user = optionalUser.get();
-	            if (user.isEnabled()) {
-	                throw new RuntimeException("Account is already verified");
-	            }
-	            user.setVerificationCode(generateVerificationCode());
-	            user.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));
-	            sendVerificationEmail(user);
-	            userRepository.save(user);
-	        } else {
-	            throw new RuntimeException("User not found");
-	        }
-	    }
+
+	public void resendVerificationCode(String email) {
+		Optional<AccountEntity> optionalUser = userRepository.findByEmail(email);
+		if (optionalUser.isPresent()) {
+			AccountEntity user = optionalUser.get();
+			if (user.isEnabled()) {
+				throw new RuntimeException("Account is already verified");
+			}
+			user.setVerificationCode(generateVerificationCode());
+			user.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));
+			sendVerificationEmail(user);
+			userRepository.save(user);
+		} else {
+			throw new RuntimeException("User not found");
+		}
+	}
 }

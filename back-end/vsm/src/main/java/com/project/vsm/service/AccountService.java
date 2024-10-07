@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.project.vsm.controller.model.AccountEntity;
+import com.project.vsm.model.AccountEntity;
 import com.project.vsm.repository.AccountRepository;
 
 

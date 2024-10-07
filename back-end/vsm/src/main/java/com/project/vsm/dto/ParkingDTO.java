@@ -1,6 +1,6 @@
 package com.project.vsm.dto;
 
-import com.project.vsm.controller.model.ParkingEntity;
+import com.project.vsm.model.ParkingEntity;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;

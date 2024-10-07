@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.vsm.controller.model.LoginRequest;
-import com.project.vsm.controller.model.LoginResponse;
-import com.project.vsm.controller.model.AccountEntity;
 import com.project.vsm.dto.RegisterUserDto;
 import com.project.vsm.dto.VerifyUserDto;
+import com.project.vsm.model.AccountEntity;
+import com.project.vsm.model.LoginRequest;
+import com.project.vsm.model.LoginResponse;
 import com.project.vsm.service.AuthService;
 
 @RestController

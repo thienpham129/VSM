@@ -1,6 +1,7 @@
 package com.project.vsm.controller;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.vsm.controller.model.CarEntity;
 import com.project.vsm.dto.CarCreateDTO;
 import com.project.vsm.dto.CarUpdateDTO;
+import com.project.vsm.model.CarEntity;
 import com.project.vsm.service.CarService;
 
 import jakarta.validation.Valid;
@@ -53,5 +54,11 @@ public class CarController {
 	public ResponseEntity<CarEntity> updateCarById(@PathVariable long id, @Valid @ModelAttribute CarUpdateDTO carInput)
 			throws IOException {
 		return new ResponseEntity<>(carService.updateCarById(id, carInput), HttpStatus.OK);
+	}
+
+	@GetMapping("/public/cars/{typeId}")
+	public ResponseEntity<List<CarEntity>> getCarByType(@PathVariable long typeId) {
+		List<CarEntity> carEntity = carService.getCarByType(typeId);
+		return new ResponseEntity<>(carEntity, HttpStatus.OK);
 	}
 }

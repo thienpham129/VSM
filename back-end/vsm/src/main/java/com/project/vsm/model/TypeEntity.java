@@ -1,4 +1,4 @@
-package com.project.vsm.controller.model;
+package com.project.vsm.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,22 +11,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Parking_Lot")
+@Table(name = "Type")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ParkingEntity {
+public class TypeEntity {
 	@Id
+	@Column(name = "type_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "parking_id")
-	private long id;
-
-	private String name;
-	private String location;
-
-	private int capacity;
-	@Column(name = "number_car")
-	private int numCar;
-	@Column(name = "is_empty", columnDefinition = "TINYINT(1)")
-	private boolean empty;
+	private long typeId;
+	@Column(name = "num_seat")
+	private int numSeat;
+	private long price;
 }
