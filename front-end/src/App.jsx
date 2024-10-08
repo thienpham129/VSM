@@ -13,6 +13,8 @@ import ListCars from "pages/listCars";
 import Profile from "pages/profile";
 import QuickBooking from "pages/quickBooking";
 import { DEFAULT } from "constants";
+import Booking from "pages/booking";
+import News from "pages/newAndBlog";
 
 
 function App() {
@@ -40,7 +42,8 @@ function App() {
             <Route path="contact" element={<Contact />} />
             <Route path="listCars" element={<ListCars />} />
             <Route path="quickBooking" element={<QuickBooking />} />
-
+            <Route path="new" element={<News />} />
+            <Route path="booking" element={<Booking />} />
           </Route>
         </Routes>
       ) : (
@@ -53,6 +56,8 @@ function App() {
             <Route path="listCars" element={<ListCars />} />
             <Route path="profile" element={<Profile />} />
             <Route path="quickBooking" element={<QuickBooking />} />
+            <Route path="booking" element={<Booking />} />
+            <Route path="new" element={<News />} />
           </Route>
           {/* <Route path="*" element={<NotFoundPage />} /> */}
         </Routes>

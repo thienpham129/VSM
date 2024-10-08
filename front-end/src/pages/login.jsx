@@ -3,10 +3,10 @@ import { axiosClient } from "helper/axiosClient";
 import { DEFAULT } from "constants";
 
 const Login = () => {
-  const [user, setUser] = useState({
-    email: "",
-    password: "",
-  });
+ 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("")
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -17,7 +17,10 @@ const Login = () => {
 
     const url = "/login";
     try {
-      const response = await axiosClient.post(url, user);
+      // const response = await axiosClient.post(url, user);
+      const response = await axiosClient.post(url, {
+        email, password
+      });
 
       if (response && response.data.accessToken) {
         localStorage.setItem(DEFAULT.TOKEN, response.data.accessToken);
@@ -34,12 +37,12 @@ const Login = () => {
     }
   };
 
-  const onChange = (e, fieldName) => {
-    setUser((prev) => ({
-      ...prev,
-      [fieldName]: e.target.value,
-    }));
-  };
+  // const onChange = (e, fieldName) => {
+  //   setUser((prev) => ({
+  //     ...prev,
+  //     [fieldName]: e.target.value,
+  //   }));
+  // };
 
   useEffect(() => {
     const token = localStorage.getItem(DEFAULT.TOKEN);
@@ -82,8 +85,10 @@ const Login = () => {
                           id="email"
                           className="form-control"
                           placeholder="Enter your email"
-                          value={user.email}
-                          onChange={(e) => onChange(e, "email")}
+                          // value={user.email}
+                          // onChange={(e) => onChange(e, "email")}
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
                           required
                           style={{marginBottom :"10px"}}
                         />
@@ -95,8 +100,10 @@ const Login = () => {
                           id="password"
                           className="form-control"
                           placeholder="Enter your password"
-                          value={user.password}
-                          onChange={(e) => onChange(e, "password")}
+                          // value={user.password}
+                          // onChange={(e) => onChange(e, "password")}
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
                           required
                         />
                       </div>

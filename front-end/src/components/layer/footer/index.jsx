@@ -96,7 +96,7 @@ const Footer = () => {
               <div className="col-md-12">
                 <div className="de-flex">
                   <div className="de-flex-col">
-                    <a href="index.html">
+                    <a href="/home">
                       Copyright 2024 - Rentaly by Designesia
                     </a>
                   </div>
