@@ -3,9 +3,9 @@ package com.project.vsm.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.project.vsm.model.UserEntity;
+import com.project.vsm.model.TypeEntity;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity, Long> {
+public interface TypeRepository extends JpaRepository<TypeEntity, Long> {
 
 }

@@ -1,5 +1,6 @@
-package com.project.vsm.controller.model;
+package com.project.vsm.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -9,23 +10,35 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @Data
 @Entity
 @RequiredArgsConstructor
-public class UserEntity {
+@Table(name = "Account")
+public class AccountEntity {
 	@Id
 	@Column(name = "user_id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 	private String email;
-
 	@JsonIgnore
 	private String password;
 	private String role;
-	private String name;
+	
+	@Column(name = "first_name")
+	private String firstName;
+	
+	@Column(name = "last_name")
+	private String lastName;
+	
+	@Column(name = "day_of_birth")
+	private LocalDate dob;
+	
+	private String address;
+	
 	@Column(name = "verification_code")
     private String verificationCode;
     @Column(name = "verification_expiration")
@@ -33,7 +46,8 @@ public class UserEntity {
     @Column(name = "create_date")
     private LocalDateTime createDate;
 	private boolean enabled;
-	public UserEntity(String email, String password) {
+	
+	public AccountEntity(String email, String password) {
 		super();
 		this.email = email;
 		this.password = password;
