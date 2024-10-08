@@ -1,4 +1,4 @@
-package com.project.vsm.controller.model;
+package com.project.vsm.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
