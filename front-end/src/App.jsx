@@ -15,6 +15,8 @@ import QuickBooking from "pages/quickBooking";
 import { DEFAULT } from "constants";
 import Booking from "pages/booking";
 import News from "pages/newAndBlog";
+import ChangePassword from "pages/changePassword";
+import Voucher from "pages/voucher";
 
 
 function App() {
@@ -52,12 +54,14 @@ function App() {
             <Route path="home" element={<HomePage />} />
             <Route path="aboutUs" element={<AboutUs />} />
             <Route path="accountBooking" element={<AccountBooking />} />
+            <Route path="changePassword" element={<ChangePassword />} />
             <Route path="contact" element={<Contact />} />
             <Route path="listCars" element={<ListCars />} />
             <Route path="profile" element={<Profile />} />
             <Route path="quickBooking" element={<QuickBooking />} />
             <Route path="booking" element={<Booking />} />
             <Route path="new" element={<News />} />
+            <Route path="voucher" element={<Voucher />} />
           </Route>
           {/* <Route path="*" element={<NotFoundPage />} /> */}
         </Routes>

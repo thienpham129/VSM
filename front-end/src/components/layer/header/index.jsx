@@ -188,7 +188,7 @@ const Header = () => {
                 </div>
               </div> */}
 
-              {/* <div className="de-flex-col" >
+              <div className="de-flex-col" >
                 <div className="menu_side_area">
                   <div className="de-login-menu">
                     <span
@@ -209,41 +209,41 @@ const Header = () => {
                       <div className="d-line" />
                       <ul className="menu-col">
                         <li>
-                          <a href="account-dashboard.html">
-                            <i className="fa fa-home" />
-                            Dashboard
-                          </a>
-                        </li>
-                        <li>
-                          <a href="account-profile.html">
+                          <a href="/profile">
                             <i className="fa fa-user" />
                             My Profile
                           </a>
                         </li>
                         <li>
-                          <a href="account-booking.html">
+                          <a href="/accountBooking">
                             <i className="fa fa-calendar" />
                             My Orders
                           </a>
                         </li>
                         <li>
-                          <a href="account-favorite.html">
+                          <a href="/changePassword">
                             <i className="fa fa-car" />
-                            My Favorite Cars
+                            Change Password
                           </a>
                         </li>
                         <li>
-                          <a href="login.html">
+                          <a href="/voucher">
+                            <i className="fa fa-ticket" />
+                            Voucher
+                          </a>
+                        </li>
+                        <li>
+                            <a >
                             <i className="fa fa-sign-out" />
                             Sign Out
-                          </a>
+                            </a>
                         </li>
                       </ul>
                     </div>
                     <span id="menu-btn" />
                   </div>
                 </div>
-              </div> */}
+              </div>
             </div>
           </div>
         </div>

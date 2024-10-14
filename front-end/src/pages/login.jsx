@@ -37,13 +37,6 @@ const Login = () => {
     }
   };
 
-  // const onChange = (e, fieldName) => {
-  //   setUser((prev) => ({
-  //     ...prev,
-  //     [fieldName]: e.target.value,
-  //   }));
-  // };
-
   useEffect(() => {
     const token = localStorage.getItem(DEFAULT.TOKEN);
     if (token) {

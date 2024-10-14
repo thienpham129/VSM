@@ -1,4 +1,5 @@
 import React from "react";
+import NavBarProfile from "components/NavBarProfile";
 
 const AccountBooking = () => {
   return (
@@ -23,54 +24,7 @@ const AccountBooking = () => {
         <div className="container">
           <div className="row">
             <div className="col-lg-3 mb30">
-              <div className="card padding30 rounded-5">
-                <div className="profile_avatar">
-                  <div className="profile_img">
-                    <img src="images/profile/1.jpg" alt="" />
-                  </div>
-                  <div className="profile_name">
-                    <h4>
-                      Monica Lucas
-                      <span className="profile_username text-gray">
-                        monica@rentaly.com
-                      </span>
-                    </h4>
-                  </div>
-                </div>
-                <div className="spacer-20" />
-                <ul className="menu-col">
-                  <li>
-                    <a href="account-dashboard.html">
-                      <i className="fa fa-home" />
-                      Dashboard
-                    </a>
-                  </li>
-                  <li>
-                    <a href="account-profile.html">
-                      <i className="fa fa-user" />
-                      My Profile
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="active">
-                      <i className="fa fa-calendar" />
-                      My Orders
-                    </a>
-                  </li>
-                  <li>
-                    <a href="account-favorite.html">
-                      <i className="fa fa-car" />
-                      My Favorite Cars
-                    </a>
-                  </li>
-                  <li>
-                    <a href="login.html">
-                      <i className="fa fa-sign-out" />
-                      Sign Out
-                    </a>
-                  </li>
-                </ul>
-              </div>
+              <NavBarProfile />
             </div>
             <div className="col-lg-9">
               <div className="card padding30 rounded-5 mb25">
