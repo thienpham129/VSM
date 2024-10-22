@@ -17,11 +17,7 @@ import Booking from "pages/booking";
 import News from "pages/newAndBlog";
 import ChangePassword from "pages/changePassword";
 import Voucher from "pages/voucher";
-<<<<<<< HEAD
-
-=======
 import OTP from "pages/OTP";
->>>>>>> Nam
 
 function App() {
   const navigate = useNavigate();
@@ -50,10 +46,7 @@ function App() {
             <Route path="quickBooking" element={<QuickBooking />} />
             <Route path="new" element={<News />} />
             <Route path="booking" element={<Booking />} />
-<<<<<<< HEAD
-=======
             <Route path="OTP" element={<OTP />} />
->>>>>>> Nam
           </Route>
         </Routes>
       ) : (
@@ -70,10 +63,7 @@ function App() {
             <Route path="booking" element={<Booking />} />
             <Route path="new" element={<News />} />
             <Route path="voucher" element={<Voucher />} />
-<<<<<<< HEAD
-=======
             <Route path="OTP" element={<OTP />} />
->>>>>>> Nam
           </Route>
           {/* <Route path="*" element={<NotFoundPage />} /> */}
         </Routes>
