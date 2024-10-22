@@ -1340,6 +1340,7 @@ header.header-mobile.header-light #menu-btn {
 
 section {
     padding: 90px 0 90px 0;
+    /* padding: 0 0 90px 0; */
     position: relative;
 }
 

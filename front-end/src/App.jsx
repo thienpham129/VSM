@@ -17,7 +17,7 @@ import Booking from "pages/booking";
 import News from "pages/newAndBlog";
 import ChangePassword from "pages/changePassword";
 import Voucher from "pages/voucher";
-
+import AdminApp from "AdminApp";
 
 function App() {
   const navigate = useNavigate();
@@ -46,6 +46,7 @@ function App() {
             <Route path="quickBooking" element={<QuickBooking />} />
             <Route path="new" element={<News />} />
             <Route path="booking" element={<Booking />} />
+
           </Route>
         </Routes>
       ) : (
@@ -63,9 +64,12 @@ function App() {
             <Route path="new" element={<News />} />
             <Route path="voucher" element={<Voucher />} />
           </Route>
-          {/* <Route path="*" element={<NotFoundPage />} /> */}
         </Routes>
       )}
+      <Routes>
+          <Route path="/admin/*" element={<AdminApp />} />
+      </Routes>
+
     </>
   );
 }

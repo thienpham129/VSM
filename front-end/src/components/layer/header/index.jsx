@@ -125,7 +125,7 @@ const Header = () => {
                 </ul>
               </div>
 
-              {/* <div className="de-flex-col">
+              <div className="de-flex-col">
                 <div className="menu_side_area">
                   {isLoggedIn ? (
                     <div className="de-login-menu">
@@ -139,7 +139,7 @@ const Header = () => {
                           alt=""
                         />
                       </span>
-                      <div id="de-submenu-profile" className="de-submenu">
+                      {/* <div id="de-submenu-profile" className="de-submenu">
                         <div className="d-name">
                           <h4>{userName}</h4>
                           <span className="text-gray">monica@rentaly.com</span>
@@ -177,7 +177,7 @@ const Header = () => {
                             </a>
                           </li>
                         </ul>
-                      </div>
+                      </div> */}
                       <span id="menu-btn" />
                     </div>
                   ) : (
@@ -186,9 +186,9 @@ const Header = () => {
                     </a>
                   )}
                 </div>
-              </div> */}
+              </div>
 
-              <div className="de-flex-col" >
+              {/* <div className="de-flex-col" >
                 <div className="menu_side_area">
                   <div className="de-login-menu">
                     <span
@@ -243,7 +243,7 @@ const Header = () => {
                     <span id="menu-btn" />
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
