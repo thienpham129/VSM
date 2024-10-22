@@ -9,13 +9,9 @@ body,
     font-family: "Source Sans Pro", sans-serif;
 }
 
-<<<<<<< HEAD
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
-<<<<<<< HEAD
-} */
-=======
 } */
 
 .toggle-btn {
@@ -175,7 +171,6 @@ code {
     transform: translate(-1px, -2px) rotate(0deg);
   }
 }
->>>>>>> Nam
 =======
 .app {
     display: flex;
@@ -210,4 +205,3 @@ code {
 .adminApp {
     display: flex;
 }
->>>>>>> quang167

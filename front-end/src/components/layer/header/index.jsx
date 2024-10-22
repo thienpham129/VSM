@@ -4,10 +4,7 @@ import React, { useEffect, useState } from "react";
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
-<<<<<<< HEAD
-=======
   const [showSubMenu, setShowSubMenu] = useState(false);
->>>>>>> Nam
 
   useEffect(() => {
     const token = localStorage.getItem(DEFAULT.TOKEN);
@@ -16,8 +13,6 @@ const Header = () => {
       setUserName("Xuan Quang");
     }
   }, []);
-<<<<<<< HEAD
-=======
   console.log("isLoggedIn:", isLoggedIn);
 
   const test = () => {
@@ -25,7 +20,6 @@ const Header = () => {
     console.log(isLoggedIn);
     console.log(typeof isLoggedIn);
   };
->>>>>>> Nam
 
   return (
     <header className="transparent scroll-light has-topbar">
@@ -139,66 +133,6 @@ const Header = () => {
                 </ul>
               </div>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-              {/* <div className="de-flex-col">
-=======
-              <div className="de-flex-col">
->>>>>>> quang167
-                <div className="menu_side_area">
-                  {isLoggedIn ? (
-                    <div className="de-login-menu">
-                      <span
-                        id="de-click-menu-profile"
-                        className="de-menu-profile"
-                      >
-                        <img
-                          src="images/profile/1.jpg"
-                          className="img-fluid"
-                          alt=""
-                        />
-                      </span>
-                      {/* <div id="de-submenu-profile" className="de-submenu">
-                        <div className="d-name">
-                          <h4>{userName}</h4>
-                          <span className="text-gray">monica@rentaly.com</span>
-                        </div>
-                        <div className="d-line" />
-                        <ul className="menu-col">
-                          <li>
-                            <a href="account-dashboard.html">
-                              <i className="fa fa-home" />
-                              Dashboard
-                            </a>
-                          </li>
-                          <li>
-                            <a href="account-profile.html">
-                              <i className="fa fa-user" />
-                              My Profile
-                            </a>
-                          </li>
-                          <li>
-                            <a href="account-booking.html">
-                              <i className="fa fa-calendar" />
-                              My Orders
-                            </a>
-                          </li>
-                          <li>
-                            <a href="account-favorite.html">
-                              <i className="fa fa-car" />
-                              My Favorite Cars
-                            </a>
-                          </li>
-                          <li>
-                            <a href="login.html">
-                              <i className="fa fa-sign-out" />
-                              Sign Out
-                            </a>
-                          </li>
-                        </ul>
-                      </div> */}
-                      <span id="menu-btn" />
-=======
               {/* error : Start */}
               <div className="de-flex-col">
                 <div className="menu_side_area">
@@ -266,7 +200,6 @@ const Header = () => {
                           <span id="menu-btn" />
                         </div>
                       </div>
->>>>>>> Nam
                     </div>
                   ) : (
                     <a href="/login" className="btn-main">
@@ -274,117 +207,11 @@ const Header = () => {
                     </a>
                   )}
                 </div>
-<<<<<<< HEAD
-<<<<<<< HEAD
-              </div> */}
-
-              <div className="de-flex-col" >
-=======
               </div>
-
-              {/* error: END */}
-
-              {/* <div className="de-flex-col" >
->>>>>>> Nam
-=======
               </div>
-
-              {/* <div className="de-flex-col" >
->>>>>>> quang167
-                <div className="menu_side_area">
-                  <div className="de-login-menu">
-                    <span
-                      id="de-click-menu-profile"
-                      className="de-menu-profile"
-                    >
-                      <img
-                        src="images/profile/1.jpg"
-                        className="img-fluid"
-                        alt=""
-                      />
-                    </span>
-                    <div id="de-submenu-profile" className="de-submenu">
-                      <div className="d-name">
-                        <h4>Monica Lucas</h4>
-                        <span className="text-gray">monica@rentaly.com</span>
-                      </div>
-                      <div className="d-line" />
-                      <ul className="menu-col">
-                        <li>
-<<<<<<< HEAD
-                          <a href="/profile">
-=======
-                          <a href="account-dashboard.html">
-                            <i className="fa fa-home" />
-                            Dashboard
-                          </a>
-                        </li>
-                        <li>
-                          <a href="account-profile.html">
->>>>>>> Nam
-                            <i className="fa fa-user" />
-                            My Profile
-                          </a>
-                        </li>
-                        <li>
-<<<<<<< HEAD
-                          <a href="/accountBooking">
-=======
-                          <a href="account-booking.html">
->>>>>>> Nam
-                            <i className="fa fa-calendar" />
-                            My Orders
-                          </a>
-                        </li>
-                        <li>
-<<<<<<< HEAD
-                          <a href="/changePassword">
-                            <i className="fa fa-car" />
-                            Change Password
-                          </a>
-                        </li>
-                        <li>
-                          <a href="/voucher">
-                            <i className="fa fa-ticket" />
-                            Voucher
-                          </a>
-                        </li>
-                        <li>
-                            <a >
-                            <i className="fa fa-sign-out" />
-                            Sign Out
-                            </a>
-=======
-                          <a href="account-favorite.html">
-                            <i className="fa fa-car" />
-                            My Favorite Cars
-                          </a>
-                        </li>
-                        <li>
-                          <a href="login.html">
-                            <i className="fa fa-sign-out" />
-                            Sign Out
-                          </a>
->>>>>>> Nam
-                        </li>
-                      </ul>
-                    </div>
-                    <span id="menu-btn" />
-                  </div>
-                </div>
-<<<<<<< HEAD
-<<<<<<< HEAD
-              </div>
-=======
-              </div> */}
->>>>>>> Nam
-=======
-              </div> */}
->>>>>>> quang167
             </div>
           </div>
         </div>
-      </div>
     </header>
   );
 };
