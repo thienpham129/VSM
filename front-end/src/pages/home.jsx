@@ -1,9 +1,20 @@
+<<<<<<< HEAD
 import React from "react";
 
 function HomePage(props) {
   return (
     <>
       
+=======
+import React, { useEffect } from "react";
+
+function HomePage(props) {
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
+  return (
+    <>
+>>>>>>> Nam
       <div className="no-bottom no-top" id="content">
         <div id="top" />
         <section
@@ -1253,7 +1264,10 @@ function HomePage(props) {
         </section>
       </div>
       <a href="#" id="back-to-top" />
+<<<<<<< HEAD
       
+=======
+>>>>>>> Nam
     </>
   );
 }
