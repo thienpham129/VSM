@@ -18,11 +18,15 @@ import News from "pages/newAndBlog";
 import ChangePassword from "pages/changePassword";
 import Voucher from "pages/voucher";
 import AdminApp from "AdminApp";
+import OTP from "pages/OTP";
+import BookingTicket from "pages/bookingTicket";
+import MethodPayment from "pages/methodPayment";
 
 function App() {
   const navigate = useNavigate();
 
   const token = window.localStorage.getItem(DEFAULT.TOKEN);
+  
 
   // useEffect(() => {
   //   if (token) {
@@ -46,7 +50,10 @@ function App() {
             <Route path="quickBooking" element={<QuickBooking />} />
             <Route path="new" element={<News />} />
             <Route path="booking" element={<Booking />} />
+            <Route path="bookingTicket" element={<BookingTicket />} />
+            <Route path="methodPayment" element={<MethodPayment />} />
 
+            <Route path="OTP" element={<OTP />} />
           </Route>
         </Routes>
       ) : (
@@ -63,6 +70,7 @@ function App() {
             <Route path="booking" element={<Booking />} />
             <Route path="new" element={<News />} />
             <Route path="voucher" element={<Voucher />} />
+            <Route path="OTP" element={<OTP />} />
           </Route>
         </Routes>
       )}
