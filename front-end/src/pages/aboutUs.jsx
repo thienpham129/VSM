@@ -2,7 +2,9 @@ import React from 'react'
 
 const AboutUs = () => {
   return (
+    
     <div className="no-bottom no-top zebra" id="content">
+
   <div id="top" />
   {/* section begin */}
   <section id="subheader" className="jarallax text-light">

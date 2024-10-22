@@ -140,7 +140,11 @@ const Header = () => {
               </div>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
               {/* <div className="de-flex-col">
+=======
+              <div className="de-flex-col">
+>>>>>>> quang167
                 <div className="menu_side_area">
                   {isLoggedIn ? (
                     <div className="de-login-menu">
@@ -154,7 +158,7 @@ const Header = () => {
                           alt=""
                         />
                       </span>
-                      <div id="de-submenu-profile" className="de-submenu">
+                      {/* <div id="de-submenu-profile" className="de-submenu">
                         <div className="d-name">
                           <h4>{userName}</h4>
                           <span className="text-gray">monica@rentaly.com</span>
@@ -192,7 +196,7 @@ const Header = () => {
                             </a>
                           </li>
                         </ul>
-                      </div>
+                      </div> */}
                       <span id="menu-btn" />
 =======
               {/* error : Start */}
@@ -271,6 +275,7 @@ const Header = () => {
                   )}
                 </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
               </div> */}
 
               <div className="de-flex-col" >
@@ -281,6 +286,11 @@ const Header = () => {
 
               {/* <div className="de-flex-col" >
 >>>>>>> Nam
+=======
+              </div>
+
+              {/* <div className="de-flex-col" >
+>>>>>>> quang167
                 <div className="menu_side_area">
                   <div className="de-login-menu">
                     <span
@@ -363,10 +373,14 @@ const Header = () => {
                   </div>
                 </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
               </div>
 =======
               </div> */}
 >>>>>>> Nam
+=======
+              </div> */}
+>>>>>>> quang167
             </div>
           </div>
         </div>
