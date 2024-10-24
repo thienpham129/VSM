@@ -51,6 +51,7 @@ function App() {
             <Route path="new" element={<News />} />
             <Route path="booking" element={<Booking />} />
             <Route path="bookingTicket" element={<BookingTicket />} />
+            <Route path="profile" element={<Profile />} />
             <Route path="methodPayment" element={<MethodPayment />} />
 
             <Route path="OTP" element={<OTP />} />

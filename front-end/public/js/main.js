@@ -69,10 +69,10 @@ class SearchTicket {
             (this.pointDownSelector = ".pointDown");
         config.dateSelector ?
             (this.dateSelector = config.dateSelector) :
-            (this.dateSelector = ".ticket-date");
+            (this.dateSelector = ".ticket_date");
         config.timeSelector ?
             (this.timeSelector = config.timeSelector) :
-            (this.timeSelector = ".ticket-time");
+            (this.timeSelector = ".ticket_time");
         config.numberSeatSelector ?
             (this.numberSeatSelector = config.numberSeatSelector) :
             (this.numberSeatSelector = ".number-seat");
@@ -550,10 +550,10 @@ class SearchTicketMobile {
             (this.pointDownSelector = `${this.wrap} .pointDown`);
         config.dateSelector ?
             (this.dateSelector = config.dateSelector) :
-            (this.dateSelector = ".ticket-date");
+            (this.dateSelector = ".ticket_date");
         config.timeSelector ?
             (this.timeSelector = config.timeSelector) :
-            (this.timeSelector = ".ticket-time");
+            (this.timeSelector = ".ticket_time");
         config.numberSeatSelector ?
             (this.numberSeatSelector = config.numberSeatSelector) :
             (this.numberSeatSelector = ".number-seat");

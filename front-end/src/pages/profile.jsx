@@ -205,7 +205,13 @@ const Profile = () => {
                                 <h5 className="font-weight-semi-bold mb-4">
                                   Address
                                 </h5>
-
+                                <input
+                                      type="text"
+                                      value={specificAddress}
+                                      onChange={handleSpecificAddressChange}
+                                      placeholder="Nhập địa chỉ cụ thể"
+                                      style={{width : '100%'}}
+                                    />
                                 <div className="row">
                                   <div className="col-md-4 form-group ">
                                     <SellectAddress
@@ -236,7 +242,7 @@ const Profile = () => {
                                       label="Wards(phường)"
                                     />
                                   </div>
-                                  <div className="col-md-12 form-group">
+                                  {/* <div className="col-md-12 form-group">
                                     <label style={{ marginRight: "20px" }}>
                                       Address :{" "}
                                     </label>
@@ -252,7 +258,7 @@ const Profile = () => {
                                       className="form-control"
                                       value={address}
                                     />
-                                  </div>
+                                  </div> */}
                                 </div>
                               </div>
                               {/*  */}

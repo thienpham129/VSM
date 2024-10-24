@@ -176,7 +176,8 @@ const BookingTicket = () => {
                     <span className={styles.searchTicket__item__title}>
                       Ngày khởi hành
                     </span>
-                    <input className={styles.ticket_date} readOnly="readOnly" />
+                    {/* <input className={styles.ticket_date} readOnly="readOnly" /> */}
+                    <input className={styles.ticket_date} type="date" />
                   </div>
                 </div>
               </div>
@@ -205,7 +206,7 @@ const BookingTicket = () => {
             </div>
           </div>
         </div>
-        <div className={styles.bookingPage__sort}>
+        {/* <div className={styles.bookingPage__sort}>
           <div className={styles.container}>
             <div
               className={`${styles.bookingPage__sort__wrap} ${styles.d_none}`}
@@ -225,7 +226,7 @@ const BookingTicket = () => {
               </p>
             </div>
           </div>
-        </div>
+        </div> */}
         <div
           className={`${styles.bookingPage__tickets} ${styles.js__booking__destop}`}
         >
@@ -251,10 +252,10 @@ const BookingTicket = () => {
                   >
                     <span className="avicon icon-bus" />
                     <div className={styles.route}>
-                      <h3 className={styles.showAsPoint}>
+                      {/* <h3 className={styles.showAsPoint}>
                         SG: 35 Sài Gòn <i className="avicon icon-arrow-right" />{" "}
                         QN: 1 Quy Nhơn
-                      </h3>
+                      </h3> */}
                       <h3 className={styles.showAsRoute}>
                         Sài Gòn - Quy Nhơn (24P Vip)
                       </h3>
@@ -371,7 +372,7 @@ const BookingTicket = () => {
                           styles.bookingPage__tickets__item__collapse__booking__seat_map__floor
                         }
                       >
-                        <h4>Tầng 1</h4>
+                        <h4>Xe 7 chỗ</h4>
                         <table le="" className={styles.avseatmap}>
                           <tbody>
                             <tr>
@@ -409,7 +410,7 @@ const BookingTicket = () => {
                                 title="A1"
                                 data-seatmap-id="SM0Tc1ybgBNa7yys"
                               >
-                                <div className="avicon icon-seat-empty" />
+                                <div className="avicon icon-seat-sold" />
                                 <span className={styles.showSeatId}>A1</span>
                               </td>
                             </tr>

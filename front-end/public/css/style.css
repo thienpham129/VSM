@@ -2669,9 +2669,9 @@ header.header-light .logo-2 {
 }
 
 input[type="checkbox"] {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+    /* -webkit-appearance: none; */
+    /* -moz-appearance: none; */
+    /* appearance: none; */
     border: none;
     outline: none;
 }
