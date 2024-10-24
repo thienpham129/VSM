@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.vsm.dto.RegisterUserDto;
 import com.project.vsm.dto.VerifyUserDto;
 import com.project.vsm.model.AccountEntity;
-import com.project.vsm.model.LoginRequest;
-import com.project.vsm.model.LoginResponse;
+import com.project.vsm.dto.request.LoginRequest;
+import com.project.vsm.dto.response.LoginResponse;
 import com.project.vsm.service.AuthService;
 
 @RestController

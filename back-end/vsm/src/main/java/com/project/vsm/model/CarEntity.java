@@ -40,6 +40,15 @@ public class CarEntity {
 	@Column(name = "day_maintenance")
 	private LocalDate dayMaintenance;
 
+	@Column(name = "start_location")
+	private String startLocation;
+
+	@Column(name = "stop_location")
+	private String stopLocation;
+
+	@Column(name = "date_start")
+	private LocalDate startDate;
+
 	@ManyToOne(cascade = { CascadeType.PERSIST })
 	@JoinColumn(name = "type_id", referencedColumnName = "type_id")
 	private TypeEntity type;

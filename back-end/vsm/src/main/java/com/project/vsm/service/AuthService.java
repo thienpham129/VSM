@@ -15,7 +15,7 @@ import com.project.vsm.dto.RegisterUserDto;
 import com.project.vsm.dto.VerifyUserDto;
 import com.project.vsm.exception.DuplicateEmailException;
 import com.project.vsm.model.AccountEntity;
-import com.project.vsm.model.LoginResponse;
+import com.project.vsm.dto.response.LoginResponse;
 import com.project.vsm.repository.AccountRepository;
 import com.project.vsm.sercurity.JwtIssuer;
 import com.project.vsm.sercurity.UserPrinciple;
@@ -87,10 +87,14 @@ public class AuthService {
 	        throw new DuplicateEmailException("Email already exists!");
 	    }
 
+		if (userRepository.existsByEmail(input.getEmail())) {
+			throw new RuntimeException("Email already exists");
+		}
+
 	    AccountEntity account = new AccountEntity(input.getEmail(), passwordEncoder.encode(input.getPassword()));
 	    account.setVerificationCode(generateVerificationCode());
 	    account.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
-	    account.setEnabled(false);
+	    account.setEnabled(true);
 	    account.setRole("ROLE_USER");
 	    account.setCreateDate(LocalDateTime.now());
 
