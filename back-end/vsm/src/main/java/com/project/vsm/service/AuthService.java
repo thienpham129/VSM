@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.vsm.dto.RegisterUserDto;
 import com.project.vsm.dto.VerifyUserDto;
+import com.project.vsm.exception.DuplicateEmailException;
 import com.project.vsm.model.AccountEntity;
 import com.project.vsm.model.LoginResponse;
 import com.project.vsm.repository.AccountRepository;
@@ -38,6 +39,8 @@ public class AuthService {
 	private AuthenticationManager authenticationManager;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private AccountService accountService;
 
 	public LoginResponse login(String email, String password) {
 		AccountEntity user = userRepository.findByEmail(email)
@@ -61,19 +64,42 @@ public class AuthService {
 		return LoginResponse.builder().accessToken(token).build();
 	}
 
+//	public AccountEntity signup(RegisterUserDto input) {
+//		Optional<AccountEntity> findAccount = accountService.findByEmail(input.getEmail());
+//		if (findAccount.isPresent()) {
+//			throw new DuplicateEmailException("Email already exits!");
+//		}
+//		AccountEntity account = new AccountEntity(input.getEmail(), passwordEncoder.encode(input.getPassword()));
+//		account.setVerificationCode(generateVerificationCode());
+//		account.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+//		account.setEnabled(false);
+//		account.setRole("ROLE_USER");
+//		account.setCreateDate(LocalDateTime.now());
+//		sendVerificationEmail(account);
+//
+//		userService.createUser(account);
+//		return userRepository.save(account);
+//	}
+
 	public AccountEntity signup(RegisterUserDto input) {
-		AccountEntity account = new AccountEntity(input.getEmail(), passwordEncoder.encode(input.getPassword()));
-		account.setVerificationCode(generateVerificationCode());
-		account.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
-		account.setEnabled(false);
-		account.setRole("ROLE_USER");
-		account.setCreateDate(LocalDateTime.now());
-		sendVerificationEmail(account);
+	    Optional<AccountEntity> findAccount = accountService.findByEmail(input.getEmail());
+	    if (findAccount.isPresent()) {
+	        throw new DuplicateEmailException("Email already exists!");
+	    }
 
-		userService.createUser(account); // create new user
-		return userRepository.save(account);
+	    AccountEntity account = new AccountEntity(input.getEmail(), passwordEncoder.encode(input.getPassword()));
+	    account.setVerificationCode(generateVerificationCode());
+	    account.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+	    account.setEnabled(false);
+	    account.setRole("ROLE_USER");
+	    account.setCreateDate(LocalDateTime.now());
+
+	    sendVerificationEmail(account);
+	    userService.createUser(account);
+
+	    return userRepository.save(account);
 	}
-
+	
 	public void verifyUser(VerifyUserDto input) {
 		Optional<AccountEntity> optionalUser = userRepository.findByEmail(input.getEmail());
 		if (optionalUser.isPresent()) {

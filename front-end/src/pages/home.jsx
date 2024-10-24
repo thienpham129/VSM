@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 
 function HomePage(props) {
-  useEffect(() => {
-    localStorage.clear();
-  }, []);
+  // useEffect(() => {
+  //   localStorage.clear();
+  // }, []);
   return (
     <>
       <div className="no-bottom no-top" id="content">

@@ -18,7 +18,7 @@ import News from "pages/newAndBlog";
 import ChangePassword from "pages/changePassword";
 import Voucher from "pages/voucher";
 import OTP from "pages/OTP";
-import AdminApp from "AdminApp";
+import AdminApp from "admin/AdminApp";
 
 function App() {
   const navigate = useNavigate();

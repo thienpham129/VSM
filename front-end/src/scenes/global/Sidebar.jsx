@@ -132,6 +132,15 @@ const Sidebar = () => {
             >
               Data
             </Typography>
+
+            <Item
+              title="Manage Voucher"
+              to="/admin/voucher"
+              icon={<PeopleOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
             <Item
               title="Manage Team"
               to="/admin/team"

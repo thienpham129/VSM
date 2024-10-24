@@ -27,6 +27,7 @@ const Login = () => {
 
       if (response && response.data.accessToken) {
         localStorage.setItem(DEFAULT.TOKEN, response.data.accessToken);
+        console.log(response.data.accessToken);
         window.location.href = "/home";
       } else {
         setErrorMessage("Login failed. Invalid credentials.");
