@@ -1,4 +1,4 @@
-package com.project.vsm.model;
+package com.project.vsm.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
