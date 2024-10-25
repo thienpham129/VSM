@@ -1,17 +1,12 @@
 package com.project.vsm.model;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -29,11 +24,14 @@ public class UserEntity {
 	private String urlImage;
 	
 	@Column(name = "num_booking")
-	private int numBoking;
+	private int numBooking;
 	
 	private String gender;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "account_id", referencedColumnName = "user_id")
+	@OneToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "account_id", referencedColumnName = "account_id")
     private AccountEntity account;
+
+	@OneToMany(mappedBy = "userEntity" )
+	private List<TicketEntity> ticketEntities = new ArrayList<>();
 }
