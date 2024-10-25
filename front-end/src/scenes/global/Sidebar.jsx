@@ -4,8 +4,11 @@ import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
+import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
+import LibraryAddCheckIcon from "@mui/icons-material/LibraryAddCheck";
+import LocalParkingIcon from "@mui/icons-material/LocalParking";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
@@ -134,9 +137,25 @@ const Sidebar = () => {
             </Typography>
 
             <Item
+              title="Manage Parking Lot"
+              to="/admin/parking"
+              icon={<LocalParkingIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
+            <Item
               title="Manage Voucher"
               to="/admin/voucher"
-              icon={<PeopleOutlinedIcon />}
+              icon={<LibraryAddCheckIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
+            <Item
+              title="Manage Car"
+              to="/admin/car"
+              icon={<DirectionsCarFilledIcon />}
               selected={selected}
               setSelected={setSelected}
             />

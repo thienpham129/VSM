@@ -4,9 +4,11 @@ import Topbar from "../scenes/global/Topbar";
 import Sidebar from "../scenes/global/Sidebar";
 import Dashboard from "../scenes/dashboard";
 import Team from "../scenes/team";
+import CarAdmin from "scenes/car";
 import Invoices from "../scenes/invoices";
 import Contacts from "../scenes/contacts";
 import VoucherAdmin from "scenes/voucher";
+import ParkingLot from "scenes/parking";
 import Bar from "../scenes/bar";
 import Form from "../scenes/form";
 import Line from "../scenes/line";
@@ -32,6 +34,8 @@ function AdminApp() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/voucher" element={<VoucherAdmin />} />
+              <Route path="/parking" element={<ParkingLot />} />
+              <Route path="/car" element={<CarAdmin />} />
               <Route path="/team" element={<Team />} />
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/invoices" element={<Invoices />} />

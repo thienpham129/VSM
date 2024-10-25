@@ -1,9 +1,7 @@
-import logo from "./logo.svg";
 import "./App.css";
 import AuthLayout from "components/layer/auth";
 import HomePage from "pages/home";
-import { Route, Routes, useNavigate } from "react-router-dom";
-import { LOCATION } from "constants";
+import { Route, Routes } from "react-router-dom";
 import Login from "pages/login";
 import AboutUs from "pages/aboutUs";
 import NonAuthLayout from "components/layer/nonAuth";
@@ -21,17 +19,7 @@ import OTP from "pages/OTP";
 import AdminApp from "admin/AdminApp";
 
 function App() {
-  const navigate = useNavigate();
-
   const token = window.localStorage.getItem(DEFAULT.TOKEN);
-
-  // useEffect(() => {
-  //   if (token) {
-  //     axiosClient.defaults.headers.Authorization = `Bearer ${token}`;
-  //   } else {
-  //     navigate(LOCATION.LOGIN);
-  //   }
-  // }, [navigate, token]);
 
   return (
     <>
@@ -68,9 +56,8 @@ function App() {
         </Routes>
       )}
       <Routes>
-          <Route path="/admin/*" element={<AdminApp />} />
+        <Route path="/admin/*" element={<AdminApp />} />
       </Routes>
-
     </>
   );
 }
