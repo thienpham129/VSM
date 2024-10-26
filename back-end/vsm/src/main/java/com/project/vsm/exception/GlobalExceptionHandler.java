@@ -26,6 +26,11 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
 	}
 
+	@ExceptionHandler(DuplicateEmailException.class)
+	public ResponseEntity<String> handleDuplicateEmailException(DuplicateEmailException ex, WebRequest request) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+	}
+	
 	 // Xử lý các ngoại lệ khác
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<String> handleGlobalException(Exception ex, WebRequest request) {
@@ -33,6 +38,7 @@ public class GlobalExceptionHandler {
 				HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
+	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
 		Map<String, String> errors = new HashMap<>();

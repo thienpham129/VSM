@@ -1,4 +1,4 @@
-import { tokens } from "../theme";
+import { tokens } from "../../theme";
 
 export const mockDataTeam = [
   {
@@ -72,6 +72,69 @@ export const mockDataTeam = [
     age: 65,
     phone: "(444)555-6239",
     access: "admin",
+  },
+];
+
+export const mockDataVoucher = [
+  {
+    id: 1,
+    code: "KpGC4QGWQO",
+    discount: 0.5,
+    valid: false,
+  },
+  {
+    id: 2,
+    code: "XyZ123456A",
+    discount: 0.3,
+    valid: true,
+  },
+  {
+    id: 3,
+    code: "ABCD1234EF",
+    discount: 0.2,
+    valid: true,
+  },
+  {
+    id: 4,
+    code: "PROMO2024",
+    discount: 0.25,
+    valid: false,
+  },
+  {
+    id: 5,
+    code: "SAVE50NOW",
+    discount: 0.5,
+    valid: true,
+  },
+  {
+    id: 6,
+    code: "FREESHIP2024",
+    discount: 0.15,
+    valid: true,
+  },
+  {
+    id: 7,
+    code: "WELCOME10",
+    discount: 0.1,
+    valid: false,
+  },
+  {
+    id: 8,
+    code: "VIPDISCOUNT",
+    discount: 0.4,
+    valid: true,
+  },
+  {
+    id: 9,
+    code: "SUMMER2024",
+    discount: 0.3,
+    valid: true,
+  },
+  {
+    id: 10,
+    code: "HOLIDAYSALE",
+    discount: 0.45,
+    valid: false,
   },
 ];
 

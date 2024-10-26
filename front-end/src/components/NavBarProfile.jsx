@@ -27,7 +27,7 @@ const NavBarProfile = () => {
             className={location.pathname === "/profile" ? "active" : ""}
           >
             <i className="fa fa-user" />
-            My Profile
+            Thông tin cá nhân
           </a>
         </li>
         <li>
@@ -36,7 +36,7 @@ const NavBarProfile = () => {
             className={location.pathname === "/accountBooking" ? "active" : ""}
           >
             <i className="fa fa-calendar" />
-            My Orders
+            Lịch sử đặt vé
           </a>
         </li>
         <li>
@@ -45,7 +45,7 @@ const NavBarProfile = () => {
             className={location.pathname === "/changePassword" ? "active" : ""}
           >
             <i className="fa fa-car" />
-            Change Password
+            Thay đổi mật khẩu
           </a>
         </li>
         <li>
@@ -54,13 +54,13 @@ const NavBarProfile = () => {
             className={location.pathname === "/voucher" ? "active" : ""}
           >
             <i className="fa fa-ticket" />
-            Voucher
+            Mã giảm giá
           </a>
         </li>
         <li>
           <a href="login.html">
             <i className="fa fa-sign-out" />
-            Sign Out
+            Đăng xuất
           </a>
         </li>
       </ul>

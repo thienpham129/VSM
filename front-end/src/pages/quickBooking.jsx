@@ -11,7 +11,7 @@ const QuickBooking = () => {
           <div className="container">
             <div className="row">
               <div className="col-md-12 text-center">
-                <h1>Quick Booking</h1>
+                <h1>Đặt vé xe nhanh</h1>
               </div>
               <div className="clearfix" />
             </div>
@@ -41,91 +41,16 @@ const QuickBooking = () => {
                   action="#"
                 >
                   <div className="col-lg-6 d-light">
-                    <h4>Booking a Car</h4>
-                    <select
-                      name="Vehicle Type"
-                      id="vehicle_type"
-                      className="form-control"
-                    >
-                      <option
-                        value="Jeep Renegade"
-                        data-src="images/cars-alt/jeep-renegade.png"
-                      >
-                        Jeep Renegade - $265
-                      </option>
-                      <option
-                        value="BMW M5"
-                        data-src="images/cars-alt/bmw-m5.png"
-                      >
-                        BMW M5 - $544
-                      </option>
-                      <option
-                        value="Ferrari Enzo"
-                        data-src="images/cars-alt/ferrari-enzo.png"
-                      >
-                        Ferrari Enzo - $167
-                      </option>
-                      <option
-                        value="Ford Raptor"
-                        data-src="images/cars-alt/ford-raptor.png"
-                      >
-                        Ford Raptor - $147
-                      </option>
-                      <option
-                        value="Mini Cooper"
-                        data-src="images/cars-alt/mini-cooper.png"
-                      >
-                        Mini Cooper - $238
-                      </option>
-                      <option
-                        value="Cheverolet Camaro"
-                        data-src="images/cars-alt/vw-polo.png"
-                      >
-                        Cheverolet Camaro - $245
-                      </option>
-                      <option
-                        value="Hyundai Staria"
-                        data-src="images/cars-alt/hyundai-staria.png"
-                      >
-                        Hyundai Staria - $191
-                      </option>
-                      <option
-                        value="Toyota Rav 4"
-                        data-src="images/cars-alt/toyota-rav.png"
-                      >
-                        Toyota Rav 4 - $114
-                      </option>
-                      <option
-                        value="Bentley"
-                        data-src="images/cars-alt/bentley.png"
-                      >
-                        Bentley - $299
-                      </option>
-                      <option
-                        value="Lexus"
-                        data-src="images/cars-alt/lexus.png"
-                      >
-                        Lexus - $131
-                      </option>
-                      <option
-                        value="Range Rover"
-                        data-src="images/cars-alt/range-rover.png"
-                      >
-                        Range Rover - $228
-                      </option>
-                    </select>
                     <div className="row g-4">
                       <div className="col-lg-6">
-                        <h5>Pick Up Location</h5>
+                        <h5>Nhập địa điểm đón</h5>
                         <select
                           name="Pick Up Location"
                           id="pick_up_location"
                           className="form-control opt-1-disable"
                           required=""
                         >
-                          <option value="New York">
-                            Enter your pickup location
-                          </option>
+                          <option value="New York">Nhập địa điểm đón</option>
                           <option value="New York">New York</option>
                           <option value="Pennsylvania">Pennsylvania</option>
                           <option value="New Jersey">New Jersey</option>
@@ -137,18 +62,16 @@ const QuickBooking = () => {
                         </select>
                       </div>
                       <div className="col-lg-6">
-                        <h5>Destination</h5>
+                        <h5>Nhập địa điểm trả</h5>
                         <select
-                          name="Destination"
-                          id="destination"
+                          name="Pick Up Location"
+                          id="pick_up_location"
                           className="form-control opt-1-disable"
                           required=""
                         >
-                          <option value="New York">
-                            Enter your destination
-                          </option>
+                          <option value="New York">Nhập địa điểm trả</option>
                           <option value="New York">New York</option>
-                          <option value="PennsylDvania">Pennsylvania</option>
+                          <option value="Pennsylvania">Pennsylvania</option>
                           <option value="New Jersey">New Jersey</option>
                           <option value="Connecticut">Connecticut</option>
                           <option value="Massachusetts">Massachusetts</option>
@@ -157,69 +80,19 @@ const QuickBooking = () => {
                           <option value="New Hampshire">New Hampshire</option>
                         </select>
                       </div>
-                      <div className="col-lg-6">
-                        <h5>Pick Up Date &amp; Time</h5>
+
+                      {/* <div className="col-lg-6">
+                          <h5 for="pickUpTime">Pick Up Date &amp; Time </h5>
                         <div className="date-time-field">
                           <input
-                            type="text"
-                            id="date-picker"
-                            name="Pick Up Date"
-                            defaultValue=""
+                            type="datetime-local"
+                            id="pickUpTime"
+                            name="pickUpTime"
                           />
-                          <select name="Pick Up Time" id="pickup-time">
-                            <option value="00:00">00:00</option>
-                            <option value="00:30">00:30</option>
-                            <option value="01:00">01:00</option>
-                            <option value="01:30">01:30</option>
-                            <option value="02:00">02:00</option>
-                            <option value="02:30">02:30</option>
-                            <option value="03:00">03:00</option>
-                            <option value="03:30">03:30</option>
-                            <option value="04:00">04:00</option>
-                            <option value="04:30">04:30</option>
-                            <option value="05:00">05:00</option>
-                            <option value="05:30">05:30</option>
-                            <option value="06:00">06:00</option>
-                            <option value="06:30">06:30</option>
-                            <option value="07:00">07:00</option>
-                            <option value="07:30">07:30</option>
-                            <option value="08:00">08:00</option>
-                            <option value="08:30">08:30</option>
-                            <option value="09:00">09:00</option>
-                            <option value="09:30">09:30</option>
-                            <option value="10:00">10:00</option>
-                            <option value="10:30">10:30</option>
-                            <option value="11:00">11:00</option>
-                            <option value="11:30">11:30</option>
-                            <option value="12:00">12:00</option>
-                            <option value="12:30">12:30</option>
-                            <option value="13:00">13:00</option>
-                            <option value="13:30">13:30</option>
-                            <option value="14:00">14:00</option>
-                            <option value="14:30">14:30</option>
-                            <option value="15:00">15:00</option>
-                            <option value="15:30">15:30</option>
-                            <option value="16:00">16:00</option>
-                            <option value="16:30">16:30</option>
-                            <option value="17:00">17:00</option>
-                            <option value="17:30">17:30</option>
-                            <option value="18:00">18:00</option>
-                            <option value="18:30">18:30</option>
-                            <option value="19:00">19:00</option>
-                            <option value="19:30">19:30</option>
-                            <option value="20:00">20:00</option>
-                            <option value="20:30">20:30</option>
-                            <option value="21:00">21:00</option>
-                            <option value="21:30">21:30</option>
-                            <option value="22:00">22:00</option>
-                            <option value="22:30">22:30</option>
-                            <option value="23:00">23:00</option>
-                            <option value="23:30">23:30</option>
-                          </select>
                         </div>
-                      </div>
+                      </div> */}
                       <div className="col-lg-6">
-                        <h5>Return Date &amp; Time</h5>
+                        <h5>Chọn thời gian đón</h5>
                         <div className="date-time-field">
                           <input
                             type="text"
@@ -283,7 +156,7 @@ const QuickBooking = () => {
                   </div>
                   {/* customer details */}
                   <div className="col-lg-6">
-                    <h4>Enter Your Details</h4>
+                    <h4>Nhập thông tin chi tiết</h4>
                     <div className="row g-4">
                       <div className="col-lg-12">
                         <div className="field-set">
@@ -292,7 +165,7 @@ const QuickBooking = () => {
                             name="Name"
                             id="name"
                             className="form-control"
-                            placeholder="Your Name"
+                            placeholder="Nhập họ và tên"
                             required=""
                           />
                         </div>
@@ -304,7 +177,7 @@ const QuickBooking = () => {
                             name="Email"
                             id="email"
                             className="form-control"
-                            placeholder="Your Email"
+                            placeholder="Nhập email của bạn"
                             required=""
                           />
                         </div>
@@ -316,7 +189,7 @@ const QuickBooking = () => {
                             name="phone"
                             id="phone"
                             className="form-control"
-                            placeholder="Your Phone"
+                            placeholder="Nhập số điện thoại "
                             required=""
                           />
                         </div>
@@ -327,7 +200,7 @@ const QuickBooking = () => {
                             name="message"
                             id="message"
                             className="form-control"
-                            placeholder="Do you have any request?"
+                            placeholder="Bạn có lời nhắn gì không?"
                             defaultValue={""}
                           />
                         </div>
@@ -379,35 +252,35 @@ const QuickBooking = () => {
               <div className="container-timeline">
                 <ul>
                   <li>
-                    <h4>Choose a vehicle</h4>
+                    <h4>Chọn một chiếc xe</h4>
                     <p>
-                      Unlock unparalleled adventures and memorable journeys with
-                      our vast fleet of vehicles tailored to suit every need,
-                      taste, and destination.
+                      Mở ra những cuộc phiêu lưu vô song và những hành trình
+                      đáng nhớ với đội xe hùng hậu của chúng tôi được thiết kế
+                      riêng để phù hợp với mọi nhu cầu, sở thích và điểm đến.
                     </p>
                   </li>
                   <li>
-                    <h4>Pick location &amp; date</h4>
+                    <h4>Chọn địa điểm và ngày</h4>
                     <p>
-                      Pick your ideal location and date, and let us take you on
-                      a journey filled with convenience, flexibility, and
-                      unforgettable experiences.
+                      Hãy chọn địa điểm và ngày lý tưởng, và để chúng tôi đưa
+                      bạn vào một hành trình đầy tiện lợi, linh hoạt và những
+                      trải nghiệm khó quên.
                     </p>
                   </li>
                   <li>
-                    <h4>Make a booking</h4>
+                    <h4>Đặt chỗ</h4>
                     <p>
-                      Secure your reservation with ease, unlocking a world of
-                      possibilities and embarking on your next adventure with
-                      confidence.
+                      Đảm bảo đặt chỗ của bạn một cách dễ dàng, mở ra một thế
+                      giới đầy tiềm năng và tự tin bắt đầu cuộc phiêu lưu tiếp
+                      theo của bạn.
                     </p>
                   </li>
                   <li>
-                    <h4>Sit back &amp; relax</h4>
+                    <h4>Ngồi lại và thư giãn</h4>
                     <p>
-                      Hassle-free convenience as we take care of every detail,
-                      allowing you to unwind and embrace a journey filled
-                      comfort.
+                      Sự tiện lợi không rắc rối khi chúng tôi chăm chút từng chi
+                      tiết, cho phép bạn thư giãn và tận hưởng sự thoải mái
+                      trong suốt chuyến đi.
                     </p>
                   </li>
                 </ul>
@@ -423,23 +296,24 @@ const QuickBooking = () => {
             <div className="row g-5">
               <div className="col-lg-6 wow fadeInRight">
                 <h2>
-                  We offer customers a wide range of{" "}
-                  <span className="id-color">commercial cars</span> and{" "}
-                  <span className="id-color">luxury cars</span> for any
-                  occasion.
+                  Chúng tôi sẽ cung cấp cho khách hàng nhiều loại{" "}
+                  <span className="id-color">khuyến mãi ưu đãi</span> and{" "}
+                  <span className="id-color">dịch vụ đặc biệt</span> cho mọi
+                  dịp.
                 </h2>
               </div>
               <div className="col-lg-6 wow fadeInLeft">
-                At our car rental agency, we believe that everyone deserves to
-                experience the pleasure of driving a reliable and comfortable
-                vehicle, regardless of their budget. We have curated a diverse
-                fleet of well-maintained cars, ranging from sleek sedans to
-                spacious SUVs, all at competitive prices. With our streamlined
-                rental process, you can quickly and conveniently reserve your
-                desired vehicle. Whether you need transportation for a business
-                trip, family vacation, or simply want to enjoy a weekend
-                getaway, we have flexible rental options to accommodate your
-                schedule.
+                Tại dịch vụ đặt vé xe trực tuyến của chúng tôi, chúng tôi tin
+                rằng ai cũng xứng đáng được trải nghiệm một chuyến đi an toàn và
+                thoải mái, bất kể ngân sách là bao nhiêu. Chúng tôi đã hợp tác
+                với nhiều hãng xe uy tín và đảm bảo chất lượng, từ xe giường nằm
+                cao cấp đến xe ghế ngồi tiện nghi, tất cả đều có mức giá cạnh
+                tranh. Với quy trình đặt vé nhanh chóng, bạn có thể dễ dàng lựa
+                chọn và đặt chuyến xe phù hợp ngay trên nền tảng của chúng tôi.
+                Dù bạn cần một chuyến xe cho công việc, du lịch cùng gia đình
+                hay chỉ đơn giản là một chuyến đi ngắn cuối tuần, chúng tôi luôn
+                có các tùy chọn linh hoạt để đáp ứng lịch trình và nhu cầu của
+                bạn.
               </div>
             </div>
             <div className="spacer-double" />
@@ -449,7 +323,7 @@ const QuickBooking = () => {
                   <h3 className="timer" data-to={15425} data-speed={3000}>
                     0
                   </h3>
-                  Completed Orders
+                  Đơn hàng thành công
                 </div>
               </div>
               <div className="col-md-3 col-sm-6 mb-sm-30">
@@ -457,7 +331,7 @@ const QuickBooking = () => {
                   <h3 className="timer" data-to={8745} data-speed={3000}>
                     0
                   </h3>
-                  Happy Customers
+                  Khách hàng hài lòng
                 </div>
               </div>
               <div className="col-md-3 col-sm-6 mb-sm-30">
@@ -465,7 +339,7 @@ const QuickBooking = () => {
                   <h3 className="timer" data-to={235} data-speed={3000}>
                     0
                   </h3>
-                  Vehicles Fleet
+                  Đội ngũ xe
                 </div>
               </div>
               <div className="col-md-3 col-sm-6 mb-sm-30">
@@ -473,7 +347,7 @@ const QuickBooking = () => {
                   <h3 className="timer" data-to={15} data-speed={3000}>
                     0
                   </h3>
-                  Years Experience
+                  Năm kinh nghiệm
                 </div>
               </div>
             </div>

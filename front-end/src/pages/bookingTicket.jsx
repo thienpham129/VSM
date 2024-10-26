@@ -1,7 +1,58 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "pages/bookingTicket.module.css";
+import BookingForm from "components/BookingForm";
+
+const Seat = ({ seatId, seatStatus, onSelect }) => {
+  const [isSelected, setIsSelected] = useState(false);
+
+  const handleSeatClick = () => {
+    if (seatStatus === "sold") return;
+    setIsSelected((prev) => !prev);
+    onSelect(seatId, !isSelected); 
+  };
+
+  return (
+    <td
+      className={`${styles.avseat} ${
+        seatStatus === "sold" ? styles.soldSeat : ""
+      }`}
+      onClick={handleSeatClick}
+      data-seat-id={seatId}
+      title={seatId}
+    >
+      <div
+        className={`avicon ${
+          seatStatus === "sold"
+            ? "icon-seat-sold"
+            : isSelected
+            ? "icon-seat-selected"
+            : "icon-seat-empty"
+        }`}
+      />
+      <span className={styles.showSeatId}>{seatId}</span>
+    </td>
+  );
+};
 
 const BookingTicket = () => {
+  const ticketPrice = 150000; 
+  const [selectedSeats, setSelectedSeats] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  const handleSeatSelection = (seatId, isSelected) => {
+    setSelectedSeats((prev) => {
+      if (isSelected) {
+        return [...prev, seatId];
+      } else {
+        return prev.filter((id) => id !== seatId);
+      }
+    });
+
+    setTotalPrice((prev) =>
+      isSelected ? prev + ticketPrice : prev - ticketPrice
+    );
+  };
+
   return (
     <div className="no-bottom no-top zebra" id="content">
       <section id="subheader" className="jarallax text-light">
@@ -12,7 +63,6 @@ const BookingTicket = () => {
         />
       </section>
       <section className={styles.bookingPage}>
-        {/* <div className={styles.bookingPage__banner} /> */}
         <div className={styles.bookingPage__search}>
           <div className={styles.container}>
             <div
@@ -206,27 +256,7 @@ const BookingTicket = () => {
             </div>
           </div>
         </div>
-        {/* <div className={styles.bookingPage__sort}>
-          <div className={styles.container}>
-            <div
-              className={`${styles.bookingPage__sort__wrap} ${styles.d_none}`}
-              id="js--bookingPage__sort"
-            >
-              <h3>Sắp xếp</h3>
-              <p
-                data-action="sort"
-                data-wrap="#js--bookingPage__sort"
-                data-filter="sortTime"
-                data-value="asc"
-              >
-                Thời gian khởi hành <span className="avicon icon-arrow-top " />
-              </p>
-              <p>
-                Số ghế trống <span className="avicon icon-arrow-top" />
-              </p>
-            </div>
-          </div>
-        </div> */}
+
         <div
           className={`${styles.bookingPage__tickets} ${styles.js__booking__destop}`}
         >
@@ -241,8 +271,6 @@ const BookingTicket = () => {
                   <div
                     className={styles.bookingPage__tickets__item__thumb__time}
                   >
-                    {/* <span className="avicon icon-clock" /> */}
-                    {/* {`${styles.bookingPage__tickets__item} ${styles.allowBook}`} */}
                     <div className={styles.times}>
                       <h3>19 : 00</h3>
                     </div>
@@ -252,10 +280,6 @@ const BookingTicket = () => {
                   >
                     <span className="avicon icon-bus" />
                     <div className={styles.route}>
-                      {/* <h3 className={styles.showAsPoint}>
-                        SG: 35 Sài Gòn <i className="avicon icon-arrow-right" />{" "}
-                        QN: 1 Quy Nhơn
-                      </h3> */}
                       <h3 className={styles.showAsRoute}>
                         Sài Gòn - Quy Nhơn (24P Vip)
                       </h3>
@@ -291,7 +315,7 @@ const BookingTicket = () => {
                   <div
                     className={styles.bookingPage__tickets__item__thumb__price}
                   >
-                    <span> 500,000</span>
+                    <span> 150,000</span>
                   </div>
                   <div
                     className={
@@ -319,40 +343,6 @@ const BookingTicket = () => {
                     id="collapse--list-routePLT0Tc1ybgN295oCg20241015"
                   >
                     <span className="avicon icon-caret-top" />
-                    {/* <div className={styles.bookingPage__tickets__item__collapse__list_point}>
-                    <div className={styles.bookingPage__tickets__item__collapse__list_point__part}>
-                      <h3>Điểm đi</h3>
-                      <div className={styles.bookingPage__tickets__item__collapse__list_point__part__content}>
-                        <div className={styles.bookingPage__tickets__item__collapse__list_point__item}>
-                          <span className="icon-dot" />
-                          <ul>
-                            <li>
-                              <span style={{ lineHeight: 25 }}>
-                                SG: 35 Sài Gòn
-                              </span>
-                              <span style={{ lineHeight: 25 }}>19:00</span>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    <div className={styles.bookingPage__tickets__item__collapse__list_point__part}>
-                      <h3>Điểm đến</h3>
-                      <div className={styles.bookingPage__tickets__item__collapse__list_point__part__content}>
-                        <div className={styles.bookingPage__tickets__item__collapse__list_point__item}>
-                          <span className="icon-dot" />
-                          <ul>
-                            <li>
-                              <span style={{ lineHeight: 25 }}>
-                                QN: 1 Quy Nhơn
-                              </span>
-                              <span style={{ lineHeight: 25 }}>07:00</span>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </div> */}
                   </div>
                   <div
                     className={
@@ -394,135 +384,46 @@ const BookingTicket = () => {
                                 <span className={styles.showSeatId}>TAI</span>
                               </td>
                               <td />
-                              <td />
-                              <td />
-                              <td
-                                className={styles.avseat}
-                                data-seat-price={0}
-                                data-extra-price={0}
-                                data-trip-id="PLT0Tc1ybgN295oCg20241015"
-                                data-seat-status="none"
-                                data-seat-col={3}
-                                data-seat-row={1}
-                                data-seat-type={4}
-                                data-seat-floor={1}
-                                data-seat-id="A1"
-                                title="A1"
-                                data-seatmap-id="SM0Tc1ybgBNa7yys"
-                              >
-                                <div className="avicon icon-seat-sold" />
-                                <span className={styles.showSeatId}>A1</span>
-                              </td>
+
+                              <Seat
+                                seatId="A1"
+                                seatStatus="available"
+                                onSelect={handleSeatSelection}
+                              />
                             </tr>
                             <tr>
-                              <td
-                                className={styles.avseat}
-                                data-seat-price={0}
-                                data-extra-price={0}
-                                data-trip-id="PLT0Tc1ybgN295oCg20241015"
-                                data-seat-status="none"
-                                data-seat-col={1}
-                                data-seat-row={2}
-                                data-seat-type={4}
-                                data-seat-floor={1}
-                                data-seat-id="A2"
-                                title="A2"
-                                data-seatmap-id="SM0Tc1ybgBNa7yys"
-                              >
-                                <div className="avicon icon-seat-empty" />
-                                <span className={styles.showSeatId}>A2</span>
-                              </td>
-                              <td />
-                              <td
-                                className={styles.avseat}
-                                data-seat-price={0}
-                                data-extra-price={0}
-                                data-trip-id="PLT0Tc1ybgN295oCg20241015"
-                                data-seat-status="none"
-                                data-seat-col={3}
-                                data-seat-row={3}
-                                data-seat-type={4}
-                                data-seat-floor={1}
-                                data-seat-id="A3"
-                                title="A3"
-                                data-seatmap-id="SM0Tc1ybgBNa7yys"
-                              >
-                                <div className="avicon icon-seat-empty" />
-                                <span className={styles.showSeatId}>A3</span>
-                              </td>
-                              <td />
-                              <td
-                                className={styles.avseat}
-                                data-seat-price={0}
-                                data-extra-price={0}
-                                data-trip-id="PLT0Tc1ybgN295oCg20241015"
-                                data-seat-status="none"
-                                data-seat-col={3}
-                                data-seat-row={3}
-                                data-seat-type={4}
-                                data-seat-floor={1}
-                                data-seat-id="A4"
-                                title="A4"
-                                data-seatmap-id="SM0Tc1ybgBNa7yys"
-                              >
-                                <div className="avicon icon-seat-empty" />
-                                <span className={styles.showSeatId}>A4</span>
-                              </td>
+                              <Seat
+                                seatId="A2"
+                                seatStatus="sold"
+                                onSelect={handleSeatSelection}
+                              />
+                              <Seat
+                                seatId="A3"
+                                seatStatus="available"
+                                onSelect={handleSeatSelection}
+                              />
+                              <Seat
+                                seatId="A4"
+                                seatStatus="available"
+                                onSelect={handleSeatSelection}
+                              />
                             </tr>
                             <tr>
-                              <td
-                                className={styles.avseat}
-                                data-seat-price={0}
-                                data-extra-price={0}
-                                data-trip-id="PLT0Tc1ybgN295oCg20241015"
-                                data-seat-status="none"
-                                data-seat-col={1}
-                                data-seat-row={3}
-                                data-seat-type={4}
-                                data-seat-floor={1}
-                                data-seat-id="A5"
-                                title="A5"
-                                data-seatmap-id="SM0Tc1ybgBNa7yys"
-                              >
-                                <div className="avicon icon-seat-empty" />
-                                <span className={styles.showSeatId}>A5</span>
-                              </td>
-                              <td />
-                              <td
-                                className={styles.avseat}
-                                data-seat-price={0}
-                                data-extra-price={0}
-                                data-trip-id="PLT0Tc1ybgN295oCg20241015"
-                                data-seat-status="none"
-                                data-seat-col={2}
-                                data-seat-row={3}
-                                data-seat-type={4}
-                                data-seat-floor={1}
-                                data-seat-id="A6"
-                                title="A6"
-                                data-seatmap-id="SM0Tc1ybgBNa7yys"
-                              >
-                                <div className="avicon icon-seat-empty" />
-                                <span className={styles.showSeatId}>A6</span>
-                              </td>
-                              <td />
-                              <td
-                                className={styles.avseat}
-                                data-seat-price={0}
-                                data-extra-price={0}
-                                data-trip-id="PLT0Tc1ybgN295oCg20241015"
-                                data-seat-status="none"
-                                data-seat-col={3}
-                                data-seat-row={3}
-                                data-seat-type={4}
-                                data-seat-floor={1}
-                                data-seat-id="A7"
-                                title="A7"
-                                data-seatmap-id="SM0Tc1ybgBNa7yys"
-                              >
-                                <div className="avicon icon-seat-empty" />
-                                <span className={styles.showSeatId}>A7</span>
-                              </td>
+                              <Seat
+                                seatId="A5"
+                                seatStatus="available"
+                                onSelect={handleSeatSelection}
+                              />
+                              <Seat
+                                seatId="A6"
+                                seatStatus="available"
+                                onSelect={handleSeatSelection}
+                              />
+                              <Seat
+                                seatId="A7"
+                                seatStatus="available"
+                                onSelect={handleSeatSelection}
+                              />
                             </tr>
                           </tbody>
                         </table>
@@ -554,280 +455,7 @@ const BookingTicket = () => {
                         </p>
                       </div>
                     </div>
-                    <div
-                      className={
-                        styles.bookingPage__tickets__item__collapse__booking__user
-                      }
-                    >
-                      <div
-                        className={
-                          styles.bookingPage__tickets__item__collapse__booking__title
-                        }
-                      >
-                        <h3>
-                          SG: 35 Sài Gòn{" "}
-                          <span className="avicon icon-arrow-right" /> QN: 1 Quy
-                          Nhơn
-                        </h3>
-                        <p>19:00 - 15/10/2024</p>
-                      </div>
-                      <form
-                        // m=""
-                        action="/index.php?mod=datve&page=datve&sub=preBooking"
-                        method="POST"
-                        data-trip-choosableseat={1}
-                        data-form-trip-id="PLT0Tc1ybgN295oCg20241015"
-                      >
-                        <input type="hidden" name="seat_selected" />
-                        <input type="hidden" name="price" />
-                        <input type="hidden" name="priceNotPromo" />
-                        <input type="hidden" name="pricePromo" />
-                        <input
-                          type="hidden"
-                          name="routeId"
-                          defaultValue="R0NY1wD4MMlyUEQ"
-                        />
-                        <input
-                          type="hidden"
-                          name="base_price"
-                          defaultValue={500000}
-                        />
-                        <input
-                          type="hidden"
-                          name="getInTimePlan"
-                          defaultValue={1728993600000}
-                        />
-                        <input
-                          type="hidden"
-                          name="extraPrice"
-                          defaultValue=""
-                        />
-                        <input
-                          type="hidden"
-                          name="extraPriceType"
-                          defaultValue=""
-                        />
-                        <input
-                          type="hidden"
-                          name="extraPriceName"
-                          defaultValue=""
-                        />
-                        <input
-                          type="hidden"
-                          name="extraPriceId"
-                          defaultValue=""
-                        />
-                        <input
-                          type="hidden"
-                          name="server_price"
-                          defaultValue={0}
-                        />
-                        <input
-                          type="hidden"
-                          name="tripId"
-                          defaultValue="PLT0Tc1ybgN295oCg20241015"
-                        />
-                        <div
-                          className="d-none"
-                          data-content="additionPriceForUserType"
-                        />
-                        <div className={styles.form_group}>
-                          <label htmlFor="">Ghế đã chọn</label>
-                          <div
-                            data-content="listSeat"
-                            className={styles.list_seat}
-                          >
-                            <span style={{ visibility: "hidden" }}>a</span>
-                          </div>
-                        </div>
-                        <label
-                          htmlFor="seat_selected"
-                          className={styles.error}
-                        />
-                        <div className={styles.form_group}>
-                          <label htmlFor="">Tổng tiền</label>
-                          <span className="total-monney">
-                            <span data-content="totalPrice">0</span> đ
-                          </span>
-                        </div>
-                        <div className={styles.form_group}>
-                          <label htmlFor="">
-                            Họ tên:{" "}
-                            <span className={styles.text_danger}>*</span>
-                          </label>
-                          <input type="text" name="full_name" defaultValue="" />
-                          <label htmlFor="full_name" className={styles.error} />
-                        </div>
-                        <div className={styles.form_group}>
-                          <label htmlFor="">
-                            Số điện thoại:{" "}
-                            <span className={styles.text_danger}>*</span>
-                          </label>
-                          <input type="text" name="phone" defaultValue="" />
-                          <label htmlFor="phone" className={styles.error} />
-                        </div>
-                        <div
-                          className={`${styles.form_group} ${styles.useEmail}`}
-                        >
-                          {/* 
-        className={`${styles.form_group} ${styles.useEmail}`}
-                        
-                        */}
-                          <input
-                            style={{ width: "30%" }}
-                            data-action="useEmail"
-                            data-trip-id="PLT0Tc1ybgN295oCg20241015"
-                            defaultChecked=""
-                            type="checkbox"
-                            name="useEmail"
-                            defaultValue=""
-                          />
-                          <label
-                            htmlFor="useEmail"
-                            className="d-block"
-                            style={{ width: "60%" }}
-                          >
-                            Gửi vé cho tôi qua email
-                          </label>
-                        </div>
-                        <div className={styles.form_group} data-content="email">
-                          <label htmlFor="">
-                            Email:{" "}
-                            <span className={styles.text_danger} required>
-                              *
-                            </span>
-                          </label>
-                          <input type="text" name="email" defaultValue="" />
-                          <label htmlFor="email" className={styles.error} />
-                        </div>
-                        <div className={styles.form_group}>
-                          <label htmlFor="">Ghi chú</label>
-                          <textarea
-                            name="note"
-                            className="form-control"
-                            defaultValue={""}
-                          />
-                        </div>
-                        <div className={styles.form_group}>
-                          <label htmlFor="">
-                            Điểm đi:{" "}
-                            <span className={styles.text_danger}>*</span>
-                          </label>
-                          <div className={styles.point_wrap}>
-                            <select
-                              className="form-control"
-                              name="pointUp_type"
-                              data-action="switchAddress"
-                              data-trip-id="PLT0Tc1ybgN295oCg20241015"
-                              data-target="pointUp"
-                            >
-                              <option value={0} selected="">
-                                Tại bến
-                              </option>
-                            </select>
-                            <textarea
-                              className="form-control"
-                              style={{ display: "none" }}
-                              required=""
-                              placeholder="Nhập địa chỉ đón"
-                              name="pointUp_address"
-                              defaultValue={""}
-                            />
-                            <select
-                              name="pointUp"
-                              data-trip-id="PLT0Tc1ybgN295oCg20241015"
-                              style={{ display: "block" }}
-                            >
-                              <option
-                                value="P0Tc1ybg01lyUen"
-                                data-point-tsprice={0}
-                              >
-                                SG: 35 Sài Gòn
-                              </option>
-                            </select>
-                          </div>
-                          <label htmlFor="pointUp" className={styles.error} />
-                        </div>
-                        <div className={styles.form_group}>
-                          <label htmlFor="">
-                            Điểm đến:{" "}
-                            <span className={styles.text_danger}>*</span>
-                          </label>
-                          <div className={styles.point_wrap}>
-                            <select
-                              className="form-control"
-                              name="pointDown_type"
-                              data-action="switchAddress"
-                              data-trip-id="PLT0Tc1ybgN295oCg20241015"
-                              data-target="pointDown"
-                            >
-                              <option value={0} selected="">
-                                Tại bến
-                              </option>
-                              <option value={1}>Taị nhà</option>
-                            </select>
-                            <textarea
-                              className="form-control"
-                              required=""
-                              placeholder="Nhập địa chỉ trả"
-                              name="pointDown_address"
-                              style={{ display: "none" }}
-                              defaultValue={""}
-                            />
-                            <select
-                              name="pointDown"
-                              data-trip-id="PLT0Tc1ybgN295oCg20241015"
-                              style={{ display: "block" }}
-                            >
-                              <option
-                                value="P0DA1s69pNKi9jG"
-                                data-point-tsprice={0}
-                              >
-                                QN: 1 Quy Nhơn
-                              </option>
-                            </select>
-                          </div>
-                          <label htmlFor="pointDown" className={styles.error} />
-                        </div>
-                        <div className={styles.form_group}>
-                          <label htmlFor="">Mã khuyến mãi:</label>
-                          <input
-                            type="text"
-                            name="promotionCode"
-                            defaultValue=""
-                          />
-                        </div>
-                        <div
-                          className={styles.form_group}
-                          mb-2
-                          data-discount-trip="PLT0Tc1ybgN295oCg20241015"
-                        ></div>
-                        <div className="d-flex justify-content-end">
-                          <button
-                            type="button"
-                            className="mr-2 px-3"
-                            data-action="checkPromotion"
-                            data-trip-id="PLT0Tc1ybgN295oCg20241015"
-                            style={{marginRight: "10px"}}
-                          >
-                            <i
-                              className="fa fa-search mr-2"
-                              aria-hidden="true"
-                            style={{paddingRight: "5px"}}
-
-                            />
-                            Kiểm tra mã
-                          </button>
-                          <button
-                            type="button"
-                            data-trip-id="PLT0Tc1ybgN295oCg20241015"
-                            className="js__toggleProcessBooking"
-                          >
-                            <a href="/methodPayment" style={{color : "#fff"}}>Tiếp tục</a>
-                          </button>
-                        </div>
-                      </form>
-                    </div>
+                    <BookingForm selectedSeats={selectedSeats} totalPrice={totalPrice} />
                   </div>
                 </div>
               </div>

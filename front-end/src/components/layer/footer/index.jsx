@@ -7,60 +7,48 @@ const Footer = () => {
           <div className="row g-custom-x">
             <div className="col-lg-3">
               <div className="widget">
-                <h5>About Rentaly</h5>
+                <h5>Giới thiệu về chúng tôi</h5>
                 <p>
-                  Where quality meets affordability. We understand the
-                  importance of a smooth and enjoyable journey without the
-                  burden of excessive costs. That's why we have meticulously
-                  crafted our offerings to provide you with top-notch vehicles
-                  at minimum expense.
+                Chào mừng bạn đến với nền tảng đặt vé xe trực tuyến của chúng tôi! Chúng tôi tự hào mang đến một giải pháp tiện lợi, nhanh chóng và đáng tin cậy cho nhu cầu di chuyển của bạn. Với dịch vụ đặt vé xe trực tuyến, bạn không cần phải đến tận nơi mua vé hay lo lắng về việc vé xe hết trước ngày khởi hành. Chỉ với vài thao tác đơn giản trên điện thoại hoặc máy tính, bạn có thể dễ dàng đặt vé mọi lúc, mọi nơi.
                 </p>
               </div>
             </div>
             <div className="col-lg-3">
               <div className="widget">
-                <h5>Contact Info</h5>
+                <h5>Liên Hệ</h5>
                 <address className="s1">
                   <span>
                     <i className="id-color fa fa-map-marker fa-lg" />
-                    08 W 36th St, New York, NY 10001
+                    Đại học FPT
                   </span>
                   <span>
                     <i className="id-color fa fa-phone fa-lg" />
-                    +1 333 9296
+                    07777832143
                   </span>
                   <span>
                     <i className="id-color fa fa-envelope-o fa-lg" />
-                    <a href="mailto:contact@example.com">contact@example.com</a>
+                    <a href="mailto:contact@example.com">vsm@email.com</a>
                   </span>
-                  <span>
-                    <i className="id-color fa fa-file-pdf-o fa-lg" />
-                    <a href="#">Download Brochure</a>
-                  </span>
+                  
                 </address>
               </div>
             </div>
             <div className="col-lg-3">
-              <h5>Quick Links</h5>
+              <h5>Về VSM</h5>
               <div className="row">
                 <div className="col-lg-6">
                   <div className="widget">
                     <ul>
                       <li>
-                        <a href="#">About</a>
+                        <a href="/aboutUs">Giới thiệu</a>
                       </li>
                       <li>
-                        <a href="#">Blog</a>
+                        <a href="/blog">Tin Tức</a>
                       </li>
                       <li>
-                        <a href="#">Careers</a>
+                        <a href="/contact">Liên hệ</a>
                       </li>
-                      <li>
-                        <a href="#">News</a>
-                      </li>
-                      <li>
-                        <a href="#">Partners</a>
-                      </li>
+                     
                     </ul>
                   </div>
                 </div>
@@ -71,16 +59,16 @@ const Footer = () => {
                 <h5>Social Network</h5>
                 <div className="social-icons">
                   <a href="#">
-                    <i className="fa fa-facebook fa-lg" />
+                    <i class="fa-brands fa-facebook fa-lg" ></i>
                   </a>
                   <a href="#">
-                    <i className="fa fa-twitter fa-lg" />
+                    <i class="fa-brands fa-twitter fa-lg" />
                   </a>
                   <a href="#">
-                    <i className="fa fa-linkedin fa-lg" />
+                    <i class="fa-brands fa-linkedin fa-lg"></i>
                   </a>
                   <a href="#">
-                    <i className="fa fa-pinterest fa-lg" />
+                    <i class="fa-brands fa-pinterest fa-lg"></i>
                   </a>
                   <a href="#">
                     <i className="fa fa-rss fa-lg" />
@@ -90,29 +78,7 @@ const Footer = () => {
             </div>
           </div>
         </div>
-        <div className="subfooter">
-          <div className="container">
-            <div className="row">
-              <div className="col-md-12">
-                <div className="de-flex">
-                  <div className="de-flex-col">
-                    <a href="/home">
-                      Copyright 2024 - Rentaly by Designesia
-                    </a>
-                  </div>
-                  <ul className="menu-simple">
-                    <li>
-                      <a href="#">Terms &amp; Conditions</a>
-                    </li>
-                    <li>
-                      <a href="#">Privacy Policy</a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        
       </footer>
   );
 };

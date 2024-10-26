@@ -390,7 +390,7 @@
 }
 
 .bookingPage__tickets__item__thumb__view_button {
-    margin-top: 15px;
+    /* margin-top: 15px; */
     text-align: right;
     width: 15%
 }
@@ -477,7 +477,7 @@
     display: inline-block;
     width: 8px;
     height: 8px;
-    background: #36679f;
+    background: #1ECB15;
     border-radius: 50%;
     margin-right: 8px
 }
@@ -705,7 +705,7 @@
 }
 
 .bookingPage__tickets__item__collapse__booking__user button {
-    background: #36679f;
+    background: #1ECB15;
     border-radius: 4px;
     padding: 11px 34px;
     font-style: normal;
@@ -778,7 +778,7 @@
 }
 
 .bookingPage--mobile__tickets__item__collapse__booking__user .order-summary button {
-    background: #36679f;
+    background: #1ECB15;
     border-radius: 8px;
     font-style: normal;
     font-weight: 500;
@@ -945,7 +945,7 @@
 }
 
 .bookingPage--mobile__tickets__item__collapse__booking__seat-map__total a {
-    background: #36679f;
+    background: #1ECB15;
     border-radius: 8px;
     font-weight: 500;
     font-size: 16px;
@@ -1183,7 +1183,7 @@
 }
 
 .bookingPayment--mobile__submit button {
-    background: #36679f;
+    background: #1ECB15;
     border-radius: 8px;
     height: 48px;
     width: calc(100% - 30% - 8px);
@@ -1205,7 +1205,7 @@
 }
 
 .bookingPayment__submit button {
-    background: #36679f;
+    background: #1ECB15;
     border-radius: 4px;
     font-style: normal;
     font-weight: 600;
@@ -1353,12 +1353,12 @@
 }
 
 .bookingPayment__method__item.active>span {
-    border-color: #36679f
+    border-color: #1ECB15;
 }
 
 .bookingPayment__method__item.active>span::after {
     content: '.';
-    background-color: #36679f;
+    background-color: #1ECB15;
     border-radius: 100%;
     width: 8px;
     height: 8px;
@@ -1423,7 +1423,7 @@
 }
 
 .bookingPage__step__item.active {
-    background-color: #36679f
+    background-color: #1ECB15
 }
 
 .bookingPage__step__item.active span {

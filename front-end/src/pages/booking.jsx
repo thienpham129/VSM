@@ -4,7 +4,6 @@ const Booking = () => {
   return (
     <div className="no-bottom no-top zebra" id="content">
   <div id="top" />
-  {/* section begin */}
   <section id="subheader" className="jarallax text-light">
     <img
       src="images/background/subheader.jpg"
@@ -273,7 +272,7 @@ const Booking = () => {
             </a>
             <div className="text">
               <a href="#">
-                <h4>Choose a vehicle</h4>
+                <h4>Chọn một chiếc xe</h4>
               </a>
               Unlock unparalleled adventures and memorable journeys with our
               vast fleet of vehicles tailored to suit every need, taste, and
@@ -362,7 +361,7 @@ const Booking = () => {
             <h3 className="timer" data-to={15425} data-speed={3000}>
               0
             </h3>
-            Completed Orders
+           Đơn hàng thành công
           </div>
         </div>
         <div className="col-md-3 col-sm-6 mb-sm-30">
@@ -370,7 +369,7 @@ const Booking = () => {
             <h3 className="timer" data-to={8745} data-speed={3000}>
               0
             </h3>
-            Happy Customers
+            Khách hàng hài lòng
           </div>
         </div>
         <div className="col-md-3 col-sm-6 mb-sm-30">
@@ -378,7 +377,7 @@ const Booking = () => {
             <h3 className="timer" data-to={235} data-speed={3000}>
               0
             </h3>
-            Vehicles Fleet
+           Đội ngũ xe
           </div>
         </div>
         <div className="col-md-3 col-sm-6 mb-sm-30">
@@ -386,7 +385,7 @@ const Booking = () => {
             <h3 className="timer" data-to={15} data-speed={3000}>
               0
             </h3>
-            Years Experience
+             Năm kinh nghiệm
           </div>
         </div>
       </div>

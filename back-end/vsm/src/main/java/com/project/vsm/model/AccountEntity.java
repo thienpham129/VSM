@@ -20,9 +20,11 @@ import lombok.RequiredArgsConstructor;
 @Table(name = "Account")
 public class AccountEntity {
 	@Id
-	@Column(name = "user_id")
+	@Column(name = "account_id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
+
+	@Column(name = "email", unique = true, columnDefinition = "VARCHAR(255) COLLATE utf8mb4_unicode_ci")
 	private String email;
 	@JsonIgnore
 	private String password;

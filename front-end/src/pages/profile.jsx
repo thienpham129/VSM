@@ -97,7 +97,7 @@ const Profile = () => {
           <div className="container">
             <div className="row">
               <div className="col-md-12 text-center">
-                <h1>My Profile</h1>
+                <h1>Thông tin cá nhân</h1>
               </div>
               <div className="clearfix" />
             </div>
@@ -124,34 +124,34 @@ const Profile = () => {
                       <div className="de_tab tab_simple">
                         <ul className="de_nav">
                           <li className="active">
-                            <span>Profile</span>
+                            <span>Thông tin cá nhân</span>
                           </li>
                         </ul>
                         <div className="de_tab_content">
                           <div className="tab-1">
                             <div className="row">
                               <div className="col-lg-6 mb20">
-                                <h5>Full Name</h5>
+                                <h5>Họ và tên</h5>
                                 <input
                                   type="text"
                                   name="fullname"
                                   id="fullname"
                                   className="form-control"
-                                  placeholder="Enter Full Name"
+                                  placeholder="Nhập đầy đủ tên"
                                 />
                               </div>
                               <div className="col-lg-6 mb20">
-                                <h5>Email Address</h5>
+                                <h5>Email</h5>
                                 <input
                                   type="text"
                                   name="email_address"
                                   id="email_address"
                                   className="form-control"
-                                  placeholder="Enter email"
+                                  placeholder="Nhập email"
                                 />
                               </div>
                               <div className="col-lg-6 mb20">
-                                <h5>Gender</h5>
+                                <h5>Giới tính</h5>
                                 {/* <select id="cars">
                                   <option value="volvo" className="form-control">Volvo</option>
                                   <option value="saab">Saab</option>
@@ -163,44 +163,43 @@ const Profile = () => {
                                   class="dropdown fullwidth"
                                 >
                                   <a href="" class="btn-selector">
-                                  Female
+                                  Nữ
                                   </a>
                                   <ul>
                                     <li class="active">
-                                      <span>Female</span>
+                                      <span>Nữ</span>
                                     </li>
                                     <li>
-                                      <span>Male</span>
+                                      <span>Nam</span>
                                     </li>
                                     <li>
-                                      <span>Other</span>
+                                      <span>Khác</span>
                                     </li>
                                   </ul>
                                 </div>
                               </div>
                               <div className="col-lg-6 mb20">
-                                <h5>Day Of Birth</h5>
+                                <h5>Ngày sinh</h5>
                                 <input
                                   type="date"
                                   className="form-control"
-                                  placeholder="Enter email"
                                 />
                               </div>
                               <div className="col-lg-6 mb20">
-                                <h5>Phone Number</h5>
+                                <h5>Số điện thoại</h5>
                                 <input
                                   type="number"
+                                  placeholder="Nhập số điện thoại"
                                   className="form-control"
                                 />
                               </div>
                               <div className="col-lg-6 mb20">
-                                <h5>The number booking ticket</h5>
+                                <h5>Số lần mua đặt vé xe</h5>
                                 <input
                                   type="text"
                                   className="form-control"
                                 />
                               </div>
-                              {/*  */}
                               <div className="col-md-12 mb20">
                                 <h5 className="font-weight-semi-bold mb-4">
                                   Address
