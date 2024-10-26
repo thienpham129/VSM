@@ -138,6 +138,669 @@ export const mockDataVoucher = [
   },
 ];
 
+export const mockParkingLot = [
+  {
+    id: 1,
+    name: "parking 1",
+    location: "77 Đào Trí",
+    capacity: 12,
+    numCar: 0,
+    empty: true,
+  },
+  {
+    id: 2,
+    name: "parking 2",
+    location: "56 Nguyễn Văn Linh",
+    capacity: 20,
+    numCar: 0,
+    empty: true,
+  },
+  {
+    id: 3,
+    name: "parking 3",
+    location: "35 Võ Văn Kiệt",
+    capacity: 10,
+    numCar: 0,
+    empty: true,
+  },
+  {
+    id: 4,
+    name: "parking 4",
+    location: "12 Lê Lợi",
+    capacity: 15,
+    numCar: 0,
+    empty: true,
+  },
+  {
+    id: 5,
+    name: "parking 5",
+    location: "23 Trần Hưng Đạo",
+    capacity: 8,
+    numCar: 0,
+    empty: true,
+  },
+  {
+    id: 6,
+    name: "parking 6",
+    location: "88 Nguyễn Huệ",
+    capacity: 14,
+    numCar: 0,
+    empty: true,
+  },
+  {
+    id: 7,
+    name: "parking 7",
+    location: "66 Phạm Ngũ Lão",
+    capacity: 25,
+    numCar: 0,
+    empty: true,
+  },
+  {
+    id: 8,
+    name: "parking 8",
+    location: "44 Lý Thường Kiệt",
+    capacity: 30,
+    numCar: 0,
+    empty: true,
+  },
+  {
+    id: 9,
+    name: "parking 9",
+    location: "29 Nguyễn Thị Minh Khai",
+    capacity: 18,
+    numCar: 0,
+    empty: true,
+  },
+  {
+    id: 10,
+    name: "parking 10",
+    location: "101 Lý Chính Thắng",
+    capacity: 22,
+    numCar: 0,
+    empty: true,
+  },
+  {
+    id: 11,
+    name: "parking 11",
+    location: "11 Bạch Đằng",
+    capacity: 16,
+    numCar: 0,
+    empty: true,
+  },
+  {
+    id: 12,
+    name: "parking 12",
+    location: "200 Trường Sa",
+    capacity: 20,
+    numCar: 0,
+    empty: true,
+  },
+];
+
+export const mockCars = [
+  {
+    id: 1,
+    name: "Fortuner",
+    plateNumber: "123123",
+    color: "vàng",
+    manufactory: "Đức",
+    yearOfManufacture: 2002,
+    dayMaintenance: "2024-10-25",
+    type: {
+      typeId: 1,
+      numSeat: 5,
+      price: 200000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 1,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/za4RexcK",
+      },
+      {
+        imageId: 2,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/1kBZWJuJ",
+      },
+    ],
+  },
+  {
+    id: 2,
+    name: "Civic",
+    plateNumber: "456456",
+    color: "đỏ",
+    manufactory: "Nhật Bản",
+    yearOfManufacture: 2010,
+    dayMaintenance: "2024-09-15",
+    type: {
+      typeId: 2,
+      numSeat: 5,
+      price: 180000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 3,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/CivicImage1",
+      },
+      {
+        imageId: 4,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/CivicImage2",
+      },
+    ],
+  },
+  {
+    id: 3,
+    name: "Mazda 3",
+    plateNumber: "789789",
+    color: "trắng",
+    manufactory: "Nhật Bản",
+    yearOfManufacture: 2015,
+    dayMaintenance: "2024-11-20",
+    type: {
+      typeId: 2,
+      numSeat: 5,
+      price: 220000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 5,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/Mazda3Image1",
+      },
+      {
+        imageId: 6,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/Mazda3Image2",
+      },
+    ],
+  },
+  {
+    id: 4,
+    name: "Accord",
+    plateNumber: "321321",
+    color: "đen",
+    manufactory: "Nhật Bản",
+    yearOfManufacture: 2018,
+    dayMaintenance: "2024-12-30",
+    type: {
+      typeId: 3,
+      numSeat: 5,
+      price: 250000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 7,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/AccordImage1",
+      },
+      {
+        imageId: 8,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/AccordImage2",
+      },
+    ],
+  },
+  {
+    id: 5,
+    name: "Camry",
+    plateNumber: "654654",
+    color: "bạc",
+    manufactory: "Nhật Bản",
+    yearOfManufacture: 2019,
+    dayMaintenance: "2025-01-10",
+    type: {
+      typeId: 3,
+      numSeat: 5,
+      price: 240000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 9,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/CamryImage1",
+      },
+      {
+        imageId: 10,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/CamryImage2",
+      },
+    ],
+  },
+  {
+    id: 6,
+    name: "Polo",
+    plateNumber: "987987",
+    color: "xanh",
+    manufactory: "Đức",
+    yearOfManufacture: 2016,
+    dayMaintenance: "2024-08-22",
+    type: {
+      typeId: 2,
+      numSeat: 5,
+      price: 150000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 11,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/PoloImage1",
+      },
+      {
+        imageId: 12,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/PoloImage2",
+      },
+    ],
+  },
+  {
+    id: 7,
+    name: "Corolla",
+    plateNumber: "321654",
+    color: "xám",
+    manufactory: "Nhật Bản",
+    yearOfManufacture: 2020,
+    dayMaintenance: "2025-02-14",
+    type: {
+      typeId: 3,
+      numSeat: 5,
+      price: 230000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 13,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/CorollaImage1",
+      },
+      {
+        imageId: 14,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/CorollaImage2",
+      },
+    ],
+  },
+  {
+    id: 8,
+    name: "Sportage",
+    plateNumber: "654789",
+    color: "cam",
+    manufactory: "Hàn Quốc",
+    yearOfManufacture: 2017,
+    dayMaintenance: "2024-11-30",
+    type: {
+      typeId: 2,
+      numSeat: 5,
+      price: 190000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 15,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/SportageImage1",
+      },
+      {
+        imageId: 16,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/SportageImage2",
+      },
+    ],
+  },
+  {
+    id: 9,
+    name: "Tucson",
+    plateNumber: "852147",
+    color: "trắng",
+    manufactory: "Hàn Quốc",
+    yearOfManufacture: 2016,
+    dayMaintenance: "2024-06-15",
+    type: {
+      typeId: 2,
+      numSeat: 5,
+      price: 200000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 17,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/TucsonImage1",
+      },
+      {
+        imageId: 18,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/TucsonImage2",
+      },
+    ],
+  },
+  {
+    id: 10,
+    name: "Kona",
+    plateNumber: "963258",
+    color: "xanh lá",
+    manufactory: "Hàn Quốc",
+    yearOfManufacture: 2019,
+    dayMaintenance: "2025-04-20",
+    type: {
+      typeId: 2,
+      numSeat: 5,
+      price: 210000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 19,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/KonaImage1",
+      },
+      {
+        imageId: 20,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/KonaImage2",
+      },
+    ],
+  },
+  {
+    id: 11,
+    name: "Seltos",
+    plateNumber: "147258",
+    color: "xám",
+    manufactory: "Hàn Quốc",
+    yearOfManufacture: 2020,
+    dayMaintenance: "2025-03-10",
+    type: {
+      typeId: 2,
+      numSeat: 5,
+      price: 220000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 21,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/SeltosImage1",
+      },
+      {
+        imageId: 22,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/SeltosImage2",
+      },
+    ],
+  },
+  {
+    id: 12,
+    name: "Sorento",
+    plateNumber: "963852",
+    color: "đỏ",
+    manufactory: "Hàn Quốc",
+    yearOfManufacture: 2018,
+    dayMaintenance: "2024-07-30",
+    type: {
+      typeId: 3,
+      numSeat: 7,
+      price: 270000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 23,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/SorentoImage1",
+      },
+      {
+        imageId: 24,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/SorentoImage2",
+      },
+    ],
+  },
+  {
+    id: 13,
+    name: "Rav4",
+    plateNumber: "852963",
+    color: "xanh",
+    manufactory: "Nhật Bản",
+    yearOfManufacture: 2019,
+    dayMaintenance: "2025-05-25",
+    type: {
+      typeId: 3,
+      numSeat: 5,
+      price: 260000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 25,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/Rav4Image1",
+      },
+      {
+        imageId: 26,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/Rav4Image2",
+      },
+    ],
+  },
+  {
+    id: 14,
+    name: "CR-V",
+    plateNumber: "789654",
+    color: "bạc",
+    manufactory: "Nhật Bản",
+    yearOfManufacture: 2021,
+    dayMaintenance: "2025-06-01",
+    type: {
+      typeId: 3,
+      numSeat: 5,
+      price: 280000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 27,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/CRVImage1",
+      },
+      {
+        imageId: 28,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/CRVImage2",
+      },
+    ],
+  },
+  {
+    id: 15,
+    name: "Rogue",
+    plateNumber: "456987",
+    color: "nâu",
+    manufactory: "Nhật Bản",
+    yearOfManufacture: 2022,
+    dayMaintenance: "2025-08-15",
+    type: {
+      typeId: 3,
+      numSeat: 5,
+      price: 300000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 29,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/RogueImage1",
+      },
+      {
+        imageId: 30,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/RogueImage2",
+      },
+    ],
+  },
+  {
+    id: 16,
+    name: "X5",
+    plateNumber: "123456",
+    color: "trắng",
+    manufactory: "Đức",
+    yearOfManufacture: 2020,
+    dayMaintenance: "2025-09-12",
+    type: {
+      typeId: 3,
+      numSeat: 5,
+      price: 320000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 31,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/X5Image1",
+      },
+      {
+        imageId: 32,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/X5Image2",
+      },
+    ],
+  },
+  {
+    id: 17,
+    name: "Q5",
+    plateNumber: "456123",
+    color: "đen",
+    manufactory: "Đức",
+    yearOfManufacture: 2018,
+    dayMaintenance: "2024-05-05",
+    type: {
+      typeId: 3,
+      numSeat: 5,
+      price: 340000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 33,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/Q5Image1",
+      },
+      {
+        imageId: 34,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/Q5Image2",
+      },
+    ],
+  },
+  {
+    id: 18,
+    name: "A6",
+    plateNumber: "789123",
+    color: "xám",
+    manufactory: "Đức",
+    yearOfManufacture: 2021,
+    dayMaintenance: "2025-10-20",
+    type: {
+      typeId: 3,
+      numSeat: 5,
+      price: 360000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 35,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/A6Image1",
+      },
+      {
+        imageId: 36,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/A6Image2",
+      },
+    ],
+  },
+  {
+    id: 19,
+    name: "3 Series",
+    plateNumber: "321789",
+    color: "bạc",
+    manufactory: "Đức",
+    yearOfManufacture: 2023,
+    dayMaintenance: "2025-12-12",
+    type: {
+      typeId: 3,
+      numSeat: 5,
+      price: 400000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 37,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/3SeriesImage1",
+      },
+      {
+        imageId: 38,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/3SeriesImage2",
+      },
+    ],
+  },
+  {
+    id: 20,
+    name: "A8",
+    plateNumber: "654321",
+    color: "đen",
+    manufactory: "Đức",
+    yearOfManufacture: 2022,
+    dayMaintenance: "2025-11-25",
+    type: {
+      typeId: 3,
+      numSeat: 5,
+      price: 450000,
+    },
+    parking: null,
+    images: [
+      {
+        imageId: 39,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/A8Image1",
+      },
+      {
+        imageId: 40,
+        imageUrl:
+          "src\\main\\resources\\static\\assets\\imagesUploads/A8Image2",
+      },
+    ],
+  },
+];
+export const mockDataType = [
+  {
+    id: 1,
+    numSeat: 7,
+    price: 10000,
+  },
+  {
+    id: 2,
+    numSeat: 4,
+    price: 120000,
+  },
+  {
+    id: 3,
+    numSeat: 10,
+    price: 20000,
+  },
+  {
+    id: 4,
+    numSeat: 4,
+    price: 25000,
+  },
+];
 export const mockDataContacts = [
   {
     id: 1,
