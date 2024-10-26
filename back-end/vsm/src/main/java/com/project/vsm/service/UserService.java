@@ -4,9 +4,11 @@ import com.project.vsm.dto.request.UpdateUserAndAccountRequest;
 import com.project.vsm.exception.NotFoundException;
 import com.project.vsm.model.AccountEntity;
 import com.project.vsm.model.UserEntity;
+import com.project.vsm.repository.AccountRepository;
 import com.project.vsm.repository.UserRepository;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +28,9 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AccountRepository accountRepository;
 
 
     public UserEntity createUser(AccountEntity account) {
@@ -64,6 +69,38 @@ public class UserService {
         }
         return userRepository.save(userEntity);
     }
+
+    public UserEntity getMyInfoToViewOrUpdate(UpdateUserAndAccountRequest request, MultipartFile file) throws IOException {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        AccountEntity accountEntity = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Cannot find account with email: " + email));
+
+        UserEntity userEntity = userRepository.findByAccount(accountEntity)
+                .orElseThrow(() -> new RuntimeException("User not found for the account"));
+
+        try {
+            String uploadImage = fileService.saveFile(file.getOriginalFilename(), file);
+            userEntity.setUrlImage(uploadImage);
+            userEntity.setNumBooking(request.getNumBooking());
+            userEntity.setGender(request.getGender());
+
+
+            accountEntity.setFirstName(request.getFirstName());
+            accountEntity.setLastName(request.getLastName());
+            accountEntity.setAddress(request.getAddress());
+            accountEntity.setDob(request.getDob());
+            accountEntity.setPassword(passwordEncoder.encode(request.getPassword())); // Always encode password
+
+            userEntity.setAccount(accountEntity);
+
+        }catch (RuntimeException e) {
+            throw new RuntimeException("Update info fail!");
+        }
+        return userRepository.save(userEntity);
+    }
+
+
 
     public Optional<UserEntity> getUserById(long id) {
         Optional<UserEntity> optionalUser = userRepository.findById(id);

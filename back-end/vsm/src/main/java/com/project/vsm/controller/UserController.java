@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @RestController
@@ -36,13 +37,10 @@ public class UserController {
 		return new ResponseEntity<>(userService.updateUserById(userId , request , file) , HttpStatus.OK);
 	}
 
-//    @PostMapping("/user/{userId}")
-//    public ResponseEntity<UserEntity> updateUserById(@PathVariable long userId,
-//                                                     @RequestParam("request") String requestJson,
-//                                                     @RequestParam("file") MultipartFile file) throws JsonProcessingException {
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        UpdateUserAndAccountRequest request = objectMapper.readValue(requestJson, UpdateUserAndAccountRequest.class);
-//        return new ResponseEntity<>(userService.updateUserById(userId, request, file), HttpStatus.OK);
-//    }
+	@PostMapping("/user/update-my-info")
+	public ResponseEntity<UserEntity> updateProfile (@ModelAttribute  UpdateUserAndAccountRequest request,
+													 @RequestPart ("imageFile") MultipartFile file) throws IOException {
+		return new ResponseEntity<>(userService.getMyInfoToViewOrUpdate(request , file) , HttpStatus.OK);
+	}
 
 }

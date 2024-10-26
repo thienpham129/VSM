@@ -27,7 +27,7 @@ public class UpdateUserAndAccountRequest {
     private String lastName;
 
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate dob;
     private String address;
 }

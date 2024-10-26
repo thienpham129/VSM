@@ -1,5 +1,6 @@
 package com.project.vsm.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -28,7 +29,7 @@ public class TicketEntity {
     @Column(name = "is_paid")
     boolean isPaid;
 
-    @Column(name = "start_localtion")
+    @Column(name = "start_location")
     String startLocation;
 
     @Column(name = "stop_location")
@@ -42,9 +43,11 @@ public class TicketEntity {
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "user_id")
+    @JsonIgnore // Prevent serialization of the user entity in ticket
     UserEntity userEntity;
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "voucher_id")
     Voucher voucher;
 }
+
