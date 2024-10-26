@@ -782,7 +782,7 @@ export const mockCars = [
 export const mockDataType = [
   {
     id: 1,
-    numSeat: 4,
+    numSeat: 7,
     price: 10000,
   },
   {
@@ -792,7 +792,7 @@ export const mockDataType = [
   },
   {
     id: 3,
-    numSeat: 4,
+    numSeat: 10,
     price: 20000,
   },
   {

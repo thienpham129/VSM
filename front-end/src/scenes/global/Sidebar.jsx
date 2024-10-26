@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
 import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
+import ChecklistIcon from "@mui/icons-material/Checklist";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import LibraryAddCheckIcon from "@mui/icons-material/LibraryAddCheck";
@@ -148,6 +149,14 @@ const Sidebar = () => {
               title="Manage Voucher"
               to="/admin/voucher"
               icon={<LibraryAddCheckIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
+            <Item
+              title="Manage Type Car"
+              to="/admin/type"
+              icon={<ChecklistIcon />}
               selected={selected}
               setSelected={setSelected}
             />

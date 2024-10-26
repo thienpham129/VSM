@@ -86,7 +86,7 @@ const ParkingLot = () => {
         <Box>
           <Button
             variant="contained"
-            color="primary"
+            color="success"
             onClick={() => handleUpdate(params.row)}
             sx={{ marginRight: 1 }}
           >
