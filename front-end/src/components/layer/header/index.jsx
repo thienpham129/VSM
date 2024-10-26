@@ -84,7 +84,11 @@ const Header = () => {
                         src="images/logo_vsm.png"
                         alt=""
                       />
-                      <img className="logo-2" src="images/logo_vsm.png" alt="" />
+                      <img
+                        className="logo-2"
+                        src="images/logo_vsm.png"
+                        alt=""
+                      />
                     </a>
                   </div>
                   {/* logo close */}
@@ -184,7 +188,13 @@ const Header = () => {
                                   </a>
                                 </li>
                                 <li>
-                                  <a href="">
+                                  <a
+                                    href=""
+                                    onClick={() => {
+                                      localStorage.clear();
+                                      window.location.href = "/home";
+                                    }}
+                                  >
                                     <i className="fa fa-sign-out" />
                                     Đăng xuất
                                   </a>
