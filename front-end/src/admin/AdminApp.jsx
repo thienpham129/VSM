@@ -9,6 +9,7 @@ import Invoices from "../scenes/invoices";
 import Contacts from "../scenes/contacts";
 import VoucherAdmin from "scenes/voucher";
 import ParkingLot from "scenes/parking";
+import UserAdmin from "scenes/user";
 import TypeCar from "scenes/type/typeCar";
 import Bar from "../scenes/bar";
 import Form from "../scenes/form";
@@ -35,6 +36,7 @@ function AdminApp() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/voucher" element={<VoucherAdmin />} />
+              <Route path="/user" element={<UserAdmin />} />
               <Route path="/parking" element={<ParkingLot />} />
               <Route path="/type" element={<TypeCar />} />
               <Route path="/car" element={<CarAdmin />} />

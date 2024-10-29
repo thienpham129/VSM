@@ -7,11 +7,8 @@ import { tokens } from "../../theme";
 import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import LibraryAddCheckIcon from "@mui/icons-material/LibraryAddCheck";
 import LocalParkingIcon from "@mui/icons-material/LocalParking";
-import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
-import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
@@ -20,6 +17,7 @@ import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutl
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import PersonIcon from "@mui/icons-material/Person";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -134,11 +132,11 @@ const Sidebar = () => {
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
             >
-              Data
+              Quản Lý Dữ Liệu
             </Typography>
 
             <Item
-              title="Manage Parking Lot"
+              title="Bãi Đỗ Xe"
               to="/admin/parking"
               icon={<LocalParkingIcon />}
               selected={selected}
@@ -146,7 +144,15 @@ const Sidebar = () => {
             />
 
             <Item
-              title="Manage Voucher"
+              title="Người Dùng"
+              to="/admin/user"
+              icon={<PersonIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
+            <Item
+              title="Mã Giảm Giá"
               to="/admin/voucher"
               icon={<LibraryAddCheckIcon />}
               selected={selected}
@@ -154,7 +160,7 @@ const Sidebar = () => {
             />
 
             <Item
-              title="Manage Type Car"
+              title="Loại Xe"
               to="/admin/type"
               icon={<ChecklistIcon />}
               selected={selected}
@@ -162,14 +168,14 @@ const Sidebar = () => {
             />
 
             <Item
-              title="Manage Car"
+              title="Xe"
               to="/admin/car"
               icon={<DirectionsCarFilledIcon />}
               selected={selected}
               setSelected={setSelected}
             />
 
-            <Item
+            {/* <Item
               title="Manage Team"
               to="/admin/team"
               icon={<PeopleOutlinedIcon />}
@@ -189,7 +195,7 @@ const Sidebar = () => {
               icon={<ReceiptOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            />
+            /> */}
 
             <Typography
               variant="h6"
