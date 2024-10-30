@@ -136,6 +136,22 @@ const Sidebar = () => {
             </Typography>
 
             <Item
+              title="Loại Xe"
+              to="/admin/type"
+              icon={<ChecklistIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
+            <Item
+              title="Xe"
+              to="/admin/car"
+              icon={<DirectionsCarFilledIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
+            <Item
               title="Bãi Đỗ Xe"
               to="/admin/parking"
               icon={<LocalParkingIcon />}
@@ -155,22 +171,6 @@ const Sidebar = () => {
               title="Mã Giảm Giá"
               to="/admin/voucher"
               icon={<LibraryAddCheckIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-
-            <Item
-              title="Loại Xe"
-              to="/admin/type"
-              icon={<ChecklistIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-
-            <Item
-              title="Xe"
-              to="/admin/car"
-              icon={<DirectionsCarFilledIcon />}
               selected={selected}
               setSelected={setSelected}
             />

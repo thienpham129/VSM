@@ -18,11 +18,11 @@ const UpdateTypeDialog = ({
 }) => {
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Update Type</DialogTitle>
+      <DialogTitle>Cập Nhập Loại Xe</DialogTitle>
       <DialogContent>
         <TextField
           margin="dense"
-          label="Number of Seats"
+          label="Số Chỗ Ngồi"
           type="number"
           fullWidth
           variant="outlined"
@@ -30,13 +30,11 @@ const UpdateTypeDialog = ({
           value={newType.numSeat}
           onChange={handleChange}
           error={errors.numSeat}
-          helperText={
-            errors.numSeat ? "Please enter a valid number of seats." : ""
-          }
+          helperText={errors.numSeat ? "Vui lòng không được để trống." : ""}
         />
         <TextField
           margin="dense"
-          label="Price"
+          label="Giá Tiền"
           type="number"
           fullWidth
           variant="outlined"
@@ -44,7 +42,7 @@ const UpdateTypeDialog = ({
           value={newType.price}
           onChange={handleChange}
           error={errors.price}
-          helperText={errors.price ? "Please enter a valid price." : ""}
+          helperText={errors.price ? "Vui lòng không được để trống." : ""}
         />
       </DialogContent>
       <DialogActions>
@@ -56,7 +54,7 @@ const UpdateTypeDialog = ({
             "&:hover": { backgroundColor: "darkgray" },
           }}
         >
-          Cancel
+          Hủy
         </Button>
         <Button
           onClick={handleUpdate}
@@ -67,7 +65,7 @@ const UpdateTypeDialog = ({
             "&:hover": { backgroundColor: "darkgreen" },
           }}
         >
-          Update
+          Cập Nhập
         </Button>
       </DialogActions>
     </Dialog>

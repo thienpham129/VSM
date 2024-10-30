@@ -1,15 +1,16 @@
 import { Box, Button } from "@mui/material";
 import { useTheme } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import { tokens } from "../../theme";
 import CarTable from "./carTable";
 import CarDialog from "./carDialog";
-import { mockCars } from "../../admin/data/mockData";
+import { useNavigate } from "react-router-dom";
 
 const CarAdmin = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
@@ -22,6 +23,35 @@ const CarAdmin = () => {
     yearOfManufacture: "",
   });
   const [images, setImages] = useState({ image1: null, image2: null });
+  const [mockCars, setMockCars] = useState([]); // State để lưu danh sách xe
+
+  useEffect(() => {
+    const fetchCars = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/public/cars");
+        const data = await response.json();
+
+        // Chuyển đổi carId thành id
+        const formattedData = data.map((car) => ({
+          id: car.carId,
+          name: car.name,
+          plateNumber: car.plateNumber,
+          color: car.color,
+          manufactory: car.manufactory,
+          yearOfManufacture: car.yearOfManufacture,
+          dayMaintenance: car.dayMaintenance,
+          price: car.type.price,
+          // Thêm các trường khác nếu cần
+        }));
+
+        setMockCars(formattedData); // Lưu dữ liệu vào state
+      } catch (error) {
+        console.error("Error fetching car data:", error);
+      }
+    };
+
+    fetchCars(); // Gọi hàm fetch khi component được mount
+  }, []);
 
   const handleClickOpen = () => setOpen(true);
 
@@ -75,42 +105,55 @@ const CarAdmin = () => {
 
   const columns = [
     { field: "id", headerName: "Car ID", flex: 0.3 },
-    { field: "name", headerName: "Name", flex: 0.5 },
-    { field: "plateNumber", headerName: "Plate Number", flex: 0.5 },
+    { field: "name", headerName: "Tên Xe", flex: 0.5 },
+    { field: "plateNumber", headerName: "Biển Số Xe", flex: 0.5 },
     {
       field: "dayMaintenance",
-      headerName: "Day of Maintenance",
+      headerName: "Ngày Bảo Hành",
       flex: 0.5,
       valueGetter: (params) => new Date(params.value).toLocaleDateString(),
     },
     {
       field: "price",
-      headerName: "Price",
+      headerName: "Giá Xe",
       type: "number",
       headerAlign: "left",
       align: "left",
       valueFormatter: (params) =>
-        params.value !== undefined ? `$${params.value.toLocaleString()}` : "$0",
+        params.value !== undefined
+          ? `${params.value.toLocaleString()} VND`
+          : "0 VND",
     },
     {
       field: "yearOfManufacture",
-      headerName: "Year of Manufacture",
+      headerName: "Năm Sản Xuất",
       type: "number",
       headerAlign: "left",
       align: "left",
       flex: 0.5,
     },
+    {
+      field: "details",
+      headerName: "Chi tiết",
+      flex: 0.3,
+      renderCell: (params) => (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate(`/admin/car/${params.row.id}`)}
+        >
+          Chi tiết
+        </Button>
+      ),
+    },
   ];
 
   return (
     <Box m="20px">
-      <Header
-        title="Manage Car"
-        subtitle="List of Contacts for Future Reference"
-      />
+      <Header title="Danh Sách Xe" subtitle="Quản Lý Danh Sách Xe" />
       <Box display="flex" justifyContent="flex-end" mb={-5}>
         <Button variant="contained" color="secondary" onClick={handleClickOpen}>
-          Add New Car
+          Thêm Mới Xe
         </Button>
       </Box>
 

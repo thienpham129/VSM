@@ -27,13 +27,13 @@ const TypeCar = () => {
     { field: "id", headerName: "ID", flex: 0.2 },
     {
       field: "numSeat",
-      headerName: "Number of Seats",
+      headerName: "Số Chỗ ngồi",
       type: "number",
       flex: 0.2,
     },
     {
       field: "price",
-      headerName: "Price",
+      headerName: "Giá",
       type: "number",
       flex: 0.3,
       valueFormatter: (params) => {
@@ -52,15 +52,15 @@ const TypeCar = () => {
             color="success"
             sx={{ marginRight: 1 }}
           >
-            Update
+            Cập Nhập
           </Button>
-          <Button
+          {/* <Button
             variant="contained"
             color="error"
             onClick={() => handleDelete(params.row)}
           >
-            Delete
-          </Button>
+            Xóa
+          </Button> */}
         </>
       ),
     },
@@ -149,10 +149,10 @@ const TypeCar = () => {
     setSnackbarOpen(true);
   };
 
-  const handleDelete = (row) => {
-    setSelectedRow(row);
-    setConfirmDelete(true);
-  };
+  // const handleDelete = (row) => {
+  //   setSelectedRow(row);
+  //   setConfirmDelete(true);
+  // };
 
   const confirmDeleteAction = () => {
     console.log("Deleted Type:", selectedRow);
@@ -169,10 +169,10 @@ const TypeCar = () => {
 
   return (
     <Box m="20px">
-      <Header title="TYPE CAR" subtitle="Manage Type Car" />
+      <Header title="Loại Xe" subtitle="Quản Lý Loại Xe" />
       <Box display="flex" justifyContent="flex-end" mb={-5}>
         <Button variant="contained" color="secondary" onClick={handleClickOpen}>
-          Create New Type
+          Thêm Mới Loại Xe
         </Button>
       </Box>
       <Box
@@ -233,6 +233,7 @@ const TypeCar = () => {
         onClose={() => setSnackbarOpen(false)}
         message={snackbarMessage}
         severity={snackbarColor}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
       />
     </Box>
   );
