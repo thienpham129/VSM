@@ -16,6 +16,7 @@ import News from "pages/newAndBlog";
 import ChangePassword from "pages/changePassword";
 import Voucher from "pages/voucher";
 import OTP from "pages/OTP";
+import ForgetPassword from "pages/forgetPassword";
 import AdminApp from "admin/AdminApp";
 
 function App() {
@@ -34,6 +35,8 @@ function App() {
             <Route path="listCars" element={<ListCars />} />
             <Route path="quickBooking" element={<QuickBooking />} />
             <Route path="new" element={<News />} />
+            <Route path="OTP" element={<OTP />} />
+            <Route path="identify" element={<ForgetPassword />} />
             <Route path="booking" element={<Booking />} />
           </Route>
         </Routes>
@@ -51,7 +54,6 @@ function App() {
             <Route path="booking" element={<Booking />} />
             <Route path="new" element={<News />} />
             <Route path="voucher" element={<Voucher />} />
-            <Route path="OTP" element={<OTP />} />
           </Route>
         </Routes>
       )}

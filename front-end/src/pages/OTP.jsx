@@ -75,8 +75,8 @@ function OTP(props) {
     const email = props.email;
     document.querySelectorAll("input").forEach((element, index) => {
       verificationCode += element.value;
-      console.log(element.value);
     });
+    console.log(verificationCode);
     const url = "/verify";
     try {
       const response = await axiosClient.post(url, {
@@ -119,6 +119,20 @@ function OTP(props) {
     input.oninput = () => {
       if (input.value.length > input.maxLength) {
         input.value = input.value.slice(0, input.maxLength);
+      }
+    };
+    input.onkeydown = (key) => {
+      if (key.keyCode >= 48 && key.keyCode <= 57) {
+        input.onkeyup = () => {
+          if (key.keyCode >= 48 && key.keyCode <= 57) {
+            if (input.nextSibling === null) {
+              document.querySelector(".otp-card-inputs").firstChild.focus();
+            } else {
+              input.nextSibling.focus();
+            }
+          }
+          input.onkeyup = null;
+        };
       }
     };
   });

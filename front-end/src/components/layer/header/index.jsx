@@ -1,25 +1,45 @@
 import { DEFAULT } from "constants";
 import React, { useEffect, useState } from "react";
+import { root } from "helper/axiosClient";
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
   const [showSubMenu, setShowSubMenu] = useState(false);
+  const [userId, setUserId] = useState("");
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem(DEFAULT.TOKEN);
+    setUserId(localStorage.getItem("userId"));
     if (token) {
       setIsLoggedIn(true);
       setUserName("Xuan Quang");
     }
   }, []);
-  console.log("isLoggedIn:", isLoggedIn);
 
   const test = () => {
     setShowSubMenu(!showSubMenu);
-    console.log(isLoggedIn);
-    console.log(typeof isLoggedIn);
   };
+
+  useEffect(() => {
+    const getUserById = async () => {
+      try {
+        const url = `/user/${localStorage.getItem("userId")}`;
+        const response = await root.get(url);
+        if (response) {
+          setEmail(response.data.account.email);
+          console.log(response.data.account.email);
+          console.log("OK");
+        } else {
+          console.log("Get User By Id Fail");
+        }
+      } catch (error) {
+        console.log(error + "  Fail Get user By id");
+      }
+    };
+    getUserById();
+  }, []);
 
   return (
     <header className="transparent scroll-light has-topbar">
@@ -78,9 +98,14 @@ const Header = () => {
                   {/* logo begin */}
                   <div id="logo">
                     <a href="/home">
-                      <img
+                      {/* <img
                         className="logo-1"
                         src="images/logo-light.png"
+                        alt=""
+                      /> */}
+                      <img
+                        className="logo-1 abc"
+                        src="images/logo_vsm.png"
                         alt=""
                       />
                       <img className="logo-2" src="images/logo.png" alt="" />
@@ -155,10 +180,9 @@ const Header = () => {
                           {showSubMenu ? (
                             <div id="de-submenu-profile" className="de-submenu">
                               <div className="d-name">
-                                <h4>Monica Lucas</h4>
-                                <span className="text-gray">
-                                  monica@rentaly.com
-                                </span>
+                                {}
+                                <h4>User</h4>
+                                <span className="text-gray">{email}</span>
                               </div>
                               <div className="d-line" />
                               <ul className="menu-col">
@@ -187,9 +211,17 @@ const Header = () => {
                                   </a>
                                 </li>
                                 <li>
-                                  <a href="login.html">
-                                    <i className="fa fa-sign-out" />
-                                    Sign Out
+                                  <a>
+                                    <span
+                                      onClick={() => {
+                                        localStorage.clear();
+                                        window.location.href = "/home";
+                                      }}
+                                    >
+                                      {" "}
+                                      <i className="fa fa-sign-out" />
+                                      Sign Out
+                                    </span>
                                   </a>
                                 </li>
                               </ul>
@@ -208,10 +240,10 @@ const Header = () => {
                   )}
                 </div>
               </div>
-              </div>
             </div>
           </div>
         </div>
+      </div>
     </header>
   );
 };
