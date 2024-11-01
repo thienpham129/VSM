@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Button, Snackbar, Alert } from "@mui/material";
+import { Box, Button, Snackbar } from "@mui/material";
 import { mockParkingLot } from "admin/data/mockData";
 import Header from "../../components/Header";
 import ParkingLotTable from "./ParkingLotTable";
@@ -18,13 +18,12 @@ const ParkingLot = () => {
     numCar: 0,
     empty: true,
   });
-  const [errors, setErrors] = useState({});
 
   // State cho Snackbar
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
-    severity: "success", // hoặc "error", "warning", tùy vào từng trường hợp
+    severity: "success",
   });
 
   const handleDelete = (id) => {
@@ -33,6 +32,8 @@ const ParkingLot = () => {
   };
 
   const confirmDelete = () => {
+    const deletedLot = parkingLots.find((lot) => lot.id === parkingLotToDelete);
+    console.log("Xóa bãi đỗ xe:", deletedLot); // Log thông tin bãi đỗ xe đã xóa
     setParkingLots(parkingLots.filter((lot) => lot.id !== parkingLotToDelete));
     setConfirmDeleteOpen(false);
     setParkingLotToDelete(null);
@@ -62,34 +63,37 @@ const ParkingLot = () => {
 
   const handleClose = () => {
     setOpen(false);
-    setErrors({});
   };
 
-  const handleConfirm = () => {
-    const newErrors = {};
-    if (!newParkingLot.name) newErrors.name = "Name is required.";
-    if (!newParkingLot.location) newErrors.location = "Location is required.";
-    if (newParkingLot.capacity <= 0)
-      newErrors.capacity = "Capacity must be positive.";
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
+  const handleAddParkingLot = (newParkingLot) => {
     const newId = parkingLots.length
       ? parkingLots[parkingLots.length - 1].id + 1
       : 1;
     const parkingLotToAdd = { ...newParkingLot, id: newId };
 
+    console.log("Thêm bãi đỗ xe mới:", parkingLotToAdd); // Log thông tin bãi đỗ xe mới tạo
     setParkingLots([...parkingLots, parkingLotToAdd]);
     handleClose();
 
     setSnackbar({
       open: true,
-      message: parkingLotToAdd.id
-        ? "Cập nhật bãi đỗ xe thành công!"
-        : "Thêm bãi đỗ xe thành công!",
+      message: "Thêm bãi đỗ xe thành công!",
+      severity: "success",
+    });
+  };
+
+  const handleUpdateParkingLot = (updatedParkingLot) => {
+    const updatedParkingLots = parkingLots.map((lot) =>
+      lot.id === updatedParkingLot.id ? updatedParkingLot : lot
+    );
+
+    console.log("Cập nhật bãi đỗ xe:", updatedParkingLot); // Log thông tin bãi đỗ xe được cập nhật
+    setParkingLots(updatedParkingLots);
+    handleClose();
+
+    setSnackbar({
+      open: true,
+      message: "Cập nhật bãi đỗ xe thành công!",
       severity: "success",
     });
   };
@@ -133,9 +137,13 @@ const ParkingLot = () => {
         open={open}
         onClose={handleClose}
         parkingLot={newParkingLot}
-        setParkingLot={setNewParkingLot}
-        onConfirm={handleConfirm}
-        errors={errors}
+        onConfirm={(values) => {
+          if (values.id) {
+            handleUpdateParkingLot(values);
+          } else {
+            handleAddParkingLot(values);
+          }
+        }}
       />
 
       <ConfirmDeleteDialog
@@ -149,16 +157,16 @@ const ParkingLot = () => {
         open={snackbar.open}
         autoHideDuration={3000}
         onClose={handleSnackbarClose}
+        message={snackbar.message}
+        severity={snackbar.severity}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+        ContentProps={{
+          style: {
+            backgroundColor: "green",
+            color: "white",
+          },
+        }}
+      />
     </Box>
   );
 };

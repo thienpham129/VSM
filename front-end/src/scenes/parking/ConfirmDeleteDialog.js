@@ -8,7 +8,7 @@ import {
 
 const ConfirmDeleteDialog = ({ open, onClose, onConfirm }) => (
   <Dialog open={open} onClose={onClose}>
-    <DialogTitle>Confirm Delete</DialogTitle>
+    <DialogTitle>Xác Nhận Xóa</DialogTitle>
     <DialogContent>
       <p>Bạn có chắc muốn xóa bãi đỗ xe này không?</p>
     </DialogContent>
@@ -31,7 +31,7 @@ const ConfirmDeleteDialog = ({ open, onClose, onConfirm }) => (
           backgroundColor: "red",
           color: "white",
           "&:hover": {
-            backgroundColor: "darkgred",
+            backgroundColor: "darkred",
           },
         }}
       >

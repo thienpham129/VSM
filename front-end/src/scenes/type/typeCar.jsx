@@ -106,7 +106,7 @@ const TypeCar = () => {
 
     console.log("New Type Added:", newEntry);
     setData((prev) => [...prev, newEntry]);
-    setSnackbarMessage("Created successfully!");
+    setSnackbarMessage("Tạo mới loại xe thành công!");
     setSnackbarColor("success");
     setSnackbarOpen(true);
     handleClose();
@@ -144,7 +144,7 @@ const TypeCar = () => {
     });
     setData(updatedData);
     setOpenUpdateDialog(false);
-    setSnackbarMessage("Updated successfully!");
+    setSnackbarMessage("Cập nhập thông tin thành công!");
     setSnackbarColor("success");
     setSnackbarOpen(true);
   };
@@ -234,6 +234,12 @@ const TypeCar = () => {
         message={snackbarMessage}
         severity={snackbarColor}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        ContentProps={{
+          style: {
+            backgroundColor: "green",
+            color: "white",
+          },
+        }}
       />
     </Box>
   );
