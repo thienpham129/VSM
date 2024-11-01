@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Button, Snackbar } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataType } from "../../admin/data/mockData";
 import Header from "../../components/Header";
 import { useTheme } from "@mui/material";
 import AddTypeDialog from "./AddTypeDialog";
 import UpdateTypeDialog from "./UpdateTypeDialog";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
+import { request } from "../../admin/helpers/axios_helper"; // Import hàm request
 
 const TypeCar = () => {
   const theme = useTheme();
@@ -16,160 +16,146 @@ const TypeCar = () => {
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
   const [newType, setNewType] = useState({ numSeat: "", price: "" });
   const [errors, setErrors] = useState({ numSeat: false, price: false });
-  const [data, setData] = useState(mockDataType);
+  const [data, setData] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarColor, setSnackbarColor] = useState("success");
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  const columns = [
-    { field: "id", headerName: "ID", flex: 0.2 },
-    {
-      field: "numSeat",
-      headerName: "Số Chỗ ngồi",
-      type: "number",
-      flex: 0.2,
-    },
-    {
-      field: "price",
-      headerName: "Giá",
-      type: "number",
-      flex: 0.3,
-      valueFormatter: (params) => {
-        return `${params.value.toLocaleString()} VND`;
-      },
-    },
-    {
-      field: "actions",
-      headerName: "Actions",
-      flex: 0.3,
-      renderCell: (params) => (
-        <>
-          <Button
-            onClick={() => handleEdit(params.row)}
-            variant="contained"
-            color="success"
-            sx={{ marginRight: 1 }}
-          >
-            Cập Nhập
-          </Button>
-          {/* <Button
-            variant="contained"
-            color="error"
-            onClick={() => handleDelete(params.row)}
-          >
-            Xóa
-          </Button> */}
-        </>
-      ),
-    },
-  ];
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setNewType({ numSeat: "", price: "" });
-    setErrors({ numSeat: false, price: false });
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setNewType({ ...newType, [name]: String(value) });
-
-    if (value.trim() === "") {
-      setErrors((prev) => ({ ...prev, [name]: true }));
-    } else {
-      setErrors((prev) => ({ ...prev, [name]: false }));
+  const fetchData = async () => {
+    try {
+      const response = await request("GET", "/admin/types");
+      const formattedData = response.data.map((item) => ({
+        id: item.typeId,
+        numSeat: item.numSeat,
+        price: item.price,
+      }));
+      setData(formattedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setSnackbarMessage("Có lỗi xảy ra khi tải dữ liệu.");
+      setSnackbarColor("error");
+      setSnackbarOpen(true);
     }
   };
 
-  const handleSubmit = () => {
-    if (newType.numSeat.trim() === "" || newType.price.trim() === "") {
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleClickOpen = () => {
+    setNewType({ numSeat: "", price: "" });
+    setErrors({ numSeat: false, price: false });
+    setOpen(true);
+  };
+
+  const handleClose = () => setOpen(false);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setNewType((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: !value }));
+  };
+
+  const handleSubmit = async () => {
+    if (!newType.numSeat || !newType.price) {
       setErrors({
-        numSeat: newType.numSeat.trim() === "",
-        price: newType.price.trim() === "",
+        numSeat: !newType.numSeat,
+        price: !newType.price,
       });
       return;
     }
 
-    const newId = data.length + 1;
-    const newEntry = {
-      id: newId,
-      numSeat: parseFloat(newType.numSeat),
-      price: parseFloat(newType.price),
-    };
+    try {
+      await request("POST", "/admin/type", newType);
+      setSnackbarMessage("Thêm mới loại xe thành công.");
+      setSnackbarColor("success");
+      setSnackbarOpen(true);
+      setOpen(false);
+      await fetchData();
+    } catch (error) {
+      console.error("Error adding type:", error);
+      setSnackbarMessage("Có lỗi xảy ra khi thêm loại xe.");
+      setSnackbarColor("error");
+      setSnackbarOpen(true);
+    }
+  };
 
-    console.log("New Type Added:", newEntry);
-    setData((prev) => [...prev, newEntry]);
-    setSnackbarMessage("Tạo mới loại xe thành công!");
-    setSnackbarColor("success");
-    setSnackbarOpen(true);
-    handleClose();
+  const handleUpdate = async () => {
+    if (!newType.numSeat || !newType.price) {
+      setErrors({
+        numSeat: !newType.numSeat,
+        price: !newType.price,
+      });
+      return;
+    }
+
+    try {
+      await request("PUT", `/admin/type/${selectedRow.id}`, newType);
+      setSnackbarMessage("Cập nhật loại xe thành công.");
+      setSnackbarColor("success");
+      setSnackbarOpen(true);
+      setOpenUpdateDialog(false);
+      await fetchData();
+    } catch (error) {
+      console.error("Error updating type:", error);
+      setSnackbarMessage("Có lỗi xảy ra khi cập nhật loại xe.");
+      setSnackbarColor("error");
+      setSnackbarOpen(true);
+    }
+  };
+
+  const confirmDeleteAction = async () => {
+    try {
+      await request("DELETE", `/admin/types/${selectedRow.id}`);
+      setSnackbarMessage("Xóa loại xe thành công.");
+      setSnackbarColor("success");
+      setSnackbarOpen(true);
+      setConfirmDelete(false);
+      await fetchData();
+    } catch (error) {
+      console.error("Error deleting type:", error);
+      setSnackbarMessage("Có lỗi xảy ra khi xóa loại xe.");
+      setSnackbarColor("error");
+      setSnackbarOpen(true);
+    }
   };
 
   const handleEdit = (row) => {
-    setNewType({ numSeat: String(row.numSeat), price: String(row.price) });
+    setNewType({ numSeat: row.numSeat, price: row.price });
     setSelectedRow(row);
     setOpenUpdateDialog(true);
   };
 
-  const handleUpdate = () => {
-    if (newType.numSeat.trim() === "" || newType.price.trim() === "") {
-      setErrors({
-        numSeat: newType.numSeat.trim() === "",
-        price: newType.price.trim() === "",
-      });
-      return;
-    }
-
-    const updatedData = data.map((item) =>
-      item.id === selectedRow.id
-        ? {
-            ...item,
-            numSeat: parseFloat(newType.numSeat),
-            price: parseFloat(newType.price),
-          }
-        : item
-    );
-
-    console.log("Updated Type:", {
-      id: selectedRow.id,
-      numSeat: newType.numSeat,
-      price: newType.price,
-    });
-    setData(updatedData);
-    setOpenUpdateDialog(false);
-    setSnackbarMessage("Cập nhập thông tin thành công!");
-    setSnackbarColor("success");
-    setSnackbarOpen(true);
-  };
-
-  // const handleDelete = (row) => {
-  //   setSelectedRow(row);
-  //   setConfirmDelete(true);
-  // };
-
-  const confirmDeleteAction = () => {
-    console.log("Deleted Type:", selectedRow);
-    setData(data.filter((item) => item.id !== selectedRow.id));
-    setConfirmDelete(false);
-    setSnackbarMessage("Deleted successfully!");
-    setSnackbarColor("error");
-    setSnackbarOpen(true);
-  };
-
-  const handleCloseConfirmDelete = () => {
-    setConfirmDelete(false);
-  };
+  const columns = [
+    { field: "id", headerName: "ID", flex: 1 },
+    { field: "numSeat", headerName: "Số Chỗ Ngồi", flex: 1 },
+    {
+      field: "price",
+      headerName: "Giá Tiền",
+      flex: 1,
+      renderCell: (params) => `${params.value} VND`, // Thêm ký hiệu "VND"
+    },
+    {
+      field: "action",
+      headerName: "Thao Tác",
+      flex: 1,
+      renderCell: (params) => (
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => handleEdit(params.row)} // Mở dialog cập nhật khi nhấn nút
+        >
+          Cập Nhập
+        </Button>
+      ),
+    },
+  ];
 
   return (
     <Box m="20px">
-      <Header title="Loại Xe" subtitle="Quản Lý Loại Xe" />
+      <Header title="Quản Lý Loại Xe" subtitle="Danh Sách Thông Tin Loại Xe" />
       <Box display="flex" justifyContent="flex-end" mb={-5}>
         <Button variant="contained" color="secondary" onClick={handleClickOpen}>
           Thêm Mới Loại Xe
@@ -204,7 +190,6 @@ const TypeCar = () => {
           components={{ Toolbar: GridToolbar }}
         />
       </Box>
-
       <AddTypeDialog
         open={open}
         handleClose={handleClose}
@@ -223,23 +208,20 @@ const TypeCar = () => {
       />
       <DeleteConfirmDialog
         open={confirmDelete}
-        handleClose={handleCloseConfirmDelete}
-        confirmDeleteAction={confirmDeleteAction}
+        handleClose={() => setConfirmDelete(false)}
+        onConfirm={confirmDeleteAction}
       />
-
       <Snackbar
         open={snackbarOpen}
-        autoHideDuration={3000}
+        autoHideDuration={6000}
         onClose={() => setSnackbarOpen(false)}
         message={snackbarMessage}
+        action={
+          <Button color="inherit" onClick={() => setSnackbarOpen(false)}>
+            Đóng
+          </Button>
+        }
         severity={snackbarColor}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        ContentProps={{
-          style: {
-            backgroundColor: "green",
-            color: "white",
-          },
-        }}
       />
     </Box>
   );

@@ -57,7 +57,7 @@ const UpdateTypeDialog = ({
           Hủy
         </Button>
         <Button
-          onClick={handleUpdate}
+          onClick={handleUpdate} // Gọi hàm cập nhật cho cả hai trường dữ liệu
           color="primary"
           sx={{
             backgroundColor: "green",
