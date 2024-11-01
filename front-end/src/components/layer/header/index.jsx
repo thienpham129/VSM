@@ -50,13 +50,13 @@ const Header = () => {
               <div className="topbar-widget">
                 <a href="#">
                   <i className="fa fa-phone" />
-                  01237898233
+                  +208 333 9296
                 </a>
               </div>
               <div className="topbar-widget">
                 <a href="#">
                   <i className="fa fa-envelope" />
-                  vsm@gmail.com
+                  contact@rentaly.com
                 </a>
               </div>
               <div className="topbar-widget">
@@ -70,19 +70,19 @@ const Header = () => {
           <div className="topbar-right">
             <div className="social-icons">
               <a href="#">
-                <i class="fa-brands fa-facebook fa-lg"></i>
+                <i className="fa fa-facebook fa-lg" />
               </a>
               <a href="#">
-                <i class="fa-brands fa-twitter fa-lg" />
+                <i className="fa fa-twitter fa-lg" />
               </a>
               <a href="#">
-                <i class="fa-brands fa-linkedin fa-lg"></i>
+                <i className="fa fa-youtube fa-lg" />
               </a>
               <a href="#">
-                <i class="fa-brands fa-pinterest fa-lg"></i>
+                <i className="fa fa-pinterest fa-lg" />
               </a>
               <a href="#">
-                <i className="fa fa-rss fa-lg" />
+                <i className="fa fa-instagram fa-lg" />
               </a>
             </div>
           </div>
@@ -100,13 +100,7 @@ const Header = () => {
                     <a href="/home">
                       {/* <img
                         className="logo-1"
-                        // src="images/logo-light.png"
-                        src="images/logo_vsm.png"
-                        alt=""
-                      />
-                      <img
-                        className="logo-2"
-                        src="images/logo_vsm.png"
+                        src="images/logo-light.png"
                         alt=""
                       /> */}
                       <img
@@ -114,6 +108,7 @@ const Header = () => {
                         src="images/logo_vsm.png"
                         alt=""
                       />
+                      <img className="logo-2" src="images/logo.png" alt="" />
                     </a>
                   </div>
                   {/* logo close */}
@@ -122,18 +117,23 @@ const Header = () => {
               <div className="de-flex-col header-col-mid">
                 <ul id="mainmenu">
                   <li>
-                    <a className="menu-item" href="/bookingTicket">
-                      Đặt vé
+                    <a className="menu-item" href="/listCars">
+                      Cars
+                    </a>
+                  </li>
+                  <li>
+                    <a className="menu-item" href="/booking">
+                      Booking
                     </a>
                     <ul>
                       <li>
                         <a className="menu-item new" href="/quickBooking">
-                          Đặt vé nhanh
+                          Quick Booking
                         </a>
                       </li>
                       <li>
-                        <a className="menu-item" href="/bookingTicket">
-                          Đặt vé
+                        <a className="menu-item" href="/booking">
+                          Booking
                         </a>
                       </li>
                     </ul>
@@ -141,24 +141,23 @@ const Header = () => {
 
                   <li>
                     <a className="menu-item" href="/aboutUs">
-                      Giới Thiệu
+                      About Us
                     </a>
                   </li>
                   <li>
                     <a className="menu-item" href="/contact">
-                      Liên Hệ
+                      Contact Us
                     </a>
                   </li>
                   <li>
                     <a className="menu-item" href="/new">
-                      Tin Tức
+                      News & Blog
                     </a>
                   </li>
                   <li></li>
                 </ul>
               </div>
 
-              <span id="menu-btn" />
               {/* error : Start */}
               <div className="de-flex-col">
                 <div className="menu_side_area">
@@ -188,25 +187,30 @@ const Header = () => {
                               <div className="d-line" />
                               <ul className="menu-col">
                                 <li>
-                                  <a href="/profile">
+                                  <a href="account-dashboard.html">
+                                    <i className="fa fa-home" />
+                                    Dashboard
+                                  </a>
+                                </li>
+                                <li>
+                                  <a href="account-profile.html">
                                     <i className="fa fa-user" />
-                                    Thông tin cá nhân
+                                    My Profile
                                   </a>
                                 </li>
                                 <li>
-                                  <a href="/accountBooking">
+                                  <a href="account-booking.html">
                                     <i className="fa fa-calendar" />
-                                    Lịch sử đặt vé
+                                    My Orders
                                   </a>
                                 </li>
                                 <li>
-                                  <a href="/changePassword">
+                                  <a href="account-favorite.html">
                                     <i className="fa fa-car" />
-                                    Thay đổi mật khẩu
+                                    My Favorite Cars
                                   </a>
                                 </li>
                                 <li>
-<<<<<<< HEAD
                                   <a>
                                     <span
                                       onClick={() => {
@@ -218,23 +222,6 @@ const Header = () => {
                                       <i className="fa fa-sign-out" />
                                       Sign Out
                                     </span>
-=======
-                                  <a href="/changePassword">
-                                    <i className="fa fa-ticket" />
-                                    Mã giảm giá
-                                  </a>
-                                </li>
-                                <li>
-                                  <a
-                                    href=""
-                                    onClick={() => {
-                                      localStorage.clear();
-                                      window.location.href = "/home";
-                                    }}
-                                  >
-                                    <i className="fa fa-sign-out" />
-                                    Đăng xuất
->>>>>>> ed650c4ccfd37fbe0c162c5340416e69cd15f1bc
                                   </a>
                                 </li>
                               </ul>
@@ -248,7 +235,7 @@ const Header = () => {
                     </div>
                   ) : (
                     <a href="/login" className="btn-main">
-                      Đăng Nhập
+                      Sign In
                     </a>
                   )}
                 </div>

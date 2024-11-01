@@ -56,6 +56,8 @@ function AdminApp() {
               <Route path="/faq" element={<FAQ />} />
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/geography" element={<Geography />} />
+
+              <Route path="/type" element={<Team />} />
             </Routes>
           </main>
         </div>

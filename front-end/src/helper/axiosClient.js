@@ -2,7 +2,6 @@ import axios from "axios";
 import { DEFAULT } from "constants";
 
 export const axiosClient = axios.create({
-<<<<<<< HEAD
   baseURL: "http://localhost:8080/auth", // Main domain
   headers: {
     "Content-Type": "application/json",
@@ -33,12 +32,3 @@ root.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-=======
-    baseURL: "http://localhost:9000/auth", // Main domain
-    headers: {
-        "Content-Type": "application/json",
-        // 'Access-Control-Allow-Origin': '*',
-        // 'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-    },
-});
->>>>>>> ed650c4ccfd37fbe0c162c5340416e69cd15f1bc

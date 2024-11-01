@@ -39,14 +39,11 @@ const Login = () => {
 
       if (response && response.data.accessToken) {
         localStorage.setItem(DEFAULT.TOKEN, response.data.accessToken);
-<<<<<<< HEAD
         // console.log(response.data.accessToken);
         // console.log(response.data + "response neeeeeeeeeeee!!!!");
         const accessToken = response.data.accessToken;
         const userId = getUserIdFromToken(accessToken);
         localStorage.setItem("userId", userId);
-=======
->>>>>>> ed650c4ccfd37fbe0c162c5340416e69cd15f1bc
         window.location.href = "/home";
       } else {
         setErrorMessage("Login failed. Invalid credentials.");
