@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -7,23 +7,24 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
-  Snackbar, // Import Snackbar
+  Snackbar,
 } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataVoucher } from "../../admin/data/mockData";
 import Header from "../../components/Header";
 import { useTheme } from "@mui/material";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
+import { request } from "../../admin/helpers/axios_helper";
 
 const VoucherAdmin = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const [open, setOpen] = useState(false); // Trạng thái mở modal
-  const [snackbarOpen, setSnackbarOpen] = useState(false); // Trạng thái mở snackbar
-  const [snackbarMessage, setSnackbarMessage] = useState(""); // Thông điệp snackbar
+  const [open, setOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [vouchers, setVouchers] = useState([]);
 
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
@@ -35,7 +36,7 @@ const VoucherAdmin = () => {
       headerAlign: "left",
       align: "left",
       flex: 1,
-      valueFormatter: (params) => `${params.value * 100}%`,
+      valueFormatter: (params) => `${params.value * 100}%`, // Định dạng hiển thị
     },
     {
       field: "valid",
@@ -50,24 +51,44 @@ const VoucherAdmin = () => {
     },
   ];
 
-  // Hàm mở modal
+  // Định nghĩa hàm fetchVouchers để gọi API lấy danh sách voucher
+  const fetchVouchers = async () => {
+    try {
+      const response = await request("GET", "/admin/vouchers");
+      console.log("Dữ liệu nhận được:", response.data);
+
+      const formattedData = response.data.map((voucher) => ({
+        id: voucher.voucherID,
+        code: voucher.code,
+        discount: voucher.discount / 100, // Chia cho 100 nếu cần
+        valid: voucher.valid,
+      }));
+
+      setVouchers(formattedData);
+    } catch (error) {
+      console.error("Lỗi khi gọi API:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchVouchers(); // Gọi hàm fetchVouchers khi component được mount
+  }, []);
+
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  // Hàm đóng modal
   const handleClose = () => {
     setOpen(false);
   };
 
-  // Schema xác thực với Yup
   const validationSchema = Yup.object({
     number: Yup.number()
-      .required("Số lượng là bắt buộc")
+      .required("Vio lòng nhập Số lượng ")
       .positive("Số lượng phải lớn hơn 0")
       .integer("Số lượng phải là số nguyên"),
     discount: Yup.number()
-      .required("Giảm giá là bắt buộc")
+      .required("Vui lòng nhập Giảm giá")
       .min(1, "Giảm giá phải từ 1 đến 100")
       .max(100, "Giảm giá phải từ 1 đến 100"),
   });
@@ -80,12 +101,8 @@ const VoucherAdmin = () => {
       />
 
       <Box display="flex" justifyContent="flex-end" mb={-5}>
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={handleClickOpen} // Mở modal
-        >
-          Thêm Voucher
+        <Button variant="contained" color="secondary" onClick={handleClickOpen}>
+          Thêm Mã Giảm Giá
         </Button>
       </Box>
 
@@ -122,7 +139,7 @@ const VoucherAdmin = () => {
         }}
       >
         <DataGrid
-          rows={mockDataVoucher}
+          rows={vouchers}
           columns={columns}
           components={{ Toolbar: GridToolbar }}
         />
@@ -132,13 +149,27 @@ const VoucherAdmin = () => {
         <DialogTitle>Thêm Voucher</DialogTitle>
         <DialogContent>
           <Formik
-            initialValues={{ number: "", discount: "" }} // Giá trị ban đầu
-            validationSchema={validationSchema} // Sử dụng schema xác thực
-            onSubmit={(values) => {
-              console.log("Thêm voucher:", values);
-              setSnackbarMessage("Thêm voucher thành công!"); // Thiết lập thông điệp snackbar
-              setSnackbarOpen(true); // Mở snackbar
-              handleClose(); // Đóng modal sau khi thêm thành công
+            initialValues={{ number: "", discount: "" }}
+            validationSchema={validationSchema}
+            onSubmit={async (values) => {
+              try {
+                // Gọi API để thêm voucher
+                const response = await request("POST", "/admin/voucher", {
+                  discount: values.discount, // Gửi giá trị discount
+                  quantity: values.number, // Gửi giá trị quantity
+                });
+
+                console.log("Thêm voucher thành công:", response.data);
+                setSnackbarMessage("Thêm voucher thành công!");
+                setSnackbarOpen(true);
+                handleClose(); // Đóng modal
+                // Gọi lại fetchVouchers để làm mới danh sách voucher
+                await fetchVouchers();
+              } catch (error) {
+                console.error("Lỗi khi thêm voucher:", error);
+                setSnackbarMessage("Có lỗi xảy ra khi thêm voucher.");
+                setSnackbarOpen(true);
+              }
             }}
           >
             {({ errors, touched }) => (
@@ -153,8 +184,8 @@ const VoucherAdmin = () => {
                       type="number"
                       fullWidth
                       variant="outlined"
-                      error={touched.number && !!errors.number} // Hiển thị lỗi nếu có
-                      helperText={touched.number && errors.number} // Hiển thị thông báo lỗi
+                      error={touched.number && !!errors.number}
+                      helperText={touched.number && errors.number}
                     />
                   )}
                 </Field>
@@ -167,8 +198,8 @@ const VoucherAdmin = () => {
                       type="number"
                       fullWidth
                       variant="outlined"
-                      error={touched.discount && !!errors.discount} // Hiển thị lỗi nếu có
-                      helperText={touched.discount && errors.discount} // Hiển thị thông báo lỗi
+                      error={touched.discount && !!errors.discount}
+                      helperText={touched.discount && errors.discount}
                     />
                   )}
                 </Field>
@@ -187,7 +218,7 @@ const VoucherAdmin = () => {
                   </Button>
 
                   <Button
-                    type="submit" // Thêm thuộc tính type="submit" để gửi form
+                    type="submit"
                     sx={{
                       backgroundColor: "green",
                       color: "white",
@@ -205,7 +236,6 @@ const VoucherAdmin = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Snackbar để hiển thị thông báo */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
