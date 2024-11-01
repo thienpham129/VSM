@@ -28,7 +28,7 @@ const CarForm = ({
         autoFocus
         margin="dense"
         name="name"
-        label="Name"
+        label="Tên Xe"
         type="text"
         fullWidth
         variant="outlined"
@@ -40,7 +40,7 @@ const CarForm = ({
       <TextField
         margin="dense"
         name="plateNumber"
-        label="Plate Number"
+        label="Biển Số Xe"
         type="text"
         fullWidth
         variant="outlined"
@@ -52,7 +52,7 @@ const CarForm = ({
       <TextField
         margin="dense"
         name="yearOfManufacture"
-        label="Year of Manufacture"
+        label="Năm Sản Xuất"
         type="number"
         fullWidth
         variant="outlined"
@@ -64,7 +64,7 @@ const CarForm = ({
       <TextField
         margin="dense"
         name="color"
-        label="Color"
+        label="Màu Xe"
         type="text"
         fullWidth
         variant="outlined"
@@ -76,7 +76,7 @@ const CarForm = ({
       <TextField
         margin="dense"
         name="manufactory"
-        label="Manufactory"
+        label="Hãng Sản Xuất"
         type="text"
         fullWidth
         variant="outlined"
@@ -86,7 +86,7 @@ const CarForm = ({
         helperText={errors.manufactory}
       />
       <FormControl fullWidth margin="dense" error={!!errors.price}>
-        <InputLabel id="price-label">Price</InputLabel>
+        <InputLabel id="price-label">Giá Vé</InputLabel>
         <Select
           labelId="price-label"
           value={carDetails.price}
@@ -99,7 +99,7 @@ const CarForm = ({
         >
           {mockDataType.map((type) => (
             <MenuItem key={type.id} value={type.price}>
-              {`$${type.price.toLocaleString()}`}{" "}
+              {`${type.price.toLocaleString()} VND`}{" "}
             </MenuItem>
           ))}
         </Select>
@@ -108,7 +108,7 @@ const CarForm = ({
       <TextField
         margin="dense"
         name="image1"
-        label="Upload Image Car 1"
+        label="Thêm Hình Ảnh 1"
         type="file"
         fullWidth
         variant="outlined"
@@ -120,7 +120,7 @@ const CarForm = ({
       <TextField
         margin="dense"
         name="image2"
-        label="Upload Image Car 2"
+        label="Thêm Hình Ảnh 2"
         type="file"
         fullWidth
         variant="outlined"

@@ -1347,7 +1347,7 @@ section {
 }
 
 #content.zebra section:nth-child(even) {
-    background: #f6f6f6;
+    /* background: #f6f6f6; */
 }
 
 section:not(.relative) {}
@@ -2669,9 +2669,9 @@ header.header-light .logo-2 {
 }
 
 input[type="checkbox"] {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+    /* -webkit-appearance: none; */
+    /* -moz-appearance: none; */
+    /* appearance: none; */
     border: none;
     outline: none;
 }
@@ -7199,7 +7199,7 @@ header.smaller {
 .social-icons i {
     text-shadow: none;
     color: #fff;
-    padding: 15px 10px 8px 10px;
+    padding: 18px 10px 8px 10px;
     width: 40px;
     height: 40px;
     text-align: center;
@@ -10518,7 +10518,7 @@ a.box-icon:hover {
 .box-icon.s2 i {
     position: absolute;
     font-size: 32px;
-    width: 54px;
+    /* width: 54px; */
     height: 54px;
     padding: 10px;
     text-align: center;
@@ -10533,7 +10533,7 @@ a.box-icon:hover {
 }
 
 .box-icon.s2.d-invert i {
-    right: 0;
+    right: 125px;
 }
 
 .box-icon.p-small {
@@ -18346,4 +18346,12 @@ img {
         left: 0;
         top: -21px;
     }
+}
+img.logo-1 {
+    width: 170px;
+    height: 100px;
+}
+img.logo-2 {
+    width: 170px;
+    height: 100px;
 }

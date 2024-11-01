@@ -15,7 +15,7 @@ const Contact = () => {
           <div className="container">
             <div className="row">
               <div className="col-md-12 text-center">
-                <h1>Contact Us</h1>
+                <h1>Liên Hệ</h1>
               </div>
               <div className="clearfix" />
             </div>
@@ -27,7 +27,7 @@ const Contact = () => {
         <div className="container">
           <div className="row g-custom-x">
             <div className="col-lg-8 mb-sm-30">
-              <h3>Do you have any question?</h3>
+              <h3>Bạn có thắc mắc gì không?</h3>
               <form
                 name="contactForm"
                 id="contact_form"
@@ -43,7 +43,7 @@ const Contact = () => {
                         name="Name"
                         id="name"
                         className="form-control"
-                        placeholder="Your Name"
+                        placeholder="Nhập tên của bạn"
                         required=""
                       />
                     </div>
@@ -55,7 +55,7 @@ const Contact = () => {
                         name="Email"
                         id="email"
                         className="form-control"
-                        placeholder="Your Email"
+                        placeholder="Nhập email"
                         required=""
                       />
                     </div>
@@ -67,7 +67,7 @@ const Contact = () => {
                         name="phone"
                         id="phone"
                         className="form-control"
-                        placeholder="Your Phone"
+                        placeholder="Nhập số điện thoại"
                         required=""
                       />
                     </div>
@@ -78,7 +78,7 @@ const Contact = () => {
                     name="message"
                     id="message"
                     className="form-control"
-                    placeholder="Your Message"
+                    placeholder="Lời nhắn"
                     required=""
                     defaultValue={""}
                   />
@@ -106,11 +106,11 @@ const Contact = () => {
             </div>
             <div className="col-lg-4">
               <div className="de-box mb30">
-                <h4>US Office</h4>
+                <h4>VSM Office</h4>
                 <address className="s1">
                   <span>
                     <i className="id-color fa fa-map-marker fa-lg" />
-                    08 W 36th St, New York, NY 10001
+                    Đại học FPT
                   </span>
                   <span>
                     <i className="id-color fa fa-phone fa-lg" />
@@ -118,15 +118,12 @@ const Contact = () => {
                   </span>
                   <span>
                     <i className="id-color fa fa-envelope-o fa-lg" />
-                    <a href="mailto:contact@example.com">contact@example.com</a>
+                    <a href="mailto:contact@example.com">vsm@email.com</a>
                   </span>
-                  <span>
-                    <i className="id-color fa fa-file-pdf-o fa-lg" />
-                    <a href="#">Download Brochure</a>
-                  </span>
+                  
                 </address>
               </div>
-              <div className="de-box mb30">
+              {/* <div className="de-box mb30">
                 <h4>AU Office</h4>
                 <address className="s1">
                   <span>
@@ -146,7 +143,7 @@ const Contact = () => {
                     <a href="#">Download Brochure</a>
                   </span>
                 </address>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

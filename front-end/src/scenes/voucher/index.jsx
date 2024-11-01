@@ -7,39 +7,46 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  Snackbar, // Import Snackbar
 } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { mockDataVoucher } from "../../admin/data/mockData";
 import Header from "../../components/Header";
 import { useTheme } from "@mui/material";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
 
 const VoucherAdmin = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const [open, setOpen] = useState(false); // Trạng thái mở modal
-  const [voucher, setVoucher] = useState({ number: "", discount: "" }); // Trạng thái cho voucher
-  const [errors, setErrors] = useState({ number: "", discount: "" }); // Trạng thái lỗi
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // Trạng thái mở snackbar
+  const [snackbarMessage, setSnackbarMessage] = useState(""); // Thông điệp snackbar
 
   const columns = [
-    { field: "id", headerName: "Voucher ID", flex: 0.5 },
-    { field: "code", headerName: "Code", flex: 1 },
+    { field: "id", headerName: "ID", flex: 0.5 },
+    { field: "code", headerName: "Mã Code", flex: 0.7 },
     {
       field: "discount",
-      headerName: "Discount",
+      headerName: "Giảm Giá",
       type: "number",
       headerAlign: "left",
       align: "left",
+      flex: 1,
       valueFormatter: (params) => `${params.value * 100}%`,
     },
     {
       field: "valid",
-      headerName: "Valid",
+      headerName: "Trạng Thái",
       type: "boolean",
       headerAlign: "left",
       align: "left",
-      renderCell: (params) => <strong>{params.value ? "Yes" : "No"}</strong>,
+      flex: 1,
+      renderCell: (params) => (
+        <strong>{params.value ? "Có thể sử dụng" : "Hết hạn"}</strong>
+      ),
     },
   ];
 
@@ -51,39 +58,26 @@ const VoucherAdmin = () => {
   // Hàm đóng modal
   const handleClose = () => {
     setOpen(false);
-    setVoucher({ number: "", discount: "" }); // Reset giá trị khi đóng
-    setErrors({ number: "", discount: "" }); // Reset lỗi khi đóng
   };
 
-  // Hàm xử lý khi nhấn nút Confirm
-  const handleConfirm = () => {
-    const newErrors = { number: "", discount: "" };
-    let valid = true;
-
-    // Kiểm tra trường Quantity không được để trống và phải lớn hơn 0
-    if (!voucher.number || voucher.number <= 0) {
-      newErrors.number = "Quantity is required and must be greater than 0";
-      valid = false;
-    }
-
-    // Kiểm tra trường Discount không được để trống và phải từ 0 đến 1
-    if (!voucher.discount || voucher.discount < 0 || voucher.discount > 1) {
-      newErrors.discount = "Discount is required and must be between 0 and 1";
-      valid = false;
-    }
-
-    setErrors(newErrors);
-
-    if (valid) {
-      // Xử lý logic thêm voucher ở đây (ví dụ: gọi API)
-      console.log("Thêm voucher:", voucher);
-      handleClose(); // Đóng modal sau khi thêm thành công
-    }
-  };
+  // Schema xác thực với Yup
+  const validationSchema = Yup.object({
+    number: Yup.number()
+      .required("Số lượng là bắt buộc")
+      .positive("Số lượng phải lớn hơn 0")
+      .integer("Số lượng phải là số nguyên"),
+    discount: Yup.number()
+      .required("Giảm giá là bắt buộc")
+      .min(1, "Giảm giá phải từ 1 đến 100")
+      .max(100, "Giảm giá phải từ 1 đến 100"),
+  });
 
   return (
     <Box m="20px">
-      <Header title="Voucher" subtitle="Manage Voucher" />
+      <Header
+        title="Quản Lý Mã Giảm Giá"
+        subtitle="Danh Sách Thông Tin Mã Giảm Giá"
+      />
 
       <Box display="flex" justifyContent="flex-end" mb={-5}>
         <Button
@@ -137,60 +131,94 @@ const VoucherAdmin = () => {
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Thêm Voucher</DialogTitle>
         <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Quantity"
-            type="number"
-            fullWidth
-            variant="outlined"
-            value={voucher.number}
-            onChange={(e) => setVoucher({ ...voucher, number: e.target.value })}
-            error={!!errors.number} // Hiển thị lỗi nếu có
-            helperText={errors.number} // Hiển thị thông báo lỗi
-          />
-          <TextField
-            margin="dense"
-            label="Discount (%)"
-            type="number"
-            fullWidth
-            variant="outlined"
-            value={voucher.discount}
-            onChange={(e) =>
-              setVoucher({ ...voucher, discount: e.target.value })
-            }
-            error={!!errors.discount} // Hiển thị lỗi nếu có
-            helperText={errors.discount} // Hiển thị thông báo lỗi
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleClose}
-            sx={{
-              backgroundColor: "gray",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "darkgray",
-              },
+          <Formik
+            initialValues={{ number: "", discount: "" }} // Giá trị ban đầu
+            validationSchema={validationSchema} // Sử dụng schema xác thực
+            onSubmit={(values) => {
+              console.log("Thêm voucher:", values);
+              setSnackbarMessage("Thêm voucher thành công!"); // Thiết lập thông điệp snackbar
+              setSnackbarOpen(true); // Mở snackbar
+              handleClose(); // Đóng modal sau khi thêm thành công
             }}
           >
-            Cancel
-          </Button>
+            {({ errors, touched }) => (
+              <Form>
+                <Field name="number">
+                  {({ field }) => (
+                    <TextField
+                      {...field}
+                      autoFocus
+                      margin="dense"
+                      label="Số Lượng"
+                      type="number"
+                      fullWidth
+                      variant="outlined"
+                      error={touched.number && !!errors.number} // Hiển thị lỗi nếu có
+                      helperText={touched.number && errors.number} // Hiển thị thông báo lỗi
+                    />
+                  )}
+                </Field>
+                <Field name="discount">
+                  {({ field }) => (
+                    <TextField
+                      {...field}
+                      margin="dense"
+                      label="Giảm Giá"
+                      type="number"
+                      fullWidth
+                      variant="outlined"
+                      error={touched.discount && !!errors.discount} // Hiển thị lỗi nếu có
+                      helperText={touched.discount && errors.discount} // Hiển thị thông báo lỗi
+                    />
+                  )}
+                </Field>
+                <DialogActions>
+                  <Button
+                    onClick={handleClose}
+                    sx={{
+                      backgroundColor: "gray",
+                      color: "white",
+                      "&:hover": {
+                        backgroundColor: "darkgray",
+                      },
+                    }}
+                  >
+                    Hủy
+                  </Button>
 
-          <Button
-            onClick={handleConfirm}
-            sx={{
-              backgroundColor: "green",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "darkgreen",
-              },
-            }}
-          >
-            Confirm
-          </Button>
-        </DialogActions>
+                  <Button
+                    type="submit" // Thêm thuộc tính type="submit" để gửi form
+                    sx={{
+                      backgroundColor: "green",
+                      color: "white",
+                      "&:hover": {
+                        backgroundColor: "darkgreen",
+                      },
+                    }}
+                  >
+                    Tạo Mới
+                  </Button>
+                </DialogActions>
+              </Form>
+            )}
+          </Formik>
+        </DialogContent>
       </Dialog>
+
+      {/* Snackbar để hiển thị thông báo */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        message={snackbarMessage}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        ContentProps={{
+          style: {
+            backgroundColor: "green",
+            color: "white",
+          },
+        }}
+      />
     </Box>
   );
 };

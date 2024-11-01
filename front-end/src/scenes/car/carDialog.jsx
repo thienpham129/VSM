@@ -17,7 +17,7 @@ const CarDialog = ({
 }) => {
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Tạo Mới Car</DialogTitle>
+      <DialogTitle>Thêm Mới Xe</DialogTitle>
       <DialogContent>
         <CarForm
           carDetails={carDetails}
@@ -32,13 +32,13 @@ const CarDialog = ({
           onClick={handleClose}
           sx={{ backgroundColor: "gray", color: "white" }}
         >
-          Cancel
+          Hủy
         </Button>
         <Button
           onClick={handleCreate}
           sx={{ backgroundColor: "green", color: "white" }}
         >
-          Create
+          Thêm Mới
         </Button>
       </DialogActions>
     </Dialog>

@@ -22149,7 +22149,7 @@ li {
     text-transform: uppercase
 }
 
-.ticket-time {
+.ticket_time {
     position: absolute;
     top: 0;
     height: 100%;
@@ -22157,19 +22157,19 @@ li {
 }
 
 .ticket-date,
-.ticket-time {
+.ticket_time {
     border: none;
     padding: 0;
     width: 100%
 }
 
 .ticket-date:hover,
-.ticket-time:hover {
+.ticket_time:hover {
     cursor: pointer
 }
 
 .ticket-date:focus,
-.ticket-time:focus {
+.ticket_time:focus {
     outline: 0
 }
 

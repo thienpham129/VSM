@@ -9,6 +9,11 @@ import Invoices from "../scenes/invoices";
 import Contacts from "../scenes/contacts";
 import VoucherAdmin from "scenes/voucher";
 import ParkingLot from "scenes/parking";
+import UserAdmin from "scenes/user";
+import TypeCar from "scenes/type/typeCar";
+import DetailCar from "scenes/car/detailCar/detailCar";
+import DriverAdmin from "scenes/driver/driverAdmin";
+import DetailDriver from "scenes/driver/detail/detailDriver";
 import Bar from "../scenes/bar";
 import Form from "../scenes/form";
 import Line from "../scenes/line";
@@ -34,8 +39,13 @@ function AdminApp() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/voucher" element={<VoucherAdmin />} />
+              <Route path="/user" element={<UserAdmin />} />
+              <Route path="/driver" element={<DriverAdmin />} />
+              <Route path="/driver/:id" element={<DetailDriver />} />
               <Route path="/parking" element={<ParkingLot />} />
+              <Route path="/type" element={<TypeCar />} />
               <Route path="/car" element={<CarAdmin />} />
+              <Route path="/car/:id" element={<DetailCar />} />
               <Route path="/team" element={<Team />} />
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/invoices" element={<Invoices />} />
