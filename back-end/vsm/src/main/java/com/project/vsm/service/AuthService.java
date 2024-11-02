@@ -46,7 +46,7 @@ public class AuthService {
 		if (!user.isEnabled()) {
 			throw new RuntimeException("Account not verified. Please verify your account.");
 		}
-//		
+//
 		var authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 
@@ -59,6 +59,12 @@ public class AuthService {
 		var token = jwtIssuer.issuer(principal.getUserID(), principal.getEmail(), roles);
 
 		return LoginResponse.builder().accessToken(token).build();
+	}
+	
+	public AccountEntity identifyUser(String email) {
+		AccountEntity user = userRepository.findByEmail(email)
+				.orElseThrow(() -> new RuntimeException("User not found"));
+		return user;
 	}
 
 	public AccountEntity signup(RegisterUserDto input) {
