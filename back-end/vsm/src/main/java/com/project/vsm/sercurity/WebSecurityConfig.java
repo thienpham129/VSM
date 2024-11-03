@@ -111,7 +111,7 @@ public class WebSecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .formLogin(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(registry -> registry
-                    .requestMatchers("/", "/public/**", "/auth/**").permitAll()
+                    .requestMatchers("/", "/public/**", "/auth/**","/assets/**").permitAll()
                     .requestMatchers("/user").hasRole("USER")
                     .requestMatchers("/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated()

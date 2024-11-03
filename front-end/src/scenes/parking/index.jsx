@@ -171,8 +171,11 @@ const ParkingLot = () => {
 
   return (
     <Box m="20px">
-      <Header title="BÃI ĐỖ XE" subtitle="Quản Lý Bãi Đỗ Xe" />
-      <Box display="flex" justifyContent="flex-end" mb={2}>
+      <Header
+        title="BÃI ĐỖ XE"
+        subtitle="Quản Lý Danh Sách Thông Tin Bãi Đỗ Xe"
+      />
+      <Box display="flex" justifyContent="flex-end" mb={-5}>
         <Button variant="contained" color="secondary" onClick={handleClickOpen}>
           Tạo Mới Bãi Đỗ Xe
         </Button>
