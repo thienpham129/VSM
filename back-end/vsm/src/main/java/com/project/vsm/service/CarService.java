@@ -41,6 +41,8 @@ public class CarService {
 	private ParkingRepository parkingRepository;
 	@Autowired
 	private FileService fileService;
+	@Autowired
+	private CarImageService carImageService;
 
 	public Optional<CarEntity> getCarById(long id) {
 		Optional<CarEntity> optionalCar = carRepository.findById(id);
@@ -130,6 +132,22 @@ public class CarService {
 		optionalCar.get().setType(typeUpdate.get());
 		optionalCar.get().setYearOfManufacture(carUpdate.getYearOfManufacture());
 		optionalCar.get().setParking(parkingUpdate.get());
+		// Lưu hình ảnh
+
+		if (carUpdate.getImages() != null) {
+			carImageService.deleteImgCarByCar(optionalCar.get());
+			List<CarImageEntity> imageCarEntities = new ArrayList<>();
+			for (MultipartFile imageFile : carUpdate.getImages()) {
+				String fileCode = fileService.saveFile(imageFile.getOriginalFilename(), imageFile);
+				CarImageEntity imageCar = new CarImageEntity();
+				imageCar.setImageUrl(fileCode);
+				imageCar.setCar(optionalCar.get()); // Gán CarEntity cho hình ảnh
+				imageCarEntities.add(imageCar);
+			}
+			// Lưu tất cả các hình ảnh vào DB
+			carImageRepository.saveAll(imageCarEntities);
+		}
+
 		return carRepository.save(optionalCar.get());
 	}
 

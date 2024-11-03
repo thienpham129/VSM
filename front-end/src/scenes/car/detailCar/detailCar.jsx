@@ -17,12 +17,13 @@ import { useEffect, useState } from "react";
 import { request } from "admin/helpers/axios_helper";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { format, isValid, parseISO } from "date-fns";
 
 const DetailCar = () => {
   const [typeCars, setTypeCars] = useState([]);
   const [parking, setParking] = useState([]);
   const [carData, setCarData] = useState(null);
-  const [images, setImages] = useState([]);
+  const [uploadedImages, setUploadedImages] = useState([]); // Đổi tên state cho hình ảnh đã tải lên
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarColor, setSnackbarColor] = useState("success");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -32,7 +33,7 @@ const DetailCar = () => {
     try {
       const response = await request("GET", `/public/car/${id}`);
       setCarData(response.data);
-      setImages(response.data.images || []);
+      setUploadedImages([]); // Đặt lại state uploadedImages khi tải lại dữ liệu xe
     } catch (err) {
       console.error("Error fetching car data:", err);
     }
@@ -105,18 +106,37 @@ const DetailCar = () => {
   const handleFormSubmit = async (values) => {
     const formData = new FormData();
 
+    // Chuyển đổi ngày từ chuỗi yyyy-MM-dd sang đối tượng Date
+    const dayMaintenanceParsed = parseISO(values.dayMaintenance);
+
+    // Kiểm tra xem ngày có hợp lệ không
+    if (!isValid(dayMaintenanceParsed)) {
+      setSnackbarMessage(
+        "Ngày bảo trì không hợp lệ. Vui lòng nhập đúng định dạng yyyy-MM-dd."
+      );
+      setSnackbarColor("error");
+      setSnackbarOpen(true);
+      return; // Dừng lại nếu ngày không hợp lệ
+    }
+
+    // Định dạng lại ngày thành chuỗi theo định dạng dd/MM/yyyy
+    const dayMaintenanceFormatted = format(dayMaintenanceParsed, "dd/MM/yyyy");
+
     formData.append("name", values.carName);
     formData.append("plateNumber", values.plateNumber);
     formData.append("color", values.color);
     formData.append("yearOfManufacture", values.yearOfManufacture);
-    formData.append("dayMaintenance", values.dayMaintenance);
+    formData.append("dayMaintenance", dayMaintenanceFormatted); // Sử dụng ngày đã được định dạng
     formData.append("manufactory", values.manufactory);
     formData.append("typeID", values.typeID);
     formData.append("parkingID", values.parkingID);
 
-    images.forEach((image) => {
-      if (image instanceof File) formData.append("images", image);
-    });
+    // Chỉ thêm hình ảnh vào formData nếu có hình ảnh mới được tải lên
+    if (uploadedImages.length > 0) {
+      uploadedImages.forEach((image) => {
+        if (image instanceof File) formData.append("images", image);
+      });
+    }
 
     try {
       const token = getAuthToken();
@@ -168,7 +188,7 @@ const DetailCar = () => {
   // Hàm xử lý khi người dùng tải lên hình ảnh
   const handleImageChange = (event) => {
     const files = Array.from(event.target.files);
-    setImages((prevImages) => [...prevImages, ...files]);
+    setUploadedImages(files); // Cập nhật hình ảnh đã tải lên
   };
 
   return (
@@ -277,37 +297,11 @@ const DetailCar = () => {
                 >
                   {typeCars.map((type) => (
                     <MenuItem key={type.id} value={type.id}>
-                      {`Số chỗ: ${type.numSeat}, Giá: ${type.price} VNĐ`}
+                      {`Số chỗ: ${type.numSeat}, Giá: ${type.price}`}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
-              <TextField
-                fullWidth
-                variant="filled"
-                label="Ngày Bảo Trì"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.dayMaintenance}
-                name="dayMaintenance"
-                error={!!touched.dayMaintenance && !!errors.dayMaintenance}
-                helperText={touched.dayMaintenance && errors.dayMaintenance}
-                sx={{ gridColumn: "span 2" }}
-              />
-              <TextField
-                fullWidth
-                variant="filled"
-                label="Nhà Sản Xuất"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.manufactory}
-                name="manufactory"
-                error={!!touched.manufactory && !!errors.manufactory}
-                helperText={touched.manufactory && errors.manufactory}
-                sx={{ gridColumn: "span 2" }}
-              />
-
-              {/* Trường Parking */}
               <FormControl
                 fullWidth
                 variant="filled"
@@ -321,61 +315,82 @@ const DetailCar = () => {
                   onBlur={handleBlur}
                   error={!!touched.parkingID && !!errors.parkingID}
                 >
-                  {parking.map((item) => (
-                    <MenuItem key={item.id} value={item.id}>
-                      {`${item.name} - ${
-                        item.empty ? "Còn trống" : "Hết chỗ trống"
-                      }`}
+                  {parking.map((park) => (
+                    <MenuItem key={park.id} value={park.id}>
+                      {`${park.name} - ${park.empty ? "Còn chỗ" : "Hết chỗ"}`}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
-
-              {/* Trường Input Hình Ảnh */}
+              <TextField
+                fullWidth
+                variant="filled"
+                label="Nhà Sản Xuất"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.manufactory}
+                name="manufactory"
+                error={!!touched.manufactory && !!errors.manufactory}
+                helperText={touched.manufactory && errors.manufactory}
+                sx={{ gridColumn: "span 2" }}
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                type="date"
+                label="Ngày Bảo Trì"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.dayMaintenance}
+                name="dayMaintenance"
+                error={!!touched.dayMaintenance && !!errors.dayMaintenance}
+                helperText={touched.dayMaintenance && errors.dayMaintenance}
+                sx={{ gridColumn: "span 2" }}
+              />
               <input
                 type="file"
                 multiple
-                onChange={handleImageChange}
-                accept="image/*"
-                style={{ gridColumn: "span 4", marginTop: "20px" }}
+                onChange={handleImageChange} // Thay đổi hàm xử lý hình ảnh
               />
-            </Box>
-
-            {/* Hiển Thị Các Hình Ảnh Đã Tải Lên */}
-            <Box display="flex" flexWrap="wrap" gap="10px" marginTop="20px">
-              {images.length > 0
-                ? images.map((image, index) => {
-                    if (image instanceof File) {
-                      // Kiểm tra nếu là đối tượng File
-                      return (
-                        <img
-                          key={index}
-                          src={URL.createObjectURL(image)} // Tạo URL tạm thời cho file
-                          alt={`car-image-${index}`}
-                          style={{
-                            width: "100px",
-                            height: "auto",
-                            borderRadius: "5px",
-                          }}
-                        />
-                      );
-                    }
-                    return null; // Nếu không phải là File, không render hình ảnh
-                  })
-                : carData?.images?.map((image, index) => (
+              <Box
+                display="flex"
+                flexDirection="column"
+                gap="20px"
+                sx={{ gridColumn: "span 4" }}
+              >
+                <h4 style={{ margin: "0px" }}>Hình Ảnh Xe:</h4>
+                <Box display="flex" flexWrap="wrap" gap="10px">
+                  {uploadedImages.map((file, index) => (
                     <img
                       key={index}
-                      src={image} // Lấy trực tiếp URL hình ảnh từ dữ liệu xe
-                      alt={`car-image-${index}`}
+                      src={URL.createObjectURL(file)}
+                      alt={`uploaded-preview-${index}`}
                       style={{
-                        width: "100px",
-                        height: "auto",
-                        borderRadius: "5px",
+                        width: "250px",
+                        height: "250px",
+                        objectFit: "cover",
                       }}
                     />
                   ))}
+                </Box>
+                {carData?.images && uploadedImages.length === 0 && (
+                  <Box display="flex" flexWrap="wrap" gap="10px">
+                    {carData.images.map((image, index) => (
+                      <img
+                        key={index}
+                        src={`${image.imageUrl}`}
+                        alt={`car-image-${index}`}
+                        style={{
+                          width: "250px",
+                          height: "250px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    ))}
+                  </Box>
+                )}
+              </Box>
             </Box>
-
             <Button
               type="submit"
               color="secondary"
@@ -387,14 +402,16 @@ const DetailCar = () => {
           </form>
         )}
       </Formik>
-
       <Snackbar
         open={snackbarOpen}
-        autoHideDuration={3000}
+        autoHideDuration={6000}
         onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarColor}>
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarColor}
+          sx={{ width: "100%" }}
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>
