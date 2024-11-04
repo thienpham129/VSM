@@ -114,6 +114,7 @@ public class WebSecurityConfig {
                     .requestMatchers("/", "/public/**", "/auth/**","/assets/**").permitAll()
                     .requestMatchers("/user").hasRole("USER")
                     .requestMatchers("/admin/**").hasRole("ADMIN")
+                    .requestMatchers("/driver/**").hasAnyRole("DRIVER","ADMIN")
                     .anyRequest().authenticated()
             )
             .cors(cors -> cors.configurationSource(corsConfigurationSource()));  // Apply custom CORS configuration
