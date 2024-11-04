@@ -23,6 +23,7 @@ import com.project.vsm.service.CarService;
 import jakarta.validation.Valid;
 
 @RestController
+@CrossOrigin(origins = "*")
 public class CarController {
 
     @Autowired

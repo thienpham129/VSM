@@ -19,9 +19,10 @@ import AdminApp from "admin/AdminApp";
 import OTP from "pages/OTP";
 import BookingTicket from "pages/bookingTicket";
 import MethodPayment from "pages/methodPayment";
+import ForgetPassword from "pages/forgetPassword";
 
 function App() {
-  const token = window.localStorage.getItem("token");
+  const token = window.localStorage.getItem(DEFAULT.TOKEN);
   
 
   return (
@@ -39,6 +40,7 @@ function App() {
             <Route path="new" element={<News />} />
             <Route path="booking" element={<Booking />} />
             <Route path="OTP" element={<OTP />} />
+            <Route path="identify" element={<ForgetPassword />} />
             <Route path="bookingTicket" element={<BookingTicket />} />
 
           </Route>

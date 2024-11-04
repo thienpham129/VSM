@@ -36,9 +36,11 @@ public class CarUpdateDTO {
 	@Min(value = 1900, message = "Capacity must be greater than 1900")
 	private int yearOfManufacture;
 
-	@NotNull(message = "yearOfManufacture Car is required")
-	@Min(value = 0, message = "Capacity must be greater than 0")
+	@NotNull(message = "typeID Car is required")
+	@Min(value = 0, message = "typeID must be greater than 0")
 	private Long typeID;
+	
+	private Long parkingID;
 
 	@NotNull(message = "dayMaintenance Car is required")
 	@NotEmpty(message = "dayMaintenance Car is required")

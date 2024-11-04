@@ -1,50 +1,51 @@
+// src/components/AddDriverModal.jsx
 import React from "react";
 import {
+  Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   TextField,
-  Button,
 } from "@mui/material";
 
-const AddTypeDialog = ({
+const AddDriverModal = ({
   open,
   handleClose,
-  newType,
-  handleChange,
-  handleSubmit,
+  newDriver,
+  setNewDriver,
   errors,
+  handleInputChange,
+  handleSubmit,
 }) => {
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Create New Type</DialogTitle>
+      <DialogTitle>Thêm Mới Tài Xế</DialogTitle>
       <DialogContent>
         <TextField
+          autoFocus
           margin="dense"
-          label="Number of Seats"
-          type="number"
+          label="Email"
+          type="email"
           fullWidth
           variant="outlined"
-          name="numSeat"
-          value={newType.numSeat}
-          onChange={handleChange}
-          error={errors.numSeat}
-          helperText={
-            errors.numSeat ? "Please enter a valid number of seats." : ""
-          }
+          name="email"
+          value={newDriver.email}
+          onChange={handleInputChange}
+          error={!!errors.email}
+          helperText={errors.email}
         />
         <TextField
           margin="dense"
-          label="Price"
-          type="number"
+          label="Mật Khẩu"
+          type="password"
           fullWidth
           variant="outlined"
-          name="price"
-          value={newType.price}
-          onChange={handleChange}
-          error={errors.price}
-          helperText={errors.price ? "Please enter a valid price." : ""}
+          name="password"
+          value={newDriver.password}
+          onChange={handleInputChange}
+          error={!!errors.password}
+          helperText={errors.password}
         />
       </DialogContent>
       <DialogActions>
@@ -56,22 +57,21 @@ const AddTypeDialog = ({
             "&:hover": { backgroundColor: "darkgray" },
           }}
         >
-          Cancel
+          Hủy
         </Button>
         <Button
           onClick={handleSubmit}
-          color="primary"
           sx={{
             backgroundColor: "green",
             color: "white",
             "&:hover": { backgroundColor: "darkgreen" },
           }}
         >
-          Create
+          Thêm mới
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default AddTypeDialog;
+export default AddDriverModal;

@@ -2,6 +2,18 @@ import React, { useEffect, useState } from "react";
 import { axiosClient } from "helper/axiosClient";
 import { DEFAULT } from "constants";
 import OTP from "./OTP.jsx";
+import { jwtDecode } from "jwt-decode";
+
+const getUserIdFromToken = (token) => {
+  try {
+    const decodedToken = jwtDecode(token);
+    const userId = decodedToken.sub;
+    return userId;
+  } catch (error) {
+    console.error("Invalid token");
+    return null;
+  }
+};
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -26,7 +38,13 @@ const Login = () => {
       });
 
       if (response && response.data.accessToken) {
-        localStorage.setItem("token", response.data.accessToken);
+        // localStorage.setItem("token", response.data.accessToken);
+        localStorage.setItem(DEFAULT.TOKEN, response.data.accessToken);
+        // console.log(response.data.accessToken);
+        // console.log(response.data + "response neeeeeeeeeeee!!!!");
+        const accessToken = response.data.accessToken;
+        const userId = getUserIdFromToken(accessToken);
+        localStorage.setItem("userId", userId);
         window.location.href = "/home";
       } else {
         setErrorMessage("Login failed. Invalid credentials.");
@@ -91,7 +109,7 @@ const Login = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem(DEFAULT.TOKEN);
     if (token) {
       window.location.href = "/home";
     }
@@ -186,6 +204,14 @@ const Login = () => {
                           >
                             {isSubmitting ? "Creating account..." : "Submit"}
                           </button>
+                          <p
+                            className="title-forgot-account"
+                            onClick={() => {
+                              window.location.href = "/identify";
+                            }}
+                          >
+                            Forgotten account?
+                          </p>
                         </form>
                       ) : (
                         <form
@@ -226,6 +252,14 @@ const Login = () => {
                           >
                             {isSubmitting ? "Logging in..." : "Submit"}
                           </button>
+                          <p
+                            className="title-forgot-account"
+                            onClick={() => {
+                              window.location.href = "/identify";
+                            }}
+                          >
+                            Forgotten account?
+                          </p>
                         </form>
                       )}
 

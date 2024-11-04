@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "*")
 @NoArgsConstructor
 public class UserController {
 

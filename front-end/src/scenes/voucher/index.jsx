@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -7,115 +7,102 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  Snackbar,
 } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataVoucher } from "../../admin/data/mockData";
 import Header from "../../components/Header";
 import { useTheme } from "@mui/material";
-import { getTokenFromLocalStorage } from "utils/tokenUtils";
-import { axiosAdmin } from "helper/axiosAdmin";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
+import { request } from "../../admin/helpers/axios_helper";
 
 const VoucherAdmin = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const [open, setOpen] = useState(false); // Trạng thái mở modal
-  const [voucher, setVoucher] = useState({ number: "", discount: "" }); // Trạng thái cho voucher
-  const [errors, setErrors] = useState({ number: "", discount: "" }); // Trạng thái lỗi
+  const [open, setOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [vouchers, setVouchers] = useState([]);
 
   const columns = [
-    { field: "id", headerName: "Voucher ID", flex: 0.5 },
-    { field: "code", headerName: "Code", flex: 1 },
+    { field: "id", headerName: "ID", flex: 0.5 },
+    { field: "code", headerName: "Mã Code", flex: 0.7 },
     {
       field: "discount",
-      headerName: "Discount",
+      headerName: "Giảm Giá",
       type: "number",
       headerAlign: "left",
       align: "left",
-      valueFormatter: (params) => `${params.value * 100}%`,
+      flex: 1,
+      valueFormatter: (params) => `${params.value * 100}%`, // Định dạng hiển thị
     },
     {
       field: "valid",
-      headerName: "Valid",
+      headerName: "Trạng Thái",
       type: "boolean",
       headerAlign: "left",
       align: "left",
-      renderCell: (params) => <strong>{params.value ? "Yes" : "No"}</strong>,
+      flex: 1,
+      renderCell: (params) => (
+        <strong>{params.value ? "Có thể sử dụng" : "Hết hạn"}</strong>
+      ),
     },
   ];
 
-  // Hàm mở modal
+  // Định nghĩa hàm fetchVouchers để gọi API lấy danh sách voucher
+  const fetchVouchers = async () => {
+    try {
+      const response = await request("GET", "/admin/vouchers");
+      console.log("Dữ liệu nhận được:", response.data);
+
+      const formattedData = response.data.map((voucher) => ({
+        id: voucher.voucherID,
+        code: voucher.code,
+        discount: voucher.discount / 100, // Chia cho 100 nếu cần
+        valid: voucher.valid,
+      }));
+
+      setVouchers(formattedData);
+    } catch (error) {
+      console.error("Lỗi khi gọi API:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchVouchers(); // Gọi hàm fetchVouchers khi component được mount
+  }, []);
+
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  // Hàm đóng modal
   const handleClose = () => {
     setOpen(false);
-    setVoucher({ number: "", discount: "" }); // Reset giá trị khi đóng
-    setErrors({ number: "", discount: "" }); // Reset lỗi khi đóng
   };
 
-  // Hàm xử lý khi nhấn nút Confirm
-  const handleConfirm = () => {
-    const newErrors = { number: "", discount: "" };
-    let valid = true;
-
-    // Kiểm tra trường Quantity không được để trống và phải lớn hơn 0
-    if (!voucher.number || voucher.number <= 0) {
-      newErrors.number = "Quantity is required and must be greater than 0";
-      valid = false;
-    }
-
-    // Kiểm tra trường Discount không được để trống và phải từ 0 đến 1
-    if (!voucher.discount || voucher.discount < 0 || voucher.discount > 1) {
-      newErrors.discount = "Discount is required and must be between 0 and 1";
-      valid = false;
-    }
-
-    setErrors(newErrors);
-
-    if (valid) {
-      // Xử lý logic thêm voucher ở đây (ví dụ: gọi API)
-      console.log("Thêm voucher:", voucher);
-      handleClose(); // Đóng modal sau khi thêm thành công
-    }
-  };
-
-  const getVoucherAll = async  () => {
-    const token = getTokenFromLocalStorage();
-    try {
-        const response = await axiosAdmin.get(
-            `/public/cars`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            }
-        );
-        console.log('««««« response »»»»»', response.data);
-    } catch (error) {
-        console.error("Error fetching cart data:", error);
-    }
-  }
-
-  useEffect(() => {
-    getVoucherAll();
-
-  },[])
+  const validationSchema = Yup.object({
+    number: Yup.number()
+      .required("Vio lòng nhập Số lượng ")
+      .positive("Số lượng phải lớn hơn 0")
+      .integer("Số lượng phải là số nguyên"),
+    discount: Yup.number()
+      .required("Vui lòng nhập Giảm giá")
+      .min(1, "Giảm giá phải từ 1 đến 100")
+      .max(100, "Giảm giá phải từ 1 đến 100"),
+  });
 
   return (
     <Box m="20px">
-      <Header title="Voucher" subtitle="Manage Voucher" />
+      <Header
+        title="Quản Lý Mã Giảm Giá"
+        subtitle="Danh Sách Thông Tin Mã Giảm Giá"
+      />
 
       <Box display="flex" justifyContent="flex-end" mb={-5}>
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={handleClickOpen} // Mở modal
-        >
-          Thêm Voucher
+        <Button variant="contained" color="secondary" onClick={handleClickOpen}>
+          Thêm Mã Giảm Giá
         </Button>
       </Box>
 
@@ -152,7 +139,7 @@ const VoucherAdmin = () => {
         }}
       >
         <DataGrid
-          rows={mockDataVoucher}
+          rows={vouchers}
           columns={columns}
           components={{ Toolbar: GridToolbar }}
         />
@@ -161,60 +148,107 @@ const VoucherAdmin = () => {
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Thêm Voucher</DialogTitle>
         <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Quantity"
-            type="number"
-            fullWidth
-            variant="outlined"
-            value={voucher.number}
-            onChange={(e) => setVoucher({ ...voucher, number: e.target.value })}
-            error={!!errors.number} // Hiển thị lỗi nếu có
-            helperText={errors.number} // Hiển thị thông báo lỗi
-          />
-          <TextField
-            margin="dense"
-            label="Discount (%)"
-            type="number"
-            fullWidth
-            variant="outlined"
-            value={voucher.discount}
-            onChange={(e) =>
-              setVoucher({ ...voucher, discount: e.target.value })
-            }
-            error={!!errors.discount} // Hiển thị lỗi nếu có
-            helperText={errors.discount} // Hiển thị thông báo lỗi
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleClose}
-            sx={{
-              backgroundColor: "gray",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "darkgray",
-              },
-            }}
-          >
-            Cancel
-          </Button>
+          <Formik
+            initialValues={{ number: "", discount: "" }}
+            validationSchema={validationSchema}
+            onSubmit={async (values) => {
+              try {
+                // Gọi API để thêm voucher
+                const response = await request("POST", "/admin/voucher", {
+                  discount: values.discount, // Gửi giá trị discount
+                  quantity: values.number, // Gửi giá trị quantity
+                });
 
-          <Button
-            onClick={handleConfirm}
-            sx={{
-              backgroundColor: "green",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "darkgreen",
-              },
+                console.log("Thêm voucher thành công:", response.data);
+                setSnackbarMessage("Thêm voucher thành công!");
+                setSnackbarOpen(true);
+                handleClose(); // Đóng modal
+                // Gọi lại fetchVouchers để làm mới danh sách voucher
+                await fetchVouchers();
+              } catch (error) {
+                console.error("Lỗi khi thêm voucher:", error);
+                setSnackbarMessage("Có lỗi xảy ra khi thêm voucher.");
+                setSnackbarOpen(true);
+              }
             }}
           >
-            Confirm
-          </Button>
-        </DialogActions>
+            {({ errors, touched }) => (
+              <Form>
+                <Field name="number">
+                  {({ field }) => (
+                    <TextField
+                      {...field}
+                      autoFocus
+                      margin="dense"
+                      label="Số Lượng"
+                      type="number"
+                      fullWidth
+                      variant="outlined"
+                      error={touched.number && !!errors.number}
+                      helperText={touched.number && errors.number}
+                    />
+                  )}
+                </Field>
+                <Field name="discount">
+                  {({ field }) => (
+                    <TextField
+                      {...field}
+                      margin="dense"
+                      label="Giảm Giá"
+                      type="number"
+                      fullWidth
+                      variant="outlined"
+                      error={touched.discount && !!errors.discount}
+                      helperText={touched.discount && errors.discount}
+                    />
+                  )}
+                </Field>
+                <DialogActions>
+                  <Button
+                    onClick={handleClose}
+                    sx={{
+                      backgroundColor: "gray",
+                      color: "white",
+                      "&:hover": {
+                        backgroundColor: "darkgray",
+                      },
+                    }}
+                  >
+                    Hủy
+                  </Button>
+
+                  <Button
+                    type="submit"
+                    sx={{
+                      backgroundColor: "green",
+                      color: "white",
+                      "&:hover": {
+                        backgroundColor: "darkgreen",
+                      },
+                    }}
+                  >
+                    Tạo Mới
+                  </Button>
+                </DialogActions>
+              </Form>
+            )}
+          </Formik>
+        </DialogContent>
       </Dialog>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        message={snackbarMessage}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        ContentProps={{
+          style: {
+            backgroundColor: "green",
+            color: "white",
+          },
+        }}
+      />
     </Box>
   );
 };

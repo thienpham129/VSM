@@ -1,13 +1,17 @@
 import { DEFAULT } from "constants";
 import React, { useEffect, useState } from "react";
+import { root } from "helper/axiosClient";
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
   const [showSubMenu, setShowSubMenu] = useState(false);
+  const [userId, setUserId] = useState("");
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem(DEFAULT.TOKEN);
+    setUserId(localStorage.getItem("userId"));
     if (token) {
       setIsLoggedIn(true);
       setUserName("Xuan Quang");
@@ -16,9 +20,27 @@ const Header = () => {
 
   const test = () => {
     setShowSubMenu(!showSubMenu);
-    console.log(isLoggedIn);
-    console.log(typeof isLoggedIn);
+  
   };
+
+  useEffect(() => {
+    const getUserById = async () => {
+      try {
+        const url = `/user/${localStorage.getItem("userId")}`;
+        const response = await root.get(url);
+        if (response) {
+          setEmail(response.data.account.email);
+          console.log(response.data.account.email);
+          console.log("OK");
+        } else {
+          console.log("Get User By Id Fail");
+        }
+      } catch (error) {
+        console.log(error + "  Fail Get user By id");
+      }
+    };
+    getUserById();
+  }, []);
 
   return (
     <header className="transparent scroll-light has-topbar">
@@ -156,9 +178,7 @@ const Header = () => {
                             <div id="de-submenu-profile" className="de-submenu">
                               <div className="d-name">
                                 <h4>Monica Lucas</h4>
-                                <span className="text-gray">
-                                  monica@rentaly.com
-                                </span>
+                                  <span className="text-gray">{email}</span>
                               </div>
                               <div className="d-line" />
                               <ul className="menu-col">

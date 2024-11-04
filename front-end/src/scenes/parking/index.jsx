@@ -1,27 +1,16 @@
-import { useState } from "react";
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
-  FormHelperText,
-} from "@mui/material";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { useTheme } from "@mui/material";
-import { tokens } from "../../theme";
-import { mockParkingLot } from "admin/data/mockData";
+import { useState, useEffect } from "react";
+import { Box, Button, Snackbar, Alert } from "@mui/material";
 import Header from "../../components/Header";
+import ParkingLotTable from "./ParkingLotTable";
+import ParkingLotDialog from "./ParkingLotDialog";
+import ConfirmDeleteDialog from "./ConfirmDeleteDialog";
+import { request } from "admin/helpers/axios_helper"; // import hàm gọi API
 
 const ParkingLot = () => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-
-  const [open, setOpen] = useState(false); // Trạng thái mở modal thêm
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false); // Trạng thái mở modal xác nhận xóa
-  const [parkingLotToDelete, setParkingLotToDelete] = useState(null); // Bãi đỗ xe cần xóa
+  const [parkingLots, setParkingLots] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [parkingLotToDelete, setParkingLotToDelete] = useState(null);
   const [newParkingLot, setNewParkingLot] = useState({
     name: "",
     location: "",
@@ -29,22 +18,64 @@ const ParkingLot = () => {
     numCar: 0,
     empty: true,
   });
-  const [errors, setErrors] = useState({}); // Trạng thái để lưu thông tin lỗi
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
-  const handleDelete = (id) => {
-    setParkingLotToDelete(id); // Thiết lập bãi đỗ xe cần xóa
-    setConfirmDeleteOpen(true); // Mở modal xác nhận xóa
+  // Gọi API để lấy dữ liệu bãi đỗ xe khi component được mount
+  useEffect(() => {
+    fetchParkingLots();
+  }, []);
+
+  const fetchParkingLots = async () => {
+    try {
+      const response = await request("get", "/admin/parkings");
+      const formattedData = response.data.map((lot) => ({
+        id: lot.id,
+        name: lot.name,
+        location: lot.location,
+        capacity: lot.capacity,
+        numCar: lot.numCar,
+        empty: lot.empty,
+      }));
+      setParkingLots(formattedData);
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu bãi đỗ xe:", error);
+      setSnackbar({
+        open: true,
+        message: "Không thể tải dữ liệu bãi đỗ xe.",
+        severity: "error",
+      });
+    }
   };
 
-  const confirmDelete = () => {
-    // Xóa bãi đỗ xe dựa trên id
-    const updatedParkingLot = mockParkingLot.filter(
-      (lot) => lot.id !== parkingLotToDelete
-    );
-    console.log("Updated Parking Lot:", updatedParkingLot);
-    setConfirmDeleteOpen(false); // Đóng modal xác nhận
-    setParkingLotToDelete(null); // Reset bãi đỗ xe cần xóa
-    // Cập nhật state hoặc logic cần thiết để lưu thông tin
+  const handleDelete = (id) => {
+    setParkingLotToDelete(id);
+    setConfirmDeleteOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await request("delete", `/admin/parking/${parkingLotToDelete}`);
+      setParkingLots(
+        parkingLots.filter((lot) => lot.id !== parkingLotToDelete)
+      );
+      setConfirmDeleteOpen(false);
+      setSnackbar({
+        open: true,
+        message: "Xóa bãi đỗ xe thành công!",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Lỗi khi xóa bãi đỗ xe:", error);
+      setSnackbar({
+        open: true,
+        message: "Không thể xóa bãi đỗ xe.",
+        severity: "error",
+      });
+    }
   };
 
   const handleUpdate = (row) => {
@@ -52,64 +83,7 @@ const ParkingLot = () => {
     setOpen(true);
   };
 
-  const columns = [
-    { field: "id", headerName: "ID", flex: 0.5 },
-    { field: "name", headerName: "Parking Name", flex: 1 },
-    { field: "location", headerName: "Location", flex: 1 },
-    {
-      field: "capacity",
-      headerName: "Capacity",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
-    },
-    {
-      field: "numCar",
-      headerName: "Number of Cars",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
-    },
-    {
-      field: "empty",
-      headerName: "Empty",
-      type: "boolean",
-      headerAlign: "left",
-      align: "left",
-      renderCell: (params) => <strong>{params.value ? "Yes" : "No"}</strong>,
-    },
-    {
-      field: "actions",
-      headerName: "Actions",
-      flex: 1,
-      renderCell: (params) => (
-        <Box>
-          <Button
-            variant="contained"
-            color="success"
-            onClick={() => handleUpdate(params.row)}
-            sx={{ marginRight: 1 }}
-          >
-            Update
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => handleDelete(params.row.id)}
-          >
-            Delete
-          </Button>
-        </Box>
-      ),
-    },
-  ];
-
   const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
     setNewParkingLot({
       name: "",
       location: "",
@@ -117,184 +91,128 @@ const ParkingLot = () => {
       numCar: 0,
       empty: true,
     });
-    setErrors({});
+    setOpen(true);
   };
 
-  const handleConfirm = () => {
-    const newErrors = {};
-    if (!newParkingLot.name) {
-      newErrors.name = "Name is required.";
-    }
-    if (!newParkingLot.location) {
-      newErrors.location = "Location is required.";
-    }
-    if (newParkingLot.capacity <= 0) {
-      newErrors.capacity = "Capacity must be a positive number.";
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    const newId = mockParkingLot.length
-      ? mockParkingLot[mockParkingLot.length - 1].id + 1
-      : 1;
-    const parkingLotToAdd = { ...newParkingLot, id: newId };
-    console.log("Thêm bãi đỗ xe:", parkingLotToAdd);
-    handleClose();
+  const handleClose = () => {
+    setOpen(false);
   };
+
+  const handleAddParkingLot = async (newParkingLot) => {
+    try {
+      const response = await request("post", "/admin/parking", newParkingLot);
+      const addedLot = {
+        ...newParkingLot,
+        id: response.data.id,
+      };
+      setParkingLots([...parkingLots, addedLot]);
+      handleClose();
+      setSnackbar({
+        open: true,
+        message: "Thêm bãi đỗ xe thành công!",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Lỗi khi thêm bãi đỗ xe:", error);
+      setSnackbar({
+        open: true,
+        message: "Không thể thêm bãi đỗ xe.",
+        severity: "error",
+      });
+    }
+  };
+
+  const handleUpdateParkingLot = async (updatedParkingLot) => {
+    try {
+      await request(
+        "put",
+        `/admin/parking/${updatedParkingLot.id}`,
+        updatedParkingLot
+      );
+      const updatedParkingLots = parkingLots.map((lot) =>
+        lot.id === updatedParkingLot.id ? updatedParkingLot : lot
+      );
+      setParkingLots(updatedParkingLots);
+      handleClose();
+      setSnackbar({
+        open: true,
+        message: "Cập nhật bãi đỗ xe thành công!",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Lỗi khi cập nhật bãi đỗ xe:", error);
+      setSnackbar({
+        open: true,
+        message: "Không thể cập nhật bãi đỗ xe.",
+        severity: "error",
+      });
+    }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
+
+  const columns = [
+    { field: "id", headerName: "ID", flex: 0.5 },
+    { field: "name", headerName: "Tên Bãi Đỗ Xe", flex: 0.5 },
+    { field: "location", headerName: "Địa Điểm", flex: 1 },
+    { field: "capacity", headerName: "Sức Chứa", type: "number" },
+    { field: "numCar", headerName: "Số Xe Đã Đỗ", type: "number" },
+    {
+      field: "empty",
+      headerName: "Còn Trống",
+      type: "boolean",
+      renderCell: (params) => (
+        <strong>{params.value ? "Trống" : "Hết chỗ"}</strong>
+      ),
+    },
+  ];
 
   return (
     <Box m="20px">
-      <Header title="PARKING LOT" subtitle="Manage Parking Lot" />
+      <Header
+        title="BÃI ĐỖ XE"
+        subtitle="Quản Lý Danh Sách Thông Tin Bãi Đỗ Xe"
+      />
       <Box display="flex" justifyContent="flex-end" mb={-5}>
         <Button variant="contained" color="secondary" onClick={handleClickOpen}>
-          Add New Parking Lot
+          Tạo Mới Bãi Đỗ Xe
         </Button>
       </Box>
-
-      <Box
-        m="40px 0 0 0"
-        height="75vh"
-        sx={{
-          "& .MuiDataGrid-root": {
-            border: "none",
-          },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: colors.blueAccent[700],
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: colors.primary[400],
-          },
-          "& .MuiDataGrid-footerContainer": {
-            borderTop: "none",
-            backgroundColor: colors.blueAccent[700],
-          },
-          "& .MuiCheckbox-root": {
-            color: `${colors.greenAccent[200]} !important`,
-          },
-          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-            color: `${colors.grey[100]} !important`,
-          },
-        }}
-      >
-        <DataGrid
-          rows={mockParkingLot}
-          columns={columns}
-          components={{ Toolbar: GridToolbar }}
-        />
-      </Box>
-
-      {/* Modal để thêm bãi đỗ xe mới */}
-      <Dialog
+      <ParkingLotTable
+        rows={parkingLots}
+        columns={columns}
+        onUpdate={handleUpdate}
+        onDelete={handleDelete}
+      />
+      <ParkingLotDialog
         open={open}
         onClose={handleClose}
-        fullWidth
-        maxWidth="md"
-        PaperProps={{
-          sx: {
-            width: "50vw",
-          },
+        parkingLot={newParkingLot}
+        onConfirm={(values) => {
+          if (values.id) {
+            handleUpdateParkingLot(values);
+          } else {
+            handleAddParkingLot(values);
+          }
         }}
-      >
-        <DialogTitle>Add New Parking Lot</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Name"
-            fullWidth
-            variant="outlined"
-            value={newParkingLot.name}
-            onChange={(e) =>
-              setNewParkingLot({ ...newParkingLot, name: e.target.value })
-            }
-            error={!!errors.name}
-          />
-          {errors.name && <FormHelperText error>{errors.name}</FormHelperText>}{" "}
-          <TextField
-            margin="dense"
-            label="Location"
-            fullWidth
-            variant="outlined"
-            value={newParkingLot.location}
-            onChange={(e) =>
-              setNewParkingLot({ ...newParkingLot, location: e.target.value })
-            }
-            error={!!errors.location}
-          />
-          {errors.location && (
-            <FormHelperText error>{errors.location}</FormHelperText>
-          )}{" "}
-          <TextField
-            margin="dense"
-            label="Capacity"
-            type="number"
-            fullWidth
-            variant="outlined"
-            value={newParkingLot.capacity}
-            onChange={(e) =>
-              setNewParkingLot({
-                ...newParkingLot,
-                capacity: Number(e.target.value),
-              })
-            }
-            error={!!errors.capacity}
-          />
-          {errors.capacity && (
-            <FormHelperText error>{errors.capacity}</FormHelperText>
-          )}{" "}
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleClose}
-            sx={{
-              backgroundColor: "gray",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "darkgray",
-              },
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleConfirm}
-            color="primary"
-            sx={{
-              backgroundColor: "green",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "darkgreen",
-              },
-            }}
-          >
-            Create
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Modal xác nhận xóa */}
-      <Dialog
+      />
+      <ConfirmDeleteDialog
         open={confirmDeleteOpen}
         onClose={() => setConfirmDeleteOpen(false)}
+        onConfirm={confirmDelete}
+      />
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <DialogTitle>Confirm Delete</DialogTitle>
-        <DialogContent>
-          <p>Are you sure you want to delete this parking lot?</p>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setConfirmDeleteOpen(false)}>Cancel</Button>
-          <Button onClick={confirmDelete} color="error">
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

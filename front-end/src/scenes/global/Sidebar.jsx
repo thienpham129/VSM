@@ -7,19 +7,12 @@ import { tokens } from "../../theme";
 import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import LibraryAddCheckIcon from "@mui/icons-material/LibraryAddCheck";
 import LocalParkingIcon from "@mui/icons-material/LocalParking";
-import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
-import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
-import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
-import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
-import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutlined";
-import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import PersonIcon from "@mui/icons-material/Person";
+import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -128,130 +121,97 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
+            <Typography
+              variant="h6"
+              color={colors.grey[300]}
+              sx={{ m: "15px 0 5px 20px" }}
+            >
+              Quản Lý Chuyến Đi
+            </Typography>
+            <Item
+              title="Vé Xe"
+              to="/admin/user"
+              icon={<PersonIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Lịch Trình"
+              to="/admin/user"
+              icon={<PersonIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Typography
+              variant="h6"
+              color={colors.grey[300]}
+              sx={{ m: "15px 0 5px 20px" }}
+            >
+              Quản Lý Dữ Liệu
+            </Typography>
+
+            <Item
+              title="Người Dùng"
+              to="/admin/user"
+              icon={<PersonIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
 
             <Typography
               variant="h6"
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
             >
-              Data
+              Quản Lý Nhân Sự
             </Typography>
 
             <Item
-              title="Manage Parking Lot"
-              to="/admin/parking"
-              icon={<LocalParkingIcon />}
+              title="Tài Xế"
+              to="/admin/driver"
+              icon={<AirlineSeatReclineExtraIcon />}
               selected={selected}
               setSelected={setSelected}
             />
-
             <Item
-              title="Manage Voucher"
-              to="/admin/voucher"
-              icon={<LibraryAddCheckIcon />}
+              title="Nhân Viên"
+              to="/admin/user"
+              icon={<AccountBoxIcon />}
               selected={selected}
               setSelected={setSelected}
             />
-
+            <Typography
+              variant="h6"
+              color={colors.grey[300]}
+              sx={{ m: "15px 0 5px 20px" }}
+            >
+              Quản Lý Tài Nguyên
+            </Typography>
             <Item
-              title="Manage Type Car"
-              to="/admin/type"
-              icon={<ChecklistIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-
-            <Item
-              title="Manage Car"
+              title="Xe"
               to="/admin/car"
               icon={<DirectionsCarFilledIcon />}
               selected={selected}
               setSelected={setSelected}
             />
-
             <Item
-              title="Manage Team"
-              to="/admin/team"
-              icon={<PeopleOutlinedIcon />}
+              title="Bãi Đỗ Xe"
+              to="/admin/parking"
+              icon={<LocalParkingIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Contacts Information"
-              to="/admin/contacts"
-              icon={<ContactsOutlinedIcon />}
+              title="Loại Xe"
+              to="/admin/type"
+              icon={<ChecklistIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Invoices Balances"
-              to="/admin/invoices"
-              icon={<ReceiptOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-
-            <Typography
-              variant="h6"
-              color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
-            >
-              Pages
-            </Typography>
-            <Item
-              title="Profile Form"
-              to="/admin/form"
-              icon={<PersonOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Calendar"
-              to="/admin/calendar"
-              icon={<CalendarTodayOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="FAQ Page"
-              to="/admin/faq"
-              icon={<HelpOutlineOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-
-            <Typography
-              variant="h6"
-              color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
-            >
-              Charts
-            </Typography>
-            <Item
-              title="Bar Chart"
-              to="/admin/bar"
-              icon={<BarChartOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Pie Chart"
-              to="/admin/pie"
-              icon={<PieChartOutlineOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Line Chart"
-              to="/admin/line"
-              icon={<TimelineOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Geography Chart"
-              to="/admin/geography"
-              icon={<MapOutlinedIcon />}
+              title="Mã Giảm Giá"
+              to="/admin/voucher"
+              icon={<LibraryAddCheckIcon />}
               selected={selected}
               setSelected={setSelected}
             />

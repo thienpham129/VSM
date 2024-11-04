@@ -32,7 +32,9 @@ public class FileService {
 		} catch (IOException ioe) {
 			throw new IOException("Could not save file: " + fileName, ioe);
 		}
-		return uploadPath + "/" + fileCode;
+		String result = "http://localhost:8080/assets/imagesUploads/" + fileCode + "-" + fileName;
+//		System.out.println(result);
+		return result;
 	}
 
 	public void init() {
@@ -49,7 +51,8 @@ public class FileService {
 	public boolean uploadFile(MultipartFile file) {
 		try {
 			init();
-			Files.copy(file.getInputStream(), this.root.resolve(file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
+			Files.copy(file.getInputStream(), this.root.resolve(file.getOriginalFilename()),
+					StandardCopyOption.REPLACE_EXISTING);
 			return true;
 		} catch (IOException e) {
 			throw new RuntimeException("Can't save file!");
