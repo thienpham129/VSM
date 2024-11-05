@@ -38,7 +38,6 @@ const Login = () => {
       });
 
       if (response && response.data.accessToken) {
-        // localStorage.setItem("token", response.data.accessToken);
         localStorage.setItem(DEFAULT.TOKEN, response.data.accessToken);
         // console.log(response.data.accessToken);
         // console.log(response.data + "response neeeeeeeeeeee!!!!");
@@ -80,6 +79,7 @@ const Login = () => {
         }
       } catch (error) {
         setErrorMessage("Error signing up.");
+        console.log(error);
       } finally {
         setIsSubmitting(false);
       }

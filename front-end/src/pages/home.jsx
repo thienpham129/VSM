@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 
 function HomePage(props) {
-
   return (
     <>
       <div className="no-bottom no-top" id="content">
