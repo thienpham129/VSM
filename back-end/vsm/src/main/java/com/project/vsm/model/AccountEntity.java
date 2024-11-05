@@ -61,6 +61,9 @@ public class AccountEntity {
 	@Column(name = "img_driver_lisence_1")
 	private String imgDriverLisence2;
 
+	@Column(name = "is_available")
+	private boolean isAvailable;
+	
 	public AccountEntity(String email, String password) {
 		super();
 		this.email = email;
