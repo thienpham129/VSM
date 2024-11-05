@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styles from "pages/bookingTicket.module.css";
 import BookingForm from "components/BookingForm";
-import BookingSeatSevenMobile from "components/Booking7Seat/BookingMobile";
+import BookingSeatSevenMobile from "components/Booking7Seat/BookingSeatSevenMobile";
 
 const Seat = ({ seatId, seatStatus, onSelect }) => {
   const [isSelected, setIsSelected] = useState(false);
