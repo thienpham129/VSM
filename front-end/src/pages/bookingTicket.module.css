@@ -1122,22 +1122,22 @@
     }
 }
 
-.bookingPayment--mobile {
+.bookingPayment__mobile {
     display: none
 }
 
-.bookingPayment--mobile .bookingPayment__method {
+.bookingPayment__mobile .bookingPayment__method {
     flex-direction: column;
     padding: 16px;
     background-color: #fff
 }
 
-.bookingPayment--mobile .bookingPayment__method__item {
+.bookingPayment__mobile .bookingPayment__method__item {
     width: 100%;
     margin-bottom: 6px
 }
 
-.bookingPayment--mobile .bookingPayment__info__wrap {
+.bookingPayment__mobile .bookingPayment__info__wrap {
     background-color: #fff;
     padding: 16px
 }
@@ -1149,7 +1149,7 @@
     justify-content: space-between
 }
 
-.bookingPayment--mobile__submit {
+.bookingPayment__mobile__submit {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -1166,7 +1166,7 @@
     z-index: 9999;
 }
 
-.bookingPayment--mobile__submit a {
+.bookingPayment__mobile__submit a {
     display: flex;
     background: #ecedf1;
     border-radius: 8px;
@@ -1182,7 +1182,7 @@
     margin-right: 8px
 }
 
-.bookingPayment--mobile__submit button {
+.bookingPayment__mobile__submit button {
     background: #1ECB15;
     border-radius: 8px;
     height: 48px;
@@ -1196,7 +1196,7 @@
 }
 
 @media only screen and (max-width:1000px) {
-    .bookingPayment--mobile {
+    .bookingPayment__mobile {
         display: block
     }
     .bookingPayment {

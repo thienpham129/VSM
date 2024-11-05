@@ -42,6 +42,7 @@ function App() {
             <Route path="OTP" element={<OTP />} />
             <Route path="identify" element={<ForgetPassword />} />
             <Route path="bookingTicket" element={<BookingTicket />} />
+            <Route path="methodPayment" element={<MethodPayment />} />
 
           </Route>
         </Routes>

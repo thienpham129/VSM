@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "pages/bookingTicket.module.css";
+import MethodPaymentMobile from "components/MethodPaymentMobile/MethodPaymentMobile";
 
 const MethodPayment = () => {
   return (
@@ -351,6 +352,7 @@ const MethodPayment = () => {
           </div>
         </form>
       </section>
+      <MethodPaymentMobile />
     </div>
   );
 };
