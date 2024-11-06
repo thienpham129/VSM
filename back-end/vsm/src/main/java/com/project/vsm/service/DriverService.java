@@ -97,6 +97,7 @@ public class DriverService {
 		newDriver.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
 		newDriver.setEnabled(true);
 		newDriver.setCreateDate(LocalDateTime.now());
+		newDriver.setAvailable(true);
 		return accountRepository.save(newDriver);
 	}
 
