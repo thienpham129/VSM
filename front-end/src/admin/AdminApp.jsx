@@ -23,6 +23,7 @@ import UserAdmin from "scenes/user";
 import DriverAdmin from "scenes/driver/driverAdmin";
 import DetailDriver from "scenes/driver/detail/detailDriver";
 import DetailCar from "scenes/car/detailCar/detailCar";
+import CreateCar from "scenes/car/create/createCar";
 
 function AdminApp() {
   const [theme, colorMode] = useMode();
@@ -45,6 +46,7 @@ function AdminApp() {
               <Route path="/parking" element={<ParkingLot />} />
               <Route path="/type" element={<TypeCar />} />
               <Route path="/car" element={<CarAdmin />} />
+              <Route path="/car/create" element={<CreateCar />} />
               <Route path="/car/:id" element={<DetailCar />} />
               <Route path="/team" element={<Team />} />
               <Route path="/contacts" element={<Contacts />} />
