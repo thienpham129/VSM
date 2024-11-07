@@ -3,14 +3,16 @@ package com.project.vsm.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @Data
 @Entity
@@ -24,10 +26,8 @@ public class AccountEntity {
 
 	@Column(name = "email", unique = true, columnDefinition = "VARCHAR(255) COLLATE utf8mb4_unicode_ci")
 	private String email;
-
 	@JsonIgnore
 	private String password;
-
 	private String role;
 
 	@Column(name = "first_name")
@@ -41,16 +41,28 @@ public class AccountEntity {
 
 	private String address;
 
+	@Column(name = "phone_number")
+	private String phoneNumber;
+
 	@Column(name = "verification_code")
 	private String verificationCode;
-
 	@Column(name = "verification_expiration")
 	private LocalDateTime verificationCodeExpiresAt;
-
 	@Column(name = "create_date")
 	private LocalDateTime createDate;
 
 	private boolean enabled;
+
+	private String gender;
+
+	@Column(name = "img_driver_lisence_2")
+	private String imgDriverLisence1;
+
+	@Column(name = "img_driver_lisence_1")
+	private String imgDriverLisence2;
+
+	@Column(name = "is_available")
+	private boolean isAvailable;
 
 	public AccountEntity(String email, String password) {
 		super();
@@ -58,4 +70,3 @@ public class AccountEntity {
 		this.password = password;
 	}
 }
-

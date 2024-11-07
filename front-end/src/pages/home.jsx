@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 function HomePage(props) {
   return (
     <>
-      
       <div className="no-bottom no-top" id="content">
         <div id="top" />
         <section
@@ -22,19 +21,20 @@ function HomePage(props) {
                   <div className="col-lg-6 text-light">
                     <h4>
                       <span className="id-color">
-                        Fast and Easy Way to Rent a Car
+                        Cách nhanh chóng và dễ dàng để đặt được 1 chuyến xe
                       </span>
                     </h4>
                     <div className="spacer-10" />
-                    <h1 className="mb-2">
-                      Explore the world with comfortable car
+                    <h1 className="mb-2" style={{ fontSize: "45px" }}>
+                      Trải nghiệm với những chiếc xe thoải mái và khám phá với
+                      dịch vụ tốt
                     </h1>
                     <div className="spacer-10" />
-                    <p className="lead">
+                    {/* <p className="lead">
                       Embark on unforgettable adventures and discover the world
                       in unparalleled comfort and style with our fleet of
                       exceptionally comfortable cars.
-                    </p>
+                    </p> */}
                   </div>
                   <div className="col-lg-6">
                     <div className="spacer-single sm-hide" />
@@ -43,7 +43,7 @@ function HomePage(props) {
                       data-bgcolor="rgba(0, 0, 0, .6)"
                     >
                       <form name="contactForm" id="contact_form" method="post">
-                        <h5>What is your vehicle type?</h5>
+                        <h5>Bạn muốn chọn loại xe nào?</h5>
                         <div className="de_form de_radio row g-3">
                           <div className="radio-img col-lg-3 col-sm-3 col-6">
                             <input
@@ -58,7 +58,7 @@ function HomePage(props) {
                               Car
                             </label>
                           </div>
-                          <div className="radio-img col-lg-3 col-sm-3 col-6">
+                          <div className="radio-img col-lg-3 col-sm-3 col-6" >
                             <input
                               id="radio-1b"
                               name="Car_Type"
@@ -104,12 +104,12 @@ function HomePage(props) {
                         <div className="spacer-20" />
                         <div className="row">
                           <div className="col-lg-6 mb20">
-                            <h5>Pick Up Location</h5>
+                            <h5>Địa điểm đi</h5>
                             <input
                               type="text"
                               name="PickupLocation"
                               onfocus="geolocate()"
-                              placeholder="Enter your pickup location"
+                              placeholder="Nhập địa điểm đi"
                               id="autocomplete"
                               autoComplete="off"
                               className="form-control"
@@ -119,12 +119,12 @@ function HomePage(props) {
                             </div>
                           </div>
                           <div className="col-lg-6 mb20">
-                            <h5>Drop Off Location</h5>
+                            <h5>Địa điểm đến</h5>
                             <input
                               type="text"
                               name="DropoffLocation"
                               onfocus="geolocate()"
-                              placeholder="Enter your dropoff location"
+                              placeholder="Nhập địa điểm trả"
                               id="autocomplete2"
                               autoComplete="off"
                               className="form-control"
@@ -134,7 +134,7 @@ function HomePage(props) {
                             </div>
                           </div>
                           <div className="col-lg-6 mb20">
-                            <h5>Pick Up Date &amp; Time</h5>
+                            <h5>Thời gian đi</h5>
                             <div className="date-time-field">
                               <input
                                 type="text"
@@ -202,7 +202,7 @@ function HomePage(props) {
                             </div>
                           </div>
                           <div className="col-lg-6 mb20">
-                            <h5>Return Date &amp; Time</h5>
+                            <h5>Thời gian trả</h5>
                             <div className="date-time-field">
                               <input
                                 type="text"
@@ -396,340 +396,17 @@ function HomePage(props) {
             </div>
           </div>
         </section>
-        <section id="section-cars">
-          <div className="container">
-            <div className="row align-items-center">
-              <div className="col-lg-6 offset-lg-3 text-center">
-                <h2>Our Vehicle Fleet</h2>
-                <p>
-                  Driving your dreams to reality with an exquisite fleet of
-                  versatile vehicles for unforgettable journeys.
-                </p>
-                <div className="spacer-20" />
-              </div>
-              <div className="clearfix" />
-              <div id="items-carousel" className="owl-carousel wow fadeIn">
-                <div className="col-lg-12">
-                  <div className="de-item mb30">
-                    <div className="d-img">
-                      <img
-                        src="images/cars/jeep-renegade.jpg"
-                        className="img-fluid"
-                        alt=""
-                      />
-                    </div>
-                    <div className="d-info">
-                      <div className="d-text">
-                        <h4>Jeep Renegade</h4>
-                        <div className="d-item_like">
-                          <i className="fa fa-heart" />
-                          <span>74</span>
-                        </div>
-                        <div className="d-atr-group">
-                          <span className="d-atr">
-                            <img src="images/icons/1-green.svg" alt="" />5
-                          </span>
-                          <span className="d-atr">
-                            <img src="images/icons/2-green.svg" alt="" />2
-                          </span>
-                          <span className="d-atr">
-                            <img src="images/icons/3-green.svg" alt="" />4
-                          </span>
-                          <span className="d-atr">
-                            <img src="images/icons/4-green.svg" alt="" />
-                            SUV
-                          </span>
-                        </div>
-                        <div className="d-price">
-                          Daily rate from <span>$265</span>
-                          <a className="btn-main" href="car-single.html">
-                            Rent Now
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-lg-12">
-                  <div className="de-item mb30">
-                    <div className="d-img">
-                      <img
-                        src="images/cars/bmw-m5.jpg"
-                        className="img-fluid"
-                        alt=""
-                      />
-                    </div>
-                    <div className="d-info">
-                      <div className="d-text">
-                        <h4>BMW M2</h4>
-                        <div className="d-item_like">
-                          <i className="fa fa-heart" />
-                          <span>36</span>
-                        </div>
-                        <div className="d-atr-group">
-                          <span className="d-atr">
-                            <img src="images/icons/1-green.svg" alt="" />5
-                          </span>
-                          <span className="d-atr">
-                            <img src="images/icons/2-green.svg" alt="" />2
-                          </span>
-                          <span className="d-atr">
-                            <img src="images/icons/3-green.svg" alt="" />4
-                          </span>
-                          <span className="d-atr">
-                            <img src="images/icons/4-green.svg" alt="" />
-                            Sedan
-                          </span>
-                        </div>
-                        <div className="d-price">
-                          Daily rate from <span>$244</span>
-                          <a className="btn-main" href="car-single.html">
-                            Rent Now
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-lg-12">
-                  <div className="de-item mb30">
-                    <div className="d-img">
-                      <img
-                        src="images/cars/ferrari-enzo.jpg"
-                        className="img-fluid"
-                        alt=""
-                      />
-                    </div>
-                    <div className="d-info">
-                      <div className="d-text">
-                        <h4>Ferarri Enzo</h4>
-                        <div className="d-item_like">
-                          <i className="fa fa-heart" />
-                          <span>85</span>
-                        </div>
-                        <div className="d-atr-group">
-                          <span className="d-atr">
-                            <img src="images/icons/1-green.svg" alt="" />5
-                          </span>
-                          <span className="d-atr">
-                            <img src="images/icons/2-green.svg" alt="" />2
-                          </span>
-                          <span className="d-atr">
-                            <img src="images/icons/3-green.svg" alt="" />4
-                          </span>
-                          <span className="d-atr">
-                            <img src="images/icons/4-green.svg" alt="" />
-                            Exotic Car
-                          </span>
-                        </div>
-                        <div className="d-price">
-                          Daily rate from <span>$167</span>
-                          <a className="btn-main" href="car-single.html">
-                            Rent Now
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-lg-12">
-                  <div className="de-item mb30">
-                    <div className="d-img">
-                      <img
-                        src="images/cars/ford-raptor.jpg"
-                        className="img-fluid"
-                        alt=""
-                      />
-                    </div>
-                    <div className="d-info">
-                      <div className="d-text">
-                        <h4>Ford Raptor</h4>
-                        <div className="d-item_like">
-                          <i className="fa fa-heart" />
-                          <span>59</span>
-                        </div>
-                        <div className="d-atr-group">
-                          <span className="d-atr">
-                            <img src="images/icons/1-green.svg" alt="" />5
-                          </span>
-                          <span className="d-atr">
-                            <img src="images/icons/2-green.svg" alt="" />2
-                          </span>
-                          <span className="d-atr">
-                            <img src="images/icons/3-green.svg" alt="" />4
-                          </span>
-                          <span className="d-atr">
-                            <img src="images/icons/4-green.svg" alt="" />
-                            Truck
-                          </span>
-                        </div>
-                        <div className="d-price">
-                          Daily rate from <span>$147</span>
-                          <a className="btn-main" href="car-single.html">
-                            Rent Now
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-lg-12">
-                  <div className="de-item mb30">
-                    <div className="d-img">
-                      <img
-                        src="images/cars/mini-cooper.jpg"
-                        className="img-fluid"
-                        alt=""
-                      />
-                    </div>
-                    <div className="d-info">
-                      <div className="d-text">
-                        <h4>Mini Cooper</h4>
-                        <div className="d-item_like">
-                          <i className="fa fa-heart" />
-                          <span>19</span>
-                        </div>
-                        <div className="d-atr-group">
-                          <span className="d-atr">
-                            <img src="images/icons/1-green.svg" alt="" />5
-                          </span>
-                          <span className="d-atr">
-                            <img src="images/icons/2-green.svg" alt="" />2
-                          </span>
-                          <span className="d-atr">
-                            <img src="images/icons/3-green.svg" alt="" />4
-                          </span>
-                          <span className="d-atr">
-                            <img src="images/icons/4-green.svg" alt="" />
-                            Hatchback
-                          </span>
-                        </div>
-                        <div className="d-price">
-                          Daily rate from <span>$238</span>
-                          <a className="btn-main" href="car-single.html">
-                            Rent Now
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-lg-12">
-                  <div className="de-item mb30">
-                    <div className="d-img">
-                      <img
-                        src="images/cars/vw-polo.jpg"
-                        className="img-fluid"
-                        alt=""
-                      />
-                    </div>
-                    <div className="d-info">
-                      <div className="d-text">
-                        <h4>VW Polo</h4>
-                        <div className="d-item_like">
-                          <i className="fa fa-heart" />
-                          <span>79</span>
-                        </div>
-                        <div className="d-atr-group">
-                          <span className="d-atr">
-                            <img src="images/icons/1-green.svg" alt="" />5
-                          </span>
-                          <span className="d-atr">
-                            <img src="images/icons/2-green.svg" alt="" />2
-                          </span>
-                          <span className="d-atr">
-                            <img src="images/icons/3-green.svg" alt="" />4
-                          </span>
-                          <span className="d-atr">
-                            <img src="images/icons/4-green.svg" alt="" />
-                            Hatchback
-                          </span>
-                        </div>
-                        <div className="d-price">
-                          Daily rate from <span>$106</span>
-                          <a className="btn-main" href="car-single.html">
-                            Rent Now
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        <section className="text-light jarallax">
-          <img src="images/background/2.jpg" className="jarallax-img" alt="" />
-          <div className="container">
-            <div className="row g-5">
-              <div className="col-lg-6 wow fadeInRight">
-                <h2>
-                  We offer customers a wide range of{" "}
-                  <span className="id-color">commercial cars</span> and{" "}
-                  <span className="id-color">luxury cars</span> for any
-                  occasion.
-                </h2>
-              </div>
-              <div className="col-lg-6 wow fadeInLeft">
-                At our car rental agency, we believe that everyone deserves to
-                experience the pleasure of driving a reliable and comfortable
-                vehicle, regardless of their budget. We have curated a diverse
-                fleet of well-maintained cars, ranging from sleek sedans to
-                spacious SUVs, all at competitive prices. With our streamlined
-                rental process, you can quickly and conveniently reserve your
-                desired vehicle. Whether you need transportation for a business
-                trip, family vacation, or simply want to enjoy a weekend
-                getaway, we have flexible rental options to accommodate your
-                schedule.
-              </div>
-            </div>
-            <div className="spacer-double" />
-            <div className="row text-center">
-              <div className="col-md-3 col-sm-6 mb-sm-30">
-                <div className="de_count transparent text-light wow fadeInUp">
-                  <h3 className="timer" data-to={15425} data-speed={3000}>
-                    0
-                  </h3>
-                  Completed Orders
-                </div>
-              </div>
-              <div className="col-md-3 col-sm-6 mb-sm-30">
-                <div className="de_count transparent text-light wow fadeInUp">
-                  <h3 className="timer" data-to={8745} data-speed={3000}>
-                    0
-                  </h3>
-                  Happy Customers
-                </div>
-              </div>
-              <div className="col-md-3 col-sm-6 mb-sm-30">
-                <div className="de_count transparent text-light wow fadeInUp">
-                  <h3 className="timer" data-to={235} data-speed={3000}>
-                    0
-                  </h3>
-                  Vehicles Fleet
-                </div>
-              </div>
-              <div className="col-md-3 col-sm-6 mb-sm-30">
-                <div className="de_count transparent text-light wow fadeInUp">
-                  <h3 className="timer" data-to={15} data-speed={3000}>
-                    0
-                  </h3>
-                  Years Experience
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
         <section aria-label="section">
           <div className="container">
             <div className="row align-items-center">
               <div className="col-lg-6 offset-lg-3 text-center">
-                <h2>Our Features</h2>
+                <h2>Lợi ích khi chọn chúng tôi</h2>
                 <p>
-                  Discover a world of convenience, safety, and customization,
-                  paving the way for unforgettable adventures and seamless
-                  mobility solutions.
+                  Chúng tôi cam kết giúp bạn trải nghiệm hành trình di chuyển an
+                  toàn, thoải mái và tiện lợi nhất. Mỗi chuyến đi đều được đảm
+                  bảo bởi các đối tác vận tải uy tín, hệ thống cập nhật liên tục
+                  về giá vé, giờ xe chạy và chỗ ngồi trống để bạn có thể lựa
+                  chọn linh hoạt theo nhu cầu.
                 </p>
                 <div className="spacer-20" />
               </div>
@@ -739,22 +416,23 @@ function HomePage(props) {
                   className="box-icon s2 p-small mb20 wow fadeInRight"
                   data-wow-delay=".5s"
                 >
-                  <i className="fa bg-color fa-trophy" />
+                  <i class="fa bg-color fa-couch" />
                   <div className="d-inner">
-                    <h4>First class services</h4>
-                    Where luxury meets exceptional care, creating unforgettable
-                    moments and exceeding your every expectation.
+                    <h4>Chỗ ngồi linh hoạt</h4>
+                    Tùy chọn chỗ ngồi theo ý thích của bạn. Dễ dàng xem và chọn
+                    ghế ngay trên giao diện đặt vé, cập nhật trạng thái ghế
+                    trống và ghế đã được chọn.
                   </div>
                 </div>
                 <div
                   className="box-icon s2 p-small mb20 wow fadeInL fadeInRight"
                   data-wow-delay=".75s"
                 >
-                  <i className="fa bg-color fa-road" />
+                  <i class="fa bg-color fa-headset" />
                   <div className="d-inner">
-                    <h4>24/7 road assistance</h4>
-                    Reliable support when you need it most, keeping you on the
-                    move with confidence and peace of mind.
+                    <h4>Hỗ trợ khách hàng 24/7</h4>
+                    Đội ngũ chăm sóc khách hàng luôn sẵn sàng hỗ trợ bạn trước,
+                    trong và sau hành trình.
                   </div>
                 </div>
               </div>
@@ -768,31 +446,94 @@ function HomePage(props) {
               <div className="col-lg-3">
                 <div
                   className="box-icon s2 d-invert p-small mb20 wow fadeInL fadeInLeft"
-                  data-wow-delay="1s"
                 >
-                  <i className="fa bg-color fa-tag" />
+                  <i class="fa bg-color fa-money-check" />
                   <div className="d-inner">
-                    <h4>Quality at Minimum Expense</h4>
-                    Unlocking affordable brilliance with elevating quality while
-                    minimizing costs for maximum value.
+                    <h4>Thanh toán an toàn</h4>
+                    Hỗ trợ thanh toán đa dạng và bảo mật tuyệt đối, mang lại sự
+                    an tâm tuyệt đối khi giao dịch trực tuyến.
                   </div>
                 </div>
                 <div
                   className="box-icon s2 d-invert p-small mb20 wow fadeInL fadeInLeft"
-                  data-wow-delay="1.25s"
                 >
-                  <i className="fa bg-color fa-map-pin" />
+                  <i class="fa bg-color fa-ticket" />
                   <div className="d-inner">
-                    <h4>Free Pick-Up &amp; Drop-Off</h4>
-                    Enjoy free pickup and drop-off services, adding an extra
-                    layer of ease to your car rental experience.
+                    <h4>Dễ dàng đặt vé</h4>
+                    Hỗ trợ tìm kiếm và đặt vé nhanh chóng qua hệ thống trực
+                    tuyến với nhiều lựa chọn tuyến đường, giờ khởi hành và loại
+                    xe.
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
-        <section id="section-img-with-tab" className="bg-dark text-light">
+        <section className="text-light jarallax">
+          <img src="images/background/2.jpg" className="jarallax-img" alt="" />
+          <div className="container">
+            <div className="row g-5">
+              <div className="col-lg-6 wow fadeInRight">
+                <h2>
+                  Chúng tôi sẽ cung cấp cho khách hàng nhiều loại{" "}
+                  <span className="id-color">khuyến mãi ưu đãi</span> and{" "}
+                  <span className="id-color">dịch vụ đặc biệt</span> cho mọi
+                  dịp.
+                </h2>
+              </div>
+              <div className="col-lg-6 wow fadeInLeft">
+                Tại dịch vụ đặt vé xe trực tuyến của chúng tôi, chúng tôi tin
+                rằng ai cũng xứng đáng được trải nghiệm một chuyến đi an toàn và
+                thoải mái, bất kể ngân sách là bao nhiêu. Chúng tôi đã hợp tác
+                với nhiều hãng xe uy tín và đảm bảo chất lượng, từ xe giường nằm
+                cao cấp đến xe ghế ngồi tiện nghi, tất cả đều có mức giá cạnh
+                tranh. Với quy trình đặt vé nhanh chóng, bạn có thể dễ dàng lựa
+                chọn và đặt chuyến xe phù hợp ngay trên nền tảng của chúng tôi.
+                Dù bạn cần một chuyến xe cho công việc, du lịch cùng gia đình
+                hay chỉ đơn giản là một chuyến đi ngắn cuối tuần, chúng tôi luôn
+                có các tùy chọn linh hoạt để đáp ứng lịch trình và nhu cầu của
+                bạn.
+              </div>
+            </div>
+            <div className="spacer-double" />
+            <div className="row text-center">
+              <div className="col-md-3 col-sm-6 mb-sm-30">
+                <div className="de_count transparent text-light wow fadeInUp">
+                  <h3 className="timer" data-to={15425} data-speed={3000}>
+                    0
+                  </h3>
+                  Đơn hàng thành công
+                </div>
+              </div>
+              <div className="col-md-3 col-sm-6 mb-sm-30">
+                <div className="de_count transparent text-light wow fadeInUp">
+                  <h3 className="timer" data-to={8745} data-speed={3000}>
+                    0
+                  </h3>
+                  Khách hàng hài lòng
+                </div>
+              </div>
+              <div className="col-md-3 col-sm-6 mb-sm-30">
+                <div className="de_count transparent text-light wow fadeInUp">
+                  <h3 className="timer" data-to={235} data-speed={3000}>
+                    0
+                  </h3>
+                  Đội ngũ xe
+                </div>
+              </div>
+              <div className="col-md-3 col-sm-6 mb-sm-30">
+                <div className="de_count transparent text-light wow fadeInUp">
+                  <h3 className="timer" data-to={1} data-speed={3000}>
+                    0
+                  </h3>
+                  Năm kinh nghiệm
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* <section id="section-img-with-tab" className="bg-dark text-light">
           <div className="container">
             <div className="row align-items-center">
               <div className="col-lg-5 offset-lg-7">
@@ -899,15 +640,16 @@ function HomePage(props) {
             className="image-container col-md-6 pull-right"
             data-bgimage="url(images/misc/e2.jpg) center"
           />
-        </section>
+        </section> */}
         <section id="section-news">
           <div className="container">
             <div className="row align-items-center">
               <div className="col-lg-6 offset-lg-3 text-center">
-                <h2>Latest News</h2>
+                <h2>Tin tức mới nhất</h2>
                 <p>
-                  Breaking news, fresh perspectives, and in-depth coverage -
-                  stay ahead with our latest news, insights, and analysis.
+                  Tin tức mới nhất, góc nhìn mới và phạm vi đưa tin chuyên sâu -
+                  hãy cập nhật những tin tức, thông tin chuyên sâu và phân tích
+                  mới nhất của chúng tôi.
                 </p>
                 <div className="spacer-20" />
               </div>
@@ -928,17 +670,16 @@ function HomePage(props) {
                     <div className="post-text">
                       <h4>
                         <a href="news-single.html">
-                          Enjoy Best Travel Experience
+                        {/* VSM THỐNG NHẤT TỔNG ĐÀI ĐẶT VÉ 24/7 CHO QUÝ KHÁCH */}
+                       VSM thống nhất tổng đài đặt vé 24/7 cho quý khách
                           <span />
                         </a>
                       </h4>
                       <p>
-                        Dolore officia sint incididunt non excepteur ea mollit
-                        commodo ut enim reprehenderit cupidatat labore ad
-                        laborum consectetur.
+                      VSM tuyến Huế-Đà Nẵng thống nhất tổng đài đặt vé qua số điện thoại 1900.90.90.60
                       </p>
                       <a className="btn-main" href="#">
-                        Read More
+                        Đọc thêm
                       </a>
                     </div>
                   </div>
@@ -961,17 +702,15 @@ function HomePage(props) {
                     <div className="post-text">
                       <h4>
                         <a href="news-single.html">
-                          The Future of Car Rent
+                        Tạm dừng hoạt động một số tuyến do ảnh hưởng của bão Trà Mi
                           <span />
                         </a>
                       </h4>
                       <p>
-                        Dolore officia sint incididunt non excepteur ea mollit
-                        commodo ut enim reprehenderit cupidatat labore ad
-                        laborum consectetur.
+                        TẠM DỪNG HOẠT ĐỘNG MỘT SỐ TUYẾN DO BÃO SỐ TRÀ MI ĐỔ BỘ ngày 26/10/2024
                       </p>
                       <a className="btn-main" href="#">
-                        Read More
+                        Đọc thêm
                       </a>
                     </div>
                   </div>
@@ -994,17 +733,16 @@ function HomePage(props) {
                     <div className="post-text">
                       <h4>
                         <a href="news-single.html">
-                          Holiday Tips For Backpacker
+                        
+                        Khách hàng được sử dụng WIFI miễn phí khi sử dụng dịch vụ VSM
                           <span />
                         </a>
                       </h4>
                       <p>
-                        Dolore officia sint incididunt non excepteur ea mollit
-                        commodo ut enim reprehenderit cupidatat labore ad
-                        laborum consectetur.
+                      VSM trang bị truy nhập Internet miễn phí qua sóng Wifi cho toàn bộ đội xe
                       </p>
                       <a className="btn-main" href="#">
-                        Read More
+                        Đọc thêm
                       </a>
                     </div>
                   </div>
@@ -1013,215 +751,7 @@ function HomePage(props) {
             </div>
           </div>
         </section>
-        <section id="section-testimonials" className="no-top no-bottom">
-          <div className="container-fluid">
-            <div className="row g-2 p-2 align-items-center">
-              <div className="col-md-4">
-                <div className="de-image-text">
-                  <div className="d-text">
-                    <div className="d-quote id-color">
-                      <i className="fa fa-quote-right" />
-                    </div>
-                    <h4>Excellent Service! Car Rent Service!</h4>
-                    <blockquote>
-                      I have been using Rentaly for my Car Rental needs for over
-                      5 years now. I have never had any problems with their
-                      service. Their customer support is always responsive and
-                      helpful. I would recommend Rentaly to anyone looking for a
-                      reliable Car Rental provider.
-                      <span className="by">Stepanie Hutchkiss</span>
-                    </blockquote>
-                  </div>
-                  <img
-                    src="images/testimonial/1.jpg"
-                    className="img-fluid"
-                    alt=""
-                  />
-                </div>
-              </div>
-              <div className="col-md-4">
-                <div className="de-image-text">
-                  <div className="d-text">
-                    <div className="d-quote id-color">
-                      <i className="fa fa-quote-right" />
-                    </div>
-                    <h4>Excellent Service! Car Rent Service!</h4>
-                    <blockquote>
-                      We have been using Rentaly for our trips needs for several
-                      years now and have always been happy with their service.
-                      Their customer support is Excellent Service! and they are
-                      always available to help with any issues we have. Their
-                      prices are also very competitive.
-                      <span className="by">Jovan Reels</span>
-                    </blockquote>
-                  </div>
-                  <img
-                    src="images/testimonial/2.jpg"
-                    className="img-fluid"
-                    alt=""
-                  />
-                </div>
-              </div>
-              <div className="col-md-4">
-                <div className="de-image-text">
-                  <div className="d-text">
-                    <div className="d-quote id-color">
-                      <i className="fa fa-quote-right" />
-                    </div>
-                    <h4>Excellent Service! Car Rent Service!</h4>
-                    <blockquote>
-                      Endorsed by industry experts, Rentaly is the Car Rental
-                      solution you can trust. With years of experience in the
-                      field, we provide fast, reliable and secure Car Rental
-                      services.
-                      <span className="by">Kanesha Keyton</span>
-                    </blockquote>
-                  </div>
-                  <img
-                    src="images/testimonial/3.jpg"
-                    className="img-fluid"
-                    alt=""
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        <section id="section-faq">
-          <div className="container">
-            <div className="row">
-              <div className="col text-center">
-                <h2>Have Any Questions?</h2>
-                <div className="spacer-20" />
-              </div>
-            </div>
-            <div className="row g-custom-x">
-              <div className="col-md-6 wow fadeInUp">
-                <div className="accordion secondary">
-                  <div className="accordion-section">
-                    <div
-                      className="accordion-section-title"
-                      data-tab="#accordion-1"
-                    >
-                      How do I get started with Car Rental?
-                    </div>
-                    <div className="accordion-section-content" id="accordion-1">
-                      <p>
-                        At vero eos et accusamus et iusto odio dignissimos
-                        ducimus qui blanditiis praesentium voluptatum deleniti
-                        atque corrupti quos dolores et quas molestias excepturi
-                        sint occaecati cupiditate non provident, similique sunt
-                        in culpa qui officia deserunt mollitia animi, id est
-                        laborum et dolorum fuga. Et harum quidem rerum facilis
-                        est et expedita distinctio.
-                      </p>
-                    </div>
-                    <div
-                      className="accordion-section-title"
-                      data-tab="#accordion-2"
-                    >
-                      Can I rent a car with a debit card??
-                    </div>
-                    <div className="accordion-section-content" id="accordion-2">
-                      <p>
-                        At vero eos et accusamus et iusto odio dignissimos
-                        ducimus qui blanditiis praesentium voluptatum deleniti
-                        atque corrupti quos dolores et quas molestias excepturi
-                        sint occaecati cupiditate non provident, similique sunt
-                        in culpa qui officia deserunt mollitia animi, id est
-                        laborum et dolorum fuga. Et harum quidem rerum facilis
-                        est et expedita distinctio.
-                      </p>
-                    </div>
-                    <div
-                      className="accordion-section-title"
-                      data-tab="#accordion-3"
-                    >
-                      What kind of Car Rental do I need?
-                    </div>
-                    <div className="accordion-section-content" id="accordion-3">
-                      <p>
-                        At vero eos et accusamus et iusto odio dignissimos
-                        ducimus qui blanditiis praesentium voluptatum deleniti
-                        atque corrupti quos dolores et quas molestias excepturi
-                        sint occaecati cupiditate non provident, similique sunt
-                        in culpa qui officia deserunt mollitia animi, id est
-                        laborum et dolorum fuga. Et harum quidem rerum facilis
-                        est et expedita distinctio.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-6 wow fadeInUp">
-                <div className="accordion secondary">
-                  <div className="accordion-section">
-                    <div
-                      className="accordion-section-title"
-                      data-tab="#accordion-b-4"
-                    >
-                      What is a rental car security deposit?
-                    </div>
-                    <div
-                      className="accordion-section-content"
-                      id="accordion-b-4"
-                    >
-                      <p>
-                        At vero eos et accusamus et iusto odio dignissimos
-                        ducimus qui blanditiis praesentium voluptatum deleniti
-                        atque corrupti quos dolores et quas molestias excepturi
-                        sint occaecati cupiditate non provident, similique sunt
-                        in culpa qui officia deserunt mollitia animi, id est
-                        laborum et dolorum fuga. Et harum quidem rerum facilis
-                        est et expedita distinctio.
-                      </p>
-                    </div>
-                    <div
-                      className="accordion-section-title"
-                      data-tab="#accordion-b-5"
-                    >
-                      Can I cancel or modify my reservation?
-                    </div>
-                    <div
-                      className="accordion-section-content"
-                      id="accordion-b-5"
-                    >
-                      <p>
-                        At vero eos et accusamus et iusto odio dignissimos
-                        ducimus qui blanditiis praesentium voluptatum deleniti
-                        atque corrupti quos dolores et quas molestias excepturi
-                        sint occaecati cupiditate non provident, similique sunt
-                        in culpa qui officia deserunt mollitia animi, id est
-                        laborum et dolorum fuga. Et harum quidem rerum facilis
-                        est et expedita distinctio.
-                      </p>
-                    </div>
-                    <div
-                      className="accordion-section-title"
-                      data-tab="#accordion-b-6"
-                    >
-                      Is it possible to extend my rental period?
-                    </div>
-                    <div
-                      className="accordion-section-content"
-                      id="accordion-b-6"
-                    >
-                      <p>
-                        At vero eos et accusamus et iusto odio dignissimos
-                        ducimus qui blanditiis praesentium voluptatum deleniti
-                        atque corrupti quos dolores et quas molestias excepturi
-                        sint occaecati cupiditate non provident, similique sunt
-                        in culpa qui officia deserunt mollitia animi, id est
-                        laborum et dolorum fuga. Et harum quidem rerum facilis
-                        est et expedita distinctio.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+
         <section
           id="section-call-to-action"
           className="bg-color-2 pt60 pb60 text-light"
@@ -1231,20 +761,20 @@ function HomePage(props) {
               <div className="row">
                 <div className="col-lg-4 offset-lg-2">
                   <span className="subtitle text-white">
-                    Call us for further information
+                  Hãy gọi cho chúng tôi để biết thêm thông tin
                   </span>
                   <h2 className="s2">
-                    Rentaly customer care is here to help you anytime.
+                  Bộ phận chăm sóc khách hàng của VSM luôn sẵn sàng hỗ trợ bạn bất cứ lúc nào.
                   </h2>
                 </div>
                 <div className="col-lg-4 text-lg-center text-sm-center">
                   <div className="phone-num-big">
                     <i className="fa fa-phone" />
-                    <span className="pnb-text">Call Us Now</span>
+                    <span className="pnb-text">Gọi cho chúng tôi ngay</span>
                     <span className="pnb-num">1 200 333 800</span>
                   </div>
                   <a href="#" className="btn-main">
-                    Contact Us
+                    Liên Hệ
                   </a>
                 </div>
               </div>
@@ -1253,7 +783,6 @@ function HomePage(props) {
         </section>
       </div>
       <a href="#" id="back-to-top" />
-      
     </>
   );
 }

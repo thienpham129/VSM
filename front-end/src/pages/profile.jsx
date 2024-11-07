@@ -1,10 +1,92 @@
-import React from "react";
+import SellectAddress from "components/SellectAddress";
+import NavBarProfile from "components/NavBarProfile";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import {
+  apiGetPublicDistrict,
+  apiGetPublicProvinces,
+  apiGetPublicWard,
+} from "services/app";
+// import {
+//   apiGetPublicDistrict,
+//   apiGetPublicProvinces,
+//   apiGetPublicWard,
+// } from "services/app";
 
 const Profile = () => {
-  const location = useLocation();
+  const [specificAddress, setSpecificAddress] = useState("");
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+  const [province, setProvince] = useState("");
+  const [district, setDistrict] = useState("");
+  const [ward, setWard] = useState("");
+  const [reset, setReset] = useState(false);
+  const [address, setAddress] = useState("");
 
-  console.log('««««« location »»»»»', location);
+  // Call Api provinces
+  const handleSpecificAddressChange = (event) => {
+    setSpecificAddress(event.target.value);
+  };
+
+  const updateAddressValue = () => {
+    const newAddress = `${specificAddress} ${
+      ward ? `${wards?.find((item) => item.ward_id === ward)?.ward_name},` : ""
+    } ${
+      district
+        ? `${
+            districts?.find((item) => item.district_id === district)
+              ?.district_name
+          },`
+        : ""
+    } ${
+      province
+        ? provinces?.find((item) => item.province_id === province)
+            ?.province_name
+        : ""
+    }`;
+    setAddress(newAddress);
+  };
+
+  useEffect(() => {
+    updateAddressValue();
+  }, [specificAddress, ward, district, province]);
+
+  useEffect(() => {
+    const fetchPublicProvince = async () => {
+      const response = await apiGetPublicProvinces();
+      if (response.status === 200) {
+        setProvinces(response?.data.results);
+      }
+    };
+    fetchPublicProvince();
+  }, []);
+  useEffect(() => {
+    setDistrict(null);
+    const fetchPublicDistrict = async () => {
+      const response = await apiGetPublicDistrict(province);
+      if (response.status === 200) {
+        setDistricts(response.data?.results);
+      }
+    };
+    province && fetchPublicDistrict();
+    !province ? setReset(true) : setReset(false);
+    !province && setDistricts([]);
+  }, [province]);
+  useEffect(() => {
+    setWard(null);
+    const fetchPublicWard = async () => {
+      const response = await apiGetPublicWard(district);
+      if (response.status === 200) {
+        setWards(response.data?.results);
+      }
+    };
+    district && fetchPublicWard();
+    !district ? setReset(true) : setReset(false);
+    !district && setWards([]);
+  }, [district]);
+
+  // End api
 
   return (
     <div className="no-bottom no-top zebra" id="content">
@@ -15,7 +97,7 @@ const Profile = () => {
           <div className="container">
             <div className="row">
               <div className="col-md-12 text-center">
-                <h1>My Profile</h1>
+                <h1>Thông tin cá nhân</h1>
               </div>
               <div className="clearfix" />
             </div>
@@ -27,54 +109,7 @@ const Profile = () => {
         <div className="container">
           <div className="row">
             <div className="col-lg-3 mb30">
-              <div className="card padding30 rounded-5">
-                <div className="profile_avatar">
-                  <div className="profile_img">
-                    <img src="images/profile/1.jpg" alt="" />
-                  </div>
-                  <div className="profile_name">
-                    <h4>
-                      Monica Lucas
-                      <span className="profile_username text-gray">
-                        monica@rentaly.com
-                      </span>
-                    </h4>
-                  </div>
-                </div>
-                <div className="spacer-20" />
-                <ul className="menu-col">
-                  <li>
-                    <a href="account-dashboard.html">
-                      <i className="fa fa-home" />
-                      Dashboard
-                    </a>
-                  </li>
-                  <li>
-                    <a href="account-profile.html" className="active">
-                      <i className="fa fa-user" />
-                      My Profile
-                    </a>
-                  </li>
-                  <li>
-                    <a href="account-booking.html">
-                      <i className="fa fa-calendar" />
-                      My Orders
-                    </a>
-                  </li>
-                  <li>
-                    <a href="account-favorite.html">
-                      <i className="fa fa-car" />
-                      My Favorite Cars
-                    </a>
-                  </li>
-                  <li>
-                    <a href="login.html">
-                      <i className="fa fa-sign-out" />
-                      Sign Out
-                    </a>
-                  </li>
-                </ul>
-              </div>
+              <NavBarProfile />
             </div>
             <div className="col-lg-9">
               <div className="card padding40  rounded-5">
@@ -89,181 +124,143 @@ const Profile = () => {
                       <div className="de_tab tab_simple">
                         <ul className="de_nav">
                           <li className="active">
-                            <span>Profile</span>
-                          </li>
-                          <li>
-                            <span>Notifications</span>
+                            <span>Thông tin cá nhân</span>
                           </li>
                         </ul>
                         <div className="de_tab_content">
                           <div className="tab-1">
                             <div className="row">
                               <div className="col-lg-6 mb20">
-                                <h5>Username</h5>
+                                <h5>Họ và tên</h5>
                                 <input
                                   type="text"
-                                  name="username"
-                                  id="username"
+                                  name="fullname"
+                                  id="fullname"
                                   className="form-control"
-                                  placeholder="Enter username"
+                                  placeholder="Nhập đầy đủ tên"
                                 />
                               </div>
                               <div className="col-lg-6 mb20">
-                                <h5>Email Address</h5>
+                                <h5>Email</h5>
                                 <input
                                   type="text"
                                   name="email_address"
                                   id="email_address"
                                   className="form-control"
-                                  placeholder="Enter email"
+                                  placeholder="Nhập email"
                                 />
                               </div>
                               <div className="col-lg-6 mb20">
-                                <h5>New Password</h5>
-                                <input
-                                  type="Password"
-                                  name="user_password"
-                                  id="user_password"
-                                  className="form-control"
-                                  placeholder="********"
-                                />
-                              </div>
-                              <div className="col-lg-6 mb20">
-                                <h5>Re-enter Password</h5>
-                                <input
-                                  type="Password"
-                                  name="user_password_re-enter"
-                                  id="user_password_re-enter"
-                                  className="form-control"
-                                  placeholder="********"
-                                />
-                              </div>
-                              <div className="col-md-6 mb20">
-                                <h5>Language</h5>
-                                <p className="p-info">
-                                  Select your prefered language.
-                                </p>
+                                <h5>Giới tính</h5>
+                                {/* <select id="cars">
+                                  <option value="volvo" className="form-control">Volvo</option>
+                                  <option value="saab">Saab</option>
+                                  <option value="opel">Opel</option>
+                                  <option value="audi">Audi</option>
+                                </select> */}
                                 <div
                                   id="select_lang"
-                                  className="dropdown fullwidth"
+                                  class="dropdown fullwidth"
                                 >
-                                  <a href="#" className="btn-selector">
-                                    English
+                                  <a href="" class="btn-selector">
+                                  Nữ
                                   </a>
                                   <ul>
-                                    <li className="active">
-                                      <span>English</span>
+                                    <li class="active">
+                                      <span>Nữ</span>
                                     </li>
                                     <li>
-                                      <span>France</span>
+                                      <span>Nam</span>
                                     </li>
                                     <li>
-                                      <span>German</span>
-                                    </li>
-                                    <li>
-                                      <span>Japan</span>
-                                    </li>
-                                    <li>
-                                      <span>Italy</span>
+                                      <span>Khác</span>
                                     </li>
                                   </ul>
                                 </div>
                               </div>
-                              <div className="col-md-6 mb20">
-                                <h5>Hour Format</h5>
-                                <p className="p-info">
-                                  Select your prefered language.
-                                </p>
-                                <div
-                                  id="select_hour_format"
-                                  className="dropdown fullwidth"
-                                >
-                                  <a href="#" className="btn-selector">
-                                    24-hour
-                                  </a>
-                                  <ul>
-                                    <li className="active">
-                                      <span>24-hour</span>
-                                    </li>
-                                    <li>
-                                      <span>12-hour</span>
-                                    </li>
-                                  </ul>
+                              <div className="col-lg-6 mb20">
+                                <h5>Ngày sinh</h5>
+                                <input
+                                  type="date"
+                                  className="form-control"
+                                />
+                              </div>
+                              <div className="col-lg-6 mb20">
+                                <h5>Số điện thoại</h5>
+                                <input
+                                  type="number"
+                                  placeholder="Nhập số điện thoại"
+                                  className="form-control"
+                                />
+                              </div>
+                              <div className="col-lg-6 mb20">
+                                <h5>Số lần mua đặt vé xe</h5>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                />
+                              </div>
+                              <div className="col-md-12 mb20">
+                                <h5 className="font-weight-semi-bold mb-4">
+                                  Address
+                                </h5>
+                                <input
+                                      type="text"
+                                      value={specificAddress}
+                                      onChange={handleSpecificAddressChange}
+                                      placeholder="Nhập địa chỉ cụ thể"
+                                      style={{width : '100%'}}
+                                    />
+                                <div className="row">
+                                  <div className="col-md-4 form-group ">
+                                    <SellectAddress
+                                      type="province"
+                                      value={province}
+                                      setValue={setProvince}
+                                      options={provinces}
+                                      label="Province/City(Tỉnh)"
+                                    />
+                                  </div>
+                                  <div className="col-md-4 form-group">
+                                    <SellectAddress
+                                      reset={reset}
+                                      type="district"
+                                      value={district}
+                                      setValue={setDistrict}
+                                      options={districts}
+                                      label="District(Quận)"
+                                    />
+                                  </div>
+                                  <div className="col-md-4 form-group">
+                                    <SellectAddress
+                                      reset={reset}
+                                      type="ward"
+                                      value={ward}
+                                      setValue={setWard}
+                                      options={wards}
+                                      label="Wards(phường)"
+                                    />
+                                  </div>
+                                  {/* <div className="col-md-12 form-group">
+                                    <label style={{ marginRight: "20px" }}>
+                                      Address :{" "}
+                                    </label>
+                                    <input
+                                      type="text"
+                                      value={specificAddress}
+                                      onChange={handleSpecificAddressChange}
+                                      placeholder="Nhập địa chỉ cụ thể"
+                                    />
+                                    <input
+                                      type="text"
+                                      readOnly
+                                      className="form-control"
+                                      value={address}
+                                    />
+                                  </div> */}
                                 </div>
                               </div>
-                            </div>
-                          </div>
-                          <div className="tab-2">
-                            <div className="row">
-                              <div className="col-md-6 mb-sm-20">
-                                <div className="switch-with-title s2">
-                                  <h5>Discount Notifications</h5>
-                                  <div className="de-switch">
-                                    <input
-                                      type="checkbox"
-                                      id="notif-item-sold"
-                                      className="checkbox"
-                                    />
-                                    <label htmlFor="notif-item-sold" />
-                                  </div>
-                                  <div className="clearfix" />
-                                  <p className="p-info">
-                                    You'll get notification while new discount
-                                    available.
-                                  </p>
-                                </div>
-                                <div className="spacer-20" />
-                                <div className="switch-with-title s2">
-                                  <h5>New Product Notification</h5>
-                                  <div className="de-switch">
-                                    <input
-                                      type="checkbox"
-                                      id="notif-bid-activity"
-                                      className="checkbox"
-                                    />
-                                    <label htmlFor="notif-bid-activity" />
-                                  </div>
-                                  <div className="clearfix" />
-                                  <p className="p-info">
-                                    You'll get notification while new product
-                                    available.
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="col-md-6">
-                                <div className="switch-with-title s2">
-                                  <h5>Daily Reports</h5>
-                                  <div className="de-switch">
-                                    <input
-                                      type="checkbox"
-                                      id="notif-auction-expiration"
-                                      className="checkbox"
-                                    />
-                                    <label htmlFor="notif-auction-expiration" />
-                                  </div>
-                                  <div className="clearfix" />
-                                  <p className="p-info">
-                                    We will send you a report everyday.
-                                  </p>
-                                </div>
-                                <div className="spacer-20" />
-                                <div className="switch-with-title s2">
-                                  <h5>Monthly Reports</h5>
-                                  <div className="de-switch">
-                                    <input
-                                      type="checkbox"
-                                      id="notif-outbid"
-                                      className="checkbox"
-                                    />
-                                    <label htmlFor="notif-outbid" />
-                                  </div>
-                                  <div className="clearfix" />
-                                  <p className="p-info">
-                                    We will send you a report each month.
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="spacer-20" />
+                              {/*  */}
                             </div>
                           </div>
                         </div>

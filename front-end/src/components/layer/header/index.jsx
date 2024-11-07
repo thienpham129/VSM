@@ -1,6 +1,47 @@
-import React from "react";
+import { DEFAULT } from "constants";
+import React, { useEffect, useState } from "react";
+import { root } from "helper/axiosClient";
 
 const Header = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [showSubMenu, setShowSubMenu] = useState(false);
+  const [userId, setUserId] = useState("");
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    const token = localStorage.getItem(DEFAULT.TOKEN);
+    setUserId(localStorage.getItem("userId"));
+    if (token) {
+      setIsLoggedIn(true);
+      setUserName("Xuan Quang");
+    }
+  }, []);
+
+  const test = () => {
+    setShowSubMenu(!showSubMenu);
+  
+  };
+
+  useEffect(() => {
+    const getUserById = async () => {
+      try {
+        const url = `/user/${localStorage.getItem("userId")}`;
+        const response = await root.get(url);
+        if (response) {
+          setEmail(response.data.account.email);
+          console.log(response.data.account.email);
+          console.log("OK");
+        } else {
+          console.log("Get User By Id Fail");
+        }
+      } catch (error) {
+        console.log(error + "  Fail Get user By id");
+      }
+    };
+    getUserById();
+  }, []);
+
   return (
     <header className="transparent scroll-light has-topbar">
       <div id="topbar" className="topbar-dark text-light">
@@ -10,13 +51,13 @@ const Header = () => {
               <div className="topbar-widget">
                 <a href="#">
                   <i className="fa fa-phone" />
-                  +208 333 9296
+                  01237898233
                 </a>
               </div>
               <div className="topbar-widget">
                 <a href="#">
                   <i className="fa fa-envelope" />
-                  contact@rentaly.com
+                  vsm@gmail.com
                 </a>
               </div>
               <div className="topbar-widget">
@@ -30,19 +71,19 @@ const Header = () => {
           <div className="topbar-right">
             <div className="social-icons">
               <a href="#">
-                <i className="fa fa-facebook fa-lg" />
+                <i class="fa-brands fa-facebook fa-lg"></i>
               </a>
               <a href="#">
-                <i className="fa fa-twitter fa-lg" />
+                <i class="fa-brands fa-twitter fa-lg" />
               </a>
               <a href="#">
-                <i className="fa fa-youtube fa-lg" />
+                <i class="fa-brands fa-linkedin fa-lg"></i>
               </a>
               <a href="#">
-                <i className="fa fa-pinterest fa-lg" />
+                <i class="fa-brands fa-pinterest fa-lg"></i>
               </a>
               <a href="#">
-                <i className="fa fa-instagram fa-lg" />
+                <i className="fa fa-rss fa-lg" />
               </a>
             </div>
           </div>
@@ -57,13 +98,18 @@ const Header = () => {
                 <div className="de-flex-col">
                   {/* logo begin */}
                   <div id="logo">
-                    <a href="index.html">
+                    <a href="/home">
                       <img
                         className="logo-1"
-                        src="images/logo-light.png"
+                        // src="images/logo-light.png"
+                        src="images/logo_vsm.png"
                         alt=""
                       />
-                      <img className="logo-2" src="images/logo.png" alt="" />
+                      <img
+                        className="logo-2"
+                        src="images/logo_vsm.png"
+                        alt=""
+                      />
                     </a>
                   </div>
                   {/* logo close */}
@@ -72,374 +118,120 @@ const Header = () => {
               <div className="de-flex-col header-col-mid">
                 <ul id="mainmenu">
                   <li>
-                    <a className="menu-item" href="index.html">
-                      Home
+                    <a className="menu-item" href="/bookingTicket">
+                      Đặt vé
                     </a>
                     <ul>
                       <li>
-                        <a
-                          className="menu-item new"
-                          href="02_dark-index-1.html"
-                        >
-                          Homepage 1 Dark
+                        <a className="menu-item new" href="/quickBooking">
+                          Đặt vé nhanh
                         </a>
                       </li>
                       <li>
-                        <a
-                          className="menu-item new"
-                          href="02_dark-index-2.html"
-                        >
-                          Homepage 2 Dark
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="index.html">
-                          Homepage Main
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="index-2.html">
-                          Homepage 2
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="index-3.html">
-                          Homepage 3
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="index-4.html">
-                          Homepage 4
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="index-5.html">
-                          Homepage 5
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="index-6.html">
-                          Homepage 6
+                        <a className="menu-item" href="/bookingTicket">
+                          Đặt vé
                         </a>
                       </li>
                     </ul>
+                  </li>
+
+                  <li>
+                    <a className="menu-item" href="/aboutUs">
+                      Giới Thiệu
+                    </a>
                   </li>
                   <li>
-                    <a className="menu-item" href="cars.html">
-                      Cars
+                    <a className="menu-item" href="/contact">
+                      Liên Hệ
                     </a>
-                    <ul>
-                      <li>
-                        <a className="menu-item" href="cars.html">
-                          Cars List 1
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="02_dark-cars.html">
-                          Cars List 1 Dark
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="cars-list.html">
-                          Cars List 2
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="02_dark-cars-list.html">
-                          Cars List 2 Dark
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="car-single.html">
-                          Cars Single
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="02_dark-car-single.html">
-                          Cars Single Dark
-                        </a>
-                      </li>
-                    </ul>
                   </li>
                   <li>
-                    <a className="menu-item" href="quick-booking.html">
-                      Booking
+                    <a className="menu-item" href="/new">
+                      Tin Tức
                     </a>
-                    <ul>
-                      <li>
-                        <a className="menu-item new" href="quick-booking.html">
-                          Quick Booking
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="booking.html">
-                          Booking
-                        </a>
-                      </li>
-                    </ul>
                   </li>
-                  <li>
-                    <a className="menu-item" href="account-dashboard.html">
-                      My Account
-                    </a>
-                    <ul>
-                      <li>
-                        <a className="menu-item" href="account-dashboard.html">
-                          Dashboard
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="account-profile.html">
-                          My Profile
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="account-booking.html">
-                          My Orders
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="account-favorite.html">
-                          My Favorite Cars
-                        </a>
-                      </li>
-                    </ul>
-                  </li>
-                  <li>
-                    <a className="menu-item" href="#">
-                      Pages
-                    </a>
-                    <ul>
-                      <li>
-                        <a className="menu-item" href="about.html">
-                          About Us
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="contact.html">
-                          Contact
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="login.html">
-                          Login
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="register.html">
-                          Register
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="404.html">
-                          Page 404
-                        </a>
-                      </li>
-                    </ul>
-                  </li>
-                  <li>
-                    <a className="menu-item" href="#">
-                      News
-                    </a>
-                    <ul>
-                      <li>
-                        <a
-                          className="menu-item"
-                          href="news-standart-right-sidebar.html"
-                        >
-                          News Standard
-                        </a>
-                        <ul>
-                          <li>
-                            <a
-                              className="menu-item"
-                              href="news-standart-right-sidebar.html"
-                            >
-                              Right Sidebar
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              className="menu-item"
-                              href="news-standart-left-sidebar.html"
-                            >
-                              Left Sidebar
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              className="menu-item"
-                              href="news-standart-no-sidebar.html"
-                            >
-                              No Sidebar
-                            </a>
-                          </li>
-                        </ul>
-                      </li>
-                      <li>
-                        <a
-                          className="menu-item"
-                          href="news-grid-right-sidebar.html"
-                        >
-                          News Grid
-                        </a>
-                        <ul>
-                          <li>
-                            <a
-                              className="menu-item"
-                              href="news-grid-right-sidebar.html"
-                            >
-                              Right Sidebar
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              className="menu-item"
-                              href="news-grid-left-sidebar.html"
-                            >
-                              Left Sidebar
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              className="menu-item"
-                              href="news-grid-no-sidebar.html"
-                            >
-                              No Sidebar
-                            </a>
-                          </li>
-                        </ul>
-                      </li>
-                    </ul>
-                  </li>
-                  <li>
-                    <a className="menu-item" href="#">
-                      Elements
-                    </a>
-                    <ul>
-                      <li>
-                        <a className="menu-item" href="preloader.html">
-                          Preloader
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="icon-boxes.html">
-                          Icon Boxes
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="badge.html">
-                          Badge
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="counters.html">
-                          Counters
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="gallery-popup.html">
-                          Gallery Popup
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="icons-elegant.html">
-                          Icons Elegant
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="icons-etline.html">
-                          Icons Etline
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="icons-font-awesome.html">
-                          Icons Font Awesome
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="map.html">
-                          Map
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="modal.html">
-                          Modal
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="popover.html">
-                          Popover
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="tabs.html">
-                          Tabs
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="tooltips.html">
-                          Tooltips
-                        </a>
-                      </li>
-                    </ul>
-                  </li>
+                  <li></li>
                 </ul>
               </div>
+
+              <span id="menu-btn" />
+              {/* error : Start */}
               <div className="de-flex-col">
                 <div className="menu_side_area">
-                  <div className="de-login-menu">
-                    <span
-                      id="de-click-menu-profile"
-                      className="de-menu-profile"
-                    >
-                      <img
-                        src="images/profile/1.jpg"
-                        className="img-fluid"
-                        alt=""
-                      />
-                    </span>
-                    <div id="de-submenu-profile" className="de-submenu">
-                      <div className="d-name">
-                        <h4>Monica Lucas</h4>
-                        <span className="text-gray">monica@rentaly.com</span>
+                  {/* {isLoggedIn ? setTest1(true) : setTest1(false)} */}
+                  {isLoggedIn ? (
+                    <div className="de-flex-col">
+                      <div className="menu_side_area">
+                        <div className="de-login-menu">
+                          <span
+                            id="de-click-menu-profile"
+                            className="de-menu-profile"
+                            onClick={test}
+                          >
+                            <img
+                              src="images/profile/1.jpg"
+                              className="img-fluid"
+                              alt=""
+                            />
+                          </span>
+                          {showSubMenu ? (
+                            <div id="de-submenu-profile" className="de-submenu">
+                              <div className="d-name">
+                                <h4>Monica Lucas</h4>
+                                  <span className="text-gray">{email}</span>
+                              </div>
+                              <div className="d-line" />
+                              <ul className="menu-col">
+                                <li>
+                                  <a href="/profile">
+                                    <i className="fa fa-user" />
+                                    Thông tin cá nhân
+                                  </a>
+                                </li>
+                                <li>
+                                  <a href="/accountBooking">
+                                    <i className="fa fa-calendar" />
+                                    Lịch sử đặt vé
+                                  </a>
+                                </li>
+                                <li>
+                                  <a href="/changePassword">
+                                    <i className="fa fa-car" />
+                                    Thay đổi mật khẩu
+                                  </a>
+                                </li>
+                                <li>
+                                  <a href="/changePassword">
+                                    <i className="fa fa-ticket" />
+                                    Mã giảm giá
+                                  </a>
+                                </li>
+                                <li>
+                                  <a
+                                    href=""
+                                    onClick={() => {
+                                      localStorage.clear();
+                                      window.location.href = "/home";
+                                    }}
+                                  >
+                                    <i className="fa fa-sign-out" />
+                                    Đăng xuất
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                          <span id="menu-btn" />
+                        </div>
                       </div>
-                      <div className="d-line" />
-                      <ul className="menu-col">
-                        <li>
-                          <a href="account-dashboard.html">
-                            <i className="fa fa-home" />
-                            Dashboard
-                          </a>
-                        </li>
-                        <li>
-                          <a href="account-profile.html">
-                            <i className="fa fa-user" />
-                            My Profile
-                          </a>
-                        </li>
-                        <li>
-                          <a href="account-booking.html">
-                            <i className="fa fa-calendar" />
-                            My Orders
-                          </a>
-                        </li>
-                        <li>
-                          <a href="account-favorite.html">
-                            <i className="fa fa-car" />
-                            My Favorite Cars
-                          </a>
-                        </li>
-                        <li>
-                          <a href="login.html">
-                            <i className="fa fa-sign-out" />
-                            Sign Out
-                          </a>
-                        </li>
-                      </ul>
                     </div>
-                    <span id="menu-btn" />
-                  </div>
+                  ) : (
+                    <a href="/login" className="btn-main">
+                      Đăng Nhập
+                    </a>
+                  )}
                 </div>
               </div>
             </div>

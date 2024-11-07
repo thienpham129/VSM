@@ -69,7 +69,7 @@ public class AuthService {
 		AccountEntity account = new AccountEntity(input.getEmail(), passwordEncoder.encode(input.getPassword()));
 		account.setVerificationCode(generateVerificationCode());
 		account.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
-		account.setEnabled(true);
+		account.setEnabled(false);
 		account.setRole("ROLE_USER");
 		account.setCreateDate(LocalDateTime.now());
 		sendVerificationEmail(account);
@@ -85,6 +85,7 @@ public class AuthService {
 		Optional<AccountEntity> optionalUser = userRepository.findByEmail(input.getEmail());
 		if (optionalUser.isPresent()) {
 			AccountEntity user = optionalUser.get();
+			System.out.println(user);
 			if (user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
 				throw new RuntimeException("Verification code has expired");
 			}
