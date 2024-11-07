@@ -5,6 +5,7 @@ function HomePage(props) {
     <>
       <div className="no-bottom no-top" id="content">
         <div id="top" />
+        <h2>Hhelooooooooooooooooooooooooooooooooooo</h2>
         <section
           id="section-hero"
           aria-label="section"
