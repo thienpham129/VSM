@@ -5,7 +5,6 @@ function HomePage(props) {
     <>
       <div className="no-bottom no-top" id="content">
         <div id="top" />
-        <h2>Hhelooooooooooooooooooooooooooooooooooo</h2>
         <section
           id="section-hero"
           aria-label="section"
@@ -59,7 +58,7 @@ function HomePage(props) {
                               Car
                             </label>
                           </div>
-                          <div className="radio-img col-lg-3 col-sm-3 col-6" >
+                          <div className="radio-img col-lg-3 col-sm-3 col-6">
                             <input
                               id="radio-1b"
                               name="Car_Type"
@@ -445,9 +444,7 @@ function HomePage(props) {
                 />
               </div>
               <div className="col-lg-3">
-                <div
-                  className="box-icon s2 d-invert p-small mb20 wow fadeInL fadeInLeft"
-                >
+                <div className="box-icon s2 d-invert p-small mb20 wow fadeInL fadeInLeft">
                   <i class="fa bg-color fa-money-check" />
                   <div className="d-inner">
                     <h4>Thanh toán an toàn</h4>
@@ -455,9 +452,7 @@ function HomePage(props) {
                     an tâm tuyệt đối khi giao dịch trực tuyến.
                   </div>
                 </div>
-                <div
-                  className="box-icon s2 d-invert p-small mb20 wow fadeInL fadeInLeft"
-                >
+                <div className="box-icon s2 d-invert p-small mb20 wow fadeInL fadeInLeft">
                   <i class="fa bg-color fa-ticket" />
                   <div className="d-inner">
                     <h4>Dễ dàng đặt vé</h4>
@@ -671,13 +666,14 @@ function HomePage(props) {
                     <div className="post-text">
                       <h4>
                         <a href="news-single.html">
-                        {/* VSM THỐNG NHẤT TỔNG ĐÀI ĐẶT VÉ 24/7 CHO QUÝ KHÁCH */}
-                       VSM thống nhất tổng đài đặt vé 24/7 cho quý khách
+                          {/* VSM THỐNG NHẤT TỔNG ĐÀI ĐẶT VÉ 24/7 CHO QUÝ KHÁCH */}
+                          VSM thống nhất tổng đài đặt vé 24/7 cho quý khách
                           <span />
                         </a>
                       </h4>
                       <p>
-                      VSM tuyến Huế-Đà Nẵng thống nhất tổng đài đặt vé qua số điện thoại 1900.90.90.60
+                        VSM tuyến Huế-Đà Nẵng thống nhất tổng đài đặt vé qua số
+                        điện thoại 1900.90.90.60
                       </p>
                       <a className="btn-main" href="#">
                         Đọc thêm
@@ -703,12 +699,14 @@ function HomePage(props) {
                     <div className="post-text">
                       <h4>
                         <a href="news-single.html">
-                        Tạm dừng hoạt động một số tuyến do ảnh hưởng của bão Trà Mi
+                          Tạm dừng hoạt động một số tuyến do ảnh hưởng của bão
+                          Trà Mi
                           <span />
                         </a>
                       </h4>
                       <p>
-                        TẠM DỪNG HOẠT ĐỘNG MỘT SỐ TUYẾN DO BÃO SỐ TRÀ MI ĐỔ BỘ ngày 26/10/2024
+                        TẠM DỪNG HOẠT ĐỘNG MỘT SỐ TUYẾN DO BÃO SỐ TRÀ MI ĐỔ BỘ
+                        ngày 26/10/2024
                       </p>
                       <a className="btn-main" href="#">
                         Đọc thêm
@@ -734,13 +732,14 @@ function HomePage(props) {
                     <div className="post-text">
                       <h4>
                         <a href="news-single.html">
-                        
-                        Khách hàng được sử dụng WIFI miễn phí khi sử dụng dịch vụ VSM
+                          Khách hàng được sử dụng WIFI miễn phí khi sử dụng dịch
+                          vụ VSM
                           <span />
                         </a>
                       </h4>
                       <p>
-                      VSM trang bị truy nhập Internet miễn phí qua sóng Wifi cho toàn bộ đội xe
+                        VSM trang bị truy nhập Internet miễn phí qua sóng Wifi
+                        cho toàn bộ đội xe
                       </p>
                       <a className="btn-main" href="#">
                         Đọc thêm
@@ -762,10 +761,11 @@ function HomePage(props) {
               <div className="row">
                 <div className="col-lg-4 offset-lg-2">
                   <span className="subtitle text-white">
-                  Hãy gọi cho chúng tôi để biết thêm thông tin
+                    Hãy gọi cho chúng tôi để biết thêm thông tin
                   </span>
                   <h2 className="s2">
-                  Bộ phận chăm sóc khách hàng của VSM luôn sẵn sàng hỗ trợ bạn bất cứ lúc nào.
+                    Bộ phận chăm sóc khách hàng của VSM luôn sẵn sàng hỗ trợ bạn
+                    bất cứ lúc nào.
                   </h2>
                 </div>
                 <div className="col-lg-4 text-lg-center text-sm-center">
