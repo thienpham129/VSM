@@ -13,6 +13,7 @@ import lombok.experimental.FieldDefaults;
 @Entity
 @Table(name = "ticket")
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
 public class TicketEntity {
 
     @Id
@@ -22,9 +23,6 @@ public class TicketEntity {
 
     @Column(name = "price")
     double price;
-
-    @Column(name = "payment_method")
-    String paymentMethod;
 
     @Column(name = "is_paid")
     boolean isPaid;
@@ -41,13 +39,35 @@ public class TicketEntity {
     @Column(name = "qr_payment")
     String QRPayment;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "user_id")
-    @JsonIgnore // Prevent serialization of the user entity in ticket
-    UserEntity userEntity;
+    @Column(name = "selected_seat")
+    int selectedSeat;
+
+    @Column(name = "note")
+    String note;
+
+    @Column(name = "email")
+    String email;
+
+    @Column(name = "fullname")
+    String fullName;
+
+    @Column(name = "phone_number")
+    String phoneNumber;
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "voucher_id")
-    Voucher voucher;
+    VoucherEntity voucher;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "payment_id")
+    private PaymentEntity paymentEntity;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name ="car_id")
+    CarEntity car;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "account_id")
+    AccountEntity account;
 }
 

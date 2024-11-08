@@ -1,5 +1,6 @@
 package com.project.vsm.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,8 @@ public class VoucherService {
 			voucherEntity.setDiscount(voucherInput.getDiscount());
 			voucherEntity.setValid(true);
 			voucherEntity.setCode(generateRandomString());
+			voucherEntity.setCreatedDate(LocalDate.now());
+			voucherEntity.setExpiredDate(LocalDate.now().plusDays(5));
 			listVoucher.add(voucherEntity);
 		}
 		for (VoucherEntity voucherEntity : listVoucher) {
