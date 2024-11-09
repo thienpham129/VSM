@@ -22,4 +22,5 @@ public class TypeEntity {
 	private long typeId;
 	@Column(name = "num_seat")
 	private int numSeat;
+	private long price;
 }

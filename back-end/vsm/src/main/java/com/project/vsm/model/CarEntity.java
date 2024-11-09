@@ -1,7 +1,6 @@
 package com.project.vsm.model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -50,12 +49,6 @@ public class CarEntity {
 	@Column(name = "date_start")
 	private LocalDate startDate;
 
-	@Column(name = "price_of_single_seat")
-	private int priceOfSingleSeat;
-
-	@Column(name = "time_start")
-	String timeStart;
-
 	@ManyToOne(cascade = { CascadeType.PERSIST })
 	@JoinColumn(name = "type_id", referencedColumnName = "type_id")
 	private TypeEntity type;
@@ -66,7 +59,4 @@ public class CarEntity {
 
 	@OneToMany(mappedBy = "car", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<CarImageEntity> images;
-
-	@OneToMany(mappedBy = "car", cascade = CascadeType.ALL)
-	private List<TicketEntity> tickets = new ArrayList<>();
 }

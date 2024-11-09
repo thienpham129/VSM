@@ -24,6 +24,7 @@ public class TypeDTO {
 	public TypeEntity convertToEntity(TypeDTO typeDTO) {
 		TypeEntity newType = new TypeEntity();
 		newType.setNumSeat(typeDTO.getNumSeat());
+		newType.setPrice(typeDTO.getPrice());
 		return newType;
 	}
 }
