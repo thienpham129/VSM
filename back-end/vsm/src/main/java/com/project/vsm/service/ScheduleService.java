@@ -1,5 +1,6 @@
 package com.project.vsm.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.vsm.dto.ScheduleCreateDTO;
+import com.project.vsm.dto.ScheduleFindDTO;
 import com.project.vsm.exception.InvalidInputException;
 import com.project.vsm.exception.NotFoundException;
 import com.project.vsm.model.AccountEntity;
@@ -47,7 +49,6 @@ public class ScheduleService {
 		}
 		ScheduleEntity schedule = new ScheduleEntity();
 		schedule.setStartTime(scheduleInput.getStartTime());
-		schedule.setEndTime(scheduleInput.getEndTime());
 		schedule.setAccount(driver.get());
 		schedule.setCar(car.get());
 		schedule.setStatus("Đã lên lịch");
@@ -93,7 +94,34 @@ public class ScheduleService {
 		optionalEntity.get().setAccount(driver.get());
 		optionalEntity.get().setCar(car.get());
 		optionalEntity.get().setStartTime(scheduleInput.getStartTime());
-		optionalEntity.get().setEndTime(scheduleInput.getEndTime());
 		return scheduleRepository.save(optionalEntity.get());
+	}
+
+	public List<ScheduleEntity> getSchedulesByDriverOrCarForDate(ScheduleFindDTO scheduleFindDTO) {
+		LocalDate startDate = scheduleFindDTO.getStartDate(); // Ngày từ input
+
+		Long carId = scheduleFindDTO.getCarId(); // ID của xe
+		Long driverId = scheduleFindDTO.getAccountId(); // ID của tài xế
+
+		// Kiểm tra sự tồn tại của xe và tài xế
+		Optional<CarEntity> car = carRepository.findById(carId);
+		if (!car.isPresent()) {
+			throw new NotFoundException("Not found car with id " + carId);
+		}
+		Optional<AccountEntity> driver = accountRepository.findById(driverId);
+		if (!driver.isPresent() || !driver.get().getRole().equalsIgnoreCase("ROLE_DRIVER")) {
+			throw new NotFoundException("Not found driver with id " + driverId);
+		}
+
+		// Tìm các lịch trình liên quan đến tài xế hoặc xe trong ngày
+		List<ScheduleEntity> schedules = scheduleRepository.findSchedulesByDriverOrCarForDate(driverId, carId,
+				startDate);
+
+		if (schedules.isEmpty()) {
+			throw new NotFoundException(
+					"No schedules found for driverId " + driverId + " or carId " + carId + " on date " + startDate);
+		}
+
+		return schedules;
 	}
 }

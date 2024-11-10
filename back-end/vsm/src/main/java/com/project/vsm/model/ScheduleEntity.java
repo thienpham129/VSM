@@ -29,18 +29,18 @@ public class ScheduleEntity {
 	@Column(name = "start_time", nullable = false)
 	private LocalDateTime startTime;
 
-	@Column(name = "end_time", nullable = false)
+	@Column(name = "end_time")
 	private LocalDateTime endTime;
 
 	@Column(name = "status", nullable = false)
 	private String status;
 
 	@ManyToOne
-	@JoinColumn(name = "account_id", referencedColumnName = "account_id", nullable = false)
+	@JoinColumn(name = "account_id", referencedColumnName = "account_id")
 	private AccountEntity account;
 
 	@ManyToOne
-	@JoinColumn(name = "car_id", referencedColumnName = "car_id", nullable = false)
+	@JoinColumn(name = "car_id", referencedColumnName = "car_id")
 	private CarEntity car;
 
 }
