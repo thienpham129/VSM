@@ -18363,3 +18363,7 @@ td {
 select#select-address {
     width: 100%;
 }
+.info_lobby th {
+    font-weight: bold;
+    color: #ffffff;
+}

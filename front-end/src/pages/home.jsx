@@ -39,7 +39,7 @@ function HomePage(props) {
                     <div className="spacer-single sm-hide" />
                     <div
                       className="p-4 rounded-3 shadow-soft text-light"
-                      style={{ backgroundColor: "rgba(0, 0, 0, .6)" }}
+                      style={{ backgroundColor: "rgba(0, 0, 0, .6)", width : '85%', marginLeft : '80px' }}
                     >
                       <div name="contactForm" id="contact_form" method="post">
                         <div className="de_form de_radio row g-3">
@@ -104,7 +104,7 @@ function HomePage(props) {
                     <div className="spacer-single sm-hide" />
                     <div
                       className="p-4 rounded-3 shadow-soft text-light"
-                      style={{ backgroundColor: "rgba(0, 0, 0, .6)" }}
+                      style={{ backgroundColor: "rgba(0, 0, 0, .6)", width : '85%', marginLeft : '80px' }}
                     >
                       <div name="contactForm" id="contact_form" method="post">
                         <div className="de_form de_radio row g-3">
@@ -172,7 +172,7 @@ function HomePage(props) {
                     <div className="spacer-single sm-hide" />
                     <div
                       className="p-4 rounded-3 shadow-soft text-light"
-                      style={{ backgroundColor: "rgba(0, 0, 0, .6)" }}
+                      style={{ backgroundColor: "rgba(0, 0, 0, .6)", width : '85%', marginLeft : '80px' }}
                     >
                       <div name="contactForm" id="contact_form" method="post">
                         <div className="de_form de_radio row g-3">
@@ -237,7 +237,7 @@ function HomePage(props) {
                     <div className="spacer-single sm-hide" />
                     <div
                       className="p-4 rounded-3 shadow-soft text-light"
-                      style={{ backgroundColor: "rgba(0, 0, 0, .6)" }}
+                      style={{ backgroundColor: "rgba(0, 0, 0, .6)", width : '85%', marginLeft : '80px' }}
                     >
                       <div name="contactForm" id="contact_form" method="post">
                         <div className="de_form de_radio row g-3">
