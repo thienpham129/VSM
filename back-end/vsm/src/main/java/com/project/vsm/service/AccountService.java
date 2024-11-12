@@ -3,7 +3,9 @@ package com.project.vsm.service;
 import java.io.IOException;
 import java.util.Optional;
 
+import com.project.vsm.dto.request.ChangePasswordRequest;
 import com.project.vsm.dto.request.UpdateAccountRequest;
+import com.project.vsm.dto.response.ChangePasswordResponse;
 import com.project.vsm.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -38,7 +40,7 @@ public class AccountService {
         return Optional.empty();
     }
 
-    public AccountEntity updateUserById(Long userId, UpdateAccountRequest request, MultipartFile file){
+    public AccountEntity updateUserById(Long userId, UpdateAccountRequest request, MultipartFile file) {
 
         AccountEntity accountEntity = accountRepository.findById(userId).orElseThrow(
                 () -> new RuntimeException("Cannot found user with id : " + userId));
@@ -54,7 +56,7 @@ public class AccountService {
             accountEntity.setAddress(request.getAddress());
 
         } catch (IOException I) {
-			throw new RuntimeException("Update user fail!");
+            throw new RuntimeException("Update user fail!");
         }
         return accountRepository.save(accountEntity);
     }
@@ -67,8 +69,8 @@ public class AccountService {
 
         try {
             String uploadImage = fileService.saveFile(file.getOriginalFilename(), file);
-			accountEntity.setUrlImage(uploadImage);
-			accountEntity.setGender(request.getGender());
+            accountEntity.setUrlImage(uploadImage);
+            accountEntity.setGender(request.getGender());
             accountEntity.setFirstName(request.getFirstName());
             accountEntity.setLastName(request.getLastName());
             accountEntity.setAddress(request.getAddress());
@@ -87,6 +89,22 @@ public class AccountService {
             throw new NotFoundException("Not found user with id " + id);
         }
         return optionalUser;
+    }
+
+    public ChangePasswordResponse changePassword(ChangePasswordRequest request) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        AccountEntity accountEntity = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Cannot find account with email: " + email));
+
+        if (request.getOldPassword().equals(request.getNewPassword())) {
+            throw new RuntimeException("New password must be different from the old password");
+        }
+        accountEntity.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        accountRepository.save(accountEntity);
+
+        return ChangePasswordResponse.builder()
+                .message("Change password successfully")
+                .build();
     }
 
 }

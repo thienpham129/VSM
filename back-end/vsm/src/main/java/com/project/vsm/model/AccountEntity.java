@@ -64,6 +64,9 @@ public class AccountEntity {
 	@Column(name = "is_available")
 	private boolean isAvailable;
 
+	@Transient
+	private String newPassword;
+
 	@OneToMany(mappedBy = "account" , cascade = CascadeType.ALL)
 	private List<TicketEntity> tickets = new ArrayList<>();
 
