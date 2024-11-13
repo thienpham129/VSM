@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "Voucher")
 @Data
@@ -24,4 +26,10 @@ public class VoucherEntity {
 	private double discount;
 	@Column(name = "is_valid")
 	private boolean isValid;
+
+	@Column(name = "created_date")
+	LocalDate createdDate;
+
+	@Column(name = "expired_date")
+	LocalDate expiredDate;
 }
