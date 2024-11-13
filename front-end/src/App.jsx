@@ -20,10 +20,12 @@ import OTP from "pages/OTP";
 import BookingTicket from "pages/bookingTicket";
 import MethodPayment from "pages/methodPayment";
 import ForgetPassword from "pages/forgetPassword";
-
+import SidebarDriver from "pages/Driver/SidebarDriver";
+import Schedule from "pages/Driver/schedule";
+import Parking from "pages/Driver/Parking";
+import Map from "pages/Driver/Map";
 function App() {
   const token = window.localStorage.getItem(DEFAULT.TOKEN);
-  
 
   return (
     <>
@@ -43,7 +45,6 @@ function App() {
             <Route path="identify" element={<ForgetPassword />} />
             <Route path="bookingTicket" element={<BookingTicket />} />
             <Route path="methodPayment" element={<MethodPayment />} />
-
           </Route>
         </Routes>
       ) : (
@@ -63,12 +64,18 @@ function App() {
             <Route path="OTP" element={<OTP />} />
             <Route path="bookingTicket" element={<BookingTicket />} />
             <Route path="methodPayment" element={<MethodPayment />} />
-
           </Route>
         </Routes>
       )}
       <Routes>
         <Route path="/admin/*" element={<AdminApp />} />
+      </Routes>
+      <Routes>
+        <Route path="/driver" element={<SidebarDriver />}>
+          <Route path="/driver/schedule" element={<Schedule />} />
+          <Route path="/driver/parking" element={<Parking />} />
+          <Route path="/driver/map" element={<Map />} />
+        </Route>
       </Routes>
     </>
   );
