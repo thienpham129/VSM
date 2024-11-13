@@ -2,6 +2,7 @@ package com.project.vsm.sercurity;
 
 import java.util.List;
 
+import com.project.vsm.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +20,9 @@ public class CustomUserDetailService implements UserDetailsService{
 
 	@Autowired
 	private AccountService userService;
+
+	@Autowired
+	private AccountRepository accountRepository;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -31,5 +35,4 @@ public class CustomUserDetailService implements UserDetailsService{
 	                .authorities(List.of(new SimpleGrantedAuthority(user.getRole())))
 	                .build();
 	}
-	
 }

@@ -11,10 +11,15 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -43,7 +48,8 @@ public class UserController {
 
 	@PostMapping("/user/update-my-info")
 	public ResponseEntity<AccountEntity> updateProfile (@ModelAttribute UpdateAccountRequest request,
-													 @RequestPart ("imageFile") MultipartFile file) throws IOException {
+														@RequestPart (value = "imageFile" , required = false)
+														MultipartFile file) throws IOException {
 		return new ResponseEntity<>(accountService.getMyInfoToViewOrUpdate(request , file) , HttpStatus.OK);
 	}
 

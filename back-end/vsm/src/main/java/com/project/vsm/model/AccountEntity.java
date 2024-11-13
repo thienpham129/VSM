@@ -67,6 +67,7 @@ public class AccountEntity {
 	@Transient
 	private String newPassword;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "account" , cascade = CascadeType.ALL)
 	private List<TicketEntity> tickets = new ArrayList<>();
 
