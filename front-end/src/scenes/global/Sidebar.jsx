@@ -137,7 +137,7 @@ const Sidebar = () => {
             />
             <Item
               title="Lịch Trình"
-              to="/admin/user"
+              to="/admin/schedule"
               icon={<PersonIcon />}
               selected={selected}
               setSelected={setSelected}

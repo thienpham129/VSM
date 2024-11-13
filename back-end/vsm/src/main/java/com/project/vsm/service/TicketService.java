@@ -27,8 +27,7 @@ public class TicketService {
             TicketResponse ticketResponse = TicketResponse
                     .builder()
                     .ticketId(ticket.getTicketId())
-                    .price(ticket.getPrice())
-                    .paymentMethod(ticket.getPaymentMethod())
+                    .totalPrice(ticket.getPrice())
                     .isPaid(ticket.isPaid())
                     .startLocation(ticket.getStartLocation())
                     .stopLocation(ticket.getStopLocation())

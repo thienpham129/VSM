@@ -4,10 +4,15 @@ import { useLocation } from "react-router-dom"; // cần react-router-dom cho vi
 const NavBarProfile = () => {
   const location = useLocation(); // lấy đường dẫn hiện tại
 
+  // Image
+
+  // 
+
   return (
     <div className="card padding30 rounded-5">
       <div className="profile_avatar">
         <div className="profile_img">
+          {/* <img src="images/profile/1.jpg" alt="" /> */}
           <img src="images/profile/1.jpg" alt="" />
         </div>
         <div className="profile_name">
