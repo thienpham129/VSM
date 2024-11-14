@@ -3,7 +3,9 @@ package com.project.vsm.service;
 import java.io.IOException;
 import java.util.Optional;
 
+import com.project.vsm.dto.request.ChangePasswordRequest;
 import com.project.vsm.dto.request.UpdateAccountRequest;
+import com.project.vsm.dto.response.ChangePasswordResponse;
 import com.project.vsm.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -47,11 +49,11 @@ public class AccountService {
 
             accountEntity.setUrlImage(uploadImage);
             accountEntity.setGender(request.getGender());
-            accountEntity.setPassword(passwordEncoder.encode(request.getPassword()));
             accountEntity.setFirstName(request.getFirstName());
             accountEntity.setLastName(request.getLastName());
             accountEntity.setDob(request.getDob());
             accountEntity.setAddress(request.getAddress());
+            accountEntity.setPhoneNumber(request.getPhoneNumber());
 
         } catch (IOException I) {
 			throw new RuntimeException("Update user fail!");
@@ -66,18 +68,29 @@ public class AccountService {
                 .orElseThrow(() -> new RuntimeException("Cannot find account with email: " + email));
 
         try {
-            String uploadImage = fileService.saveFile(file.getOriginalFilename(), file);
-			accountEntity.setUrlImage(uploadImage);
-			accountEntity.setGender(request.getGender());
-            accountEntity.setFirstName(request.getFirstName());
-            accountEntity.setLastName(request.getLastName());
-            accountEntity.setAddress(request.getAddress());
-            accountEntity.setDob(request.getDob());
-            accountEntity.setPassword(passwordEncoder.encode(request.getPassword())); // Always encode password
+        	
+        	if (file != null && !file.isEmpty()) {
+                String uploadImage = fileService.saveFile(file.getOriginalFilename(), file);
+                accountEntity.setUrlImage(uploadImage);
+            }
+           
+//			accountEntity.setGender(request.getGender());
+//            accountEntity.setFirstName(request.getFirstName());
+//            accountEntity.setLastName(request.getLastName());
+//            accountEntity.setAddress(request.getAddress());
+//            accountEntity.setDob(request.getDob());
+//            accountEntity.setPhoneNumber(request.getPhoneNumber());
+        	 if (request.getGender() != null) accountEntity.setGender(request.getGender());
+             if (request.getFirstName() != null) accountEntity.setFirstName(request.getFirstName());
+             if (request.getLastName() != null) accountEntity.setLastName(request.getLastName());
+             if (request.getAddress() != null) accountEntity.setAddress(request.getAddress());
+             if (request.getDob() != null) accountEntity.setDob(request.getDob());
+             if (request.getPhoneNumber() != null) accountEntity.setPhoneNumber(request.getPhoneNumber());
+            
+            return accountRepository.save(accountEntity);
         } catch (RuntimeException e) {
             throw new RuntimeException("Update info fail!");
         }
-        return accountRepository.save(accountEntity);
     }
 
 
@@ -87,6 +100,26 @@ public class AccountService {
             throw new NotFoundException("Not found user with id " + id);
         }
         return optionalUser;
+    }
+    
+    public ChangePasswordResponse changePassword(ChangePasswordRequest request) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        AccountEntity accountEntity = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Cannot find account with email: " + email));
+        
+        if (!passwordEncoder.matches(request.getOldPassword(), accountEntity.getPassword())) {
+            throw new RuntimeException("Old password is incorrect");
+        }
+
+        if (request.getOldPassword().equals(request.getNewPassword())) {
+            throw new RuntimeException("New password must be different from the old password");
+        }
+        accountEntity.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        accountRepository.save(accountEntity);
+
+        return ChangePasswordResponse.builder()
+                .message("Change password successfully")
+                .build();
     }
 
 }

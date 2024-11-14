@@ -13,13 +13,11 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class UpdateAccountRequest {
-    String urlImage;
+ 
     String gender;
-
-    private String password;
     private String firstName;
     private String lastName;
-
     private LocalDate dob;
     private String address;
+    private String phoneNumber;
 }

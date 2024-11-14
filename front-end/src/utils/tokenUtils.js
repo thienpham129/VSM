@@ -1,11 +1,11 @@
 export const getTokenFromLocalStorage = () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("TOKEN");
     return token;
 };
 export const setTokenToLocalStorage = (token) => {
-    localStorage.setItem("token", token);
+    localStorage.setItem("TOKEN", token);
 };
 export const removeTokenFromLocalStorage = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("TOKEN");
 
 };
