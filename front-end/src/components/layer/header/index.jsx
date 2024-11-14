@@ -10,7 +10,10 @@ const Header = () => {
   const [showSubMenu, setShowSubMenu] = useState(false);
   const [userId, setUserId] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [urlImage, setUrlImage] = useState();
 
   // useEffect(() => {
   //   const token = localStorage.getItem(DEFAULT.TOKEN);
@@ -57,8 +60,9 @@ const Header = () => {
       });
       if (response && response.data) {
         setEmail(response.data.email);
-        setRole(response.data.role);
-        // console.log("User data retrieved:", response.data);
+        setUrlImage(response.data.urlImage);
+        setFullName(`${response.data.firstName} ${response.data.lastName}`);
+        console.log("User data retrieved:", response.data);
       } else {
         console.log("Failed to retrieve user data");
       }
@@ -216,7 +220,8 @@ const Header = () => {
                             onClick={test}
                           >
                             <img
-                              src="images/profile/1.jpg"
+                              // src="images/profile/1.jpg"
+                              src={urlImage}
                               className="img-fluid"
                               alt=""
                             />
@@ -224,7 +229,7 @@ const Header = () => {
                           {showSubMenu ? (
                             <div id="de-submenu-profile" className="de-submenu">
                               <div className="d-name">
-                                <h4>{role}</h4>
+                                <h4>{fullName}</h4>
                                 <span className="text-gray">{email}</span>
                               </div>
                               <div className="d-line" />

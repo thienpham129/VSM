@@ -4,6 +4,8 @@ import styles from "pages/changePassword.module.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { root } from "helper/axiosClient";
 import { getTokenFromLocalStorage } from "utils/tokenUtils";
+import { ToastContainer, toast, Bounce } from "react-toastify";
+
 
 const ChangePassword = () => {
   const [oldPassword, setCurrentPassword] = useState("");
@@ -60,18 +62,45 @@ const ChangePassword = () => {
       });
 
       if (response.status === 200) {
-        alert("Password changed successfully");
+        notifySuccessUpdate();
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
-      } else {
-        alert("Failed to change password. Please check your input.");
       }
     } catch (error) {
-      alert("Mật khẩu cũ nhập không đúng");
+      notifyErrorUpdate();
       console.error("Change Password error:", error);
     }
   };
+
+  // Notifications
+  const notifySuccessUpdate = () =>
+    toast.success("Thay đổi mật khẩu thành công! ", {
+      position: "bottom-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+
+  const notifyErrorUpdate = () =>
+    toast.error("Thay đổi mật khẩu thất bại!", {
+      position: "bottom-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+
+  //
 
   return (
     <div className="no-bottom no-top zebra" id="content">
@@ -186,6 +215,19 @@ const ChangePassword = () => {
           </div>
         </div>
       </section>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={1500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
     </div>
   );
 };

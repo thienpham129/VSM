@@ -20,7 +20,7 @@ import OTP from "pages/OTP";
 import BookingTicket from "pages/bookingTicket";
 import MethodPayment from "pages/methodPayment";
 import ForgetPassword from "pages/forgetPassword";
-import ImageUpload from "components/ImageUpload";
+import ImageUploadFile from "components/ImageUploadFile";
 
 function App() {
   const token = window.localStorage.getItem(DEFAULT.TOKEN);
@@ -71,7 +71,7 @@ function App() {
       <Routes>
         <Route path="/admin/*" element={<AdminApp />} />
       </Routes>
-      {/* <ImageUpload /> */}
+      {/* <ImageUploadFile /> */}
     </>
   );
 }

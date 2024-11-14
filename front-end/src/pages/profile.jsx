@@ -1,7 +1,8 @@
 import SellectAddress from "components/SellectAddress";
 import NavBarProfile from "components/NavBarProfile";
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { ToastContainer, toast, Bounce } from "react-toastify";
+
 import {
   apiGetPublicDistrict,
   apiGetPublicProvinces,
@@ -34,6 +35,7 @@ const Profile = () => {
 
   const [showFullAddress, setShowFullAddress] = useState(true);
 
+  // Call API
   const handleSpecificAddressChange = (event) => {
     setSpecificAddress(event.target.value);
   };
@@ -43,11 +45,15 @@ const Profile = () => {
       ward ? `${wards?.find((item) => item.ward_id === ward)?.ward_name},` : ""
     } ${
       district
-        ? `${districts?.find((item) => item.district_id === district)?.district_name},`
+        ? `${
+            districts?.find((item) => item.district_id === district)
+              ?.district_name
+          },`
         : ""
     } ${
       province
-        ? provinces?.find((item) => item.province_id === province)?.province_name
+        ? provinces?.find((item) => item.province_id === province)
+            ?.province_name
         : ""
     }`;
     setAddress(newAddress.trim());
@@ -105,6 +111,7 @@ const Profile = () => {
     updateAddressValue();
   }, [specificAddress, ward, district, province]);
 
+  //
   const fetchUser = async (userId) => {
     const token = getTokenFromLocalStorage();
     try {
@@ -176,14 +183,82 @@ const Profile = () => {
       });
 
       if (response.status === 200) {
-        alert("Lưu thông tin cá nhân thành công!");
+        // alert("Lưu thông tin cá nhân thành công!");
+        notifySuccessUpdate();
         setShowFullAddress(false);
       }
     } catch (error) {
       console.log("Lỗi khi lưu thông tin cá nhân:", error);
-      alert("Có lỗi xảy ra khi lưu thông tin cá nhân.");
+      // alert("Có lỗi xảy ra khi lưu thông tin cá nhân.");
+      notifyErrorUpdate();
     }
   };
+
+  // Notifications
+  const notifySuccessUpdate = () =>
+    toast.success("Lưu thông tin cá nhân thành công! ", {
+      position: "bottom-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+
+  const notifyErrorUpdate = () =>
+    toast.error("Lưu thông tin cá nhân thất bại!", {
+      position: "bottom-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+
+  const notifyWrongOTP = () =>
+    toast.error("Wrong verification code!", {
+      position: "bottom-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+  const notifyErrorOTP = () =>
+    toast.error("Error verification.", {
+      position: "bottom-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+
+  const notifyExpriedOTP = () =>
+    toast.warn("The OTP is exprired! Please resend the OTP", {
+      position: "bottom-right",
+      autoClose: 3500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+  //
 
   return (
     <div className="no-bottom no-top zebra" id="content">
@@ -298,7 +373,7 @@ const Profile = () => {
                               className="form-control"
                               placeholder="Địa chỉ cụ thể"
                               value={specificAddress}
-              onChange={handleSpecificAddressChange}
+                              onChange={handleSpecificAddressChange}
                             />
                           </div>
                         </div>
@@ -362,6 +437,19 @@ const Profile = () => {
           </div>
         </div>
       </section>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={1500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
     </div>
   );
 };

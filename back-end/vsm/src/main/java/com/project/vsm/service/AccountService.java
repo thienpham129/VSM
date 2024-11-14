@@ -74,12 +74,18 @@ public class AccountService {
                 accountEntity.setUrlImage(uploadImage);
             }
            
-			accountEntity.setGender(request.getGender());
-            accountEntity.setFirstName(request.getFirstName());
-            accountEntity.setLastName(request.getLastName());
-            accountEntity.setAddress(request.getAddress());
-            accountEntity.setDob(request.getDob());
-            accountEntity.setPhoneNumber(request.getPhoneNumber());
+//			accountEntity.setGender(request.getGender());
+//            accountEntity.setFirstName(request.getFirstName());
+//            accountEntity.setLastName(request.getLastName());
+//            accountEntity.setAddress(request.getAddress());
+//            accountEntity.setDob(request.getDob());
+//            accountEntity.setPhoneNumber(request.getPhoneNumber());
+        	 if (request.getGender() != null) accountEntity.setGender(request.getGender());
+             if (request.getFirstName() != null) accountEntity.setFirstName(request.getFirstName());
+             if (request.getLastName() != null) accountEntity.setLastName(request.getLastName());
+             if (request.getAddress() != null) accountEntity.setAddress(request.getAddress());
+             if (request.getDob() != null) accountEntity.setDob(request.getDob());
+             if (request.getPhoneNumber() != null) accountEntity.setPhoneNumber(request.getPhoneNumber());
             
             return accountRepository.save(accountEntity);
         } catch (RuntimeException e) {
