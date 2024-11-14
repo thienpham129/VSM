@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ScheduleEntity {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "schedule_id")
@@ -34,6 +34,10 @@ public class ScheduleEntity {
 
 	@Column(name = "status", nullable = false)
 	private String status;
+
+	@ManyToOne
+	@JoinColumn(name = "route_id", referencedColumnName = "id")
+	private RouteEntity route;
 
 	@ManyToOne
 	@JoinColumn(name = "account_id", referencedColumnName = "account_id")

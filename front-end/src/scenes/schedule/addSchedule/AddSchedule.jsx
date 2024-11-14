@@ -19,6 +19,7 @@ import { request } from "admin/helpers/axios_helper";
 const initialValues = {
   driver: "",
   car: "",
+  route: "",
   date: new Date().toISOString().split("T")[0], // Lấy ngày hiện tại theo định dạng yyyy-mm-dd
   hour: "",
   minute: "",
@@ -28,6 +29,7 @@ const initialValues = {
 const scheduleSchema = yup.object().shape({
   driver: yup.string().required("Tài xế là bắt buộc"),
   car: yup.string().required("Tên xe là bắt buộc"),
+  route: yup.string().required("Tuyến đường là bắt buộc"),
   date: yup.date().required("Ngày là bắt buộc"),
   hour: yup.number().required("Giờ là bắt buộc"),
   minute: yup.number().required("Phút là bắt buộc"),
@@ -38,8 +40,10 @@ const AddSchedule = () => {
   const [currentDate] = useState(new Date().toISOString().split("T")[0]);
   const [drivers, setDrivers] = useState([]);
   const [cars, setCars] = useState([]);
+  const [routes, setRoutes] = useState([]); // State lưu danh sách tuyến đường
   const [loadingDrivers, setLoadingDrivers] = useState(true);
   const [loadingCars, setLoadingCars] = useState(true);
+  const [loadingRoutes, setLoadingRoutes] = useState(true); // State loading cho tuyến đường
   const [scheduleData, setScheduleData] = useState(null); // State lưu kết quả từ API
 
   useEffect(() => {
@@ -72,38 +76,47 @@ const AddSchedule = () => {
     fetchCars();
   }, []);
 
-  // useEffect để theo dõi sự thay đổi của ngày và tự động gọi API khi ngày thay đổi
   useEffect(() => {
-    // Nếu tài xế và xe đã được chọn, gọi API để lấy lịch trình cho ngày mới
-    if (initialValues.driver && initialValues.car && initialValues.date) {
-      handleDriverAndCarChange(
-        initialValues.driver,
-        initialValues.car,
-        initialValues.date
-      );
-    }
-  }, [initialValues.date]); // Chỉ gọi lại khi ngày thay đổi
-
-  const handleDriverAndCarChange = async (driverId, carId, startDate) => {
-    if (driverId && carId && startDate) {
+    // Gọi API để lấy danh sách tuyến đường
+    const fetchRoutes = async () => {
       try {
-        // Gửi dữ liệu qua POST request với body
-        const response = await request("post", "/public/find-schedule", {
-          accountId: driverId,
-          carId: carId,
-          startDate: startDate,
-        });
-        setScheduleData(response.data); // Lưu kết quả vào state
-        console.log(response.data); // Log kết quả ra màn hình
+        const response = await request("get", "/admin/routes");
+        setRoutes(response.data);
+        setLoadingRoutes(false);
       } catch (error) {
-        console.error("Lỗi khi lấy lịch trình:", error);
-        setScheduleData(null);
+        console.error("Lỗi khi lấy danh sách tuyến đường:", error);
+        setLoadingRoutes(false);
       }
-    }
-  };
+    };
+    fetchRoutes();
+  }, []);
 
-  const handleFormSubmit = (values) => {
-    console.log(values);
+  const handleFormSubmit = async (values) => {
+    // Tạo startTime theo định dạng ISO từ date, hour và minute
+    const startTime = `${values.date}T${String(values.hour).padStart(
+      2,
+      "0"
+    )}:${String(values.minute).padStart(2, "0")}:00`;
+
+    // Tạo body cho request
+    const requestData = {
+      startTime: startTime,
+      accountId: values.driver,
+      carId: values.car,
+      routeId: values.route,
+    };
+    try {
+      // Gửi request với phương thức POST đến /admin/schedule
+      const response = await request("post", "/admin/schedule", requestData);
+
+      // Xử lý thành công
+      console.log("Lịch trình được tạo thành công:", response.data);
+      alert("Lịch trình được tạo thành công!");
+    } catch (error) {
+      // Xử lý lỗi nếu có
+      console.error("Lỗi khi tạo lịch trình:", error);
+      alert("Đã có lỗi xảy ra khi tạo lịch trình. Vui lòng thử lại.");
+    }
   };
 
   return (
@@ -145,14 +158,7 @@ const AddSchedule = () => {
                 <Select
                   name="driver"
                   value={values.driver}
-                  onChange={(e) => {
-                    handleChange(e);
-                    handleDriverAndCarChange(
-                      e.target.value,
-                      values.car,
-                      values.date
-                    ); // Gọi API khi chọn tài xế
-                  }}
+                  onChange={handleChange}
                 >
                   {loadingDrivers ? (
                     <MenuItem disabled>
@@ -175,18 +181,7 @@ const AddSchedule = () => {
                 error={!!touched.car && !!errors.car}
               >
                 <InputLabel>Tên Xe</InputLabel>
-                <Select
-                  name="car"
-                  value={values.car}
-                  onChange={(e) => {
-                    handleChange(e);
-                    handleDriverAndCarChange(
-                      values.driver,
-                      e.target.value,
-                      values.date
-                    ); // Gọi API khi chọn xe
-                  }}
-                >
+                <Select name="car" value={values.car} onChange={handleChange}>
                   {loadingCars ? (
                     <MenuItem disabled>
                       <CircularProgress size={24} />
@@ -209,15 +204,7 @@ const AddSchedule = () => {
                 variant="filled"
                 type="date"
                 label="Ngày"
-                onChange={(e) => {
-                  handleChange(e);
-                  // Gọi lại API mỗi khi ngày thay đổi
-                  handleDriverAndCarChange(
-                    values.driver,
-                    values.car,
-                    e.target.value
-                  );
-                }}
+                onChange={handleChange}
                 value={values.date}
                 name="date"
                 error={!!touched.date && !!errors.date}
@@ -240,8 +227,8 @@ const AddSchedule = () => {
                   error={!!touched.hour && !!errors.hour}
                 >
                   {[...Array(24).keys()].map((hour) => (
-                    <MenuItem key={hour + 1} value={hour + 1}>
-                      {hour + 1}h
+                    <MenuItem key={hour} value={hour}>
+                      {hour}h
                     </MenuItem>
                   ))}
                 </Select>
@@ -259,6 +246,32 @@ const AddSchedule = () => {
                       {minute} phút
                     </MenuItem>
                   ))}
+                </Select>
+              </FormControl>
+
+              {/* Dropdown Tuyến Đường */}
+              <FormControl
+                variant="filled"
+                sx={{ gridColumn: "span 4" }}
+                error={!!touched.route && !!errors.route}
+              >
+                <InputLabel>Tuyến Đường</InputLabel>
+                <Select
+                  name="route"
+                  value={values.route}
+                  onChange={handleChange}
+                >
+                  {loadingRoutes ? (
+                    <MenuItem disabled>
+                      <CircularProgress size={24} />
+                    </MenuItem>
+                  ) : (
+                    routes.map((route) => (
+                      <MenuItem key={route.id} value={route.id}>
+                        {`${route.startLocation} > ${route.stopLocation}`}
+                      </MenuItem>
+                    ))
+                  )}
                 </Select>
               </FormControl>
             </Box>
