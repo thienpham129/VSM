@@ -123,8 +123,9 @@
         <!-- End chat-->
 
         <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.5.1</version>
         </dependency>
 
     </dependencies>

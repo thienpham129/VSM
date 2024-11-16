@@ -1,14 +1,13 @@
 package com.project.vsm.controller;
 
+import java.io.IOException;
 import java.util.List;
 
+import com.project.vsm.dto.request.TicketRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.project.vsm.dto.response.TicketResponse;
 import com.project.vsm.service.TicketService;
@@ -35,9 +34,9 @@ public class TicketController {
         return "Delete ticket has successfully";
     }
 
-//    @PostMapping("public/tickets/create")
-//    public ResponseEntity<TicketResponse> createTickets(@RequestBody TicketRequest request) {
-//        return new ResponseEntity<>(ticketService.createTicket(request) , HttpStatus.OK);
-//    }
+    @PostMapping("/public/tickets/create")
+    public ResponseEntity<TicketResponse> createTickets(@RequestBody TicketRequest ticketRequest , HttpServletRequest request) throws IOException {
+        return new ResponseEntity<>(ticketService.createTicket(ticketRequest , request) , HttpStatus.OK);
+    }
 
 }

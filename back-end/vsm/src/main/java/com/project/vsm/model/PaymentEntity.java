@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -20,6 +23,6 @@ public class PaymentEntity {
     @Column(name = "payment_name")
     String paymentName;
 
-    @OneToOne(mappedBy = "paymentEntity" , cascade = CascadeType.ALL)
-    TicketEntity ticketEntity;
+    @OneToMany(mappedBy = "paymentEntity" , cascade = CascadeType.ALL)
+    List<TicketEntity> tickets = new ArrayList<>();
 }

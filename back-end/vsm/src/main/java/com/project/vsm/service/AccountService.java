@@ -81,7 +81,6 @@ public class AccountService {
 
     }
 
-
     public Optional<AccountEntity> getUserById(long id) {
         Optional<AccountEntity> optionalUser = accountRepository.findById(id);
         if (!optionalUser.isPresent()) {

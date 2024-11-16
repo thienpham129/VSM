@@ -1,5 +1,8 @@
 package com.project.vsm.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.project.vsm.model.TicketEntity;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -10,6 +13,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TicketResponse {
     long ticketId;
     int selectedSeat;
@@ -23,6 +27,10 @@ public class TicketResponse {
     String stopLocation;
     String status;
     String QRPayment;
+    String paymentMethod;
+    ScheduleResponse scheduleResponse;
+    String paymentUrl;
+    String qrCodeBase64;
 
     public static TicketResponse fromEntity(TicketEntity ticket) {
         return TicketResponse.builder()
@@ -33,6 +41,7 @@ public class TicketResponse {
                 .phoneNumber(ticket.getPhoneNumber())
                 .email(ticket.getEmail())
                 .note(ticket.getNote())
+                .paymentMethod(ticket.getPaymentMethod())
                 .startLocation(ticket.getStartLocation())
                 .stopLocation(ticket.getStopLocation())
                 .build();
