@@ -7,6 +7,8 @@ import com.project.vsm.model.TicketEntity;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -31,6 +33,8 @@ public class TicketResponse {
     ScheduleResponse scheduleResponse;
     String paymentUrl;
     String qrCodeBase64;
+    LocalDateTime startTime;
+    LocalDateTime endTime;
 
     public static TicketResponse fromEntity(TicketEntity ticket) {
         return TicketResponse.builder()

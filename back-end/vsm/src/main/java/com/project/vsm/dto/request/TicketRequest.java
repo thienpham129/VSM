@@ -15,13 +15,12 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class TicketRequest {
+    long scheduleId;
     int selectedSeat;
     String fullName;
     String phoneNumber;
     String email;
     String note;
-    String startLocation;
-    String stopLocation;
     String voucher;
     String paymentMethod;
 
@@ -32,8 +31,6 @@ public class TicketRequest {
                 .phoneNumber(this.phoneNumber)
                 .email(this.email)
                 .note(this.note)
-                .startLocation(this.startLocation)
-                .stopLocation(this.stopLocation)
                 .price(totalPrice)
                 .voucher(voucher)
                 .account(account)

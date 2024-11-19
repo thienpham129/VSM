@@ -30,6 +30,12 @@ public class ScheduleEntity {
 	@Column(name = "status", nullable = false)
 	private String status;
 
+	@Column(name = "start_locaton")
+	private String startLocation;
+
+	@Column(name = "stop_location")
+	private String stopLocation;
+
 	@ManyToOne
 	@JoinColumn(name = "account_id", referencedColumnName = "account_id")
 	private AccountEntity account;

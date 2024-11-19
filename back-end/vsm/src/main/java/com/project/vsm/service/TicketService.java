@@ -29,6 +29,7 @@ public class TicketService {
     PaymentRepository paymentRepository;
     PaymentService paymentService;
     GoogleSheetsService googleSheetsService;
+    ScheduleRepository scheduleRepository;
 
 
     public List<TicketResponse> getAllTicket() {
@@ -68,7 +69,7 @@ public class TicketService {
         ticketRepository.delete(ticket);
     }
 
-    public TicketResponse createTicket(TicketRequest request, HttpServletRequest httpRequest) {
+    public TicketResponse createTicket(TicketRequest request) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
         AccountEntity account = accountRepository.findByEmail(email)
@@ -96,9 +97,19 @@ public class TicketService {
         PaymentEntity payment = paymentRepository.findByPaymentName(request.getPaymentMethod())
                 .orElseThrow(() -> new RuntimeException("Payment method not found"));
 
+        ScheduleEntity schedule = scheduleRepository.findById(request.getScheduleId())
+                .orElseThrow(() -> new RuntimeException("Schedule not found"));
+
         TicketEntity ticket = request.toEntity(account, payment, voucher, totalPrice);
+        ticket.setStartLocation(schedule.getStartLocation());
+        ticket.setStopLocation(schedule.getStopLocation());
+        ticket.setScheduleEntity(schedule);
+
         ticketRepository.save(ticket);
+
         TicketResponse ticketResponse = TicketResponse.fromEntity(ticket);
+        ticketResponse.setStartTime(schedule.getStartTime());
+        ticketResponse.setEndTime(schedule.getEndTime());
 
         if (payment.getPaymentName().equalsIgnoreCase("vietQR")) {
             String qrCodeUrl = paymentService.generateQrCode(totalPrice , ticket.getTicketId() , account.getEmail());
@@ -116,4 +127,18 @@ public class TicketService {
         return true;
     }
 
+    public TicketResponse updateTicketById ( long ticketId , TicketRequest request) {
+        TicketEntity ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
+
+        ticket.setEmail(request.getEmail());
+        ticket.setFullName(request.getFullName());
+        ticket.setNote(request.getNote());
+        ticket.setPhoneNumber(request.getPhoneNumber());
+        ticket.setSelectedSeat(request.getSelectedSeat());
+
+        ticketRepository.save(ticket);
+
+        return TicketResponse.fromEntity(ticket);
+    }
 }
