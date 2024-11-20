@@ -142,7 +142,7 @@ const MethodPaymentMobile = () => {
 
           <div className={styles.bookingPayment__note}>
             {/* <h4>Lưu ý</h4> */}
-            <div data-content="paymentCKInfo">
+            {/* <div data-content="paymentCKInfo">
               <h4>Thông tin thanh toán,</h4>
               <p>
                 STK ngân hàng Ngân hàng Thương mại cổ phần Đầu tư và Phát triển
@@ -152,10 +152,10 @@ const MethodPaymentMobile = () => {
               <p>
                 <span>Nội dung chuyển khoản để lại: Sdt đặt.</span>
               </p>
-            </div>
+            </div> */}
           </div>
           <div>
-            <p>
+            <p style={{padding : '10px'}}>
               <span className="text-big" style={{ fontSize: "1.4em" }}>
                 QUÝ KHÁCH VUI LÒNG THANH TOÁN TRONG VÒNG{" "}
                 <strong>60 PHÚT</strong>, QUÁ THỜI HẠN MÃ VÉ SẼ BỊ HUỶ. CẦN HỖ

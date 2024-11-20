@@ -169,8 +169,38 @@
     font-size: 16px
 }
 
+.bookingPage__search__triggle.mobile {
+    background-color: #1ECB15;
+    padding: 10px 20px;
+    text-align: center;
+    border-radius: 24px;
+    height: 42px;
+    width: 100%;
+}
+
+.bookingPage__search__triggle.mobile a {
+    color: #fff;
+}
+
 .bookingPage__search__wrap .searchTicket {
     width: 80%
+}
+
+.bookingPage__search__wrap.mobile_wrap {
+    flex-wrap: wrap;
+}
+
+.bookingPage__search__wrap.mobile_wrap .searchTicket {
+    display: block;
+    width: 100%;
+}
+
+.bookingPage__search__wrap.mobile_wrap .searchTicket .searchTicket__item {
+    display: flex;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 10px;
+    width: 100%;
 }
 
 .bookingPage__step__wrap {
@@ -562,7 +592,7 @@
 .bookingPage__tickets__item__collapse__booking__title h3 {
     font-style: normal;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 25px;
     line-height: 22px;
     color: #000;
     margin-bottom: 8px
@@ -575,14 +605,14 @@
 .bookingPage__tickets__item__collapse__booking__title p {
     font-style: normal;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 19px;
     line-height: 19px;
     color: #646d84;
     margin-bottom: 8px
 }
 
 .bookingPage__tickets__item__collapse__booking__seat_map {
-    width: 68%;
+    width: 100%;
     margin-right: 24px
 }
 
@@ -797,10 +827,11 @@
 .bookingPage__mobile__tickets__item__collapse__booking__user .form_group {
     display: flex;
     flex-wrap: wrap;
-    align-items: center
+    /* align-items: center */
 }
 
 .bookingPage__mobile__tickets__item__collapse__booking__user .form_group label {
+    padding: 10px;
     width: 30%;
     font-style: normal;
     font-weight: 400;
@@ -1123,7 +1154,7 @@
 }
 
 .bookingPayment__mobile {
-    display: none
+    /* display: none */
 }
 
 .bookingPayment__mobile .bookingPayment__method {

@@ -45,6 +45,7 @@ const BookingFormMobile7Seat = () => {
   useEffect(() => {
     const fetchPublicProvince = async () => {
       const response = await apiGetPublicProvinces();
+      console.log('««««« responseProvince »»»»»', response);
       if (response.status === 200) {
         setProvinces(response?.data.results);
       }

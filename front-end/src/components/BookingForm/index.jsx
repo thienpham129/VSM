@@ -151,8 +151,14 @@ function BookingForm({ selectedSeats, totalPrice }) {
           <label htmlFor="phone" className={styles.error} />
         </div>
         <div className={`${styles.form_group} ${styles.useEmail}`}>
+          <label
+            htmlFor="useEmail"
+            className="d-block"
+          >
+            Gửi vé cho tôi qua email
+          </label>
           <input
-            style={{ width: "30%" }}
+            style={{ width: "30%", marginLeft: "-140px"}}
             data-action="useEmail"
             data-trip-id="PLT0Tc1ybgN295oCg20241015"
             defaultChecked=""
@@ -160,13 +166,6 @@ function BookingForm({ selectedSeats, totalPrice }) {
             name="useEmail"
             defaultValue=""
           />
-          <label
-            htmlFor="useEmail"
-            className="d-block"
-            style={{ width: "60%" }}
-          >
-            Gửi vé cho tôi qua email
-          </label>
         </div>
         <div className={styles.form_group} data-content="email">
           <label htmlFor="">

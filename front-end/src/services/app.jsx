@@ -1,10 +1,10 @@
 // import axiosClient from "@/libraries/axiosClient";
 import axiosDefault from 'axios'
-import { axiosClient } from 'helper/axiosClient'
+import { axiosClient, root } from 'helper/axiosClient'
 
 export const apiGetProvinces = () => new Promise(async (resolve, reject) => {
     try {
-        const response = await axiosClient({
+        const response = await root({
             method: 'get',
             url: '/api/v1/province/all'
         })

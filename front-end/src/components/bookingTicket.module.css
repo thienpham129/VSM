@@ -562,7 +562,7 @@
 .bookingPage__tickets__item__collapse__booking__title h3 {
     font-style: normal;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 25px;
     line-height: 22px;
     color: #000;
     margin-bottom: 8px
@@ -575,14 +575,14 @@
 .bookingPage__tickets__item__collapse__booking__title p {
     font-style: normal;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 19px;
     line-height: 19px;
     color: #646d84;
     margin-bottom: 8px
 }
 
 .bookingPage__tickets__item__collapse__booking__seat_map {
-    width: 68%;
+    width: 100%;
     margin-right: 24px
 }
 
@@ -660,7 +660,8 @@
 }
 
 .bookingPage__tickets__item__collapse__booking__user {
-    width: calc(100% - 68% - 24px)
+    /* width: calc(100% - 68% - 24px) */
+    width: 100%
 }
 
 .bookingPage__tickets__item__collapse__booking__user .form_group {
@@ -797,10 +798,11 @@
 .bookingPage__mobile__tickets__item__collapse__booking__user .form_group {
     display: flex;
     flex-wrap: wrap;
-    align-items: center
+    /* align-items: center */
 }
 
 .bookingPage__mobile__tickets__item__collapse__booking__user .form_group label {
+    padding: 10px;
     width: 30%;
     font-style: normal;
     font-weight: 400;
@@ -1138,7 +1140,7 @@
 }
 
 .bookingPayment__mobile {
-    display: none
+    /* display: none */
 }
 
 .bookingPayment__mobile .bookingPayment__method {
@@ -1716,7 +1718,7 @@ figure.image.ck-widget.ck-widget_with-resizer {
 }
 
 .bookingPage__search__triggle.mobile {
-    background-color: #000000;
+    background-color: #1ECB15;
     padding: 10px 20px;
     text-align: center;
     border-radius: 24px;
