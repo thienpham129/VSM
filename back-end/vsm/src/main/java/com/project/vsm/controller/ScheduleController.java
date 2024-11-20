@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.vsm.dto.ScheduleCreateDTO;
+import com.project.vsm.dto.ScheduleFindDTO;
 import com.project.vsm.model.ScheduleEntity;
 import com.project.vsm.service.ScheduleService;
 
@@ -33,6 +34,11 @@ public class ScheduleController {
 		return new ResponseEntity<>(schedule.get(), HttpStatus.OK);
 	}
 
+	@PostMapping("public/find-schedule")
+	public ResponseEntity<Iterable<ScheduleEntity>> getSchedulesByDriverAndCar(@RequestBody ScheduleFindDTO input) {
+		return new ResponseEntity<>(scheduleService.getSchedulesByDriverOrCarForDate(input),
+				HttpStatus.OK);
+	}
 
 	@PostMapping("admin/schedule")
 	public ResponseEntity<ScheduleEntity> createSchedule(@Valid @RequestBody ScheduleCreateDTO scheduleDTO) {

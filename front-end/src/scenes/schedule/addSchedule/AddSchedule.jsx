@@ -45,6 +45,7 @@ const AddSchedule = () => {
   const [loadingCars, setLoadingCars] = useState(true);
   const [loadingRoutes, setLoadingRoutes] = useState(true); // State loading cho tuyến đường
   const [scheduleData, setScheduleData] = useState(null); // State lưu kết quả từ API
+  const [newSchedule, setNewSchedule] = useState(initialValues);
 
   useEffect(() => {
     // Gọi API để lấy danh sách tài xế
@@ -90,6 +91,31 @@ const AddSchedule = () => {
     };
     fetchRoutes();
   }, []);
+  useEffect(() => {
+    if (newSchedule.date && newSchedule.driver && newSchedule.car) {
+      const requestData = {
+        startDate: newSchedule.date,
+        accountId: newSchedule.driver,
+        carId: newSchedule.car,
+      };
+
+      const fetchDataSchedule = async () => {
+        try {
+          const response = await request(
+            "post",
+            "/public/find-schedule",
+            requestData
+          );
+          setScheduleData(response.data); // Cập nhật dữ liệu lịch trình
+        } catch (error) {
+          setScheduleData([]);
+          console.error("Lỗi khi lấy danh sách lịch trình:", error);
+        }
+      };
+
+      fetchDataSchedule();
+    }
+  }, [newSchedule]);
 
   const handleFormSubmit = async (values) => {
     // Tạo startTime theo định dạng ISO từ date, hour và minute
@@ -138,151 +164,167 @@ const AddSchedule = () => {
           handleBlur,
           handleChange,
           handleSubmit,
-        }) => (
-          <form onSubmit={handleSubmit}>
-            <Box
-              display="grid"
-              gap="30px"
-              gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-              sx={{
-                "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
-              }}
-            >
-              {/* Dropdown Tài Xế */}
-              <FormControl
-                variant="filled"
-                sx={{ gridColumn: "span 2" }}
-                error={!!touched.driver && !!errors.driver}
-              >
-                <InputLabel>Tài Xế</InputLabel>
-                <Select
-                  name="driver"
-                  value={values.driver}
-                  onChange={handleChange}
-                >
-                  {loadingDrivers ? (
-                    <MenuItem disabled>
-                      <CircularProgress size={24} />
-                    </MenuItem>
-                  ) : (
-                    drivers.map((driver) => (
-                      <MenuItem key={driver.id} value={driver.id}>
-                        {driver.firstName} {driver.lastName}
-                      </MenuItem>
-                    ))
-                  )}
-                </Select>
-              </FormControl>
+        }) => {
+          const handleInputChange = (e) => {
+            const { name, value } = e.target;
+            handleChange(e); // Cập nhật giá trị Formik
+            setNewSchedule((prev) => ({
+              ...prev,
+              [name]: value, // Cập nhật newSchedule khi giá trị input thay đổi
+            }));
+          };
 
-              {/* Dropdown Tên Xe */}
-              <FormControl
-                variant="filled"
-                sx={{ gridColumn: "span 2" }}
-                error={!!touched.car && !!errors.car}
-              >
-                <InputLabel>Tên Xe</InputLabel>
-                <Select name="car" value={values.car} onChange={handleChange}>
-                  {loadingCars ? (
-                    <MenuItem disabled>
-                      <CircularProgress size={24} />
-                    </MenuItem>
-                  ) : (
-                    cars.map((car) => (
-                      <MenuItem key={car.carId} value={car.carId}>
-                        {`Xe ${car.name}: ${
-                          car.type.numSeat
-                        } chỗ, ${car.type.price.toLocaleString()} VND`}
-                      </MenuItem>
-                    ))
-                  )}
-                </Select>
-              </FormControl>
-
-              {/* Chọn Ngày */}
-              <TextField
-                fullWidth
-                variant="filled"
-                type="date"
-                label="Ngày"
-                onChange={handleChange}
-                value={values.date}
-                name="date"
-                error={!!touched.date && !!errors.date}
-                helperText={touched.date && errors.date}
-                sx={{ gridColumn: "span 2" }}
-                InputProps={{
-                  inputProps: { min: currentDate },
+          return (
+            <form onSubmit={handleSubmit}>
+              <Box
+                display="grid"
+                gap="30px"
+                gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+                sx={{
+                  "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
                 }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-
-              <FormControl variant="filled" sx={{ gridColumn: "span 1" }}>
-                <InputLabel>Giờ</InputLabel>
-                <Select
-                  name="hour"
-                  value={values.hour}
-                  onChange={handleChange}
-                  error={!!touched.hour && !!errors.hour}
-                >
-                  {[...Array(24).keys()].map((hour) => (
-                    <MenuItem key={hour} value={hour}>
-                      {hour}h
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl variant="filled" sx={{ gridColumn: "span 1" }}>
-                <InputLabel>Phút</InputLabel>
-                <Select
-                  name="minute"
-                  value={values.minute}
-                  onChange={handleChange}
-                  error={!!touched.minute && !!errors.minute}
-                >
-                  {[0, 10, 20, 30, 40, 50].map((minute) => (
-                    <MenuItem key={minute} value={minute}>
-                      {minute} phút
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              {/* Dropdown Tuyến Đường */}
-              <FormControl
-                variant="filled"
-                sx={{ gridColumn: "span 4" }}
-                error={!!touched.route && !!errors.route}
               >
-                <InputLabel>Tuyến Đường</InputLabel>
-                <Select
-                  name="route"
-                  value={values.route}
-                  onChange={handleChange}
+                {/* Dropdown Tài Xế */}
+                <FormControl
+                  variant="filled"
+                  sx={{ gridColumn: "span 2" }}
+                  error={!!touched.driver && !!errors.driver}
                 >
-                  {loadingRoutes ? (
-                    <MenuItem disabled>
-                      <CircularProgress size={24} />
-                    </MenuItem>
-                  ) : (
-                    routes.map((route) => (
-                      <MenuItem key={route.id} value={route.id}>
-                        {`${route.startLocation} > ${route.stopLocation}`}
+                  <InputLabel>Tài Xế</InputLabel>
+                  <Select
+                    name="driver"
+                    value={newSchedule.driver} // Lấy giá trị từ newSchedule
+                    onChange={handleInputChange} // Cập nhật newSchedule khi thay đổi
+                  >
+                    {loadingDrivers ? (
+                      <MenuItem disabled>
+                        <CircularProgress size={24} />
                       </MenuItem>
-                    ))
-                  )}
-                </Select>
-              </FormControl>
-            </Box>
+                    ) : (
+                      drivers.map((driver) => (
+                        <MenuItem key={driver.id} value={driver.id}>
+                          {driver.firstName} {driver.lastName}
+                        </MenuItem>
+                      ))
+                    )}
+                  </Select>
+                </FormControl>
 
-            <Box display="flex" justifyContent="end" mt="20px">
-              <Button type="submit" color="secondary" variant="contained">
-                Tạo Mới Lịch Trình
-              </Button>
-            </Box>
-          </form>
-        )}
+                {/* Dropdown Tên Xe */}
+                <FormControl
+                  variant="filled"
+                  sx={{ gridColumn: "span 2" }}
+                  error={!!touched.car && !!errors.car}
+                >
+                  <InputLabel>Tên Xe</InputLabel>
+                  <Select
+                    name="car"
+                    value={newSchedule.car} // Lấy giá trị từ newSchedule
+                    onChange={handleInputChange} // Cập nhật newSchedule khi thay đổi
+                  >
+                    {loadingCars ? (
+                      <MenuItem disabled>
+                        <CircularProgress size={24} />
+                      </MenuItem>
+                    ) : (
+                      cars.map((car) => (
+                        <MenuItem key={car.carId} value={car.carId}>
+                          {`Xe ${car.name}: ${
+                            car.type.numSeat
+                          } chỗ, ${car.type.price.toLocaleString()} VND`}
+                        </MenuItem>
+                      ))
+                    )}
+                  </Select>
+                </FormControl>
+
+                {/* Chọn Ngày */}
+                <TextField
+                  fullWidth
+                  variant="filled"
+                  type="date"
+                  label="Ngày"
+                  onChange={handleInputChange} // Cập nhật newSchedule khi thay đổi
+                  value={newSchedule.date} // Lấy giá trị từ newSchedule
+                  name="date"
+                  error={!!touched.date && !!errors.date}
+                  helperText={touched.date && errors.date}
+                  sx={{ gridColumn: "span 2" }}
+                  InputProps={{
+                    inputProps: { min: currentDate },
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+
+                {/* Chọn Giờ */}
+                <FormControl variant="filled" sx={{ gridColumn: "span 1" }}>
+                  <InputLabel>Giờ</InputLabel>
+                  <Select
+                    name="hour"
+                    value={newSchedule.hour} // Lấy giá trị từ newSchedule
+                    onChange={handleInputChange} // Cập nhật newSchedule khi thay đổi
+                  >
+                    {[...Array(24).keys()].map((hour) => (
+                      <MenuItem key={hour} value={hour}>
+                        {hour}h
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                {/* Chọn Phút */}
+                <FormControl variant="filled" sx={{ gridColumn: "span 1" }}>
+                  <InputLabel>Phút</InputLabel>
+                  <Select
+                    name="minute"
+                    value={newSchedule.minute} // Lấy giá trị từ newSchedule
+                    onChange={handleInputChange} // Cập nhật newSchedule khi thay đổi
+                  >
+                    {[0, 10, 20, 30, 40, 50].map((minute) => (
+                      <MenuItem key={minute} value={minute}>
+                        {minute} phút
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                {/* Dropdown Tuyến Đường */}
+                <FormControl
+                  variant="filled"
+                  sx={{ gridColumn: "span 4" }}
+                  error={!!touched.route && !!errors.route}
+                >
+                  <InputLabel>Tuyến Đường</InputLabel>
+                  <Select
+                    name="route"
+                    value={newSchedule.route} // Lấy giá trị từ newSchedule
+                    onChange={handleInputChange} // Cập nhật newSchedule khi thay đổi
+                  >
+                    {loadingRoutes ? (
+                      <MenuItem disabled>
+                        <CircularProgress size={24} />
+                      </MenuItem>
+                    ) : (
+                      routes.map((route) => (
+                        <MenuItem key={route.id} value={route.id}>
+                          {`${route.startLocation} > ${route.stopLocation}`}
+                        </MenuItem>
+                      ))
+                    )}
+                  </Select>
+                </FormControl>
+              </Box>
+
+              <Box display="flex" justifyContent="end" mt="20px">
+                <Button type="submit" color="secondary" variant="contained">
+                  Tạo Mới Lịch Trình
+                </Button>
+              </Box>
+            </form>
+          );
+        }}
       </Formik>
 
       {/* Hiển thị kết quả từ API */}
@@ -303,6 +345,9 @@ const AddSchedule = () => {
                     Xe
                   </th>
                   <th style={{ border: "1px solid #ddd", padding: "8px" }}>
+                    Tuyến Đường
+                  </th>
+                  <th style={{ border: "1px solid #ddd", padding: "8px" }}>
                     Thời Gian Bắt Đầu
                   </th>
                 </tr>
@@ -315,6 +360,9 @@ const AddSchedule = () => {
                     </td>
                     <td style={{ border: "1px solid #ddd", padding: "8px" }}>
                       {schedule.car.name}
+                    </td>
+                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                      {`${schedule.route.startLocation} > ${schedule.route.stopLocation}`}
                     </td>
                     <td style={{ border: "1px solid #ddd", padding: "8px" }}>
                       {new Date(schedule.startTime).toLocaleString()}
