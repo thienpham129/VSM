@@ -1,5 +1,6 @@
 package com.project.vsm.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class ScheduleEntity {
 	@Column(name = "status", nullable = false)
 	private String status;
 
-	@Column(name = "start_locaton")
+	@Column(name = "start_location")
 	private String startLocation;
 
 	@Column(name = "stop_location")

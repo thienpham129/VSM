@@ -7,6 +7,7 @@ import com.project.vsm.model.TicketEntity;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
