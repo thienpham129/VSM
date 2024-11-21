@@ -54,6 +54,9 @@ public class AccountEntity {
 	private boolean enabled;
 
 	private String gender;
+	
+	@Transient
+	private String newPassword;
 
 	@Column(name = "img_driver_lisence_2")
 	private String imgDriverLisence1;

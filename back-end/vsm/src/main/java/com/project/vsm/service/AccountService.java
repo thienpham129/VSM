@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Optional;
 
-
 @Service
 public class AccountService {
     @Autowired
@@ -27,7 +26,6 @@ public class AccountService {
     @Autowired
     @Lazy
     private PasswordEncoder passwordEncoder;
-
 
     public Optional<AccountEntity> findByEmail(String email) {
 

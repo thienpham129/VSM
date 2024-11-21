@@ -39,6 +39,10 @@ public class ScheduleEntity {
 	private String stopLocation;
 
 	@ManyToOne
+	@JoinColumn(name = "route_id", referencedColumnName = "id")
+	private RouteEntity route;
+
+	@ManyToOne
 	@JoinColumn(name = "account_id", referencedColumnName = "account_id")
 	private AccountEntity account;
 

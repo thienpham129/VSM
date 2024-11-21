@@ -4078,6 +4078,7 @@ hr {
 }
 
 .form-border input[type=text],
+.form-border input[type=number],
 .form-border textarea,
 .form-underline input[type=email],
 .form-border input[type=password],
@@ -12780,8 +12781,9 @@ body.dark-scheme::-webkit-scrollbar-track,#de_modal::-webkit-scrollbar-track {
     display: none;
 }
 .v-center {
-    min-height: 100%;
-    min-height: 100vh;
+    /* min-height: 100%; */
+    /* min-height: 200vh; */
+    min-height: 150vh;
     display: flex;
     align-items: center;
 }
@@ -18354,4 +18356,15 @@ img.logo-1 {
 img.logo-2 {
     width: 170px;
     height: 100px;
+}
+.info_lobby th,
+td {
+    text-align: center;
+}
+select#select-address {
+    width: 100%;
+}
+.info_lobby th {
+    font-weight: bold;
+    color: #ffffff;
 }

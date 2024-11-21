@@ -1,5 +1,12 @@
 package com.project.vsm.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.project.vsm.dto.ScheduleCreateDTO;
 import com.project.vsm.dto.ScheduleFindDTO;
@@ -9,9 +16,11 @@ import com.project.vsm.exception.InvalidInputException;
 import com.project.vsm.exception.NotFoundException;
 import com.project.vsm.model.AccountEntity;
 import com.project.vsm.model.CarEntity;
+import com.project.vsm.model.RouteEntity;
 import com.project.vsm.model.ScheduleEntity;
 import com.project.vsm.repository.AccountRepository;
 import com.project.vsm.repository.CarRepository;
+import com.project.vsm.repository.RouteRepository;
 import com.project.vsm.repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,32 +38,89 @@ public class ScheduleService {
     private CarRepository carRepository;
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private RouteRepository routeRepository;
 
-    public ScheduleEntity createNewSchedule(ScheduleCreateDTO scheduleInput) {
-        Optional<CarEntity> car = carRepository.findById(scheduleInput.getCarId());
-        if (!car.isPresent()) {
-            throw new NotFoundException("Not found car with id " + scheduleInput.getCarId());
+    public ScheduleEntity createNewSchedule(ScheduleCreateDTO scheduleDTO) {
+        // Kiểm tra xe có tồn tại không
+        Optional<CarEntity> optionalCar = carRepository.findById(scheduleDTO.getCarId());
+        if (!optionalCar.isPresent()) {
+            throw new NotFoundException("Not found car with id " + scheduleDTO.getCarId());
         }
-        Optional<AccountEntity> driver = accountRepository.findById(scheduleInput.getAccountId());
-        if (!driver.isPresent() || !driver.get().getRole().equalsIgnoreCase("ROLE_DRIVER")) {
-            throw new NotFoundException("Not found driver with id " + scheduleInput.getAccountId());
+
+        // Kiểm tra tài xế có tồn tại và có phải là tài xế không
+        Optional<AccountEntity> optionalDriver = accountRepository.findById(scheduleDTO.getAccountId());
+        if (!optionalDriver.isPresent() || !optionalDriver.get().getRole().equals("ROLE_DRIVER")) {
+            throw new NotFoundException("Not found Driver with id " + scheduleDTO.getAccountId());
         }
-        List<ScheduleEntity> checkScheduleCar = scheduleRepository.findByCarAndStartTime(car.get(),
-                scheduleInput.getStartTime());
-        if (checkScheduleCar.size() > 0) {
-            throw new InvalidInputException("Đã tồn tại schedule với giờ và xe này");
+
+        // Kiểm tra tuyến đường có tồn tại không
+        Optional<RouteEntity> optionalRoute = routeRepository.findById(scheduleDTO.getRouteId());
+        if (!optionalRoute.isPresent()) {
+            throw new NotFoundException("Not found Route with id " + scheduleDTO.getRouteId());
         }
-        List<ScheduleEntity> checkScheduleDriver = scheduleRepository.findByAccountAndStartTime(driver.get(),
-                scheduleInput.getStartTime());
-        if (checkScheduleDriver.size() > 0) {
-            throw new InvalidInputException("Đã tồn tại schedule với giờ và tài xế này");
+
+        // Kiểm tra tính khả dụng của tài xế và xe
+        if (!isAccountAvailable(scheduleDTO.getAccountId(), scheduleDTO.getStartTime())
+                || !isCarAvailable(scheduleDTO.getCarId(), scheduleDTO.getStartTime())) {
+            throw new InvalidInputException("Tài xế hoặc xe sắp lịch phải cách nhau ít nhất 3 tiếng");
         }
+
+        String carStopLocation = findClosestStopLocation(scheduleDTO.getCarId(), scheduleDTO.getStartTime());
+        String driverStopLocation = findClosestStopLocationByDriver(scheduleDTO.getAccountId(),
+                scheduleDTO.getStartTime());
+
+        // Kiểm tra nếu không có lịch trình trước đó, bỏ qua kiểm tra điểm bắt đầu
+        if (carStopLocation != null && !carStopLocation.equals(optionalRoute.get().getStartLocation())) {
+            throw new InvalidInputException(
+                    "Điểm bắt đầu của lịch phải phù hợp với điểm dừng của lịch trước đó cho xe.");
+        }
+        if (driverStopLocation != null && !driverStopLocation.equals(optionalRoute.get().getStartLocation())) {
+            throw new InvalidInputException(
+                    "Điểm bắt đầu của lịch phải phù hợp với điểm dừng của lịch trước đó cho tài xế.");
+        }
+
+        // Tạo đối tượng ScheduleEntity mới
         ScheduleEntity schedule = new ScheduleEntity();
-        schedule.setStartTime(scheduleInput.getStartTime());
-        schedule.setAccount(driver.get());
-        schedule.setCar(car.get());
+        schedule.setAccount(optionalDriver.get());
+        schedule.setCar(optionalCar.get());
+        schedule.setRoute(optionalRoute.get());
+        schedule.setStartTime(scheduleDTO.getStartTime());
         schedule.setStatus("Đã lên lịch");
+
+        // Lưu lịch trình vào cơ sở dữ liệu và trả về
         return scheduleRepository.save(schedule);
+    }
+
+    public String findClosestStopLocationByDriver(Long driverId, LocalDateTime startTime) {
+        List<ScheduleEntity> schedules = scheduleRepository.findClosestScheduleSameDayByDriver(driverId, startTime);
+
+        if (!schedules.isEmpty()) {
+            ScheduleEntity closestSchedule = schedules.get(0);
+            return closestSchedule.getRoute().getStopLocation();
+        }
+        return null;
+    }
+
+    public String findClosestStopLocation(Long carId, LocalDateTime startTime) {
+        List<ScheduleEntity> schedules = scheduleRepository.findClosestScheduleSameDay(carId, startTime);
+
+        if (!schedules.isEmpty()) {
+            ScheduleEntity closestSchedule = schedules.get(0);
+            return closestSchedule.getRoute().getStopLocation();
+        }
+        return null;
+    }
+
+    public boolean isCarAvailable(Long carId, LocalDateTime startTime) {
+        List<ScheduleEntity> conflictingSchedules = scheduleRepository.findConflictingSchedules(carId, startTime);
+        return conflictingSchedules.isEmpty();
+    }
+
+    public boolean isAccountAvailable(Long accountId, LocalDateTime startTime) {
+        List<ScheduleEntity> conflictingSchedules = scheduleRepository.findConflictingSchedulesByAccount(accountId,
+                startTime);
+        return conflictingSchedules.isEmpty();
     }
 
     public Optional<ScheduleEntity> getScheduleById(long id) {
@@ -70,42 +136,11 @@ public class ScheduleService {
         return listSchedules;
     }
 
-    public ScheduleEntity updateScheduleById(long id, ScheduleCreateDTO scheduleInput) {
-        Optional<ScheduleEntity> optionalEntity = scheduleRepository.findById(id);
-        if (!optionalEntity.isPresent()) {
-            throw new NotFoundException("Not found schedule with id " + id);
-        }
-        Optional<CarEntity> car = carRepository.findById(scheduleInput.getCarId());
-        if (!car.isPresent()) {
-            throw new NotFoundException("Not found car with id " + scheduleInput.getCarId());
-        }
-        Optional<AccountEntity> driver = accountRepository.findById(scheduleInput.getAccountId());
-        if (!driver.isPresent() || !driver.get().getRole().equalsIgnoreCase("ROLE_DRIVER")) {
-            throw new NotFoundException("Not found driver with id " + scheduleInput.getAccountId());
-        }
-        List<ScheduleEntity> checkScheduleCar = scheduleRepository.findByCarAndStartTime(car.get(),
-                scheduleInput.getStartTime());
-        if (checkScheduleCar.size() > 0) {
-            throw new InvalidInputException("Đã tồn tại schedule với giờ và xe này");
-        }
-        List<ScheduleEntity> checkScheduleDriver = scheduleRepository.findByAccountAndStartTime(driver.get(),
-                scheduleInput.getStartTime());
-        if (checkScheduleDriver.size() > 0) {
-            throw new InvalidInputException("Đã tồn tại schedule với giờ và tài xế này");
-        }
-        optionalEntity.get().setAccount(driver.get());
-        optionalEntity.get().setCar(car.get());
-        optionalEntity.get().setStartTime(scheduleInput.getStartTime());
-        return scheduleRepository.save(optionalEntity.get());
-    }
-
     public List<ScheduleEntity> getSchedulesByDriverOrCarForDate(ScheduleFindDTO scheduleFindDTO) {
         LocalDate startDate = scheduleFindDTO.getStartDate(); // Ngày từ input
 
         Long carId = scheduleFindDTO.getCarId(); // ID của xe
         Long driverId = scheduleFindDTO.getAccountId(); // ID của tài xế
-
-        // Kiểm tra sự tồn tại của xe và tài xế
         Optional<CarEntity> car = carRepository.findById(carId);
         if (!car.isPresent()) {
             throw new NotFoundException("Not found car with id " + carId);
@@ -126,13 +161,14 @@ public class ScheduleService {
         return schedules;
     }
 
-    public List<ScheduleResponse> getSchedulesWithCars(String startLocation, String stopLocation, LocalDateTime startTime) {
+    public List<ScheduleResponse> getSchedulesWithCars(String startLocation, String stopLocation,
+            LocalDateTime startTime) {
         System.out.println("startLocation: " + startLocation);
         System.out.println("stopLocation: " + stopLocation);
         System.out.println("startTime: " + startTime);
 
-        List<ScheduleEntity> schedules = scheduleRepository.findByStartLocationAndStopLocationAndStartTime
-                (startLocation, stopLocation, startTime);
+        List<ScheduleEntity> schedules = scheduleRepository
+                .findByStartLocationAndStopLocationAndStartTime(startLocation, stopLocation, startTime);
 
         if (schedules.isEmpty()) {
             System.out.println("No schedules found.");
