@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -17,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentController {
     private final PaymentService paymentService;
     @GetMapping("/vn-pay")
-    public ResponseObject<VNPayResponse> pay(HttpServletRequest request) {
-        return new ResponseObject<>(HttpStatus.OK, "Success", paymentService.createVnPayPayment(request));
+    public ResponseObject<VNPayResponse> pay(@RequestParam long ticketId , HttpServletRequest request) {
+        return new ResponseObject<>(HttpStatus.OK, "Success", paymentService.createVnPayPayment(ticketId,request));
     }
     @GetMapping("/vn-pay-callback")
     public ResponseObject<VNPayResponse> payCallbackHandler(HttpServletRequest request) {

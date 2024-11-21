@@ -1,14 +1,20 @@
 package com.project.vsm.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com.project.vsm.dto.ScheduleCreateDTO;
 import com.project.vsm.dto.ScheduleFindDTO;
+import com.project.vsm.dto.response.CarResponse;
+import com.project.vsm.dto.response.ScheduleResponse;
 import com.project.vsm.exception.InvalidInputException;
 import com.project.vsm.exception.NotFoundException;
 import com.project.vsm.model.AccountEntity;
@@ -124,4 +130,31 @@ public class ScheduleService {
 
 		return schedules;
 	}
+	
+	public List<ScheduleResponse> getSchedulesWithCars(String startLocation, String stopLocation, LocalDateTime startTime) {
+        System.out.println("startLocation: " + startLocation);
+        System.out.println("stopLocation: " + stopLocation);
+        System.out.println("startTime: " + startTime);
+
+        List<ScheduleEntity> schedules = scheduleRepository.findByStartLocationAndStopLocationAndStartTime
+                (startLocation, stopLocation, startTime);
+
+        if (schedules.isEmpty()) {
+            System.out.println("No schedules found.");
+            return Collections.emptyList();
+        }
+
+        List<ScheduleResponse> responses = new ArrayList<>();
+
+        for (ScheduleEntity schedule : schedules) {
+            ScheduleResponse response = ScheduleResponse.mapScheduleResponse(schedule);
+            CarEntity car = schedule.getCar();
+            if (car != null) {
+                CarResponse carResponse = CarResponse.mapCarResponse(car);
+                response.setCar(carResponse);
+            }
+            responses.add(response);
+        }
+        return responses;
+    }
 }

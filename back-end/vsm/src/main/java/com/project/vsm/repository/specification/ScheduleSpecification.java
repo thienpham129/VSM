@@ -1,32 +1,31 @@
 package com.project.vsm.repository.specification;
 
-
-import com.project.vsm.model.CarEntity;
-import jakarta.persistence.criteria.Predicate;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.ObjectUtils;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.ObjectUtils;
+
+import com.project.vsm.model.ScheduleEntity;
+
+import jakarta.persistence.criteria.Predicate;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CarSpecification {
-    private static final String FILED_START_LOCATION = "startLocation";
+public class ScheduleSpecification {
+	private static final String FILED_START_LOCATION = "startLocation";
     private static final String FILED_END_LOCATION = "stopLocation";
-    private static final String FILED_START_DATE = "startDate";
+    private static final String FILED_START_DATE = "startTime";
+    private final List<Specification<ScheduleEntity>> specifications = new ArrayList<>();
 
-    private final List<Specification<CarEntity>> specifications = new ArrayList<>();
-
-    public static CarSpecification builder() {
-        return new CarSpecification();
+    public static ScheduleSpecification builder() {
+        return new ScheduleSpecification();
     }
 
-    public CarSpecification withStartLocation(String startLocation) {
+    public ScheduleSpecification withStartLocation(String startLocation) {
         if (!ObjectUtils.isEmpty(startLocation)) {
             specifications.add((root, query, criteriaBuilder) ->
             criteriaBuilder.like(criteriaBuilder.upper(root.get(FILED_START_LOCATION)), like(startLocation)));
@@ -34,7 +33,7 @@ public class CarSpecification {
         return this;
     }
 
-    public CarSpecification withEndLocation(String endLocation) {
+    public ScheduleSpecification withEndLocation(String endLocation) {
         if (!ObjectUtils.isEmpty(endLocation)) {
             specifications.add((root, query, criteriaBuilder) ->
                     criteriaBuilder.like(criteriaBuilder.upper(root.get(FILED_END_LOCATION)), like(endLocation)));
@@ -42,7 +41,7 @@ public class CarSpecification {
         return this;
     }
 
-    public CarSpecification withStartDate(LocalDateTime startDate) {
+    public ScheduleSpecification withStartDate(LocalDate startDate) {
         if (!ObjectUtils.isEmpty(startDate)) {
             specifications.add((root, query, criteriaBuilder) ->
                     criteriaBuilder.equal(root.get(FILED_START_DATE) , startDate));
@@ -54,7 +53,7 @@ public class CarSpecification {
         return "%" + value.toUpperCase() + "%";
     }
 
-    public Specification<CarEntity> build() {
+    public Specification<ScheduleEntity> build() {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.and(specifications.stream()
                 .filter(Objects::nonNull)
                 .map(s -> s.toPredicate(root, query, criteriaBuilder))

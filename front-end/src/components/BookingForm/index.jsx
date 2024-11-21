@@ -9,7 +9,7 @@ import {
   apiGetPublicWard,
 } from "services/app";
 
-function BookingForm({ selectedSeats, totalPrice }) {
+function BookingForm({ selectedSeats, totalPrice, startTime, startLocation, stopLocation, car, numSeat, price } ) {
   // Pick-up location state
   const [pickupSpecificAddress, setPickupSpecificAddress] = useState("");
   const [pickupProvinces, setPickupProvinces] = useState([]);
@@ -107,10 +107,9 @@ function BookingForm({ selectedSeats, totalPrice }) {
         className={styles.bookingPage__tickets__item__collapse__booking__title}
       >
         <h3>
-          SG: 35 Sài Gòn <span className="avicon icon-arrow-right" /> QN: 1 Quy
-          Nhơn
+        {startLocation} <i class="fa-solid fa-arrow-right" /> {stopLocation}
         </h3>
-        <p>19:00 - 15/10/2024</p>
+        <p>{new Date(startTime).toLocaleString()}</p>
       </div>
       <form
         method="POST"
@@ -278,8 +277,8 @@ function BookingForm({ selectedSeats, totalPrice }) {
           <input type="text" name="promotionCode" defaultValue="" />
         </div>
         <div
-          className={styles.form_group}
-          mb-2
+          className={`styles.form_group`}
+          // mb-2
           data-discount-trip="PLT0Tc1ybgN295oCg20241015"
         ></div>
         <div className="d-flex justify-content-end">

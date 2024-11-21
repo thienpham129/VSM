@@ -24,6 +24,10 @@ public class TicketEntity {
     @Column(name = "price")
     double price;
 
+    @Column(name = "payment_method")
+     String paymentMethod;
+
+
     @Column(name = "is_paid")
     boolean isPaid;
 
@@ -53,21 +57,28 @@ public class TicketEntity {
 
     @Column(name = "phone_number")
     String phoneNumber;
+    
+    @Column(name = "detail_address_pick_up")
+    String detailAddressPickUp;
+    
+    @Column(name = "detail_address_drop_off")
+    String detailAddressDropOff;
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "voucher_id")
     VoucherEntity voucher;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "payment_id")
-    private PaymentEntity paymentEntity;
-
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name ="car_id")
-    CarEntity car;
+    @JoinColumn(name = "payment_id")
+    PaymentEntity  paymentEntity;
+
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "account_id")
     AccountEntity account;
+
+    @ManyToOne(cascade = CascadeType.ALL ,  fetch = FetchType.EAGER)
+    @JoinColumn(name = "schedule_id")
+    ScheduleEntity scheduleEntity;
 }
 

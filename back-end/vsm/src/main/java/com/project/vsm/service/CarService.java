@@ -165,7 +165,7 @@ public class CarService {
 
 	public Page<CarResponse> getCarPagingAndSearch(CarSearchRequest request) {
 		return carRepository.findAll(request.specification(), request.getPaging().pageable())
-				.map(car -> CarResponse.builder().carId(car.getCarId()).carName(car.getName())
+				.map(car -> CarResponse.builder().carId(car.getCarId()).name(car.getName())
 						.plateNumber(car.getPlateNumber()).startLocation(car.getStartLocation())
 						.stopLocation(car.getStopLocation()).startDate(car.getStartDate()).build());
 	}

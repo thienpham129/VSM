@@ -34,8 +34,8 @@ const Seat = ({ seatId, seatStatus, onSelect }) => {
   );
 };
 
-const Schedule10Seat = () => {
-  const ticketPrice = 150000;
+const Schedule10Seat = ({ startTime, startLocation, stopLocation, car, numSeat, price }) => {
+  const ticketPrice = price;
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [toggle, setToggle] = useState(false);
@@ -65,15 +65,18 @@ const Schedule10Seat = () => {
     >
       <div className={styles.bookingPage__tickets__item__thumb}>
         <div className={styles.bookingPage__tickets__item__thumb__time}>
-          <div className={styles.times}>
-            <h3>19 : 00</h3>
-          </div>
+        <span className="avicon icon-clock"></span>
+
+          {/* <div className={styles.times} > */}
+          <h3 className={styles.times}>{new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</h3>
+
+          {/* </div> */}
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__route}>
           <span className="avicon icon-bus" />
           <div className={styles.route}>
             <h3 className={styles.showAsRoute}>
-              Đồng Hới - Quảng Nam (24P Vip)
+            {startLocation} - {stopLocation}
             </h3>
           </div>
         </div>
@@ -87,15 +90,16 @@ const Schedule10Seat = () => {
                 data-trip-id="PLT0Tc1ybgN295oCg20241015"
                 data-seatmap-id="SM0Tc1ybgBNa7yys"
               >
-                14
+                  {numSeat}
               </b>{" "}
-              chỗ trống
+              chỗ ngồi
             </h3>
-            <span>Giường nằm limousine</span>
+            <span>Xe {car.name}</span>
           </div>
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__price}>
-          <span> 150,000</span>
+        <span>{price.toLocaleString()} VND</span>
+
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__view_button}>
           <a
@@ -248,6 +252,11 @@ const Schedule10Seat = () => {
             <BookingForm
               selectedSeats={selectedSeats}
               totalPrice={totalPrice}
+              startTime={startTime}
+              startLocation={startLocation}
+              stopLocation={stopLocation}
+              car={car}
+              numSeat={numSeat}
             />
           </div>
         </div>

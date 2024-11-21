@@ -324,6 +324,11 @@
     color: #646d84
 }
 
+.bookingPage__tickets__item__thumb__time .times {
+    letter-spacing: 2px;
+    padding-left: 10px;
+}
+
 .bookingPage__tickets__item__thumb__route {
     display: flex;
     flex-wrap: wrap;
