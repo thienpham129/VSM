@@ -71,7 +71,7 @@ public class TicketEntity {
     @JoinColumn(name = "account_id")
     AccountEntity account;
 
-    @ManyToOne(cascade = CascadeType.ALL ,  fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL ,  fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id")
     ScheduleEntity scheduleEntity;
 }

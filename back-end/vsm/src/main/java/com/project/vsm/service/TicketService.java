@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -57,7 +58,7 @@ public class TicketService {
                 scheduleResponse.setEndTime(schedule.getEndTime());
                 scheduleResponse.setStatus(schedule.getStatus());
             }
-            ticketResponse.setScheduleResponse(scheduleResponse);
+            ticketResponse.setSchedules(scheduleResponse);
             ticketResponses.add(ticketResponse);
         }
         return ticketResponses;
@@ -112,7 +113,7 @@ public class TicketService {
         ticketResponse.setEndTime(schedule.getEndTime());
 
         if (payment.getPaymentName().equalsIgnoreCase("vietQR")) {
-            String qrCodeUrl = paymentService.generateQrCode(totalPrice , ticket.getTicketId() , account.getEmail());
+            String qrCodeUrl = paymentService.generateQrCode(totalPrice, ticket.getTicketId(), account.getEmail());
             ticketResponse.setPaymentUrl(qrCodeUrl);
         }
         boolean paymentSuccess = checkPaymentStatus(ticket.getTicketId());
@@ -127,7 +128,7 @@ public class TicketService {
         return true;
     }
 
-    public TicketResponse updateTicketById ( long ticketId , TicketRequest request) {
+    public TicketResponse updateTicketById(long ticketId, TicketRequest request) {
         TicketEntity ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
 
@@ -140,5 +141,19 @@ public class TicketService {
         ticketRepository.save(ticket);
 
         return TicketResponse.fromEntity(ticket);
+    }
+
+    public List<TicketResponse> getTicketByScheduleId(long scheduleId) {
+        ScheduleEntity schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new RuntimeException("Not found schedule with id : " + scheduleId));
+
+        List<TicketEntity> tickets = ticketRepository.getTicketByScheduleId(scheduleId);
+        if(tickets.isEmpty()) {
+            throw new RuntimeException("Not found ticket with schedule id : " + scheduleId);
+        }
+
+        return tickets.stream()
+                .map(TicketResponse::fromEntity)
+                .collect(Collectors.toList());
     }
 }

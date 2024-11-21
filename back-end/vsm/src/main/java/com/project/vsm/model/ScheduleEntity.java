@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ScheduleEntity {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "schedule_id")
@@ -41,11 +42,11 @@ public class ScheduleEntity {
 	@JoinColumn(name = "account_id", referencedColumnName = "account_id")
 	private AccountEntity account;
 
-	@ManyToOne
+	@ManyToOne()
 	@JoinColumn(name = "car_id", referencedColumnName = "car_id")
 	private CarEntity car;
 
-	@OneToMany(mappedBy = "scheduleEntity" , fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "scheduleEntity" , fetch = FetchType.LAZY)
 	private List<TicketEntity> tickets = new ArrayList<>();
 
 }

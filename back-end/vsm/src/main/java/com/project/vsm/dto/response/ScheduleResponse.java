@@ -36,4 +36,15 @@ public class ScheduleResponse {
         return response;
     }
 
+    public static ScheduleResponse fromEntity(ScheduleEntity schedule) {
+        return ScheduleResponse.builder()
+                .scheduleId(schedule.getId())
+                .startLocation(schedule.getStartLocation())
+                .stopLocation(schedule.getStopLocation())
+                .startTime(schedule.getStartTime())
+                .endTime(schedule.getEndTime())
+                .status(schedule.getStatus())
+                .build();
+    }
+
 }

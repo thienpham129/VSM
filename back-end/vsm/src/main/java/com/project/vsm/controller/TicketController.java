@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.project.vsm.dto.request.TicketRequest;
+import com.project.vsm.model.TicketEntity;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +43,11 @@ public class TicketController {
     @PutMapping("/admin/update/ticket/{ticketId}")
     public ResponseEntity<TicketResponse> updateTicketById (@PathVariable long ticketId ,@RequestBody TicketRequest request){
         return new ResponseEntity<>(ticketService.updateTicketById(ticketId , request),HttpStatus.OK);
+    }
+
+    @GetMapping("/admin/ticket-with-schedule/{scheduleId}")
+    public ResponseEntity<List<TicketResponse>> getTicketByScheduleId (@PathVariable long scheduleId) {
+        return new ResponseEntity<>(ticketService.getTicketByScheduleId(scheduleId) , HttpStatus.OK);
     }
 
 }
