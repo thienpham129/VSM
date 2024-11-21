@@ -30,7 +30,8 @@ export const dataScheduleDetail = [
     name: "David Brown",
     phone: "+3216549870",
     email: "david.brown@example.com",
-    start_address: "101 Pine Rd, Da Nang",
+    start_address:
+      "101 Pine Rd, Da Nang ákkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkdhj",
     end_address: "303 Birch Ave, Da Nang",
     seat_number: 4,
     status: "Đã Lên Xe",

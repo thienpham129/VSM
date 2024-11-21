@@ -18,7 +18,6 @@ export const root = axios.create({
 root.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem(DEFAULT.TOKEN);
-    console.log(token + "  Fucking Token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

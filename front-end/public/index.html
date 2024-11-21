@@ -1,35 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta name="description" content="Web site created using create-react-app" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
     <!-- CSS Files
     ================================================== -->
-    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap">
-    <link href="css/mdb.min.css" rel="stylesheet" type="text/css" id="mdb">
-    <link href="css/plugins.css" rel="stylesheet" type="text/css">
-    <link href="css/style.css" rel="stylesheet" type="text/css">
-    <link href="css/coloring.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="css/customize.css?v=2.0.1">
-    <link rel="stylesheet" href="css/sprite.css?v=2.0.1">
+    <link
+      href="css/bootstrap.min.css"
+      rel="stylesheet"
+      type="text/css"
+      id="bootstrap"
+    />
+    <link href="css/mdb.min.css" rel="stylesheet" type="text/css" id="mdb" />
+    <link href="css/plugins.css" rel="stylesheet" type="text/css" />
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <link href="css/coloring.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="css/customize.css?v=2.0.1" />
+    <link rel="stylesheet" href="css/sprite.css?v=2.0.1" />
     <!-- <link rel="stylesheet" href="css/booking.css"> -->
     <script src="js/jquery.min.js"></script>
     <!-- color scheme -->
-    <link id="colors" href="css/colors/scheme-01.css" rel="stylesheet" type="text/css">
+    <link
+      id="colors"
+      href="css/colors/scheme-01.css"
+      rel="stylesheet"
+      type="text/css"
+    />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
 
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer"
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
     />
 
     <title>React App</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
 
@@ -42,16 +65,26 @@
     <script src="js/booking.js"></script>
     <!-- <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script> -->
     <script>
-        var baseApiUrlV2 = "https://api.anvui.vn/v2";
-        var baseApiUrlV1 = "https://api.anvui.vn/v1";
-        var companyId = "TC0Cm1rweVdinjJi";
+      var baseApiUrlV2 = "https://api.anvui.vn/v2";
+      var baseApiUrlV1 = "https://api.anvui.vn/v1";
+      var companyId = "TC0Cm1rweVdinjJi";
     </script>
     <script>
-        var isRegionByLocation = 0;
-        var streetListPointUp = Array;
-        var streetListPointDown = Array;
+      var isRegionByLocation = 0;
+      var streetListPointUp = Array;
+      var streetListPointDown = Array;
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgiM7ogCAA2Y5pgSk2KXZfxF5S_1jsptA&amp;libraries=places&amp;callback=initPlaces" async="" defer=""></script>
-</body>
 
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgiM7ogCAA2Y5pgSk2KXZfxF5S_1jsptA&amp;libraries=places&amp;callback=initPlaces"
+      async=""
+      defer=""
+    ></script>
+  </body>
 </html>
