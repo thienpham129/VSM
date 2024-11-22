@@ -16,7 +16,7 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CarSpecification {
     private static final String FILED_START_LOCATION = "startLocation";
-    private static final String FILED_END_LOCATION = "endLocation";
+    private static final String FILED_END_LOCATION = "stopLocation";
     private static final String FILED_START_DATE = "startDate";
 
     private final List<Specification<CarEntity>> specifications = new ArrayList<>();

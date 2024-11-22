@@ -1,5 +1,6 @@
 package com.project.vsm.dto.response;
 
+import com.project.vsm.model.TypeEntity;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -9,6 +10,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class ChangePasswordResponse {
-    String message;
+public class TypeResponse {
+     long typeId;
+     int numSeat;
+     long price;
 }

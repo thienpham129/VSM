@@ -24,6 +24,10 @@ public class TicketEntity {
     @Column(name = "price")
     double price;
 
+    @Column(name = "payment_method")
+     String paymentMethod;
+
+
     @Column(name = "is_paid")
     boolean isPaid;
 
@@ -58,16 +62,17 @@ public class TicketEntity {
     @JoinColumn(name = "voucher_id")
     VoucherEntity voucher;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "payment_id")
-    private PaymentEntity paymentEntity;
-
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name ="car_id")
-    CarEntity car;
+    @JoinColumn(name = "payment_id")
+    PaymentEntity  paymentEntity;
+
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "account_id")
     AccountEntity account;
+
+    @ManyToOne(cascade = CascadeType.ALL ,  fetch = FetchType.LAZY)
+    @JoinColumn(name = "schedule_id")
+    ScheduleEntity scheduleEntity;
 }
 

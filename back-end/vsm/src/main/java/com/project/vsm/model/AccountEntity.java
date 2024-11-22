@@ -54,9 +54,6 @@ public class AccountEntity {
 	private boolean enabled;
 
 	private String gender;
-	
-	@Transient
-	private String newPassword;
 
 	@Column(name = "img_driver_lisence_2")
 	private String imgDriverLisence1;
@@ -67,6 +64,10 @@ public class AccountEntity {
 	@Column(name = "is_available")
 	private boolean isAvailable;
 
+	@Transient
+	private String newPassword;
+
+	@JsonIgnore
 	@OneToMany(mappedBy = "account" , cascade = CascadeType.ALL)
 	private List<TicketEntity> tickets = new ArrayList<>();
 
