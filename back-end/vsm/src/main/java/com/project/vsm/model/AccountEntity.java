@@ -9,9 +9,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 @RequiredArgsConstructor
 @Table(name = "Account")
@@ -71,6 +74,8 @@ public class AccountEntity {
 	@OneToMany(mappedBy = "account" , cascade = CascadeType.ALL)
 	private List<TicketEntity> tickets = new ArrayList<>();
 
+	@OneToMany(mappedBy = "account" , cascade = CascadeType.ALL)
+	private List<ScheduleEntity> schedules = new ArrayList<>();
 
 	public AccountEntity(String email, String password) {
 		super();

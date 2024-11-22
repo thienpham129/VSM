@@ -5,6 +5,7 @@ import com.project.vsm.dto.request.ChangePasswordRequest;
 import com.project.vsm.dto.request.UpdateAccountRequest;
 import com.project.vsm.dto.response.ChangePasswordResponse;
 import com.project.vsm.dto.response.ResponseObject;
+import com.project.vsm.dto.response.ScheduleResponse;
 import com.project.vsm.model.AccountEntity;
 import com.project.vsm.service.AccountService;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -56,5 +58,10 @@ public class UserController {
 	@PostMapping("/user/change-password")
 	public ResponseObject<ChangePasswordResponse> changePassword (@RequestBody ChangePasswordRequest request) {
 			return new ResponseObject<>(HttpStatus.OK , "Success" , accountService.changePassword(request));
+	}
+
+	@GetMapping("/user/view-schedule")
+	public ResponseEntity<List<ScheduleResponse>> getScheduleOfUser () {
+		return new ResponseEntity<>(accountService.getScheduleOfAccount(), HttpStatus.OK);
 	}
 }
