@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { dataScheduleDetail } from "./dataScheduleDetail";
-import { dataSchedule } from "./dataSchedule";
+// import { dataScheduleDetail } from "./dataScheduleDetail";
+// import { dataSchedule } from "./dataSchedule";
 import DataTable from "react-data-table-component";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
@@ -24,8 +24,9 @@ function Schedule() {
   const [tempDataScheduleDetail, setTempDataScheduleDetail] = useState([]);
   const [valueInput, setValueInput] = useState("");
   const [statusUser, setStatusUSer] = useState("");
-  // const [dataSchedule, setDataSchedule] = useState([]);
-  // const [dataScheduleDetail, setDataScheduleDetail] = useState([]);
+  const [dataSchedule, setDataSchedule] = useState([]);
+  const [dataScheduleDetail, setDataScheduleDetail] = useState([]);
+  const [dataScheduleFinal, setDataScheduleFinal] = useState([]);
   // const [nameToggle, setNameToggle] = useState("");
   // const [phoneToggle, setPhoneToggle] = useState("");
   // const [emailToggle, setEmailToggle] = useState("");
@@ -36,15 +37,19 @@ function Schedule() {
   const columns = [
     {
       name: "Điểm Khởi Hành",
-      selector: (row) => row.start_location,
+      selector: (row) => row.route.startLocation,
     },
     {
       name: "Điểm Đến",
-      selector: (row) => row.end_location,
+      selector: (row) => row.route.stopLocation,
     },
     {
       name: "Giờ Khỏi Hành",
-      selector: (row) => row.begin_time,
+      selector: (row) => {
+        return (
+          row.startTime.split("T")[1] + " / " + row.startTime.split("T")[0]
+        );
+      },
     },
     {
       name: "",
@@ -101,45 +106,57 @@ function Schedule() {
     },
   ];
 
-  // useEffect(() => {
-  //   if (dataSchedule.length > 0) {
-  //     changeDataSchedule();
-  //   }
-  //   if (dataScheduleDetail.length > 0) {
-  //     changeDataScheduleDetail();
-  //   }
-  // }, [isClickDetail]);
+  useEffect(() => {
+    if (dataSchedule.length > 0) {
+      changeDataSchedule();
+    }
+    if (dataScheduleDetail.length > 0) {
+      changeDataScheduleDetail();
+    }
+  }, [isClickDetail]);
 
-  // useEffect(() => {
-  //   if (dataSchedule.length > 0) {
-  //     changeDataSchedule();
-  //   }
-  // }, [dataSchedule]);
+  useEffect(() => {
+    if (dataSchedule.length > 0) {
+      changeDataSchedule();
+    }
+  }, [dataSchedule]);
 
-  // useEffect(() => {
-  //   if (dataScheduleDetail.length > 0) {
-  //     changeDataSchedule();
-  //   }
-  // }, [dataScheduleDetail]);
+  useEffect(() => {
+    if (dataScheduleDetail.length > 0) {
+      changeDataSchedule();
+    }
+  }, [dataScheduleDetail]);
 
   useEffect(() => {
     changeDataSchedule();
     changeDataScheduleDetail();
   }, [isClickDetail]);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const url = "/public/schedules";
-  //     try {
-  //       const response = await root.get(url);
-  //       if (response) {
-  //         setDataSchedule(response.data);
-  //         console.log(response.data);
-  //       }
-  //     } catch (error) {}
-  //   };
-  //   fetchData();
-  // }, [isClickDetail]);
+  const fetchDataSchedule = async () => {
+    const url = "/public/schedules";
+    try {
+      const response = await root.get(url);
+      if (response) {
+        setDataSchedule(response.data);
+        console.log(response.data);
+      }
+    } catch (error) {}
+  };
+
+  const fetchDataScheduleDetail = async () => {
+    const url = "/public/schedules";
+    try {
+      const response = await root.get(url);
+      if (response) {
+        setDataSchedule(response.data);
+        console.log(response.data);
+      }
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    fetchDataSchedule();
+  }, [isClickDetail]);
 
   const handleSearchName = (e) => {
     setValueInput(e.target.value);
@@ -181,24 +198,9 @@ function Schedule() {
   };
 
   const changeDataSchedule = () => {
-    // const tempArray = dataSchedule.map((item, index) => ({
-    //   ...item,
-    //   action: (
-    //     <Button
-    //       style={{ width: "75px", fontSize: "9px" }}
-    //       variant="contained"
-    //       onClick={(e) => {
-    //         // navigate("/driver/schedule/*");
-    //         setIsClickDetail(true);
-    //         e.stopPropagation();
-    //       }}
-    //     >
-    //       Xem Chi Tiết
-    //     </Button>
-    //   ),
-    // }));
-    dataSchedule.forEach((item, index) => {
-      item.action = (
+    const tempArray = dataSchedule.map((item, index) => ({
+      ...item,
+      action: (
         <Button
           style={{ width: "75px", fontSize: "9px" }}
           variant="contained"
@@ -210,8 +212,25 @@ function Schedule() {
         >
           Xem Chi Tiết
         </Button>
-      );
-    });
+      ),
+    }));
+    setDataScheduleFinal(tempArray);
+
+    // dataSchedule.forEach((item, index) => {
+    //   item.action = (
+    //     <Button
+    //       style={{ width: "75px", fontSize: "9px" }}
+    //       variant="contained"
+    //       onClick={(e) => {
+    //         // navigate("/driver/schedule/*");
+    //         setIsClickDetail(true);
+    //         e.stopPropagation();
+    //       }}
+    //     >
+    //       Xem Chi Tiết
+    //     </Button>
+    //   );
+    // });
   };
 
   const changeDataScheduleDetail = () => {
@@ -490,7 +509,7 @@ function Schedule() {
       ) : (
         <div className="schedule">
           <h1>Lịch Trình</h1>
-          <DataTable columns={columns} data={dataSchedule}></DataTable>
+          <DataTable columns={columns} data={dataScheduleFinal}></DataTable>
         </div>
       )}
     </>

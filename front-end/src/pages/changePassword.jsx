@@ -2,11 +2,17 @@ import React, { useState } from "react";
 import NavBarProfile from "components/NavBarProfile";
 import styles from "pages/changePassword.module.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { root } from "helper/axiosClient";
+import { getTokenFromLocalStorage } from "utils/tokenUtils";
+import { ToastContainer, toast, Bounce } from "react-toastify";
+
 
 const ChangePassword = () => {
-  const [currentPassword, setCurrentPassword] = useState("");
+  const [oldPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [errorMessageNewPassword, setErrorMessageNewPassword] = useState(""); 
+  const [errorMessageConfirmPassword, setErrorMessageConfirmPassword] = useState("");
 
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -24,6 +30,78 @@ const ChangePassword = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  const handleChangePass = async (event) => {
+    event.preventDefault();
+
+    // Check if new password is the same as the old password
+    if (newPassword === oldPassword) {
+      setErrorMessageNewPassword("Mật khẩu mới không được trùng với mật khẩu cũ.");
+      return; // Prevent form submission if passwords match
+    }
+
+    // Check if confirm password matches new password
+    if (newPassword !== confirmPassword) {
+      setErrorMessageConfirmPassword("Mật khẩu xác nhận không khớp với mật khẩu mới.");
+      return; // Prevent form submission if passwords don't match
+    }
+
+    // Reset error message if passwords are valid
+    setErrorMessageNewPassword("");
+    setErrorMessageConfirmPassword("");
+
+    const token = getTokenFromLocalStorage();
+    try {
+      const response = await root.post(`/user/change-password`, {
+        oldPassword,
+        newPassword,
+        confirmPassword,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        notifySuccessUpdate();
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+      }
+    } catch (error) {
+      notifyErrorUpdate();
+      console.error("Change Password error:", error);
+    }
+  };
+
+  // Notifications
+  const notifySuccessUpdate = () =>
+    toast.success("Thay đổi mật khẩu thành công! ", {
+      position: "bottom-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+
+  const notifyErrorUpdate = () =>
+    toast.error("Thay đổi mật khẩu thất bại!", {
+      position: "bottom-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+
+  //
+
   return (
     <div className="no-bottom no-top zebra" id="content">
       <div id="top" />
@@ -40,7 +118,6 @@ const ChangePassword = () => {
           </div>
         </div>
       </section>
-      {/* section close */}
       <section id="section-settings" className="bg-gray-100">
         <div className="container">
           <div className="row">
@@ -48,7 +125,7 @@ const ChangePassword = () => {
               <NavBarProfile />
             </div>
             <div className="col-lg-9">
-              <div className="card padding40  rounded-5">
+              <div className="card padding40 rounded-5">
                 <div className="row">
                   <div className="col-lg-12">
                     <div className="de_tab tab_simple">
@@ -64,25 +141,17 @@ const ChangePassword = () => {
                               <h5>Mật khẩu hiện tại</h5>
                               <div className={styles.password_input}>
                                 <input
-                                  type={
-                                    showCurrentPassword ? "text" : "password"
-                                  }
-                                  value={currentPassword}
+                                  type={showCurrentPassword ? "text" : "password"}
+                                  value={oldPassword}
                                   className="form-control"
                                   placeholder="Nhập mật khẩu hiện tại"
-                                  onChange={(e) =>
-                                    setCurrentPassword(e.target.value)
-                                  }
+                                  onChange={(e) => setCurrentPassword(e.target.value)}
                                 />
                                 <div
                                   className={styles.password_toggle}
                                   onClick={handleCurrentPasswordToggle}
                                 >
-                                  {showCurrentPassword ? (
-                                    <FaEyeSlash />
-                                  ) : (
-                                    <FaEye />
-                                  )}
+                                  {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
                                 </div>
                               </div>
                             </div>
@@ -94,9 +163,7 @@ const ChangePassword = () => {
                                   type={showNewPassword ? "text" : "password"}
                                   placeholder="Nhập mật khẩu mới"
                                   value={newPassword}
-                                  onChange={(e) =>
-                                    setNewPassword(e.target.value)
-                                  }
+                                  onChange={(e) => setNewPassword(e.target.value)}
                                 />
                                 <div
                                   className={styles.password_toggle}
@@ -106,31 +173,29 @@ const ChangePassword = () => {
                                 </div>
                               </div>
                             </div>
+                            {errorMessageNewPassword && (
+                                  <div className="text-danger mt-2">{errorMessageNewPassword}</div>
+                                )}
                             <div className="col-lg-12 mb20">
                               <h5>Nhập lại mật khẩu mới</h5>
                               <div className={styles.password_input}>
                                 <input
                                   className="form-control"
-                                  type={
-                                    showConfirmPassword ? "text" : "password"
-                                  }
+                                  type={showConfirmPassword ? "text" : "password"}
                                   placeholder="Nhập lại mật khẩu mới"
                                   value={confirmPassword}
-                                  onChange={(e) =>
-                                    setConfirmPassword(e.target.value)
-                                  }
+                                  onChange={(e) => setConfirmPassword(e.target.value)}
                                 />
                                 <div
                                   className={styles.password_toggle}
                                   onClick={handleConfirmPasswordToggle}
                                 >
-                                  {showConfirmPassword ? (
-                                    <FaEyeSlash />
-                                  ) : (
-                                    <FaEye />
-                                  )}
+                                  {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                                 </div>
                               </div>
+                                {errorMessageConfirmPassword && (
+                                  <div className="text-danger mt-2">{errorMessageConfirmPassword}</div>
+                                )}
                             </div>
                           </div>
                         </div>
@@ -141,6 +206,7 @@ const ChangePassword = () => {
                       id="submit"
                       className="btn-main"
                       defaultValue="Thay đổi mật khẩu"
+                      onClick={handleChangePass}
                     />
                   </div>
                 </div>
@@ -149,6 +215,19 @@ const ChangePassword = () => {
           </div>
         </div>
       </section>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={1500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
     </div>
   );
 };

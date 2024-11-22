@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,9 +46,15 @@ public class ScheduleController {
 		return new ResponseEntity<>(schedule, HttpStatus.CREATED);
 	}
 
-	@PutMapping("/admin/schedule/{id}")
-	public ResponseEntity<ScheduleEntity> updateScheduleById(@PathVariable long id,
-			@Valid @RequestBody ScheduleCreateDTO scheduleDTO) {
-		return new ResponseEntity<>(scheduleService.updateScheduleById(id, scheduleDTO), HttpStatus.OK);
-	}
+//	@PostMapping("public/find-schedule")
+//	public ResponseEntity<Iterable<ScheduleEntity>> getSchedulesByDriverAndCar(@RequestBody ScheduleFindDTO input) {
+//		return new ResponseEntity<>(scheduleService.getSchedulesByDriverOrCarForDate(input),
+//				HttpStatus.OK);
+//	}
+//	
+//	@PutMapping("/admin/schedule/{id}")
+//	public ResponseEntity<ScheduleEntity> updateScheduleById(@PathVariable long id,
+//			@Valid @RequestBody ScheduleCreateDTO scheduleDTO) {
+//		return new ResponseEntity<>(scheduleService.updateScheduleById(id, scheduleDTO), HttpStatus.OK);
+//	}
 }

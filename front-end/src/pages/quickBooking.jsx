@@ -1,6 +1,103 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import SellectAddress from "components/SellectAddress";
 
+import {
+  apiGetPublicDistrict,
+  apiGetPublicProvinces,
+  apiGetPublicWard,
+} from "services/app";
 const QuickBooking = () => {
+  // Pick-up location state
+  const [pickupSpecificAddress, setPickupSpecificAddress] = useState("");
+  const [pickupProvinces, setPickupProvinces] = useState([]);
+  const [pickupDistricts, setPickupDistricts] = useState([]);
+  const [pickupWards, setPickupWards] = useState([]);
+  const [pickupProvince, setPickupProvince] = useState("");
+  const [pickupDistrict, setPickupDistrict] = useState("");
+  const [pickupWard, setPickupWard] = useState("");
+
+  // Drop-off location state
+  const [dropoffSpecificAddress, setDropoffSpecificAddress] = useState("");
+  const [dropoffProvinces, setDropoffProvinces] = useState([]);
+  const [dropoffDistricts, setDropoffDistricts] = useState([]);
+  const [dropoffWards, setDropoffWards] = useState([]);
+  const [dropoffProvince, setDropoffProvince] = useState("");
+  const [dropoffDistrict, setDropoffDistrict] = useState("");
+  const [dropoffWard, setDropoffWard] = useState("");
+
+  // Handle change for specific addresses
+  const handlePickupSpecificAddressChange = (event) => {
+    setPickupSpecificAddress(event.target.value);
+  };
+
+  const handleDropoffSpecificAddressChange = (event) => {
+    setDropoffSpecificAddress(event.target.value);
+  };
+
+  // Fetch provinces once and use them for both pick-up and drop-off
+  useEffect(() => {
+    const fetchProvinces = async () => {
+      const response = await apiGetPublicProvinces();
+      if (response.status === 200) {
+        setPickupProvinces(response.data.results);
+        setDropoffProvinces(response.data.results);
+      }
+    };
+    fetchProvinces();
+  }, []);
+
+  // Fetch districts and wards for pick-up location based on province and district selection
+  useEffect(() => {
+    const fetchPickupDistricts = async () => {
+      const response = await apiGetPublicDistrict(pickupProvince);
+      if (response.status === 200) {
+        setPickupDistricts(response.data.results);
+      }
+    };
+    pickupProvince && fetchPickupDistricts();
+
+    setPickupDistrict("");
+    setPickupWards([]);
+  }, [pickupProvince]);
+
+  useEffect(() => {
+    const fetchPickupWards = async () => {
+      const response = await apiGetPublicWard(pickupDistrict);
+      if (response.status === 200) {
+        setPickupWards(response.data.results);
+      }
+    };
+    pickupDistrict && fetchPickupWards();
+
+    setPickupWard("");
+  }, [pickupDistrict]);
+
+  // Fetch districts and wards for drop-off location based on province and district selection
+  useEffect(() => {
+    const fetchDropoffDistricts = async () => {
+      const response = await apiGetPublicDistrict(dropoffProvince);
+      if (response.status === 200) {
+        setDropoffDistricts(response.data.results);
+      }
+    };
+    dropoffProvince && fetchDropoffDistricts();
+
+    setDropoffDistrict("");
+    setDropoffWards([]);
+  }, [dropoffProvince]);
+
+  useEffect(() => {
+    const fetchDropoffWards = async () => {
+      const response = await apiGetPublicWard(dropoffDistrict);
+      if (response.status === 200) {
+        setDropoffWards(response.data.results);
+      }
+    };
+    dropoffDistrict && fetchDropoffWards();
+
+    setDropoffWard("");
+  }, [dropoffDistrict]);
+
   return (
     <div className="no-bottom no-top" id="content">
       <div id="top" />
@@ -42,114 +139,90 @@ const QuickBooking = () => {
                 >
                   <div className="col-lg-6 d-light">
                     <div className="row g-4">
-                      <div className="col-lg-6">
+                      <div className="col-lg-12">
                         <h5>Nhập địa điểm đón</h5>
-                        <select
-                          name="Pick Up Location"
-                          id="pick_up_location"
-                          className="form-control opt-1-disable"
-                          required=""
-                        >
-                          <option value="New York">Nhập địa điểm đón</option>
-                          <option value="New York">New York</option>
-                          <option value="Pennsylvania">Pennsylvania</option>
-                          <option value="New Jersey">New Jersey</option>
-                          <option value="Connecticut">Connecticut</option>
-                          <option value="Massachusetts">Massachusetts</option>
-                          <option value="Vermont">Vermont</option>
-                          <option value="Rhode Island">Rhode Island</option>
-                          <option value="New Hampshire">New Hampshire</option>
-                        </select>
-                      </div>
-                      <div className="col-lg-6">
-                        <h5>Nhập địa điểm trả</h5>
-                        <select
-                          name="Pick Up Location"
-                          id="pick_up_location"
-                          className="form-control opt-1-disable"
-                          required=""
-                        >
-                          <option value="New York">Nhập địa điểm trả</option>
-                          <option value="New York">New York</option>
-                          <option value="Pennsylvania">Pennsylvania</option>
-                          <option value="New Jersey">New Jersey</option>
-                          <option value="Connecticut">Connecticut</option>
-                          <option value="Massachusetts">Massachusetts</option>
-                          <option value="Vermont">Vermont</option>
-                          <option value="Rhode Island">Rhode Island</option>
-                          <option value="New Hampshire">New Hampshire</option>
-                        </select>
-                      </div>
-
-                      {/* <div className="col-lg-6">
-                          <h5 for="pickUpTime">Pick Up Date &amp; Time </h5>
-                        <div className="date-time-field">
-                          <input
-                            type="datetime-local"
-                            id="pickUpTime"
-                            name="pickUpTime"
-                          />
+                        <div className="row">
+                          <div className="col-md-4 form-group">
+                            <SellectAddress
+                              type="province"
+                              value={pickupProvince}
+                              setValue={setPickupProvince}
+                              options={pickupProvinces}
+                              label="Province/City(Tỉnh)"
+                            />
+                          </div>
+                          <div className="col-md-4 form-group">
+                            <SellectAddress
+                              type="district"
+                              value={pickupDistrict}
+                              setValue={setPickupDistrict}
+                              options={pickupDistricts}
+                              label="District(Quận)"
+                            />
+                          </div>
+                          <div className="col-md-4 form-group">
+                            <SellectAddress
+                              type="ward"
+                              value={pickupWard}
+                              setValue={setPickupWard}
+                              options={pickupWards}
+                              label="Wards(phường)"
+                            />
+                          </div>
+                          <div className="col-md-12 form-group">
+                            <label style={{ marginRight: "20px" }}>
+                              Address:{" "}
+                            </label>
+                            <input
+                              type="text"
+                              value={pickupSpecificAddress}
+                              onChange={handlePickupSpecificAddressChange}
+                              placeholder="Nhập địa chỉ cụ thể"
+                            />
+                          </div>
                         </div>
-                      </div> */}
-                      <div className="col-lg-6">
-                        <h5>Chọn thời gian đón</h5>
-                        <div className="date-time-field">
-                          <input
-                            type="text"
-                            id="date-picker-2"
-                            name="Return Date"
-                            defaultValue=""
-                          />
-                          <select name="Return Time" id="collection-time">
-                            <option value="00:00">00:00</option>
-                            <option value="00:30">00:30</option>
-                            <option value="01:00">01:00</option>
-                            <option value="01:30">01:30</option>
-                            <option value="02:00">02:00</option>
-                            <option value="02:30">02:30</option>
-                            <option value="03:00">03:00</option>
-                            <option value="03:30">03:30</option>
-                            <option value="04:00">04:00</option>
-                            <option value="04:30">04:30</option>
-                            <option value="05:00">05:00</option>
-                            <option value="05:30">05:30</option>
-                            <option value="06:00">06:00</option>
-                            <option value="06:30">06:30</option>
-                            <option value="07:00">07:00</option>
-                            <option value="07:30">07:30</option>
-                            <option value="08:00">08:00</option>
-                            <option value="08:30">08:30</option>
-                            <option value="09:00">09:00</option>
-                            <option value="09:30">09:30</option>
-                            <option value="10:00">10:00</option>
-                            <option value="10:30">10:30</option>
-                            <option value="11:00">11:00</option>
-                            <option value="11:30">11:30</option>
-                            <option value="12:00">12:00</option>
-                            <option value="12:30">12:30</option>
-                            <option value="13:00">13:00</option>
-                            <option value="13:30">13:30</option>
-                            <option value="14:00">14:00</option>
-                            <option value="14:30">14:30</option>
-                            <option value="15:00">15:00</option>
-                            <option value="15:30">15:30</option>
-                            <option value="16:00">16:00</option>
-                            <option value="16:30">16:30</option>
-                            <option value="17:00">17:00</option>
-                            <option value="17:30">17:30</option>
-                            <option value="18:00">18:00</option>
-                            <option value="18:30">18:30</option>
-                            <option value="19:00">19:00</option>
-                            <option value="19:30">19:30</option>
-                            <option value="20:00">20:00</option>
-                            <option value="20:30">20:30</option>
-                            <option value="21:00">21:00</option>
-                            <option value="21:30">21:30</option>
-                            <option value="22:00">22:00</option>
-                            <option value="22:30">22:30</option>
-                            <option value="23:00">23:00</option>
-                            <option value="23:30">23:30</option>
-                          </select>
+                      </div>
+                      <div className="col-lg-12">
+                        <h5>Nhập địa điểm trả</h5>
+                        <div className="row">
+                          <div className="col-md-4 form-group">
+                            <SellectAddress
+                              type="province"
+                              value={dropoffProvince}
+                              setValue={setDropoffProvince}
+                              options={dropoffProvinces}
+                              label="Province/City(Tỉnh)"
+                            />
+                          </div>
+                          <div className="col-md-4 form-group">
+                            <SellectAddress
+                              type="district"
+                              value={dropoffDistrict}
+                              setValue={setDropoffDistrict}
+                              options={dropoffDistricts}
+                              label="District(Quận)"
+                            />
+                          </div>
+                          <div className="col-md-4 form-group">
+                            <SellectAddress
+                              type="ward"
+                              value={dropoffWard}
+                              setValue={setDropoffWard}
+                              options={dropoffWards}
+                              label="Wards(phường)"
+                            />
+                          </div>
+                          <div className="col-md-12 form-group">
+                            <label style={{ marginRight: "20px" }}>
+                              Address:{" "}
+                            </label>
+                            <input
+                              type="text"
+                              value={dropoffSpecificAddress}
+                              onChange={handleDropoffSpecificAddressChange}
+                              placeholder="Nhập địa chỉ cụ thể"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -207,18 +280,11 @@ const QuickBooking = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-lg-3">
+                  <div className="col-lg-12">
                     <input
                       type="submit"
-                      id="send_message"
-                      defaultValue="Submit"
-                      className="btn-main btn-fullwidth"
-                    />
-                  </div>
-                  <div className="col-lg-4">
-                    <div
-                      className="g-recaptcha"
-                      data-sitekey="6LdW03QgAAAAAJko8aINFd1eJUdHlpvT4vNKakj6"
+                      className="btn-main pull-right"
+                      value={"Đặt vé ngay"}
                     />
                   </div>
                 </form>
