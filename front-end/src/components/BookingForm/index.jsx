@@ -10,76 +10,97 @@ import {
 } from "services/app";
 
 function BookingForm({ selectedSeats, totalPrice }) {
-  const [specificAddress, setSpecificAddress] = useState("");
-  const [provinces, setProvinces] = useState([]);
-  const [districts, setDistricts] = useState([]);
-  const [wards, setWards] = useState([]);
-  const [province, setProvince] = useState("");
-  const [district, setDistrict] = useState("");
-  const [ward, setWard] = useState("");
-  const [reset, setReset] = useState(false);
-  const [address, setAddress] = useState("");
+  // Pick-up location state
+  const [pickupSpecificAddress, setPickupSpecificAddress] = useState("");
+  const [pickupProvinces, setPickupProvinces] = useState([]);
+  const [pickupDistricts, setPickupDistricts] = useState([]);
+  const [pickupWards, setPickupWards] = useState([]);
+  const [pickupProvince, setPickupProvince] = useState("");
+  const [pickupDistrict, setPickupDistrict] = useState("");
+  const [pickupWard, setPickupWard] = useState("");
 
-  const handleSpecificAddressChange = (event) => {
-    setSpecificAddress(event.target.value);
+  // Drop-off location state
+  const [dropoffSpecificAddress, setDropoffSpecificAddress] = useState("");
+  const [dropoffProvinces, setDropoffProvinces] = useState([]);
+  const [dropoffDistricts, setDropoffDistricts] = useState([]);
+  const [dropoffWards, setDropoffWards] = useState([]);
+  const [dropoffProvince, setDropoffProvince] = useState("");
+  const [dropoffDistrict, setDropoffDistrict] = useState("");
+  const [dropoffWard, setDropoffWard] = useState("");
+
+  // Handle change for specific addresses
+  const handlePickupSpecificAddressChange = (event) => {
+    setPickupSpecificAddress(event.target.value);
   };
 
-  const updateAddressValue = () => {
-    const newAddress = `${specificAddress} ${
-      ward ? `${wards?.find((item) => item.ward_id === ward)?.ward_name},` : ""
-    } ${
-      district
-        ? `${
-            districts?.find((item) => item.district_id === district)
-              ?.district_name
-          },`
-        : ""
-    } ${
-      province
-        ? provinces?.find((item) => item.province_id === province)
-            ?.province_name
-        : ""
-    }`;
-    setAddress(newAddress);
+  const handleDropoffSpecificAddressChange = (event) => {
+    setDropoffSpecificAddress(event.target.value);
   };
 
+  // Fetch provinces once and use them for both pick-up and drop-off
   useEffect(() => {
-    updateAddressValue();
-  }, [specificAddress, ward, district, province]);
-
-  useEffect(() => {
-    const fetchPublicProvince = async () => {
+    const fetchProvinces = async () => {
       const response = await apiGetPublicProvinces();
       if (response.status === 200) {
-        setProvinces(response?.data.results);
+        setPickupProvinces(response.data.results);
+        setDropoffProvinces(response.data.results);
       }
     };
-    fetchPublicProvince();
+    fetchProvinces();
   }, []);
+
+  // Fetch districts and wards for pick-up location based on province and district selection
   useEffect(() => {
-    setDistrict(null);
-    const fetchPublicDistrict = async () => {
-      const response = await apiGetPublicDistrict(province);
+    const fetchPickupDistricts = async () => {
+      const response = await apiGetPublicDistrict(pickupProvince);
       if (response.status === 200) {
-        setDistricts(response.data?.results);
+        setPickupDistricts(response.data.results);
       }
     };
-    province && fetchPublicDistrict();
-    !province ? setReset(true) : setReset(false);
-    !province && setDistricts([]);
-  }, [province]);
+    pickupProvince && fetchPickupDistricts();
+
+    setPickupDistrict("");
+    setPickupWards([]);
+  }, [pickupProvince]);
+
   useEffect(() => {
-    setWard(null);
-    const fetchPublicWard = async () => {
-      const response = await apiGetPublicWard(district);
+    const fetchPickupWards = async () => {
+      const response = await apiGetPublicWard(pickupDistrict);
       if (response.status === 200) {
-        setWards(response.data?.results);
+        setPickupWards(response.data.results);
       }
     };
-    district && fetchPublicWard();
-    !district ? setReset(true) : setReset(false);
-    !district && setWards([]);
-  }, [district]);
+    pickupDistrict && fetchPickupWards();
+
+    setPickupWard("");
+  }, [pickupDistrict]);
+
+  // Fetch districts and wards for drop-off location based on province and district selection
+  useEffect(() => {
+    const fetchDropoffDistricts = async () => {
+      const response = await apiGetPublicDistrict(dropoffProvince);
+      if (response.status === 200) {
+        setDropoffDistricts(response.data.results);
+      }
+    };
+    dropoffProvince && fetchDropoffDistricts();
+
+    setDropoffDistrict("");
+    setDropoffWards([]);
+  }, [dropoffProvince]);
+
+  useEffect(() => {
+    const fetchDropoffWards = async () => {
+      const response = await apiGetPublicWard(dropoffDistrict);
+      if (response.status === 200) {
+        setDropoffWards(response.data.results);
+      }
+    };
+    dropoffDistrict && fetchDropoffWards();
+
+    setDropoffWard("");
+  }, [dropoffDistrict]);
+
   return (
     <div className={styles.bookingPage__tickets__item__collapse__booking__user}>
       <div
@@ -168,41 +189,42 @@ function BookingForm({ selectedSeats, totalPrice }) {
           <div className={styles.point_wrap}>
             <input
               type="text"
-              // onChange={handleSpecificAddressChange}
-              placeholder="Nhập địa chỉ đón"
-              style={{ width: "100%" }}
+              value={pickupSpecificAddress}
+              onChange={handlePickupSpecificAddressChange}
+              placeholder="Nhập địa chỉ cụ thể"
+              style={{width: '100%'}}
+
             />
 
             <div className="row">
-              <div className="col-md-12 form-group ">
+              <div className="col-md-12 form-group">
                 <SellectAddress
                   type="province"
-                  value={province}
-                  setValue={setProvince}
-                  options={provinces}
+                  value={pickupProvince}
+                  setValue={setPickupProvince}
+                  options={pickupProvinces}
                   label="Province/City(Tỉnh)"
                 />
               </div>
               <div className="col-md-12 form-group">
                 <SellectAddress
-                  reset={reset}
                   type="district"
-                  value={district}
-                  setValue={setDistrict}
-                  options={districts}
+                  value={pickupDistrict}
+                  setValue={setPickupDistrict}
+                  options={pickupDistricts}
                   label="District(Quận)"
                 />
               </div>
               <div className="col-md-12 form-group">
                 <SellectAddress
-                  reset={reset}
                   type="ward"
-                  value={ward}
-                  setValue={setWard}
-                  options={wards}
+                  value={pickupWard}
+                  setValue={setPickupWard}
+                  options={pickupWards}
                   label="Wards(phường)"
                 />
               </div>
+             
             </div>
           </div>
           <label htmlFor="pointUp" className={styles.error} />
@@ -212,42 +234,42 @@ function BookingForm({ selectedSeats, totalPrice }) {
             Điểm đến: <span className={styles.text_danger}>*</span>
           </label>
           <div className={styles.point_wrap}>
-           
             <input
-              className="form-control"
-              placeholder="Nhập địa chỉ trả"
-              style={{ width: "100%" }}
+              type="text"
+              value={dropoffSpecificAddress}
+              onChange={handleDropoffSpecificAddressChange}
+              placeholder="Nhập địa chỉ cụ thể"
+              style={{width: '100%'}}
             />
             <div className="row">
-              <div className="col-md-12 form-group ">
+              <div className="col-md-12 form-group">
                 <SellectAddress
                   type="province"
-                  value={province}
-                  setValue={setProvince}
-                  options={provinces}
+                  value={dropoffProvince}
+                  setValue={setDropoffProvince}
+                  options={dropoffProvinces}
                   label="Province/City(Tỉnh)"
                 />
               </div>
               <div className="col-md-12 form-group">
                 <SellectAddress
-                  reset={reset}
                   type="district"
-                  value={district}
-                  setValue={setDistrict}
-                  options={districts}
+                  value={dropoffDistrict}
+                  setValue={setDropoffDistrict}
+                  options={dropoffDistricts}
                   label="District(Quận)"
                 />
               </div>
               <div className="col-md-12 form-group">
                 <SellectAddress
-                  reset={reset}
                   type="ward"
-                  value={ward}
-                  setValue={setWard}
-                  options={wards}
+                  value={dropoffWard}
+                  setValue={setDropoffWard}
+                  options={dropoffWards}
                   label="Wards(phường)"
                 />
               </div>
+             
             </div>
           </div>
           <label htmlFor="pointDown" className={styles.error} />

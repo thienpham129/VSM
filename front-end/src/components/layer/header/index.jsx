@@ -1,6 +1,8 @@
 import { DEFAULT } from "constants";
 import React, { useEffect, useState } from "react";
-import { root } from "helper/axiosClient";
+import { axiosClient, root } from "helper/axiosClient";
+import { getTokenFromLocalStorage } from "utils/tokenUtils";
+import { jwtDecode } from "jwt-decode";
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -8,39 +10,88 @@ const Header = () => {
   const [showSubMenu, setShowSubMenu] = useState(false);
   const [userId, setUserId] = useState("");
   const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [urlImage, setUrlImage] = useState();
+
+  // useEffect(() => {
+  //   const token = localStorage.getItem(DEFAULT.TOKEN);
+  //   setUserId(localStorage.getItem("userId"));
+  //   if (token) {
+  //     setIsLoggedIn(true);
+  //     setUserName("Xuan Quang");
+  //   }
+  // }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem(DEFAULT.TOKEN);
-    setUserId(localStorage.getItem("userId"));
+    const token = getTokenFromLocalStorage();
     if (token) {
-      setIsLoggedIn(true);
-      setUserName("Xuan Quang");
+      try {
+        // Decode the token to extract user information
+        const decodedToken = jwtDecode(token);
+        console.log('««««« decodedToken »»»»»', decodedToken.sub);
+        
+        const userId = decodedToken.sub;
+        if (userId) {
+          setUserId(userId); 
+          setIsLoggedIn(true);
+          getUserById(userId);
+        } else {
+          console.error("userId not found in token");
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
     }
   }, []);
 
   const test = () => {
     setShowSubMenu(!showSubMenu);
-  
   };
 
-  useEffect(() => {
-    const getUserById = async () => {
-      try {
-        const url = `/user/${localStorage.getItem("userId")}`;
-        const response = await root.get(url);
-        if (response) {
-          setEmail(response.data.account.email);
-          console.log(response.data.account.email);
-          console.log("OK");
-        } else {
-          console.log("Get User By Id Fail");
-        }
-      } catch (error) {
-        console.log(error + "  Fail Get user By id");
+  const getUserById = async (userId) => {
+    const token = getTokenFromLocalStorage();
+    try {
+      const response = await root.get(`/user/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response && response.data) {
+        setEmail(response.data.email);
+        setUrlImage(response.data.urlImage);
+        setFullName(`${response.data.firstName} ${response.data.lastName}`);
+        console.log("User data retrieved:", response.data);
+      } else {
+        console.log("Failed to retrieve user data");
       }
-    };
-    getUserById();
-  }, []);
+    } catch (error) {
+      console.log("Failed to retrieve user data:", error);
+    }
+  };
+  // useEffect(() => {
+  //   getUserById();
+  // }, []);
+
+   // useEffect(() => {
+  //   const getUserById = async () => {
+  //     try {
+  //       const url = `/user/${localStorage.getItem("userId")}`;
+  //       const response = await root.get(url);
+  //       if (response) {
+  //         setEmail(response.data.account.email);
+  //         console.log(response.data.account.email);
+  //         console.log("OK");
+  //       } else {
+  //         console.log("Get User By Id Fail");
+  //       }
+  //     } catch (error) {
+  //       console.log(error + "  Fail Get user By id");
+  //     }
+  //   };
+  //   getUserById();
+  // }, []);
 
   return (
     <header className="transparent scroll-light has-topbar">
@@ -169,7 +220,8 @@ const Header = () => {
                             onClick={test}
                           >
                             <img
-                              src="images/profile/1.jpg"
+                              // src="images/profile/1.jpg"
+                              src={urlImage}
                               className="img-fluid"
                               alt=""
                             />
@@ -177,8 +229,8 @@ const Header = () => {
                           {showSubMenu ? (
                             <div id="de-submenu-profile" className="de-submenu">
                               <div className="d-name">
-                                <h4>Monica Lucas</h4>
-                                  <span className="text-gray">{email}</span>
+                                <h4>{fullName}</h4>
+                                <span className="text-gray">{email}</span>
                               </div>
                               <div className="d-line" />
                               <ul className="menu-col">

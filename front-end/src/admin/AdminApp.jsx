@@ -52,6 +52,7 @@ function AdminApp() {
               <Route path="/car" element={<CarAdmin />} />
               <Route path="/car/create" element={<CreateCar />} />
               <Route path="/car/:id" element={<DetailCar />} />
+              <Route path="/car/create" element={<CreateCar />} />
               <Route path="/team" element={<Team />} />
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/invoices" element={<Invoices />} />

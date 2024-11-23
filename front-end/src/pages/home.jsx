@@ -1,6 +1,22 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function HomePage(props) {
+  const navigate = useNavigate();
+  const [selectedPrice, setSelectedPrice] = useState("150.000 VNĐ");
+
+  const handleSelection = (price) => {
+    setSelectedPrice(price);
+  };
+
+  const handleContinueQuickBooking = (e) => {
+    e.preventDefault(); 
+    navigate("/quickBooking")
+
+  }
+
+ 
+
   return (
     <>
       <div className="no-bottom no-top" id="content">
@@ -17,273 +33,273 @@ function HomePage(props) {
                 <div className="spacer-double d-lg-none d-sm-block" />
                 <div className="spacer-double d-lg-none d-sm-block" />
                 <div className="spacer-double d-lg-none d-sm-block" />
+                {/*  */}
                 <div className="row align-items-center">
-                  <div className="col-lg-6 text-light">
-                    <h4>
-                      <span className="id-color">
-                        Cách nhanh chóng và dễ dàng để đặt được 1 chuyến xe
-                      </span>
-                    </h4>
-                    <div className="spacer-10" />
-                    <h1 className="mb-2" style={{ fontSize: "45px" }}>
-                      Trải nghiệm với những chiếc xe thoải mái và khám phá với
-                      dịch vụ tốt
-                    </h1>
-                    <div className="spacer-10" />
-                    {/* <p className="lead">
-                      Embark on unforgettable adventures and discover the world
-                      in unparalleled comfort and style with our fleet of
-                      exceptionally comfortable cars.
-                    </p> */}
-                  </div>
                   <div className="col-lg-6">
                     <div className="spacer-single sm-hide" />
                     <div
                       className="p-4 rounded-3 shadow-soft text-light"
-                      data-bgcolor="rgba(0, 0, 0, .6)"
+                      style={{ backgroundColor: "rgba(0, 0, 0, .6)", width : '85%', marginLeft : '80px' }}
                     >
-                      <form name="contactForm" id="contact_form" method="post">
-                        <h5>Bạn muốn chọn loại xe nào?</h5>
+                      <div name="contactForm" id="contact_form" method="post">
                         <div className="de_form de_radio row g-3">
-                          <div className="radio-img col-lg-3 col-sm-3 col-6">
-                            <input
-                              id="radio-1a"
-                              name="Car_Type"
-                              type="radio"
-                              defaultValue="Residential"
-                              defaultChecked="checked"
-                            />
-                            <label htmlFor="radio-1a">
-                              <img src="images/select-form/car.png" alt="" />
-                              Car
-                            </label>
-                          </div>
-                          <div className="radio-img col-lg-3 col-sm-3 col-6">
+                          <div className="radio-img col-lg-6 col-sm-3 col-6">
                             <input
                               id="radio-1b"
                               name="Car_Type"
                               type="radio"
                               defaultValue="Office"
+                              value="150.000 VNĐ"
+                              onChange={() => handleSelection("150.000 VNĐ")}
                             />
                             <label htmlFor="radio-1b">
                               <img src="images/select-form/van.png" alt="" />
-                              Van
+                              Xe 7 chỗ (150.000)
                             </label>
                           </div>
-                          <div className="radio-img col-lg-3 col-sm-3 col-6">
+                          <div className="radio-img col-lg-6 col-sm-3 col-6">
                             <input
                               id="radio-1c"
                               name="Car_Type"
                               type="radio"
                               defaultValue="Commercial"
+                              value="120.000 VNĐ"
+                              onChange={() => handleSelection("120.000 VNĐ")}
                             />
                             <label htmlFor="radio-1c">
                               <img
                                 src="images/select-form/minibus.png"
                                 alt=""
                               />
-                              Minibus
+                              Xe 10 chỗ (120.000)
                             </label>
                           </div>
-                          <div className="radio-img col-lg-3 col-sm-3 col-6">
-                            <input
-                              id="radio-1d"
-                              name="Car_Type"
-                              type="radio"
-                              defaultValue="Retail"
-                            />
-                            <label htmlFor="radio-1d">
-                              <img
-                                src="images/select-form/sportscar.png"
-                                alt=""
-                              />
-                              Prestige
-                            </label>
-                          </div>
+                          <table className="info_lobby">
+                            <tr>
+                              <th>Thời gian chuẩn bị xe chạy</th>
+                              <th>Địa điểm đi và đến</th>
+                              <th>Giá vé</th>
+                              <th>Số ghế còn trống</th>
+                            </tr>
+                            <tr>
+                              <td>7 :00</td>
+                              <td>Đà Nẵng đến Huế</td>
+                              <td>{selectedPrice}</td>
+                              <td>10/50</td>
+                            </tr>
+                          </table>
                         </div>
                         <div className="spacer-20" />
-                        <div className="row">
-                          <div className="col-lg-6 mb20">
-                            <h5>Địa điểm đi</h5>
-                            <input
-                              type="text"
-                              name="PickupLocation"
-                              onfocus="geolocate()"
-                              placeholder="Nhập địa điểm đi"
-                              id="autocomplete"
-                              autoComplete="off"
-                              className="form-control"
-                            />
-                            <div className="jls-address-preview jls-address-preview--hidden">
-                              <div className="jls-address-preview__header"></div>
-                            </div>
-                          </div>
-                          <div className="col-lg-6 mb20">
-                            <h5>Địa điểm đến</h5>
-                            <input
-                              type="text"
-                              name="DropoffLocation"
-                              onfocus="geolocate()"
-                              placeholder="Nhập địa điểm trả"
-                              id="autocomplete2"
-                              autoComplete="off"
-                              className="form-control"
-                            />
-                            <div className="jls-address-preview jls-address-preview--hidden">
-                              <div className="jls-address-preview__header"></div>
-                            </div>
-                          </div>
-                          <div className="col-lg-6 mb20">
-                            <h5>Thời gian đi</h5>
-                            <div className="date-time-field">
-                              <input
-                                type="text"
-                                id="date-picker"
-                                name="Pick Up Date"
-                                defaultValue=""
-                              />
-                              <select name="Pick Up Time" id="pickup-time">
-                                <option
-                                  selected=""
-                                  disabled=""
-                                  value="Select time"
-                                >
-                                  Time
-                                </option>
-                                <option value="00:00">00:00</option>
-                                <option value="00:30">00:30</option>
-                                <option value="01:00">01:00</option>
-                                <option value="01:30">01:30</option>
-                                <option value="02:00">02:00</option>
-                                <option value="02:30">02:30</option>
-                                <option value="03:00">03:00</option>
-                                <option value="03:30">03:30</option>
-                                <option value="04:00">04:00</option>
-                                <option value="04:30">04:30</option>
-                                <option value="05:00">05:00</option>
-                                <option value="05:30">05:30</option>
-                                <option value="06:00">06:00</option>
-                                <option value="06:30">06:30</option>
-                                <option value="07:00">07:00</option>
-                                <option value="07:30">07:30</option>
-                                <option value="08:00">08:00</option>
-                                <option value="08:30">08:30</option>
-                                <option value="09:00">09:00</option>
-                                <option value="09:30">09:30</option>
-                                <option value="10:00">10:00</option>
-                                <option value="10:30">10:30</option>
-                                <option value="11:00">11:00</option>
-                                <option value="11:30">11:30</option>
-                                <option value="12:00">12:00</option>
-                                <option value="12:30">12:30</option>
-                                <option value="13:00">13:00</option>
-                                <option value="13:30">13:30</option>
-                                <option value="14:00">14:00</option>
-                                <option value="14:30">14:30</option>
-                                <option value="15:00">15:00</option>
-                                <option value="15:30">15:30</option>
-                                <option value="16:00">16:00</option>
-                                <option value="16:30">16:30</option>
-                                <option value="17:00">17:00</option>
-                                <option value="17:30">17:30</option>
-                                <option value="18:00">18:00</option>
-                                <option value="18:30">18:30</option>
-                                <option value="19:00">19:00</option>
-                                <option value="19:30">19:30</option>
-                                <option value="20:00">20:00</option>
-                                <option value="20:30">20:30</option>
-                                <option value="21:00">21:00</option>
-                                <option value="21:30">21:30</option>
-                                <option value="22:00">22:00</option>
-                                <option value="22:30">22:30</option>
-                                <option value="23:00">23:00</option>
-                                <option value="23:30">23:30</option>
-                              </select>
-                            </div>
-                          </div>
-                          <div className="col-lg-6 mb20">
-                            <h5>Thời gian trả</h5>
-                            <div className="date-time-field">
-                              <input
-                                type="text"
-                                id="date-picker-2"
-                                name="Collection Date"
-                                defaultValue=""
-                              />
-                              <select
-                                name="Collection Time"
-                                id="collection-time"
-                              >
-                                <option
-                                  selected=""
-                                  disabled=""
-                                  value="Select time"
-                                >
-                                  Time
-                                </option>
-                                <option value="00:00">00:00</option>
-                                <option value="00:30">00:30</option>
-                                <option value="01:00">01:00</option>
-                                <option value="01:30">01:30</option>
-                                <option value="02:00">02:00</option>
-                                <option value="02:30">02:30</option>
-                                <option value="03:00">03:00</option>
-                                <option value="03:30">03:30</option>
-                                <option value="04:00">04:00</option>
-                                <option value="04:30">04:30</option>
-                                <option value="05:00">05:00</option>
-                                <option value="05:30">05:30</option>
-                                <option value="06:00">06:00</option>
-                                <option value="06:30">06:30</option>
-                                <option value="07:00">07:00</option>
-                                <option value="07:30">07:30</option>
-                                <option value="08:00">08:00</option>
-                                <option value="08:30">08:30</option>
-                                <option value="09:00">09:00</option>
-                                <option value="09:30">09:30</option>
-                                <option value="10:00">10:00</option>
-                                <option value="10:30">10:30</option>
-                                <option value="11:00">11:00</option>
-                                <option value="11:30">11:30</option>
-                                <option value="12:00">12:00</option>
-                                <option value="12:30">12:30</option>
-                                <option value="13:00">13:00</option>
-                                <option value="13:30">13:30</option>
-                                <option value="14:00">14:00</option>
-                                <option value="14:30">14:30</option>
-                                <option value="15:00">15:00</option>
-                                <option value="15:30">15:30</option>
-                                <option value="16:00">16:00</option>
-                                <option value="16:30">16:30</option>
-                                <option value="17:00">17:00</option>
-                                <option value="17:30">17:30</option>
-                                <option value="18:00">18:00</option>
-                                <option value="18:30">18:30</option>
-                                <option value="19:00">19:00</option>
-                                <option value="19:30">19:30</option>
-                                <option value="20:00">20:00</option>
-                                <option value="20:30">20:30</option>
-                                <option value="21:00">21:00</option>
-                                <option value="21:30">21:30</option>
-                                <option value="22:00">22:00</option>
-                                <option value="22:30">22:30</option>
-                                <option value="23:00">23:00</option>
-                                <option value="23:30">23:30</option>
-                              </select>
-                            </div>
-                          </div>
-                        </div>
                         <input
                           type="submit"
-                          id="send_message"
-                          defaultValue="Find a Vehicle"
                           className="btn-main pull-right"
+                          value={"Chọn chuyến đi này"}
+                          onClick={handleContinueQuickBooking}
                         />
                         <div className="clearfix" />
-                      </form>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-lg-6">
+                    <div className="spacer-single sm-hide" />
+                    <div
+                      className="p-4 rounded-3 shadow-soft text-light"
+                      style={{ backgroundColor: "rgba(0, 0, 0, .6)", width : '85%', marginLeft : '80px' }}
+                    >
+                      <div name="contactForm" id="contact_form" method="post">
+                        <div className="de_form de_radio row g-3">
+                          <div className="radio-img col-lg-6 col-sm-3 col-6">
+                            <input
+                              id="radio-1b"
+                              name="Car_Type"
+                              type="radio"
+                              defaultValue="Office"
+                              value="150.000 VNĐ"
+                              onChange={() => handleSelection("150.000 VNĐ")}
+                            />
+                            <label htmlFor="radio-1b">
+                              <img src="images/select-form/van.png" alt="" />
+                              Xe 7 chỗ (150.000)
+                            </label>
+                          </div>
+                          <div className="radio-img col-lg-6 col-sm-3 col-6">
+                            <input
+                              id="radio-1c"
+                              name="Car_Type"
+                              type="radio"
+                              defaultValue="Commercial"
+                              value="120.000 VNĐ"
+                              onChange={() => handleSelection("120.000 VNĐ")}
+                            />
+                            <label htmlFor="radio-1c">
+                              <img
+                                src="images/select-form/minibus.png"
+                                alt=""
+                              />
+                              Xe 10 chỗ (120.000)
+                            </label>
+                          </div>
+                          <table className="info_lobby">
+                            <tr>
+                              <th>Thời gian chuẩn bị xe chạy</th>
+                              <th>Địa điểm đi và đến</th>
+                              <th>Giá vé</th>
+                              <th>Số ghế còn trống</th>
+                            </tr>
+                            <tr>
+                              <td>7 :00</td>
+                              <td>Đà Nẵng đến Huế</td>
+                              <td>{selectedPrice}</td>
+                              <td>10/50</td>
+                            </tr>
+                          </table>
+                        </div>
+                        <div className="spacer-20" />
+
+                         <input
+                          type="submit"
+                          className="btn-main pull-right"
+                          value={"Chọn chuyến đi này"}
+                        />
+                        <div className="clearfix" />
+                      </div>
                     </div>
                   </div>
                 </div>
+                {/*  */}
+                <div className="row align-items-center">
+                  <div className="col-lg-6">
+                    <div className="spacer-single sm-hide" />
+                    <div
+                      className="p-4 rounded-3 shadow-soft text-light"
+                      style={{ backgroundColor: "rgba(0, 0, 0, .6)", width : '85%', marginLeft : '80px' }}
+                    >
+                      <div name="contactForm" id="contact_form" method="post">
+                        <div className="de_form de_radio row g-3">
+                          <div className="radio-img col-lg-6 col-sm-3 col-6">
+                            <input
+                              id="radio-1b"
+                              name="Car_Type"
+                              type="radio"
+                              defaultValue="Office"
+                              value="150.000 VNĐ"
+                              onChange={() => handleSelection("150.000 VNĐ")}
+                            />
+                            <label htmlFor="radio-1b">
+                              <img src="images/select-form/van.png" alt="" />
+                              Xe 7 chỗ (150.000)
+                            </label>
+                          </div>
+                          <div className="radio-img col-lg-6 col-sm-3 col-6">
+                            <input
+                              id="radio-1c"
+                              name="Car_Type"
+                              type="radio"
+                              defaultValue="Commercial"
+                              value="120.000 VNĐ"
+                              onChange={() => handleSelection("120.000 VNĐ")}
+                            />
+                            <label htmlFor="radio-1c">
+                              <img
+                                src="images/select-form/minibus.png"
+                                alt=""
+                              />
+                              Xe 10 chỗ (120.000)
+                            </label>
+                          </div>
+                          <table className="info_lobby">
+                            <tr>
+                              <th>Thời gian chuẩn bị xe chạy</th>
+                              <th>Địa điểm đi và đến</th>
+                              <th>Giá vé</th>
+                              <th>Số ghế còn trống</th>
+                            </tr>
+                            <tr>
+                              <td>7 :00</td>
+                              <td>Đà Nẵng đến Huế</td>
+                              <td>{selectedPrice}</td>
+                              <td>10/50</td>
+                            </tr>
+                          </table>
+                        </div>
+                        <div className="spacer-20" />
+
+                         <input
+                          type="submit"
+                          className="btn-main pull-right"
+                          value={"Chọn chuyến đi này"}
+                        />
+                        <div className="clearfix" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-lg-6">
+                    <div className="spacer-single sm-hide" />
+                    <div
+                      className="p-4 rounded-3 shadow-soft text-light"
+                      style={{ backgroundColor: "rgba(0, 0, 0, .6)", width : '85%', marginLeft : '80px' }}
+                    >
+                      <div name="contactForm" id="contact_form" method="post">
+                        <div className="de_form de_radio row g-3">
+                          <div className="radio-img col-lg-6 col-sm-3 col-6">
+                            <input
+                              id="radio-1b"
+                              name="Car_Type"
+                              type="radio"
+                              defaultValue="Office"
+                              value="150.000 VNĐ"
+                              onChange={() => handleSelection("150.000 VNĐ")}
+                            />
+                            <label htmlFor="radio-1b">
+                              <img src="images/select-form/van.png" alt="" />
+                              Xe 7 chỗ (150.000)
+                            </label>
+                          </div>
+                          <div className="radio-img col-lg-6 col-sm-3 col-6">
+                            <input
+                              id="radio-1c"
+                              name="Car_Type"
+                              type="radio"
+                              defaultValue="Commercial"
+                              value="120.000 VNĐ"
+                              onChange={() => handleSelection("120.000 VNĐ")}
+                            />
+                            <label htmlFor="radio-1c">
+                              <img
+                                src="images/select-form/minibus.png"
+                                alt=""
+                              />
+                              Xe 10 chỗ (120.000)
+                            </label>
+                          </div>
+                          <table className="info_lobby">
+                            <tr>
+                              <th>Thời gian chuẩn bị xe chạy</th>
+                              <th>Địa điểm đi và đến</th>
+                              <th>Giá vé</th>
+                              <th>Số ghế còn trống</th>
+                            </tr>
+                            <tr>
+                              <td>7 :00</td>
+                              <td>Đà Nẵng đến Huế</td>
+                              <td>{selectedPrice}</td>
+                              <td>10/50</td>
+                            </tr>
+                          </table>
+                        </div>
+                        <div className="spacer-20" />
+
+                         <input
+                          type="submit"
+                          className="btn-main pull-right"
+                          value={"Chọn chuyến đi này"}
+                        />
+                        <div className="clearfix" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/*  */}
                 <div className="spacer-double d-lg-none d-sm-block" />
                 <div className="spacer-double d-lg-none d-sm-block" />
               </div>

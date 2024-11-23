@@ -9,6 +9,8 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,7 +21,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TicketResponse {
     long ticketId;
-    int selectedSeat;
+    List<String> selectedSeat;
     double totalPrice;
     String fullName;
     String phoneNumber;
@@ -40,7 +42,7 @@ public class TicketResponse {
     public static TicketResponse fromEntity(TicketEntity ticket) {
         return TicketResponse.builder()
                 .ticketId(ticket.getTicketId())
-                .selectedSeat(ticket.getSelectedSeat())
+                .selectedSeat(Arrays.asList(ticket.getSelectedSeat().split(",")))
                 .totalPrice(ticket.getPrice())
                 .fullName(ticket.getFullName())
                 .phoneNumber(ticket.getPhoneNumber())
@@ -50,6 +52,7 @@ public class TicketResponse {
                 .startLocation(ticket.getStartLocation())
                 .stopLocation(ticket.getStopLocation())
                 .schedules(ScheduleResponse.fromEntity(ticket.getScheduleEntity()))
+                .status(ticket.getStatus())
                 .build();
     }
 

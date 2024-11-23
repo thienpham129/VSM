@@ -17,6 +17,9 @@ public class ScheduleCreateDTO {
 	@Future(message = "Start time must be in the future")
 	private LocalDateTime startTime;
 
+	@NotNull(message = "Route ID is required")
+    private Long routeId; 
+	
 	@NotNull(message = "Account ID is required")
 	private Long accountId;
 
