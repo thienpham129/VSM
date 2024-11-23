@@ -700,6 +700,7 @@
 
 .bookingPage__tickets__item__collapse__booking__user .form_group input[type=number],
 .bookingPage__tickets__item__collapse__booking__user .form_group input[type=text],
+.bookingPage__tickets__item__collapse__booking__user .form_group input[type=email],
 .bookingPage__tickets__item__collapse__booking__user .form_group textarea {
     width: calc(100% - 8px - 30%);
     height: 40px;
@@ -820,6 +821,7 @@
 
 .bookingPage__mobile__tickets__item__collapse__booking__user .form_group input[type=number],
 .bookingPage__mobile__tickets__item__collapse__booking__user .form_group input[type=text],
+.bookingPage__mobile__tickets__item__collapse__booking__user .form_group input[type=email],
 .bookingPage__mobile__tickets__item__collapse__booking__user .form_group select {
     width: calc(100% - 8px - 30%);
     border: 1px solid #cfd3db;
@@ -1734,6 +1736,10 @@ figure.image.ck-widget.ck-widget_with-resizer {
 
 .bookingPage__search__triggle.mobile a {
     color: #fff;
+}
+
+.error {
+    color: red;
 }
 
 

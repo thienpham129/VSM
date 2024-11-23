@@ -15,19 +15,20 @@ import com.project.vsm.model.CarEntity;
 import com.project.vsm.model.ScheduleEntity;
 
 @Repository
-public interface ScheduleRepository
-		extends JpaRepository<ScheduleEntity, Long>, JpaSpecificationExecutor<ScheduleEntity> {
+public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Long>{
 
-	List<ScheduleEntity> findByCarAndStartTime(CarEntity car, LocalDateTime startTime);
+    List<ScheduleEntity> findByCarAndStartTime(CarEntity car, LocalDateTime startTime);
 
-	List<ScheduleEntity> findByAccountAndStartTime(AccountEntity account, LocalDateTime startTime);
+    List<ScheduleEntity> findByAccountAndStartTime(AccountEntity account, LocalDateTime startTime);
 
-	@Query("SELECT s FROM ScheduleEntity s WHERE (DATE(s.startTime) = :startDate AND s.account.id = :driverId) "
-			+ "OR (DATE(s.startTime) = :startDate AND s.car.id = :carId)")
-	List<ScheduleEntity> findSchedulesByDriverOrCarForDate(@Param("driverId") Long driverId, @Param("carId") Long carId,
-			@Param("startDate") LocalDate startDate);
+    @Query("SELECT s FROM ScheduleEntity s WHERE (DATE(s.startTime) = :startDate AND s.account.id = :driverId) " +
+            "OR (DATE(s.startTime) = :startDate AND s.car.id = :carId)")
+    List<ScheduleEntity> findSchedulesByDriverOrCarForDate(@Param("driverId") Long driverId,
+                                                           @Param("carId") Long carId,
+                                                           @Param("startDate") LocalDate startDate);
 
-	List<ScheduleEntity> findByStartLocationAndStopLocationAndStartTime(String startLocation, 
-																		String stopLocation,
-																	    LocalDateTime startTime);
+
+    List<ScheduleEntity> findByStartLocationAndStopLocationAndStartTime(String startLocation,
+                                                                        String stopLocation,
+                                                                        LocalDateTime startTime);
 }

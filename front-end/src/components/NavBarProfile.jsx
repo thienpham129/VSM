@@ -162,16 +162,7 @@ const NavBarProfile = () => {
           </a>
         </li>
         <li>
-          <a
-            href="/voucher"
-            className={location.pathname === "/voucher" ? "active" : ""}
-          >
-            <i className="fa fa-ticket" />
-            Mã giảm giá
-          </a>
-        </li>
-        <li>
-          <a href="login.html" onClick={handleLogout}>
+          <a onClick={handleLogout}>
             <i className="fa fa-sign-out" />
             Đăng xuất
           </a>

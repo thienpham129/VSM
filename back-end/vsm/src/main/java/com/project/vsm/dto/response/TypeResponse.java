@@ -1,5 +1,6 @@
 package com.project.vsm.dto.response;
 
+import com.project.vsm.model.TypeEntity;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

@@ -1,9 +1,14 @@
 package com.project.vsm.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.project.vsm.model.ScheduleEntity;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.project.vsm.model.ScheduleEntity;
@@ -33,4 +38,16 @@ public class ScheduleResponse {
         response.setStopLocation(schedule.getStopLocation());
         return response;
     }
+
+    public static ScheduleResponse fromEntity(ScheduleEntity schedule) {
+        return ScheduleResponse.builder()
+                .scheduleId(schedule.getId())
+                .startLocation(schedule.getStartLocation())
+                .stopLocation(schedule.getStopLocation())
+                .startTime(schedule.getStartTime())
+                .endTime(schedule.getEndTime())
+                .status(schedule.getStatus())
+                .build();
+    }
+
 }

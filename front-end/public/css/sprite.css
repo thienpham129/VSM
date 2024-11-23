@@ -138,6 +138,13 @@ To change `display` (e.g. `display: inline-block;`), we suggest using a common C
     height: 24px;
 }
 
+.icon-clock-mobile {
+    background-image: url(../images_02/sprite.png);
+    background-position: -360px -224px;
+    width: 24px;
+    height: 24px;
+}
+
 .icon-cod {
     background-image: url(../images_02/sprite.png);
     background-position: -142px -144px;
@@ -342,7 +349,7 @@ To change `display` (e.g. `display: inline-block;`), we suggest using a common C
 
 .icon-seat-sm-empty {
     /* background-image: url(../images_02/sprite.png); */
-    background-color: #FFFFFF;
+    background-color: #D6D6D6;
     background-position: -384px -104px;
     width: 24px;
     height: 32px;

@@ -34,7 +34,7 @@ const Seat = ({ seatId, seatStatus, onSelect }) => {
   );
 };
 
-const Schedule7Seat = ({ startTime, startLocation, stopLocation, car, numSeat, price }) => {
+const Schedule7Seat = ({ startTime, startLocation, stopLocation, car, numSeat, price, scheduleId, typeId }) => {
   const ticketPrice = price;
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -241,7 +241,9 @@ const Schedule7Seat = ({ startTime, startLocation, stopLocation, car, numSeat, p
               stopLocation={stopLocation}
               car={car}
               numSeat={numSeat}
-              // price={price}
+              price={price}
+              scheduleId={scheduleId}
+              typeId={typeId}
             />
           </div>
         </div>

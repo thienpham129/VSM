@@ -219,8 +219,16 @@ const Header = () => {
                             className="de-menu-profile"
                             onClick={test}
                           >
+                            {urlImage ? (<img
+                              src={urlImage}
+                              className="img-fluid"
+                              alt=""
+                            />) : (<img
+                              src="images/avatar_user.png"
+                              className="img-fluid"
+                              alt=""
+                            />)}
                             <img
-                              // src="images/profile/1.jpg"
                               src={urlImage}
                               className="img-fluid"
                               alt=""
@@ -252,12 +260,7 @@ const Header = () => {
                                     Thay đổi mật khẩu
                                   </a>
                                 </li>
-                                <li>
-                                  <a href="/changePassword">
-                                    <i className="fa fa-ticket" />
-                                    Mã giảm giá
-                                  </a>
-                                </li>
+                                
                                 <li>
                                   <a
                                     href=""

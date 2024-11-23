@@ -3,6 +3,7 @@ import styles from "pages/bookingTicket.module.css";
 import MethodPaymentMobile from "components/MethodPaymentMobile/MethodPaymentMobile";
 
 const MethodPayment = () => {
+  
   return (
     <div className="no-bottom no-top zebra" id="content">
       <div id="top" />

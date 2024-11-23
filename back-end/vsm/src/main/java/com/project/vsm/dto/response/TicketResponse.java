@@ -7,6 +7,7 @@ import com.project.vsm.model.TicketEntity;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -30,7 +31,7 @@ public class TicketResponse {
     String status;
     String QRPayment;
     String paymentMethod;
-    ScheduleResponse scheduleResponse;
+    ScheduleResponse schedules;
     String paymentUrl;
     String qrCodeBase64;
     LocalDateTime startTime;
@@ -52,6 +53,7 @@ public class TicketResponse {
                 .paymentMethod(ticket.getPaymentMethod())
                 .startLocation(ticket.getStartLocation())
                 .stopLocation(ticket.getStopLocation())
+                .schedules(ScheduleResponse.fromEntity(ticket.getScheduleEntity()))
                 .build();
     }
 

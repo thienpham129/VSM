@@ -1,11 +1,14 @@
 package com.project.vsm.dto.response;
 
 
+import com.project.vsm.model.CarEntity;
+import com.project.vsm.model.TypeEntity;
 import jakarta.persistence.Column;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.project.vsm.model.CarEntity;
 import com.project.vsm.model.TypeEntity;
@@ -17,7 +20,7 @@ import com.project.vsm.model.TypeEntity;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class CarResponse {
-	private long carId;
+    private long carId;
     private String name;
     private String plateNumber;
     private String color;

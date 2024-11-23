@@ -34,7 +34,7 @@ const Seat = ({ seatId, seatStatus, onSelect }) => {
   );
 };
 
-const Schedule10Seat = ({ startTime, startLocation, stopLocation, car, numSeat, price }) => {
+const Schedule10Seat = ({ startTime, startLocation, stopLocation, car, numSeat, price, scheduleId, typeId }) => {
   const ticketPrice = price;
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -65,18 +65,16 @@ const Schedule10Seat = ({ startTime, startLocation, stopLocation, car, numSeat, 
     >
       <div className={styles.bookingPage__tickets__item__thumb}>
         <div className={styles.bookingPage__tickets__item__thumb__time}>
-        <span className="avicon icon-clock"></span>
-
-          {/* <div className={styles.times} > */}
+          <span className="avicon icon-clock"></span>
+          {/* <div className={styles.times}> */}
           <h3 className={styles.times}>{new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</h3>
-
           {/* </div> */}
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__route}>
           <span className="avicon icon-bus" />
           <div className={styles.route}>
             <h3 className={styles.showAsRoute}>
-            {startLocation} - {stopLocation}
+            {startLocation} - {stopLocation} 
             </h3>
           </div>
         </div>
@@ -90,24 +88,24 @@ const Schedule10Seat = ({ startTime, startLocation, stopLocation, car, numSeat, 
                 data-trip-id="PLT0Tc1ybgN295oCg20241015"
                 data-seatmap-id="SM0Tc1ybgBNa7yys"
               >
-                  {numSeat}
+                {numSeat}
               </b>{" "}
               chỗ ngồi
             </h3>
             <span>Xe {car.name}</span>
+
           </div>
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__price}>
         <span>{price.toLocaleString()} VND</span>
-
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__view_button}>
           <a
             // className="js--toggleCreateMap"
             data-trip-id="PLT0Tc1ybgN295oCg20241015"
-            href="#collapse--booking-ticketPLT0Tc1ybgN295oCg20241015"
+            href="#"
             data-parent="#tripPLT0Tc1ybgN295oCg20241015"
-            // data-toggle="collapse"
+            data-toggle="collapse"
             onClick={handelClickDetail}
           >
             Chọn chỗ
@@ -142,7 +140,7 @@ const Schedule10Seat = ({ startTime, startLocation, stopLocation, car, numSeat, 
                   styles.bookingPage__tickets__item__collapse__booking__seat_map__floor
                 }
               >
-                <h4>Xe 10 chỗ</h4>
+                <h4>Xe 7 chỗ</h4>
                 <table le="" className={styles.avseatmap}>
                   <tbody>
                     <tr>
@@ -164,6 +162,7 @@ const Schedule10Seat = ({ startTime, startLocation, stopLocation, car, numSeat, 
                         <span className={styles.showSeatId}>TAI</span>
                       </td>
                       <td />
+
                       <Seat
                         seatId="A1"
                         seatStatus="available"
@@ -257,6 +256,9 @@ const Schedule10Seat = ({ startTime, startLocation, stopLocation, car, numSeat, 
               stopLocation={stopLocation}
               car={car}
               numSeat={numSeat}
+              price={price}
+              scheduleId={scheduleId}
+              typeId={typeId}
             />
           </div>
         </div>

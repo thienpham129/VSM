@@ -17,6 +17,7 @@ import lombok.experimental.FieldDefaults;
 public class TicketRequest {
     long scheduleId;
     int selectedSeat;
+    long typeId;
     String fullName;
     String phoneNumber;
     String email;
