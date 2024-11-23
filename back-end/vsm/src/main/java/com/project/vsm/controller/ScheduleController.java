@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.vsm.dto.ScheduleCreateDTO;
 import com.project.vsm.dto.ScheduleFindDTO;
+import com.project.vsm.dto.SearchScheduleDriverDTO;
 import com.project.vsm.model.ScheduleEntity;
 import com.project.vsm.service.ScheduleService;
 
@@ -28,16 +29,26 @@ public class ScheduleController {
 		return new ResponseEntity<>(scheduleService.getAllSchedules(), HttpStatus.OK);
 	}
 
+	@GetMapping("driver/schedules/{id}")
+	public ResponseEntity<Iterable<ScheduleEntity>> getAllSchedulesByDriverId(@PathVariable long id) {
+		return new ResponseEntity<>(scheduleService.getAllSchedulesByDriverID(id), HttpStatus.OK);
+	}
+
 	@GetMapping("public/schedule/{id}")
 	public ResponseEntity<ScheduleEntity> getScheduleById(@PathVariable long id) {
 		Optional<ScheduleEntity> schedule = scheduleService.getScheduleById(id);
 		return new ResponseEntity<>(schedule.get(), HttpStatus.OK);
 	}
 
+	@PostMapping("driver/find-driver-schedule")
+	public ResponseEntity<ScheduleEntity> getSchedulesByDriver(@RequestBody SearchScheduleDriverDTO input) {
+		Optional<ScheduleEntity> schedule = scheduleService.getSchedulesByDriver(input);
+		return new ResponseEntity<>(schedule.get(), HttpStatus.OK);
+	}
+
 	@PostMapping("public/find-schedule")
 	public ResponseEntity<Iterable<ScheduleEntity>> getSchedulesByDriverAndCar(@RequestBody ScheduleFindDTO input) {
-		return new ResponseEntity<>(scheduleService.getSchedulesByDriverOrCarForDate(input),
-				HttpStatus.OK);
+		return new ResponseEntity<>(scheduleService.getSchedulesByDriverOrCarForDate(input), HttpStatus.OK);
 	}
 
 	@PostMapping("admin/schedule")

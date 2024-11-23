@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.vsm.dto.ScheduleCreateDTO;
 import com.project.vsm.dto.ScheduleFindDTO;
+import com.project.vsm.dto.SearchScheduleDriverDTO;
 import com.project.vsm.exception.InvalidInputException;
 import com.project.vsm.exception.NotFoundException;
 import com.project.vsm.model.AccountEntity;
@@ -153,4 +154,33 @@ public class ScheduleService {
 
 		return schedules;
 	}
+
+	public Iterable<ScheduleEntity> getAllSchedulesByDriverID(Long driverId) {
+		Optional<AccountEntity> driver = accountRepository.findById(driverId);
+		if (!driver.isPresent() || !driver.get().getRole().equalsIgnoreCase("ROLE_DRIVER")) {
+			throw new NotFoundException("Not found driver with id " + driverId);
+		}
+
+		Iterable<ScheduleEntity> listSchedules = scheduleRepository.findByAccount_Id(driverId);
+		return listSchedules;
+	}
+
+	public Optional<ScheduleEntity> getSchedulesByDriver(SearchScheduleDriverDTO scheduleFindDTO) {
+		LocalDateTime dateTime = scheduleFindDTO.getDateTime(); // Ngày từ input
+
+		Long driverId = scheduleFindDTO.getAccountId(); // ID của tài xế
+		Optional<AccountEntity> driver = accountRepository.findById(driverId);
+		if (!driver.isPresent() || !driver.get().getRole().equalsIgnoreCase("ROLE_DRIVER")) {
+			throw new NotFoundException("Not found driver with id " + driverId);
+		}
+
+		// Tìm các lịch trình liên quan đến tài xế hoặc xe trong ngày
+		Optional<ScheduleEntity> schedules = scheduleRepository.findByAccount_IdAndStartTime(driverId, dateTime);
+		if (schedules.isEmpty()) {
+			throw new NotFoundException("No schedules found for driverId " + driverId + " on date " + dateTime);
+		}
+
+		return schedules;
+	}
+
 }

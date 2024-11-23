@@ -3,6 +3,7 @@ package com.project.vsm.repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -50,4 +51,9 @@ public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Long> 
 			+ "OR (DATE(s.startTime) = :startDate AND s.car.id = :carId)")
 	List<ScheduleEntity> findSchedulesByDriverOrCarForDate(@Param("driverId") Long driverId, @Param("carId") Long carId,
 			@Param("startDate") LocalDate startDate);
+
+	List<ScheduleEntity> findByAccount_Id(Long accountId);
+
+	Optional<ScheduleEntity> findByAccount_IdAndStartTime(Long accountId, LocalDateTime startTime);
+
 }
