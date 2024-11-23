@@ -228,11 +228,7 @@ const Header = () => {
                               className="img-fluid"
                               alt=""
                             />)}
-                            <img
-                              src={urlImage}
-                              className="img-fluid"
-                              alt=""
-                            />
+                            
                           </span>
                           {showSubMenu ? (
                             <div id="de-submenu-profile" className="de-submenu">

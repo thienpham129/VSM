@@ -71,7 +71,7 @@ const Schedule7Seat = ({ startTime, startLocation, stopLocation, car, numSeat, p
           {/* </div> */}
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__route}>
-          <span className="avicon icon-bus" />
+          <span className="avicon icon-bus" style={{marginRight: '14px'}}/>
           <div className={styles.route}>
             <h3 className={styles.showAsRoute}>
             {startLocation} - {stopLocation} 
@@ -79,7 +79,7 @@ const Schedule7Seat = ({ startTime, startLocation, stopLocation, car, numSeat, p
           </div>
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__seat}>
-          <span className="avicon icon-chair" />
+          <span className="avicon icon-chair" style={{marginRight: '14px'}}/>
           <div className={styles.seat}>
             <h3>
               <b

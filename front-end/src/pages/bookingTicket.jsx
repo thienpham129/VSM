@@ -53,6 +53,7 @@ const BookingTicket = () => {
             <div
               className={styles.bookingPage__search__wrap}
               id="js-SearchTicket"
+              // style={{backgroundColor : '#333'}}
             >
               <div className={styles.searchTicket}>
                 <div className={styles.searchTicket__item}>
@@ -76,14 +77,48 @@ const BookingTicket = () => {
                     <span className={styles.searchTicket__item__title}>
                       Điểm đi
                     </span>
-                    <select
+                    {/* <select
                       className={styles.pointUp}
                       value={startLocation}
+                      id="searchPointUp"
                       onChange={(e) => setStartLocation(e.target.value)}
                     >
                       <option value="">Chọn điểm đi</option>
                       <option value="Đà Nẵng">Đà Nẵng</option>
-                      <option value="Quảng Nam">Quảng Nam</option>
+                      <option value="Quảng Nam">Quảng Nam</option> */}
+                    {/* <h3 data-point-target="pointUp" /> */}
+                    <select
+                      className={styles.pointUp}
+                      value={startLocation}
+                      id="searchPointUp"
+                      onChange={(e) => setStartLocation(e.target.value)}
+                    >
+                      <option value="">Chọn điểm lên</option>
+                      <optgroup label="Quảng Nam">
+                        <option
+                          value="Quảng Nam"
+                          data-route-id="R0U11yleLOCho9m,R0Tu1yipwtweLFh,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0Tu1yiptmYVave,R0DA1s6Bu8rN9mg,R0NY1wD4MMlyUEQ,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0NY1wD4LJD2IxB,R0DA1s6C94QCePS,R0DA1s6Bk8LFiei,R0DB1s6UOpGDcXh"
+                        >
+                          QN: 1 Quảng Nam
+                        </option>
+                      </optgroup>
+                      <optgroup label="Đà Nẵng">
+                        <option
+                          value="Đà Nẵng"
+                          data-route-id="R0U11yleLOCho9m,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0DA1s6Bu8rN9mg,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0DB1s6UOpGDcXh"
+                        >
+                          ĐN: 21 Đà Nẵng
+                        </option>
+                      </optgroup>
+
+                      <optgroup label="Thừa Thiên Huế">
+                        <option
+                          value="Huế"
+                          data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
+                        >
+                          H: 28 Huế
+                        </option>
+                      </optgroup>
                     </select>
                   </div>
                 </div>
@@ -109,13 +144,37 @@ const BookingTicket = () => {
                       Điểm đến
                     </span>
                     <select
-                      className={styles.pointDown}
+                      className={styles.pointUp}
+                      id="searchPointUp"
                       value={stopLocation}
                       onChange={(e) => setStopLocation(e.target.value)}
                     >
-                      <option value="">Chọn điểm đến</option>
-                      <option value="Huế">Huế</option>
-                      <option value="Đà Nẵng">Đà Nẵng</option>
+                      <option value="">Chọn điểm lên</option>
+                      <optgroup label="Quảng Nam">
+                        <option
+                          value="Quảng Nam"
+                          data-route-id="R0U11yleLOCho9m,R0Tu1yipwtweLFh,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0Tu1yiptmYVave,R0DA1s6Bu8rN9mg,R0NY1wD4MMlyUEQ,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0NY1wD4LJD2IxB,R0DA1s6C94QCePS,R0DA1s6Bk8LFiei,R0DB1s6UOpGDcXh"
+                        >
+                          QN: 1 Quảng Nam
+                        </option>
+                      </optgroup>
+                      <optgroup label="Đà Nẵng">
+                        <option
+                          value="Đà Nẵng"
+                          data-route-id="R0U11yleLOCho9m,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0DA1s6Bu8rN9mg,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0DB1s6UOpGDcXh"
+                        >
+                          ĐN: 21 Đà Nẵng
+                        </option>
+                      </optgroup>
+
+                      <optgroup label="Thừa Thiên Huế">
+                        <option
+                          value="Huế"
+                          data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
+                        >
+                          H: 28 Huế
+                        </option>
+                      </optgroup>
                     </select>
                   </div>
                 </div>
@@ -129,7 +188,7 @@ const BookingTicket = () => {
                     value={startTime}
                     onChange={(e) => setStartTime(e.target.value)}
                   /> */}
-                  
+
                   <input
                     className={styles.ticket_date}
                     type="datetime-local"
@@ -357,18 +416,22 @@ const BookingTicket = () => {
                       Ngày khởi hành
                     </span>
                     <input
-                    className={styles.ticket_date}
-                    type="datetime-local"
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                  />
+                      className={styles.ticket_date}
+                      type="datetime-local"
+                      value={startTime}
+                      onChange={(e) => setStartTime(e.target.value)}
+                    />
                   </div>
                 </div>
               </div>
               <div
                 className={`${styles.bookingPage__search__triggle} ${styles.mobile}`}
               >
-                <a href="javascript:;" data-action="searchTrip" onClick={handleSearch}>
+                <a
+                  href="javascript:;"
+                  data-action="searchTrip"
+                  onClick={handleSearch}
+                >
                   <i className="fa fa-search" aria-hidden="true" />
                   Tìm chuyến{" "}
                 </a>
@@ -382,50 +445,50 @@ const BookingTicket = () => {
             <span>Hoàn thành</span>
           </div>
           <div className={styles.bookingPage__mobile__content}>
-          {schedules.length > 0 ? (
-                schedules.map((schedule) => (
-                  <div
-                    key={schedule.scheduleId}
-                    className={styles.bookingPage__ticket}
-                  >
-                    <p style={{ display: "none" }}>
-                      Số ghế: {schedule.car.numSeat}
-                    </p>
-                    {/* <p >
+            {schedules.length > 0 ? (
+              schedules.map((schedule) => (
+                <div
+                  key={schedule.scheduleId}
+                  className={styles.bookingPage__ticket}
+                >
+                  <p style={{ display: "none" }}>
+                    Số ghế: {schedule.car.numSeat}
+                  </p>
+                  {/* <p >
                       Số ghế: {schedule.car.type.typeId}
                     </p> */}
-                    {/* Điều kiện hiển thị Schedule7Seat hoặc Schedule10Seat */}
-                    {schedule.car.numSeat === 7 && (
-                      <Schedule7SeatMobile
-                        key={schedule.scheduleId}
-                        scheduleId={schedule.scheduleId}
-                        startTime={schedule.startTime}
-                        startLocation={schedule.startLocation}
-                        stopLocation={schedule.stopLocation}
-                        car={schedule.car}
-                        numSeat={schedule.car.numSeat}
-                        typeId={schedule.car.type.typeId}
-                        price={schedule.car.price}
-                      />
-                    )}
-                    {schedule.car.numSeat === 10 && (
-                      <Schedule10SeatMobile
-                        key={schedule.scheduleId}
-                        startTime={schedule.startTime}
-                        scheduleId={schedule.scheduleId}
-                        startLocation={schedule.startLocation}
-                        stopLocation={schedule.stopLocation}
-                        car={schedule.car}
-                        numSeat={schedule.car.numSeat}
-                        price={schedule.car.price}
-                        typeId={schedule.car.type.typeId}
-                      />
-                    )}
-                  </div>
-                ))
-              ) : (
-                <p>Không tìm thấy lịch trình nào!</p>
-              )}
+                  {/* Điều kiện hiển thị Schedule7Seat hoặc Schedule10Seat */}
+                  {schedule.car.numSeat === 7 && (
+                    <Schedule7SeatMobile
+                      key={schedule.scheduleId}
+                      scheduleId={schedule.scheduleId}
+                      startTime={schedule.startTime}
+                      startLocation={schedule.startLocation}
+                      stopLocation={schedule.stopLocation}
+                      car={schedule.car}
+                      numSeat={schedule.car.numSeat}
+                      typeId={schedule.car.type.typeId}
+                      price={schedule.car.price}
+                    />
+                  )}
+                  {schedule.car.numSeat === 10 && (
+                    <Schedule10SeatMobile
+                      key={schedule.scheduleId}
+                      startTime={schedule.startTime}
+                      scheduleId={schedule.scheduleId}
+                      startLocation={schedule.startLocation}
+                      stopLocation={schedule.stopLocation}
+                      car={schedule.car}
+                      numSeat={schedule.car.numSeat}
+                      price={schedule.car.price}
+                      typeId={schedule.car.type.typeId}
+                    />
+                  )}
+                </div>
+              ))
+            ) : (
+              <p>Không tìm thấy lịch trình nào!</p>
+            )}
           </div>
         </div>
       </div>
