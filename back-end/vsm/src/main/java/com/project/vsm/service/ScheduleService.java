@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.vsm.dto.ScheduleCreateDTO;
 import com.project.vsm.dto.ScheduleFindDTO;
+import com.project.vsm.dto.ScheduleUpdateDTO;
 import com.project.vsm.dto.SearchScheduleDriverDTO;
 import com.project.vsm.exception.InvalidInputException;
 import com.project.vsm.exception.NotFoundException;
@@ -83,6 +84,64 @@ public class ScheduleService {
 
 		// Lưu lịch trình vào cơ sở dữ liệu và trả về
 		return scheduleRepository.save(schedule);
+	}
+
+	public ScheduleEntity updateScheduleById(ScheduleUpdateDTO scheduleUpdateDTO) {
+
+		Optional<ScheduleEntity> optionalSchedule = scheduleRepository.findById(scheduleUpdateDTO.getSchduleId());
+		if (!optionalSchedule.isPresent()) {
+			throw new NotFoundException("Not found schedule with id " + scheduleUpdateDTO.getSchduleId());
+		}
+		// Kiểm tra xe có tồn tại không
+		Optional<CarEntity> optionalCar = carRepository.findById(scheduleUpdateDTO.getCarId());
+		if (!optionalCar.isPresent()) {
+			throw new NotFoundException("Not found car with id " + scheduleUpdateDTO.getCarId());
+		}
+
+		// Kiểm tra tài xế có tồn tại và có phải là tài xế không
+		Optional<AccountEntity> optionalDriver = accountRepository.findById(scheduleUpdateDTO.getAccountId());
+		if (!optionalDriver.isPresent() || !optionalDriver.get().getRole().equals("ROLE_DRIVER")) {
+			throw new NotFoundException("Not found Driver with id " + scheduleUpdateDTO.getAccountId());
+		}
+
+		// Kiểm tra tuyến đường có tồn tại không
+		Optional<RouteEntity> optionalRoute = routeRepository.findById(scheduleUpdateDTO.getRouteId());
+		if (!optionalRoute.isPresent()) {
+			throw new NotFoundException("Not found Route with id " + scheduleUpdateDTO.getRouteId());
+		}
+
+//		// Kiểm tra tính khả dụng của tài xế và xe
+//		if ((!isAccountAvailable(scheduleUpdateDTO.getAccountId(), scheduleUpdateDTO.getStartTime())
+//				|| !isCarAvailable(scheduleUpdateDTO.getCarId(), scheduleUpdateDTO.getStartTime()))
+//				|| (optionalSchedule.get().getStartTime() == scheduleUpdateDTO.getStartTime())) {
+//			throw new InvalidInputException("Tài xế hoặc xe sắp lịch phải cách nhau ít nhất 3 tiếng");
+//		}
+
+		String carStopLocation = findClosestStopLocation(scheduleUpdateDTO.getCarId(),
+				scheduleUpdateDTO.getStartTime());
+		String driverStopLocation = findClosestStopLocationByDriver(scheduleUpdateDTO.getAccountId(),
+				scheduleUpdateDTO.getStartTime());
+
+		// Kiểm tra nếu không có lịch trình trước đó, bỏ qua kiểm tra điểm bắt đầu
+		if (carStopLocation != null && !carStopLocation.equals(optionalRoute.get().getStartLocation())) {
+			throw new InvalidInputException(
+					"Điểm bắt đầu của lịch phải phù hợp với điểm dừng của lịch trước đó cho xe.");
+		}
+		if (driverStopLocation != null && !driverStopLocation.equals(optionalRoute.get().getStartLocation())) {
+			throw new InvalidInputException(
+					"Điểm bắt đầu của lịch phải phù hợp với điểm dừng của lịch trước đó cho tài xế.");
+		}
+
+		// Tạo đối tượng ScheduleEntity mới
+		optionalSchedule.get().setAccount(optionalDriver.get());
+		optionalSchedule.get().setCar(optionalCar.get());
+		optionalSchedule.get().setRoute(optionalRoute.get());
+		optionalSchedule.get().setStartTime(scheduleUpdateDTO.getStartTime());
+		optionalSchedule.get().setStatus(scheduleUpdateDTO.getStatus());
+		optionalSchedule.get().setEndTime(scheduleUpdateDTO.getEndTime());
+
+		// Lưu lịch trình vào cơ sở dữ liệu và trả về
+		return scheduleRepository.save(optionalSchedule.get());
 	}
 
 	public String findClosestStopLocationByDriver(Long driverId, LocalDateTime startTime) {

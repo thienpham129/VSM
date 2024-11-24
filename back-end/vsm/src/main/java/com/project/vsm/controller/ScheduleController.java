@@ -8,11 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.vsm.dto.ScheduleCreateDTO;
 import com.project.vsm.dto.ScheduleFindDTO;
+import com.project.vsm.dto.ScheduleUpdateDTO;
 import com.project.vsm.dto.SearchScheduleDriverDTO;
 import com.project.vsm.model.ScheduleEntity;
 import com.project.vsm.service.ScheduleService;
@@ -57,15 +59,9 @@ public class ScheduleController {
 		return new ResponseEntity<>(schedule, HttpStatus.CREATED);
 	}
 
-//	@PostMapping("public/find-schedule")
-//	public ResponseEntity<Iterable<ScheduleEntity>> getSchedulesByDriverAndCar(@RequestBody ScheduleFindDTO input) {
-//		return new ResponseEntity<>(scheduleService.getSchedulesByDriverOrCarForDate(input),
-//				HttpStatus.OK);
-//	}
-//	
-//	@PutMapping("/admin/schedule/{id}")
-//	public ResponseEntity<ScheduleEntity> updateScheduleById(@PathVariable long id,
-//			@Valid @RequestBody ScheduleCreateDTO scheduleDTO) {
-//		return new ResponseEntity<>(scheduleService.updateScheduleById(id, scheduleDTO), HttpStatus.OK);
-//	}
+	@PutMapping("admin/schedule")
+	public ResponseEntity<ScheduleEntity> updateSchedule(@Valid @RequestBody ScheduleUpdateDTO scheduleDTO) {
+		ScheduleEntity schedule = scheduleService.updateScheduleById(scheduleDTO);
+		return new ResponseEntity<>(schedule, HttpStatus.CREATED);
+	}
 }
