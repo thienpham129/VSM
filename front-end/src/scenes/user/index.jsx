@@ -1,14 +1,13 @@
 import { Box, Button } from "@mui/material";
 import { useTheme } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { tokens } from "../../theme";
-import { mockDataUser } from "../../admin/data/mockData";
 import Header from "../../components/Header";
 import UserFormDialog from "./UserFormDialog";
 import ConfirmDialog from "./ConfirmDialog";
 import SnackbarAlert from "./SnackbarAlert";
 import UserDataGrid from "./UserDataGrid";
-
+import { request } from "admin/helpers/axios_helper";
 const UserAdmin = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -28,6 +27,20 @@ const UserAdmin = () => {
   });
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [listUser, setListUser] = useState([]);
+
+  // call list user
+  const fetchUsers = async () => {
+    try {
+      const response = await request("get", "/admin/users");
+      setListUser(response.data); // Cập nhật danh sách người dùng
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách người dùng:", error);
+    }
+  };
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => {
@@ -40,7 +53,7 @@ const UserAdmin = () => {
     return re.test(email);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const newErrors = { email: "", password: "" };
 
     if (!newUser.email) {
@@ -60,94 +73,133 @@ const UserAdmin = () => {
       return;
     }
 
-    console.log("Thêm người dùng mới:", newUser);
-    setNewUser({ email: "", firstName: "", lastName: "", password: "" });
-    handleClose();
-    setSnackbarMessage("Thêm người dùng thành công.");
-    setSnackbarOpen(true);
+    try {
+      // Gọi API để tạo mới người dùng
+      const response = await request("post", "/admin/user", {
+        email: newUser.email,
+        password: newUser.password,
+      });
+
+      // Cập nhật danh sách người dùng sau khi thêm mới thành công
+      setListUser((prevUsers) => [...prevUsers, response.data]);
+
+      // Reset form và hiển thị thông báo
+      setNewUser({ email: "", firstName: "", lastName: "", password: "" });
+      handleClose();
+      setSnackbarMessage("Thêm người dùng thành công.");
+      setSnackbarOpen(true);
+    } catch (error) {
+      setSnackbarMessage(error.response.data);
+      setSnackbarOpen(true);
+    }
   };
 
   const handleConfirmBanUnbanUser = (user) => {
-    setUserToBan(user);
+    setUserToBan(user.row);
     setConfirmDialogOpen(true);
   };
 
-  const handleBanUser = () => {
-    console.log("Đã ban người dùng:", userToBan);
-    setSnackbarMessage("Bạn đã ban người dùng thành công.");
-    setSnackbarOpen(true);
-    setConfirmDialogOpen(false);
-    setUserToBan(null);
+  const handleBanUser = async () => {
+    try {
+      const response = await request("put", `/admin/user/ban/${userToBan.id}`);
+      // Kiểm tra nếu thành công
+      if (response.status === 200) {
+        setSnackbarMessage("Bạn đã ban người dùng thành công.");
+        setSnackbarOpen(true);
+      } else {
+        setSnackbarMessage("Có lỗi khi ban người dùng.");
+        setSnackbarOpen(true);
+      }
+      setConfirmDialogOpen(false);
+      setUserToBan(null);
+      fetchUsers();
+    } catch (error) {
+      console.error("Lỗi khi ban người dùng:", error);
+      setSnackbarMessage("Có lỗi khi ban người dùng.");
+      setSnackbarOpen(true);
+    }
   };
 
-  const handleUnbanUser = () => {
-    console.log("Đã bỏ ban người dùng:", userToBan);
-    setSnackbarMessage("Bạn đã bỏ ban người dùng thành công.");
-    setSnackbarOpen(true);
-    setConfirmDialogOpen(false);
-    setUserToBan(null);
+  const handleUnbanUser = async () => {
+    try {
+      const response = await request("put", `/admin/user/ban/${userToBan.id}`);
+      // Kiểm tra nếu thành công
+      if (response.status === 200) {
+        setSnackbarMessage("Bạn đã bỏ chặn người dùng thành công.");
+        setSnackbarOpen(true);
+      } else {
+        setSnackbarMessage("Có lỗi khi bỏ chặn người dùng.");
+        setSnackbarOpen(true);
+      }
+      setConfirmDialogOpen(false);
+      setUserToBan(null);
+      fetchUsers();
+    } catch (error) {
+      console.error("Lỗi khi bỏ chặn người dùng:", error);
+      setSnackbarMessage("Có lỗi khi bỏ chặn người dùng.");
+      setSnackbarOpen(true);
+    }
   };
 
   const handleCloseSnackbar = () => setSnackbarOpen(false);
 
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
-    { field: "gender", headerName: "Giới Tính", flex: 1 },
     {
       field: "email",
       headerName: "Email",
       flex: 1,
-      valueGetter: (params) => params.row.account?.email || "",
     },
     {
       field: "fullname",
       headerName: "Họ và Tên",
       flex: 1,
       valueGetter: (params) =>
-        `${params.row.account?.lastName || ""} ${
-          params.row.account?.firstName || ""
-        }`,
+        `${params.row.lastName || ""} ${params.row.firstName || ""}`,
       cellClassName: "name-column--cell",
     },
     {
-      field: "Khả Dụng",
-      headerName: "Enabled",
+      field: "role",
+      headerName: "Vai Trò",
+      flex: 1,
+    },
+    {
+      field: "enabled",
+      headerName: "Trạng Thái",
       flex: 1,
       renderCell: (params) => (
         <Button
           variant="contained"
           sx={{
-            backgroundColor: params.row.account?.enabled
+            backgroundColor: params.row.enabled
               ? colors.greenAccent[600]
               : colors.redAccent[600],
             color: "#fff",
             "&:hover": {
-              backgroundColor: params.row.account?.enabled
+              backgroundColor: params.row.enabled
                 ? colors.greenAccent[700]
                 : colors.redAccent[700],
             },
           }}
         >
-          {params.row.account?.enabled ? "Enable" : "Disable"}
+          {params.row.enabled ? "Enabled" : "Disabled"}
         </Button>
       ),
     },
     {
       field: "banUser",
       headerName: "Action",
+      flex: 1,
       renderCell: (params) => (
         <Button
           variant="contained"
-          color={params.row.account?.enabled ? "error" : "success"}
+          color={params.row.enabled ? "error" : "success"}
           sx={{ width: "150px" }}
           onClick={() => handleConfirmBanUnbanUser(params.row)}
         >
-          {params.row.account?.enabled
-            ? "Chặn Người dùng"
-            : "Bỏ Chặn Người Dùng"}
+          {params.row.enabled ? "Chặn Người dùng" : "Bỏ Chặn Người Dùng"}
         </Button>
       ),
-      flex: 1,
     },
   ];
 
@@ -186,8 +238,8 @@ const UserAdmin = () => {
         }}
       >
         <UserDataGrid
-          rows={mockDataUser}
-          columns={columns}
+          rows={listUser} // Sử dụng dữ liệu thực tế từ API
+          columns={columns} // Cập nhật cột để khớp với dữ liệu mới
           onBanUnban={handleConfirmBanUnbanUser}
         />
       </Box>
@@ -206,7 +258,7 @@ const UserAdmin = () => {
         onClose={() => setConfirmDialogOpen(false)}
         userToBan={userToBan}
         onConfirm={() =>
-          userToBan?.account?.enabled ? handleBanUser() : handleUnbanUser()
+          userToBan?.enabled ? handleBanUser() : handleUnbanUser()
         }
       />
 
