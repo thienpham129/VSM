@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-// import { dataScheduleDetail } from "./dataScheduleDetail";
+import { dataScheduleDetail } from "./dataScheduleDetail";
 // import { dataSchedule } from "./dataSchedule";
 import DataTable from "react-data-table-component";
 import Button from "@mui/material/Button";
@@ -25,7 +25,7 @@ function Schedule() {
   const [valueInput, setValueInput] = useState("");
   const [statusUser, setStatusUSer] = useState("");
   const [dataSchedule, setDataSchedule] = useState([]);
-  const [dataScheduleDetail, setDataScheduleDetail] = useState([]);
+  // const [dataScheduleDetail, setDataScheduleDetail] = useState([]);
   const [dataScheduleFinal, setDataScheduleFinal] = useState([]);
   // const [nameToggle, setNameToggle] = useState("");
   // const [phoneToggle, setPhoneToggle] = useState("");
@@ -60,12 +60,7 @@ function Schedule() {
   const columnsScheduleDetail = [
     {
       name: "Họ Và Tên",
-      selector: (row) => (
-        <div title={row.name} onClick={() => showPopUpDetailData(row)}>
-          {" "}
-          {row.name}{" "}
-        </div>
-      ),
+      selector: (row) => <div title={row.name}> {row.name} </div>,
       width: "150px",
     },
     {
@@ -143,10 +138,10 @@ function Schedule() {
     } catch (error) {}
   };
 
-  const fetchDataScheduleDetail = async () => {
-    const url = "/public/schedules";
+  const fetchDataScheduleDetail = async (scheduleId) => {
+    const url = "/admin/ticket-with-schedule";
     try {
-      const response = await root.get(url);
+      const response = await root.get(`${url}/${scheduleId}`);
       if (response) {
         setDataSchedule(response.data);
         console.log(response.data);
@@ -206,8 +201,10 @@ function Schedule() {
           variant="contained"
           onClick={(e) => {
             // navigate("/driver/schedule/*");
+            // alert(item.id);
+            fetchDataScheduleDetail(item.id);
             setIsClickDetail(true);
-            e.stopPropagation();
+            // e.stopPropagation();
           }}
         >
           Xem Chi Tiết
