@@ -1,16 +1,16 @@
 package com.project.vsm.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class VNPayResponse {
-    public String code;
-    public String message;
-    public String paymentUrl;
+    String paymentUrl;
 }

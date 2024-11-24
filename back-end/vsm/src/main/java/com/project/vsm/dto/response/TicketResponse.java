@@ -53,6 +53,10 @@ public class TicketResponse {
                 .stopLocation(ticket.getStopLocation())
                 .schedules(ScheduleResponse.fromEntity(ticket.getScheduleEntity()))
                 .status(ticket.getStatus())
+                .isPaid(ticket.isPaid())
+                .startTime(ticket.getScheduleEntity().getStartTime())
+                .endTime(ticket.getScheduleEntity().getEndTime())
+                .status(ticket.getStatus())
                 .build();
     }
 

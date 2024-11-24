@@ -24,7 +24,7 @@ import lombok.experimental.FieldDefaults;
 public class TicketController {
     TicketService ticketService;
 
-    @GetMapping("/admin/tickets")
+    @GetMapping("/public/tickets")
     public ResponseEntity<List<TicketResponse>> getAllTickets() {
         return new ResponseEntity<>(ticketService.getAllTicket(), HttpStatus.OK);
     }

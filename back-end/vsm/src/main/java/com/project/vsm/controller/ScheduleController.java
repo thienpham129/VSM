@@ -62,7 +62,7 @@ public class ScheduleController {
     @GetMapping("/public/schedule/search")
     public ResponseEntity<List<ScheduleResponse>> getSchedulesWithCars(@RequestParam String startLocation,
                                                                        @RequestParam String stopLocation,
-                                                                       @RequestParam LocalDate startTime) {
+                                                                       @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startTime) {
         return new ResponseEntity<>(scheduleService.getSchedulesWithCars(startLocation , stopLocation , startTime)
                                     , HttpStatus.OK);
     }
