@@ -96,7 +96,6 @@ const NavBarProfile = () => {
         setLastName(response.data.lastName);
 
         setFullName(`${response.data.firstName} ${response.data.lastName}`);
-        console.log("User data retrieved:", response.data);
       } else {
         console.log("Failed to retrieve user data");
       }

@@ -47,6 +47,7 @@ public class ScheduleResponse {
                 .startTime(schedule.getStartTime())
                 .endTime(schedule.getEndTime())
                 .status(schedule.getStatus())
+                .car(schedule.getCar() != null ? CarResponse.mapCarResponse(schedule.getCar()) : null)
                 .build();
     }
 

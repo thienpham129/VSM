@@ -81,7 +81,7 @@ public class TicketService {
         		.orElseThrow(() -> new RuntimeException("Type not found"));
 
         double priceOfSingleSeat = type.getPrice();
-        double totalPrice = priceOfSingleSeat * request.getSelectedSeat();
+        double totalPrice = priceOfSingleSeat * request.getSelectedSeat().size();
 
         VoucherEntity voucher = null;
         if (request.getVoucher() != null) {
@@ -127,7 +127,8 @@ public class TicketService {
         }
         return ticketResponse;
     }
-
+    
+   
     private boolean checkPaymentStatus(long ticketId) {
         return true;
     }
@@ -140,7 +141,7 @@ public class TicketService {
         ticket.setFullName(request.getFullName());
         ticket.setNote(request.getNote());
         ticket.setPhoneNumber(request.getPhoneNumber());
-        ticket.setSelectedSeat(request.getSelectedSeat());
+        ticket.setSelectedSeat(request.getSelectedSeat().toString());
 
         ticketRepository.save(ticket);
 
@@ -159,5 +160,15 @@ public class TicketService {
         return tickets.stream()
                 .map(TicketResponse::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    public TicketResponse updateStatusTicketById (long ticketId , TicketRequest request) {
+        TicketEntity ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
+
+        ticket.setStatus(request.getStatus());
+        ticketRepository.save(ticket);
+
+        return TicketResponse.fromEntity(ticket);
     }
 }

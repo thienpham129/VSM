@@ -8,6 +8,8 @@ import com.project.vsm.model.VoucherEntity;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,21 +17,23 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class TicketRequest {
-    long scheduleId;
-    int selectedSeat;
     long typeId;
+    long scheduleId;
+    List<String> selectedSeat;
     String fullName;
     String phoneNumber;
     String email;
     String note;
     String voucher;
     String paymentMethod;
+    String status;
     String detailAddressToPickUp;
     String detailAddressDropOff;
+    String qrCode;
 
     public TicketEntity toEntity(AccountEntity account, PaymentEntity payment, VoucherEntity voucher, double totalPrice) {
         return TicketEntity.builder()
-                .selectedSeat(this.selectedSeat)
+                .selectedSeat(String.join("," , this.selectedSeat))
                 .detailAddressPickUp(this.detailAddressToPickUp)
                 .detailAddressDropOff(this.detailAddressDropOff)
                 .fullName(this.fullName)

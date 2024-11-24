@@ -9,9 +9,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 @RequiredArgsConstructor
 @Table(name = "Account")
@@ -54,9 +57,6 @@ public class AccountEntity {
 	private boolean enabled;
 
 	private String gender;
-	
-	@Transient
-	private String newPassword;
 
 	@Column(name = "img_driver_lisence_2")
 	private String imgDriverLisence1;
@@ -71,6 +71,8 @@ public class AccountEntity {
 	@OneToMany(mappedBy = "account" , cascade = CascadeType.ALL)
 	private List<TicketEntity> tickets = new ArrayList<>();
 
+//	@OneToMany(mappedBy = "account" , cascade = CascadeType.ALL)
+//	private List<ScheduleEntity> schedules = new ArrayList<>();
 
 	public AccountEntity(String email, String password) {
 		super();

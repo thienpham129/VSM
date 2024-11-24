@@ -129,7 +129,6 @@ const Profile = () => {
         setDob(data.dob || "");
         setGender(data.gender || "");
         setSpecificAddress(data.address || "");
-        console.log("User data retrieved:", data);
       }
     } catch (error) {
       console.error("Failed to retrieve user data:", error);

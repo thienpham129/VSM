@@ -12,11 +12,13 @@ import {
 import { getTokenFromLocalStorage } from "utils/tokenUtils";
 import { root } from "helper/axiosClient";
 
-const Seat = ({ seatId, seatStatus, onSelect }) => {
+const Seat = ({ seatId, seatStatus, onSelect, bookedSeats }) => {
+  const isSold = bookedSeats.soldSeats.includes(seatId);
+  const isBooked = bookedSeats.bookedSeats.includes(seatId);
   const [isSelected, setIsSelected] = useState(false);
 
   const handleSeatClick = () => {
-    if (seatStatus === "sold") return;
+    if (isSold || isBooked) return;
     setIsSelected((prev) => !prev);
     onSelect(seatId, !isSelected);
   };
@@ -24,7 +26,7 @@ const Seat = ({ seatId, seatStatus, onSelect }) => {
   return (
     <td
       className={`${styles.avseat} ${
-        seatStatus === "sold" ? styles.soldSeat : ""
+        isSold ? styles.soldSeat : isBooked ? styles.bookedSeat : ""
       }`}
       onClick={handleSeatClick}
       data-seat-id={seatId}
@@ -32,8 +34,10 @@ const Seat = ({ seatId, seatStatus, onSelect }) => {
     >
       <div
         className={`avicon ${
-          seatStatus === "sold"
-            ? "icon-seat-sold"
+          isSold
+            ? "icon-seat-sold" // paid: true
+            : isBooked
+            ? "icon-seat-booked" // paid: false
             : isSelected
             ? "icon-seat-selected"
             : "icon-seat-empty"
@@ -60,6 +64,10 @@ const Schedule10SeatMobile = ({
   const [totalPrice, setTotalPrice] = useState(0);
   const [isUserInfoVisible, setIsUserInfoVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [bookedSeats, setBookedSeats] = useState({
+    soldSeats: [],
+    bookedSeats: [],
+  });
 
   //
   const [fullName, setFullName] = useState("");
@@ -224,6 +232,43 @@ const Schedule10SeatMobile = ({
   ]);
   // End Api
 
+  //
+  useEffect(() => {
+    const fetchBookedSeats = async () => {
+      try {
+        const response = await root.get(
+          `/public/ticket-with-schedule/${scheduleId}`
+        );
+        // Lấy ghế paid: true và paid: false
+        const seatsPaidTrue = response.data
+          .filter((ticket) => ticket.paid)
+          .map((ticket) => ticket.selectedSeat)
+          .flat();
+
+        const seatsPaidFalse = response.data
+          .filter((ticket) => !ticket.paid)
+          .map((ticket) => ticket.selectedSeat)
+          .flat();
+
+        // Lưu danh sách ghế theo trạng thái
+        setBookedSeats({
+          soldSeats: seatsPaidTrue, // paid: true
+          bookedSeats: seatsPaidFalse, // paid: false
+        });
+
+        // const seats = response.data.map((ticket) => ticket.selectedSeat).flat();
+        // setBookedSeats(seats); // Lưu danh sách ghế đã đặt
+        console.log("««««« response.data »»»»»", response.data);
+      } catch (err) {
+        console.log("««««« err »»»»»", err);
+      } finally {
+      }
+    };
+
+    fetchBookedSeats();
+  }, [scheduleId]);
+  //
+
   const handleSeatSelection = (seatId, isSelected) => {
     setSelectedSeats((prev) => {
       if (isSelected) {
@@ -255,7 +300,7 @@ const Schedule10SeatMobile = ({
   };
 
   useEffect(() => {
-    setSelectedSeat(selectedSeats.length); // Set selectedSeat to the count of selected seats
+    setSelectedSeat(selectedSeats); // Set selectedSeat to the count of selected seats
   }, [selectedSeats]);
 
   //
@@ -315,7 +360,21 @@ const Schedule10SeatMobile = ({
 
       if (response.status === 200) {
         console.log("Booking successful:", response.data);
-        navigate("/methodPayment");
+        navigate("/methodPayment", {
+          state: {
+            fullName,
+            phoneNumber,
+            email,
+            note,
+            detailAddressToPickUp,
+            selectedSeat,
+            detailAddressDropOff,
+            totalPrice,
+            startTime,
+            startLocation,
+            stopLocation,
+          },
+        });
       } else {
         console.error("Error submitting booking");
       }
@@ -434,54 +493,54 @@ const Schedule10SeatMobile = ({
                       <td />
                       <Seat
                         seatId="A1"
-                        seatStatus="available"
+                        bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
                       />
                     </tr>
                     <tr>
                       <Seat
                         seatId="A2"
-                        seatStatus="sold"
+                        bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
                       />
                       <Seat
                         seatId="A3"
-                        seatStatus="available"
+                        bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
                       />
                       <Seat
                         seatId="A4"
-                        seatStatus="available"
+                        bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
                       />
                     </tr>
                     <tr>
                       <Seat
                         seatId="A5"
-                        seatStatus="available"
+                        bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
                       />
                       <Seat
                         seatId="A6"
-                        seatStatus="available"
+                        bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
                       />
                       <Seat
                         seatId="A7"
-                        seatStatus="available"
+                        bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
                       />
                     </tr>
                     <tr>
                     <Seat
                         seatId="A8"
-                        seatStatus="available"
+                        bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
                       />
                       <td/>
                       <Seat
                         seatId="A9"
-                        seatStatus="available"
+                        bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
                       />
                     </tr>
@@ -547,13 +606,8 @@ const Schedule10SeatMobile = ({
                   <label htmlFor="">Ghế đã chọn</label>
 
                   <div data-content="listSeat" className={styles.list_seat}>
-                    {selectedSeat > 0
-                      ? `${selectedSeat} ghế (${selectedSeats.join(", ")})`
-                      : (
-                          <span className={styles.error}>
-                            {errors.selectedSeats}
-                          </span>
-                        ) || ""}
+                    {selectedSeats.join(", ")}
+                    <span className={styles.error}>{errors.selectedSeats}</span>
                   </div>
                 </div>
                 <div className={styles.form_group}>

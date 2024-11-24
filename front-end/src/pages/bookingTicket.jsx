@@ -77,16 +77,6 @@ const BookingTicket = () => {
                     <span className={styles.searchTicket__item__title}>
                       Điểm đi
                     </span>
-                    {/* <select
-                      className={styles.pointUp}
-                      value={startLocation}
-                      id="searchPointUp"
-                      onChange={(e) => setStartLocation(e.target.value)}
-                    >
-                      <option value="">Chọn điểm đi</option>
-                      <option value="Đà Nẵng">Đà Nẵng</option>
-                      <option value="Quảng Nam">Quảng Nam</option> */}
-                    {/* <h3 data-point-target="pointUp" /> */}
                     <select
                       className={styles.pointUp}
                       value={startLocation}
@@ -178,25 +168,8 @@ const BookingTicket = () => {
                     </select>
                   </div>
                 </div>
-                <div className={styles.searchTicket__item}>
-                  {/* <span className={styles.searchTicket__item__title}>
-                    Ngày khởi hành
-                  </span> */}
-                  {/* <input
-                    className={styles.ticket_date}
-                    type="datetime-local"
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                  /> */}
 
-                  <input
-                    className={styles.ticket_date}
-                    type="datetime-local"
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                  />
-                </div>
-                {/* <div className={styles.searchTicket__item}>
+                <div className={styles.searchTicket__item}>
                   <div className={styles.searchTicket__item__left}>
                     <span className={`${styles.avicon} ${styles.iconsvg}`}>
                       <svg
@@ -219,13 +192,13 @@ const BookingTicket = () => {
                       Ngày khởi hành
                     </span>
                     <input
-                    className={styles.ticket_date}
-                    type="datetime-local"
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                  />
+                      className={styles.ticket_date}
+                      type="date"
+                      value={startTime}
+                      onChange={(e) => setStartTime(e.target.value)}
+                    />
                   </div>
-                </div> */}
+                </div>
               </div>
               <div className={styles.bookingPage__search__triggle}>
                 <a
@@ -344,18 +317,39 @@ const BookingTicket = () => {
                       Điểm đi
                     </span>
                     <h3 data-point-target="pointUp" />
-                    {/* <select className={styles.pointUp} id="searchPointUp"> */}
                     <select
-                      id="searchPointUp"
                       className={styles.pointUp}
                       value={startLocation}
+                      id="searchPointUp"
                       onChange={(e) => setStartLocation(e.target.value)}
                     >
-                      <option value="">Chọn điểm đi</option>
-                      <option value="Đà Nẵng">Đà Nẵng</option>
-                      <option value="Quảng Nam">Quảng Nam</option>
+                      <option value="">Chọn điểm lên</option>
+                      <optgroup label="Quảng Nam">
+                        <option
+                          value="Quảng Nam"
+                          data-route-id="R0U11yleLOCho9m,R0Tu1yipwtweLFh,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0Tu1yiptmYVave,R0DA1s6Bu8rN9mg,R0NY1wD4MMlyUEQ,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0NY1wD4LJD2IxB,R0DA1s6C94QCePS,R0DA1s6Bk8LFiei,R0DB1s6UOpGDcXh"
+                        >
+                          QN: 1 Quảng Nam
+                        </option>
+                      </optgroup>
+                      <optgroup label="Đà Nẵng">
+                        <option
+                          value="Đà Nẵng"
+                          data-route-id="R0U11yleLOCho9m,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0DA1s6Bu8rN9mg,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0DB1s6UOpGDcXh"
+                        >
+                          ĐN: 21 Đà Nẵng
+                        </option>
+                      </optgroup>
+
+                      <optgroup label="Thừa Thiên Huế">
+                        <option
+                          value="Huế"
+                          data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
+                        >
+                          H: 28 Huế
+                        </option>
+                      </optgroup>
                     </select>
-                    {/* </select> */}
                   </div>
                 </div>
                 <div className={styles.searchTicket__item}>
@@ -382,14 +376,37 @@ const BookingTicket = () => {
                     <h3 data-point-target="pointUp" />
 
                     <select
-                      id="searchPointDown"
-                      className={styles.pointDown}
+                      className={styles.pointUp}
+                      id="searchPointUp"
                       value={stopLocation}
                       onChange={(e) => setStopLocation(e.target.value)}
                     >
-                      <option value="">Chọn điểm đến</option>
-                      <option value="Huế">Huế</option>
-                      <option value="Đà Nẵng">Đà Nẵng</option>
+                      <option value="">Chọn điểm lên</option>
+                      <optgroup label="Quảng Nam">
+                        <option
+                          value="Quảng Nam"
+                          data-route-id="R0U11yleLOCho9m,R0Tu1yipwtweLFh,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0Tu1yiptmYVave,R0DA1s6Bu8rN9mg,R0NY1wD4MMlyUEQ,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0NY1wD4LJD2IxB,R0DA1s6C94QCePS,R0DA1s6Bk8LFiei,R0DB1s6UOpGDcXh"
+                        >
+                          QN: 1 Quảng Nam
+                        </option>
+                      </optgroup>
+                      <optgroup label="Đà Nẵng">
+                        <option
+                          value="Đà Nẵng"
+                          data-route-id="R0U11yleLOCho9m,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0DA1s6Bu8rN9mg,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0DB1s6UOpGDcXh"
+                        >
+                          ĐN: 21 Đà Nẵng
+                        </option>
+                      </optgroup>
+
+                      <optgroup label="Thừa Thiên Huế">
+                        <option
+                          value="Huế"
+                          data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
+                        >
+                          H: 28 Huế
+                        </option>
+                      </optgroup>
                     </select>
                   </div>
                 </div>
@@ -417,7 +434,7 @@ const BookingTicket = () => {
                     </span>
                     <input
                       className={styles.ticket_date}
-                      type="datetime-local"
+                      type="date"
                       value={startTime}
                       onChange={(e) => setStartTime(e.target.value)}
                     />

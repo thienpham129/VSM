@@ -1,13 +1,17 @@
 package com.project.vsm.service;
 
+
 import java.io.IOException;
 import java.util.Optional;
+
 
 import com.project.vsm.dto.request.ChangePasswordRequest;
 import com.project.vsm.dto.request.UpdateAccountRequest;
 import com.project.vsm.dto.response.ChangePasswordResponse;
+import com.project.vsm.dto.response.ScheduleResponse;
 import com.project.vsm.exception.NotFoundException;
 import com.project.vsm.model.AccountEntity;
+import com.project.vsm.model.ScheduleEntity;
 import com.project.vsm.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -17,8 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-
 
 @Service
 public class AccountService {
@@ -30,7 +35,6 @@ public class AccountService {
     @Autowired
     @Lazy
     private PasswordEncoder passwordEncoder;
-
 
     public Optional<AccountEntity> findByEmail(String email) {
 
@@ -104,8 +108,6 @@ public class AccountService {
         return optionalUser;
     }
     
-   
-
     public ChangePasswordResponse changePassword(ChangePasswordRequest request) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         AccountEntity accountEntity = accountRepository.findByEmail(email)
@@ -126,4 +128,19 @@ public class AccountService {
                 .build();
     }
 
+//    public List<ScheduleResponse> getScheduleOfAccount () {
+//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+//        AccountEntity accountEntity = accountRepository.findByEmail(email)
+//                .orElseThrow(() -> new RuntimeException("Cannot find account with email: " + email));
+//
+//        List<ScheduleResponse> response = new ArrayList<>();
+//        for (ScheduleEntity schedule : accountEntity.getSchedules()) {
+//            ScheduleResponse scheduleResponse =  ScheduleResponse.fromEntity(schedule);
+//            response.add(scheduleResponse);
+//        }
+//        return response;
+//    }
+
 }
+
+

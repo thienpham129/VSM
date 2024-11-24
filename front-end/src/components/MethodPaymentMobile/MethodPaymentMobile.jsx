@@ -1,7 +1,19 @@
 import React from "react";
 import styles from "components/bookingTicket.module.css";
 
-const MethodPaymentMobile = () => {
+const MethodPaymentMobile = ({
+  fullName,
+  phoneNumber,
+  email,
+  note,
+  detailAddressToPickUp,
+  selectedSeat,
+  detailAddressDropOff,
+  totalPrice,
+  startTime,
+  startLocation,
+  stopLocation,
+}) => {
   return (
     <section
       className={`${styles.bookingPage__mobile} ${styles.bookingPayment__mobile}`}
@@ -84,15 +96,15 @@ const MethodPaymentMobile = () => {
 
               <div className={styles.bookingPayment__info__item}>
                 <label htmlFor="">Họ tên</label>
-                <p>Nguyễn Xuân Quang</p>
+                <p>{fullName}</p>
               </div>
               <div className={styles.bookingPayment__info__item}>
                 <label htmlFor="">Số điện thoại</label>
-                <p>0777907831</p>
+                <p>{phoneNumber}</p>
               </div>
               <div className={styles.bookingPayment__info__item}>
                 <label htmlFor="">Email</label>
-                <p>123@gmail.com</p>
+                <p>{email}</p>
               </div>
               <div className={styles.bookingPayment__info__title__line}>
                 <h4 className={styles.bookingPayment__info__title} />
@@ -102,24 +114,35 @@ const MethodPaymentMobile = () => {
               </div>
               <div className={styles.bookingPayment__info__item}>
                 <label htmlFor="">Tuyến</label>
-                <p>Quy Nhơn - Đà Nẵng (Giường)</p>
+                <p>
+                  {startLocation} - {stopLocation}
+                </p>
               </div>
               <div className={styles.bookingPayment__info__item}>
                 <label htmlFor="">Giờ xuất bến</label>
-                <p>11:00</p>
+                <p>
+                  {new Date(startTime).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
               </div>
               <div className={styles.bookingPayment__info__item}>
                 <label htmlFor="">Điểm đi</label>
-                <p>QN</p>
+                <p>{detailAddressToPickUp}</p>
               </div>
               <div className={styles.bookingPayment__info__item}>
                 <label htmlFor="">Điểm đến</label>
-                <p>ĐN</p>
+                <p>{detailAddressDropOff}</p>
               </div>
               <div className={styles.bookingPayment__info__item}>
                 <label htmlFor="">Ghế</label>
                 <p className="list-seat">
-                  <span>A14</span>
+                  <span>
+                    {selectedSeat.length > 0
+                      ? selectedSeat.join(", ")
+                      : "Chưa chọn ghế"}
+                  </span>
                 </p>
               </div>
               <div className={styles.bookingPayment__info__item}>
@@ -128,13 +151,13 @@ const MethodPaymentMobile = () => {
               </div>
               <div className={styles.bookingPayment__info__item}>
                 <label htmlFor="">Ghi chú</label>
-                <p />
+                <p>{note}</p>
               </div>
 
               <div className={styles.bookingPayment__info__item__line} />
               <div className={styles.bookingPayment__info__item}>
                 <label htmlFor="">Tổng tiền</label>
-                <p>240,000 đ</p>
+                <p>{totalPrice.toLocaleString()} đ</p>
               </div>
             </div>
           </div>
@@ -155,7 +178,7 @@ const MethodPaymentMobile = () => {
             </div> */}
           </div>
           <div>
-            <p style={{padding : '10px'}}>
+            <p style={{ padding: "10px" }}>
               <span className="text-big" style={{ fontSize: "1.4em" }}>
                 QUÝ KHÁCH VUI LÒNG THANH TOÁN TRONG VÒNG{" "}
                 <strong>60 PHÚT</strong>, QUÁ THỜI HẠN MÃ VÉ SẼ BỊ HUỶ. CẦN HỖ

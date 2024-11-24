@@ -12,6 +12,7 @@ import {
 import { root } from "helper/axiosClient";
 import { getTokenFromLocalStorage } from "utils/tokenUtils";
 import { useNavigate } from "react-router-dom";
+import MethodPayment from "pages/methodPayment";
 
 function BookingForm({
   selectedSeats,
@@ -23,7 +24,6 @@ function BookingForm({
   scheduleId,
   typeId,
 }) {
-
   const navigate = useNavigate();
 
   const [fullName, setFullName] = useState("");
@@ -33,7 +33,7 @@ function BookingForm({
   const [detailAddressToPickUp, setDetailAddressToPickUp] = useState("");
   const [detailAddressDropOff, setDetailAddressDropOff] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("vietQR");
-  const [selectedSeat, setSelectedSeat] = useState(0);
+  const [selectedSeat, setSelectedSeat] = useState([]);
   const [errors, setErrors] = useState({});
 
   // Pick-up location state
@@ -187,7 +187,7 @@ function BookingForm({
   ]);
 
   useEffect(() => {
-    setSelectedSeat(selectedSeats.length); // Set selectedSeat to the count of selected seats
+    setSelectedSeat(selectedSeats); // Set selectedSeat to the count of selected seats
   }, [selectedSeats]);
 
   //
@@ -205,7 +205,7 @@ function BookingForm({
     }
     if (!email.trim()) {
       newErrors.email = "Email là bắt buộc.";
-    } 
+    }
     if (!pickupSpecificAddress.trim())
       newErrors.pickupSpecificAddress = "Vui lòng nhập địa chỉ điểm đi.";
     if (!dropoffSpecificAddress.trim())
@@ -247,7 +247,21 @@ function BookingForm({
 
       if (response.status === 200) {
         console.log("Booking successful:", response.data);
-        navigate("/methodPayment")
+        navigate("/methodPayment", {
+          state: {
+            fullName,
+            phoneNumber,
+            email,
+            note,
+            detailAddressToPickUp,
+            selectedSeat,
+            detailAddressDropOff,
+            totalPrice,
+            startTime,
+            startLocation,
+            stopLocation,
+          }
+        });
       } else {
         console.error("Error submitting booking");
       }
@@ -256,7 +270,6 @@ function BookingForm({
     }
   };
 
-   
   return (
     <div className={styles.bookingPage__tickets__item__collapse__booking__user}>
       <div
@@ -278,11 +291,9 @@ function BookingForm({
         <div className={styles.form_group}>
           <label htmlFor="">Ghế đã chọn</label>
           <div data-content="listSeat" className={styles.list_seat}>
-            {selectedSeat > 0
-              ? `${selectedSeat} ghế (${selectedSeats.join(", ")})`
-              : 
-              <span className={styles.error}>{errors.selectedSeats}</span>
-              || ""}
+            {selectedSeats.join(", ")}
+
+            <span className={styles.error}>{errors.selectedSeats}</span>
           </div>
         </div>
         {/* <label htmlFor="seat_selected" className={styles.error} /> */}
@@ -307,7 +318,9 @@ function BookingForm({
             onChange={(e) => setFullName(e.target.value)}
           />
           {errors.fullName && (
-            <span className={styles.error} style={{marginLeft : '312px'}}>{errors.fullName}</span>
+            <span className={styles.error} style={{ marginLeft: "312px" }}>
+              {errors.fullName}
+            </span>
           )}
         </div>
         <div className={styles.form_group}>
@@ -321,12 +334,12 @@ function BookingForm({
             onChange={(e) => setPhoneNumber(e.target.value)}
           />
           {errors.phoneNumber && (
-            <span className={styles.error} style={{marginLeft : '312px'}}>{errors.phoneNumber}</span>
+            <span className={styles.error} style={{ marginLeft: "312px" }}>
+              {errors.phoneNumber}
+            </span>
           )}
         </div>
-        <div className={`${styles.form_group} ${styles.useEmail}`}>
-        
-        </div>
+        <div className={`${styles.form_group} ${styles.useEmail}`}></div>
         <div className={styles.form_group} data-content="email">
           <label htmlFor="">
             Email:
@@ -340,7 +353,11 @@ function BookingForm({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          {errors.email && <span className={styles.error} style={{marginLeft : '312px'}}>{errors.email}</span>}
+          {errors.email && (
+            <span className={styles.error} style={{ marginLeft: "312px" }}>
+              {errors.email}
+            </span>
+          )}
         </div>
         <div className={styles.form_group}>
           <label htmlFor="">Ghi chú</label>
@@ -482,7 +499,6 @@ function BookingForm({
           </button>
         </div>
       </form>
-      
     </div>
   );
 }

@@ -44,7 +44,7 @@ public class TicketEntity {
     String QRPayment;
 
     @Column(name = "selected_seat")
-    int selectedSeat;
+    String selectedSeat;
 
     @Column(name = "note")
     String note;

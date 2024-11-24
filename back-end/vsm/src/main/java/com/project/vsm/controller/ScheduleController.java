@@ -1,5 +1,6 @@
 package com.project.vsm.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -50,18 +51,17 @@ public class ScheduleController {
         return new ResponseEntity<>(schedule, HttpStatus.CREATED);
     }
 
-    @PutMapping("/admin/schedule/{id}")
-    public ResponseEntity<ScheduleEntity> updateScheduleById(@PathVariable long id,
-                                                             @Valid @RequestBody ScheduleCreateDTO scheduleDTO) {
-        return new ResponseEntity<>(scheduleService.updateScheduleById(id, scheduleDTO), HttpStatus.OK);
-    }
-
+//	@PutMapping("/admin/schedule/{id}")
+//	public ResponseEntity<ScheduleEntity> updateScheduleById(@PathVariable long id,
+//			@Valid @RequestBody ScheduleCreateDTO scheduleDTO) {
+//		return new ResponseEntity<>(scheduleService.updateScheduleById(id, scheduleDTO), HttpStatus.OK);
+//	}
+             
     @GetMapping("/public/schedule/search")
-    public ResponseEntity<List<ScheduleResponse>> getSchedules(
-            @RequestParam(required = true) String startLocation,
-            @RequestParam(required = true) String stopLocation,
-            @RequestParam(required = true) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startTime) {
-
-        return new ResponseEntity<>(scheduleService.getSchedulesWithCars(startLocation, stopLocation, startTime) , HttpStatus.OK) ;
+    public ResponseEntity<List<ScheduleResponse>> getSchedulesWithCars(@RequestParam String startLocation,
+                                                                       @RequestParam String stopLocation,
+                                                                       @RequestParam LocalDate startTime) {
+        return new ResponseEntity<>(scheduleService.getSchedulesWithCars(startLocation , stopLocation , startTime)
+                                    , HttpStatus.OK);
     }
 }
