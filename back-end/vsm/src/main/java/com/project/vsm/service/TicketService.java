@@ -31,6 +31,7 @@ public class TicketService {
     PaymentService paymentService;
     GoogleSheetsService googleSheetsService;
     ScheduleRepository scheduleRepository;
+    TypeRepository typeRepository;
 
 
     public List<TicketResponse> getAllTicket() {
@@ -75,9 +76,12 @@ public class TicketService {
 
         AccountEntity account = accountRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
+        
+        TypeEntity type = typeRepository.findById(request.getTypeId())
+        		.orElseThrow(() -> new RuntimeException("Type not found"));
 
-        double priceOfSingleSeat = 10000;
-        double totalPrice = priceOfSingleSeat * request.getSelectedSeat();
+        double priceOfSingleSeat = type.getPrice();
+        double totalPrice = priceOfSingleSeat * request.getSelectedSeat().size();
 
         VoucherEntity voucher = null;
         if (request.getVoucher() != null) {
@@ -136,7 +140,7 @@ public class TicketService {
         ticket.setFullName(request.getFullName());
         ticket.setNote(request.getNote());
         ticket.setPhoneNumber(request.getPhoneNumber());
-        ticket.setSelectedSeat(request.getSelectedSeat());
+        ticket.setSelectedSeat(request.getSelectedSeat().toString());
 
         ticketRepository.save(ticket);
 
@@ -155,5 +159,15 @@ public class TicketService {
         return tickets.stream()
                 .map(TicketResponse::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    public TicketResponse updateStatusTicketById (long ticketId , TicketRequest request) {
+        TicketEntity ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
+
+        ticket.setStatus(request.getStatus());
+        ticketRepository.save(ticket);
+
+        return TicketResponse.fromEntity(ticket);
     }
 }

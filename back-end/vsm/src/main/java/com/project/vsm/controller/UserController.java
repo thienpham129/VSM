@@ -4,21 +4,18 @@ import com.project.vsm.dto.request.ChangePasswordRequest;
 import com.project.vsm.dto.request.UpdateAccountRequest;
 import com.project.vsm.dto.response.ChangePasswordResponse;
 import com.project.vsm.dto.response.ResponseObject;
+import com.project.vsm.dto.response.ScheduleResponse;
 import com.project.vsm.model.AccountEntity;
 import com.project.vsm.service.AccountService;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -52,4 +49,11 @@ public class UserController {
 	public ResponseObject<ChangePasswordResponse> changePassword(@RequestBody ChangePasswordRequest request) {
 		return new ResponseObject<>(HttpStatus.OK, "Success", accountService.changePassword(request));
 	}
+
+	@GetMapping("/user/view-my-schedule")
+	public ResponseEntity<List<ScheduleResponse>> getScheduleOfUser () {
+		return new ResponseEntity<>(accountService.getScheduleOfAccount(), HttpStatus.OK);
+	}
 }
+
+

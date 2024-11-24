@@ -9,6 +9,8 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,8 +20,8 @@ import java.time.LocalDateTime;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TicketResponse {
-    long ticketId;
-    int selectedSeat;
+	long ticketId;
+    List<String> selectedSeat;
     double totalPrice;
     String fullName;
     String phoneNumber;
@@ -36,12 +38,16 @@ public class TicketResponse {
     String qrCodeBase64;
     LocalDateTime startTime;
     LocalDateTime endTime;
+    String detailAddressToPickUp;
+    String detailAddressDropOff;
 
     public static TicketResponse fromEntity(TicketEntity ticket) {
         return TicketResponse.builder()
                 .ticketId(ticket.getTicketId())
-                .selectedSeat(ticket.getSelectedSeat())
+                .selectedSeat(Arrays.asList(ticket.getSelectedSeat().split(",")))
                 .totalPrice(ticket.getPrice())
+                .detailAddressToPickUp(ticket.getDetailAddressPickUp())
+                .detailAddressDropOff(ticket.getDetailAddressDropOff())
                 .fullName(ticket.getFullName())
                 .phoneNumber(ticket.getPhoneNumber())
                 .email(ticket.getEmail())
@@ -50,6 +56,8 @@ public class TicketResponse {
                 .startLocation(ticket.getStartLocation())
                 .stopLocation(ticket.getStopLocation())
                 .schedules(ScheduleResponse.fromEntity(ticket.getScheduleEntity()))
+                .status(ticket.getStatus())
+                .isPaid(ticket.isPaid())
                 .build();
     }
 
