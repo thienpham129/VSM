@@ -29,6 +29,7 @@ public class ScheduleResponse {
     String stopLocation;
     String startDate;
     CarResponse car;
+    List<TicketResponse> tickets;
 
     public static ScheduleResponse mapScheduleResponse(ScheduleEntity schedule) {
         ScheduleResponse response = new ScheduleResponse();
@@ -50,5 +51,5 @@ public class ScheduleResponse {
                 .car(schedule.getCar() != null ? CarResponse.mapCarResponse(schedule.getCar()) : null)
                 .build();
     }
-
 }
+

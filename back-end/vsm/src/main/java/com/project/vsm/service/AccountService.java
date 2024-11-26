@@ -9,6 +9,7 @@ import com.project.vsm.dto.request.ChangePasswordRequest;
 import com.project.vsm.dto.request.UpdateAccountRequest;
 import com.project.vsm.dto.response.ChangePasswordResponse;
 import com.project.vsm.dto.response.ScheduleResponse;
+import com.project.vsm.dto.response.TicketResponse;
 import com.project.vsm.exception.NotFoundException;
 import com.project.vsm.model.AccountEntity;
 import com.project.vsm.model.ScheduleEntity;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountService {
@@ -128,18 +130,23 @@ public class AccountService {
                 .build();
     }
 
-//    public List<ScheduleResponse> getScheduleOfAccount () {
-//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-//        AccountEntity accountEntity = accountRepository.findByEmail(email)
-//                .orElseThrow(() -> new RuntimeException("Cannot find account with email: " + email));
-//
-//        List<ScheduleResponse> response = new ArrayList<>();
-//        for (ScheduleEntity schedule : accountEntity.getSchedules()) {
-//            ScheduleResponse scheduleResponse =  ScheduleResponse.fromEntity(schedule);
-//            response.add(scheduleResponse);
-//        }
-//        return response;
-//    }
+    // public List<ScheduleResponse> getScheduleOfAccount() {
+    //     String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    //     AccountEntity accountEntity = accountRepository.findByEmail(email)
+    //             .orElseThrow(() -> new RuntimeException("Cannot find account with email: " + email));
+
+    //     return accountEntity.getSchedules().stream()
+    //             .map(ScheduleResponse::fromEntity)
+    //             .collect(Collectors.toList());
+    // }
+
+    public List<TicketResponse> getTicketOfAccount() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        AccountEntity accountEntity = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Cannot find account with email: " + email));
+
+        return accountEntity.getTickets().stream().map(TicketResponse::fromEntity).collect(Collectors.toList());
+    }
 
 }
 

@@ -45,6 +45,8 @@ public class TicketRequest {
                 .account(account)
                 .paymentEntity(payment)
                 .paymentMethod(this.paymentMethod)
+                .QRPayment(qrCode)
+                .status("PENDING")
                 .build();
     }
 }

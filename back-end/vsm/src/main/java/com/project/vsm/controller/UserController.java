@@ -5,6 +5,7 @@ import com.project.vsm.dto.request.UpdateAccountRequest;
 import com.project.vsm.dto.response.ChangePasswordResponse;
 import com.project.vsm.dto.response.ResponseObject;
 import com.project.vsm.dto.response.ScheduleResponse;
+import com.project.vsm.dto.response.TicketResponse;
 import com.project.vsm.model.AccountEntity;
 import com.project.vsm.service.AccountService;
 import lombok.NoArgsConstructor;
@@ -59,16 +60,19 @@ public class UserController {
 	}
 	
 	@PostMapping("/user/change-password")
-	public ResponseObject<ChangePasswordResponse> changePassword (@RequestBody ChangePasswordRequest request) {
-			return new ResponseObject<>(HttpStatus.OK , "Success" , accountService.changePassword(request));
+	public ResponseObject<ChangePasswordResponse> changePassword(@RequestBody ChangePasswordRequest request) {
+		return  ResponseObject.<ChangePasswordResponse>builder()
+				.code(200)
+				.message("Change password successfully")
+				.data(accountService.changePassword(request))
+				.build();
 	}
-	
-//	@GetMapping("/user/view-my-schedule")
-//	public ResponseEntity<List<ScheduleResponse>> getScheduleOfUser () {
-//		return new ResponseEntity<>(accountService.getScheduleOfAccount(), HttpStatus.OK);
-//	}
 
-	
+
+	@GetMapping("/user/view-my-ticket")
+	public ResponseEntity<List<TicketResponse>> getTicketOfAccount () {
+		return new ResponseEntity<>(accountService.getTicketOfAccount(), HttpStatus.OK);
+	}
 }
 
 

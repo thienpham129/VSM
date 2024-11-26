@@ -20,6 +20,8 @@ import BookingTicket from "pages/bookingTicket";
 import MethodPayment from "pages/methodPayment";
 import ForgetPassword from "pages/forgetPassword";
 import ImageUploadFile from "components/ImageUploadFile";
+// import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 function App() {
   const token = window.localStorage.getItem(DEFAULT.TOKEN);
