@@ -7,13 +7,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import com.project.vsm.dto.response.CarResponse;
-import com.project.vsm.dto.response.ScheduleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.vsm.dto.ScheduleCreateDTO;
 import com.project.vsm.dto.ScheduleFindDTO;
+import com.project.vsm.dto.ScheduleUpdateDTO;
+import com.project.vsm.dto.SearchScheduleDriverDTO;
+import com.project.vsm.dto.response.CarResponse;
+import com.project.vsm.dto.response.ScheduleResponse;
 import com.project.vsm.exception.InvalidInputException;
 import com.project.vsm.exception.NotFoundException;
 import com.project.vsm.model.AccountEntity;
@@ -87,6 +89,64 @@ public class ScheduleService {
 		// Lưu lịch trình vào cơ sở dữ liệu và trả về
 		return scheduleRepository.save(schedule);
 	}
+	
+	public ScheduleEntity updateScheduleById(ScheduleUpdateDTO scheduleUpdateDTO) {
+
+		Optional<ScheduleEntity> optionalSchedule = scheduleRepository.findById(scheduleUpdateDTO.getSchduleId());
+		if (!optionalSchedule.isPresent()) {
+			throw new NotFoundException("Not found schedule with id " + scheduleUpdateDTO.getSchduleId());
+		}
+		// Kiểm tra xe có tồn tại không
+		Optional<CarEntity> optionalCar = carRepository.findById(scheduleUpdateDTO.getCarId());
+		if (!optionalCar.isPresent()) {
+			throw new NotFoundException("Not found car with id " + scheduleUpdateDTO.getCarId());
+		}
+
+		// Kiểm tra tài xế có tồn tại và có phải là tài xế không
+		Optional<AccountEntity> optionalDriver = accountRepository.findById(scheduleUpdateDTO.getAccountId());
+		if (!optionalDriver.isPresent() || !optionalDriver.get().getRole().equals("ROLE_DRIVER")) {
+			throw new NotFoundException("Not found Driver with id " + scheduleUpdateDTO.getAccountId());
+		}
+
+		// Kiểm tra tuyến đường có tồn tại không
+		Optional<RouteEntity> optionalRoute = routeRepository.findById(scheduleUpdateDTO.getRouteId());
+		if (!optionalRoute.isPresent()) {
+			throw new NotFoundException("Not found Route with id " + scheduleUpdateDTO.getRouteId());
+		}
+
+//		// Kiểm tra tính khả dụng của tài xế và xe
+//		if ((!isAccountAvailable(scheduleUpdateDTO.getAccountId(), scheduleUpdateDTO.getStartTime())
+//				|| !isCarAvailable(scheduleUpdateDTO.getCarId(), scheduleUpdateDTO.getStartTime()))
+//				|| (optionalSchedule.get().getStartTime() == scheduleUpdateDTO.getStartTime())) {
+//			throw new InvalidInputException("Tài xế hoặc xe sắp lịch phải cách nhau ít nhất 3 tiếng");
+//		}
+
+		String carStopLocation = findClosestStopLocation(scheduleUpdateDTO.getCarId(),
+				scheduleUpdateDTO.getStartTime());
+		String driverStopLocation = findClosestStopLocationByDriver(scheduleUpdateDTO.getAccountId(),
+				scheduleUpdateDTO.getStartTime());
+
+		// Kiểm tra nếu không có lịch trình trước đó, bỏ qua kiểm tra điểm bắt đầu
+		if (carStopLocation != null && !carStopLocation.equals(optionalRoute.get().getStartLocation())) {
+			throw new InvalidInputException(
+					"Điểm bắt đầu của lịch phải phù hợp với điểm dừng của lịch trước đó cho xe.");
+		}
+		if (driverStopLocation != null && !driverStopLocation.equals(optionalRoute.get().getStartLocation())) {
+			throw new InvalidInputException(
+					"Điểm bắt đầu của lịch phải phù hợp với điểm dừng của lịch trước đó cho tài xế.");
+		}
+
+		// Tạo đối tượng ScheduleEntity mới
+		optionalSchedule.get().setAccount(optionalDriver.get());
+		optionalSchedule.get().setCar(optionalCar.get());
+		optionalSchedule.get().setRoute(optionalRoute.get());
+		optionalSchedule.get().setStartTime(scheduleUpdateDTO.getStartTime());
+		optionalSchedule.get().setStatus(scheduleUpdateDTO.getStatus());
+		optionalSchedule.get().setEndTime(scheduleUpdateDTO.getEndTime());
+
+		// Lưu lịch trình vào cơ sở dữ liệu và trả về
+		return scheduleRepository.save(optionalSchedule.get());
+	}
 
 	public String findClosestStopLocationByDriver(Long driverId, LocalDateTime startTime) {
 		List<ScheduleEntity> schedules = scheduleRepository.findClosestScheduleSameDayByDriver(driverId, startTime);
@@ -131,7 +191,7 @@ public class ScheduleService {
 		Iterable<ScheduleEntity> listSchedules = scheduleRepository.findAll();
 		return listSchedules;
 	}
-	
+
 	public List<ScheduleEntity> getSchedulesByDriverOrCarForDate(ScheduleFindDTO scheduleFindDTO) {
 		LocalDate startDate = scheduleFindDTO.getStartDate(); // Ngày từ input
 
@@ -158,13 +218,40 @@ public class ScheduleService {
 		return schedules;
 	}
 
-	public List<ScheduleResponse> getSchedulesWithCars(String startLocation, String stopLocation,
-													   LocalDate startTime) {
+	public Iterable<ScheduleEntity> getAllSchedulesByDriverID(Long driverId) {
+		Optional<AccountEntity> driver = accountRepository.findById(driverId);
+		if (!driver.isPresent() || !driver.get().getRole().equalsIgnoreCase("ROLE_DRIVER")) {
+			throw new NotFoundException("Not found driver with id " + driverId);
+		}
+
+		Iterable<ScheduleEntity> listSchedules = scheduleRepository.findByAccount_Id(driverId);
+		return listSchedules;
+	}
+
+	public Optional<ScheduleEntity> getSchedulesByDriver(SearchScheduleDriverDTO scheduleFindDTO) {
+		LocalDateTime dateTime = scheduleFindDTO.getDateTime(); // Ngày từ input
+
+		Long driverId = scheduleFindDTO.getAccountId(); // ID của tài xế
+		Optional<AccountEntity> driver = accountRepository.findById(driverId);
+		if (!driver.isPresent() || !driver.get().getRole().equalsIgnoreCase("ROLE_DRIVER")) {
+			throw new NotFoundException("Not found driver with id " + driverId);
+		}
+
+		// Tìm các lịch trình liên quan đến tài xế hoặc xe trong ngày
+		Optional<ScheduleEntity> schedules = scheduleRepository.findByAccount_IdAndStartTime(driverId, dateTime);
+		if (schedules.isEmpty()) {
+			throw new NotFoundException("No schedules found for driverId " + driverId + " on date " + dateTime);
+		}
+
+		return schedules;
+	}
+
+	public List<ScheduleResponse> getSchedulesWithCars(String startLocation, String stopLocation, LocalDate startTime) {
 		System.out.println("startLocation: " + startLocation);
 		System.out.println("stopLocation: " + stopLocation);
 		System.out.println("startTime: " + startTime);
-		List<ScheduleEntity> schedules = scheduleRepository
-				.findStartLocationStopLocationStartTime(startLocation, stopLocation, startTime);
+		List<ScheduleEntity> schedules = scheduleRepository.findStartLocationStopLocationStartTime(startLocation,
+				stopLocation, startTime);
 		if (schedules.isEmpty()) {
 			System.out.println("No schedules found.");
 			return Collections.emptyList();
@@ -181,4 +268,5 @@ public class ScheduleService {
 		}
 		return responses;
 	}
+
 }

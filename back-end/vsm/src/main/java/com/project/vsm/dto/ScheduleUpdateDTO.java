@@ -11,17 +11,26 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ScheduleCreateDTO {
+public class ScheduleUpdateDTO {
+
+	@NotNull(message = "Schdule ID is required")
+	private Long schduleId;
+
+	@NotNull(message = "Car ID is required")
+	private Long carId;
+
+	@NotNull(message = "Account ID is required")
+	private Long accountId;
+
+	@NotNull(message = "Route ID is required")
+	private Long routeId;
+
 	@NotNull(message = "Start time is required")
 	@Future(message = "Start time must be in the future")
 	private LocalDateTime startTime;
 
-	@NotNull(message = "Route ID is required")
-    private Long routeId; 
-	
-	@NotNull(message = "Account ID is required")
-	private Long accountId;
+	private LocalDateTime endTime;
 
-	@NotNull(message = "Car ID is required")
-	private Long carId;
+	@NotNull(message = "Status is required")
+	private String status;
 }

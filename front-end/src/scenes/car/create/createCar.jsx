@@ -75,7 +75,7 @@ const CreateCar = () => {
 
       // Gọi API để tạo xe mới
       const response = await axios.post(
-        "http://localhost:9000/admin/car",
+        "http://localhost:8080/admin/car",
         formData,
         {
           headers: {

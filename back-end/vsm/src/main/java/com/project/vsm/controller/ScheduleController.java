@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.project.vsm.dto.ScheduleCreateDTO;
 import com.project.vsm.dto.ScheduleFindDTO;
+import com.project.vsm.dto.ScheduleUpdateDTO;
+import com.project.vsm.dto.SearchScheduleDriverDTO;
 import com.project.vsm.dto.request.PagingRequest;
 import com.project.vsm.dto.response.PageableResponse;
 import com.project.vsm.dto.response.PagingResponse;
@@ -33,17 +35,27 @@ public class ScheduleController {
         return new ResponseEntity<>(scheduleService.getAllSchedules(), HttpStatus.OK);
     }
 
-    @GetMapping("public/schedule/{id}")
-    public ResponseEntity<ScheduleEntity> getScheduleById(@PathVariable long id) {
-        Optional<ScheduleEntity> schedule = scheduleService.getScheduleById(id);
-        return new ResponseEntity<>(schedule.get(), HttpStatus.OK);
-    }
+	@GetMapping("driver/schedules/{id}")
+	public ResponseEntity<Iterable<ScheduleEntity>> getAllSchedulesByDriverId(@PathVariable long id) {
+		return new ResponseEntity<>(scheduleService.getAllSchedulesByDriverID(id), HttpStatus.OK);
+	}
 
-    @PostMapping("public/find-schedule")
-    public ResponseEntity<Iterable<ScheduleEntity>> getSchedulesByDriverAndCar(@RequestBody ScheduleFindDTO input) {
-        return new ResponseEntity<>(scheduleService.getSchedulesByDriverOrCarForDate(input),
-                HttpStatus.OK);
-    }
+	@GetMapping("public/schedule/{id}")
+	public ResponseEntity<ScheduleEntity> getScheduleById(@PathVariable long id) {
+		Optional<ScheduleEntity> schedule = scheduleService.getScheduleById(id);
+		return new ResponseEntity<>(schedule.get(), HttpStatus.OK);
+	}
+
+	@PostMapping("driver/find-driver-schedule")
+	public ResponseEntity<ScheduleEntity> getSchedulesByDriver(@RequestBody SearchScheduleDriverDTO input) {
+		Optional<ScheduleEntity> schedule = scheduleService.getSchedulesByDriver(input);
+		return new ResponseEntity<>(schedule.get(), HttpStatus.OK);
+	}
+
+	@PostMapping("public/find-schedule")
+	public ResponseEntity<Iterable<ScheduleEntity>> getSchedulesByDriverAndCar(@RequestBody ScheduleFindDTO input) {
+		return new ResponseEntity<>(scheduleService.getSchedulesByDriverOrCarForDate(input), HttpStatus.OK);
+	}
 
     @PostMapping("admin/schedule")
     public ResponseEntity<ScheduleEntity> createSchedule(@Valid @RequestBody ScheduleCreateDTO scheduleDTO) {
@@ -51,12 +63,6 @@ public class ScheduleController {
         return new ResponseEntity<>(schedule, HttpStatus.CREATED);
     }
 
-//	@PutMapping("/admin/schedule/{id}")
-//	public ResponseEntity<ScheduleEntity> updateScheduleById(@PathVariable long id,
-//			@Valid @RequestBody ScheduleCreateDTO scheduleDTO) {
-//		return new ResponseEntity<>(scheduleService.updateScheduleById(id, scheduleDTO), HttpStatus.OK);
-//	}
-             
     @GetMapping("/public/schedule/search")
     public ResponseEntity<List<ScheduleResponse>> getSchedulesWithCars(@RequestParam String startLocation,
                                                                        @RequestParam String stopLocation,
@@ -64,4 +70,9 @@ public class ScheduleController {
         return new ResponseEntity<>(scheduleService.getSchedulesWithCars(startLocation , stopLocation , startTime)
                                     , HttpStatus.OK);
     }
+	@PutMapping("admin/schedule")
+	public ResponseEntity<ScheduleEntity> updateSchedule(@Valid @RequestBody ScheduleUpdateDTO scheduleDTO) {
+		ScheduleEntity schedule = scheduleService.updateScheduleById(scheduleDTO);
+		return new ResponseEntity<>(schedule, HttpStatus.CREATED);
+	}
 }
