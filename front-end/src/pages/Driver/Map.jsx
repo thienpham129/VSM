@@ -361,8 +361,8 @@ const maps = {
 
 const Map = () => {
   const [map, setMap] = useState(null);
-  const [start, setStart] = useState([16.0544, 108.2022]);
-  const [end, setEnd] = useState([16.0754, 108.2355]);
+  const [start, setStart] = useState([16.0544, 108.2022]); //216 duy tan
+  const [end, setEnd] = useState([16.0754, 108.2355]); // số 5 sơn trà
 
   // const CreateRoutineMachineLayer = () => {
   //   const [distance, setDistance] = useState(0);

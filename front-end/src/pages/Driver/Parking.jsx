@@ -6,6 +6,10 @@ import DataTable from "react-data-table-component";
 import Button from "@mui/material/Button";
 import styles from "./parking.module.css";
 import parkingIcon from "./parkingIcon.png";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
+import { MenuItem } from "@mui/material";
+import { Select } from "@mui/material";
 
 import { root } from "../../helper/axiosClient";
 
@@ -55,8 +59,16 @@ function Parking() {
       selector: (row) => row.numCar,
     },
     {
-      name: "Còn Trống",
-      selector: (row) => row.empty,
+      name: "Trạng Thái",
+      selector: (row) => {
+        if (row.empty === true)
+          return (
+            <div style={{ fontWeight: "bold", color: "blue" }}>Còn Trống</div>
+          );
+        return (
+          <div style={{ fontWeight: "bold", color: "red" }}>Đã Hết Chỗ</div>
+        );
+      },
     },
     {
       name: "",
@@ -97,7 +109,7 @@ function Parking() {
   const [dataFilter, setDataFilter] = useState([]);
   const [dataInput, setDataInput] = useState("");
   const [finalDataParking, setFinalDataParking] = useState([]);
-
+  const [searchName, setSearchName] = useState(true);
   const changeDataParking = () => {
     const updatedData = dataParking.map((item) => ({
       ...item,
@@ -106,6 +118,7 @@ function Parking() {
           <Button
             style={{ width: "75px", fontSize: "9px" }}
             variant="contained"
+            disabled={!item.empty}
             onClick={(e) => {
               setToggleModal(true);
               setNameParking(
@@ -134,18 +147,33 @@ function Parking() {
   };
 
   const handleSearchParking = (e) => {
-    setDataInput(e.target.value);
-    const tempArray = [];
-    finalDataParking.forEach((item, index) => {
-      if (
-        item.name
-          .toLocaleUpperCase()
-          .includes(e.target.value.toLocaleUpperCase())
-      ) {
-        tempArray.push(item);
-      }
-    });
-    setDataFilter(tempArray);
+    if (searchName) {
+      setDataInput(e.target.value);
+      const tempArray = [];
+      finalDataParking.forEach((item, index) => {
+        if (
+          item.name
+            .toLocaleUpperCase()
+            .includes(e.target.value.toLocaleUpperCase())
+        ) {
+          tempArray.push(item);
+        }
+      });
+      setDataFilter(tempArray);
+    } else {
+      setDataInput(e.target.value);
+      const tempArray = [];
+      finalDataParking.forEach((item, index) => {
+        if (
+          item.location
+            .toLocaleUpperCase()
+            .includes(e.target.value.toLocaleUpperCase())
+        ) {
+          tempArray.push(item);
+        }
+      });
+      setDataFilter(tempArray);
+    }
   };
 
   useEffect(() => {
@@ -155,6 +183,7 @@ function Parking() {
         const response = await root.get(url);
         if (response) {
           setDataParking(response.data);
+          console.log(response.data);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -173,19 +202,59 @@ function Parking() {
   return (
     <div>
       <h1>Bãi Đỗ Xe</h1>
-      <input
-        type="text"
-        placeholder="Tìm Kiếm Theo Tên"
-        style={{
-          marginLeft: "77%",
-          height: "35px",
-          width: "200px",
-          border: "1px solid grey",
-          borderRadius: "15px",
-        }}
-        value={dataInput}
-        onChange={(e) => handleSearchParking(e)}
-      />
+      <div style={{ display: "flex", alignItems: "center", marginLeft: "65%" }}>
+        <FormControl style={{ width: "230px", height: "40px" }}>
+          <InputLabel
+            id="demo-simple-select-label"
+            style={{ fontSize: "13px" }}
+          >
+            Lựa Chọn Tìm Kiếm
+          </InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Lựa Chọn Tìm Kiếm"
+            onChange={(e) => {
+              e.target.value === 1 ? setSearchName(true) : setSearchName(false);
+            }}
+            style={{ height: "40px" }}
+          >
+            <MenuItem value={1}>Tìm Kiếm Theo Tên</MenuItem>
+            <MenuItem value={0}>Tìm Kiếm Theo Địa Điểm</MenuItem>
+          </Select>
+        </FormControl>
+        {searchName ? (
+          <input
+            type="text"
+            placeholder="Tìm Kiếm Theo Tên"
+            style={{
+              // marginLeft: "77%",
+              height: "35px",
+              width: "200px",
+              border: "1px solid grey",
+              borderRadius: "15px",
+              marginLeft: "20px",
+            }}
+            value={dataInput}
+            onChange={(e) => handleSearchParking(e)}
+          />
+        ) : (
+          <input
+            type="text"
+            placeholder="Tìm Kiếm Theo Địa Điểm"
+            style={{
+              // marginLeft: "77%",
+              height: "35px",
+              width: "200px",
+              border: "1px solid grey",
+              borderRadius: "15px",
+              marginLeft: "20px",
+            }}
+            value={dataInput}
+            onChange={(e) => handleSearchParking(e)}
+          />
+        )}
+      </div>
       {dataInput ? (
         <DataTable columns={columns} data={dataFilter} />
       ) : (

@@ -3,6 +3,7 @@ package com.project.vsm.repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -46,14 +47,23 @@ public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Long> 
 
     List<ScheduleEntity> findByCar_CarIdOrAccount_Id(Long carId, Long accountId);
 
-    @Query("SELECT s FROM ScheduleEntity s WHERE (DATE(s.startTime) = :startDate AND s.account.id = :driverId) "
-            + "OR (DATE(s.startTime) = :startDate AND s.car.id = :carId)")
-    List<ScheduleEntity> findSchedulesByDriverOrCarForDate(@Param("driverId") Long driverId, @Param("carId") Long carId,
-                                                           @Param("startDate") LocalDate startDate);
+    // @Query("SELECT s FROM ScheduleEntity s WHERE (DATE(s.startTime) = :startDate AND s.account.id = :driverId) "
+    //         + "OR (DATE(s.startTime) = :startDate AND s.car.id = :carId)")
+    // List<ScheduleEntity> findSchedulesByDriverOrCarForDate(@Param("driverId") Long driverId, @Param("carId") Long carId,
+    //                                                        @Param("startDate") LocalDate startDate);
 
     @Query(value = "select s from ScheduleEntity s where s.startLocation = ?1 and s.stopLocation = ?2 " +
                    "and DATE (s.startTime) = DATE(?3)")
     List<ScheduleEntity> findStartLocationStopLocationStartTime(String startLocation,
                                                                    String stopLocation,
                                                                    LocalDate startTime);
+	@Query("SELECT s FROM ScheduleEntity s WHERE (DATE(s.startTime) = :startDate AND s.account.id = :driverId) "
+			+ "OR (DATE(s.startTime) = :startDate AND s.car.id = :carId)")
+	List<ScheduleEntity> findSchedulesByDriverOrCarForDate(@Param("driverId") Long driverId, @Param("carId") Long carId,
+			@Param("startDate") LocalDate startDate);
+
+	List<ScheduleEntity> findByAccount_Id(Long accountId);
+
+	Optional<ScheduleEntity> findByAccount_IdAndStartTime(Long accountId, LocalDateTime startTime);
+
 }
