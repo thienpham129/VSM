@@ -6,10 +6,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.project.vsm.dto.DriverFindScheduleByDateDTO;
+import com.project.vsm.dto.DriverUpdateParkingDTO;
 import com.project.vsm.dto.ScheduleCreateDTO;
 import com.project.vsm.dto.ScheduleFindDTO;
 import com.project.vsm.dto.ScheduleUpdateDTO;
@@ -20,10 +23,12 @@ import com.project.vsm.exception.InvalidInputException;
 import com.project.vsm.exception.NotFoundException;
 import com.project.vsm.model.AccountEntity;
 import com.project.vsm.model.CarEntity;
+import com.project.vsm.model.ParkingEntity;
 import com.project.vsm.model.RouteEntity;
 import com.project.vsm.model.ScheduleEntity;
 import com.project.vsm.repository.AccountRepository;
 import com.project.vsm.repository.CarRepository;
+import com.project.vsm.repository.ParkingRepository;
 import com.project.vsm.repository.RouteRepository;
 import com.project.vsm.repository.ScheduleRepository;
 
@@ -38,6 +43,8 @@ public class ScheduleService {
 	private AccountRepository accountRepository;
 	@Autowired
 	private RouteRepository routeRepository;
+	@Autowired
+	private ParkingRepository parkingRepository;
 
 	public ScheduleEntity createNewSchedule(ScheduleCreateDTO scheduleDTO) {
 		// Kiểm tra xe có tồn tại không
@@ -89,7 +96,7 @@ public class ScheduleService {
 		// Lưu lịch trình vào cơ sở dữ liệu và trả về
 		return scheduleRepository.save(schedule);
 	}
-	
+
 	public ScheduleEntity updateScheduleById(ScheduleUpdateDTO scheduleUpdateDTO) {
 
 		Optional<ScheduleEntity> optionalSchedule = scheduleRepository.findById(scheduleUpdateDTO.getSchduleId());
@@ -246,6 +253,21 @@ public class ScheduleService {
 		return schedules;
 	}
 
+	public Iterable<ScheduleEntity> getSchedulesByDriver(DriverFindScheduleByDateDTO scheduleFindDTO) {
+		LocalDate date = scheduleFindDTO.getDay(); // Ngày từ input
+
+		Long driverId = scheduleFindDTO.getAccountId(); // ID của tài xế
+		Optional<AccountEntity> driver = accountRepository.findById(driverId);
+		if (!driver.isPresent() || !driver.get().getRole().equalsIgnoreCase("ROLE_DRIVER")) {
+			throw new NotFoundException("Not found driver with id " + driverId);
+		}
+
+		// Tìm các lịch trình liên quan đến tài xế hoặc xe trong ngày
+		Iterable<ScheduleEntity> schedules = scheduleRepository.findSchedulesByDayAndAccountId(date, driverId);
+
+		return schedules;
+	}
+
 	public List<ScheduleResponse> getSchedulesWithCars(String startLocation, String stopLocation, LocalDate startTime) {
 		System.out.println("startLocation: " + startLocation);
 		System.out.println("stopLocation: " + stopLocation);
@@ -269,4 +291,38 @@ public class ScheduleService {
 		return responses;
 	}
 
+	public Optional<ScheduleEntity> getCurrentOrNextRunningSchedule(Long accountId) {
+		LocalDateTime currentTime = LocalDateTime.now();
+		LocalDateTime startOfDay = currentTime.toLocalDate().atStartOfDay(); // 00:00 hôm nay
+		LocalDateTime endOfDay = startOfDay.plusDays(1); // 00:00 ngày mai
+		Optional<AccountEntity> driver = accountRepository.findById(accountId);
+		if (!driver.isPresent() || !driver.get().getRole().equalsIgnoreCase("ROLE_DRIVER")) {
+			throw new NotFoundException("Not found driver with id " + accountId);
+		}
+		List<ScheduleEntity> schedules = scheduleRepository.findCurrentOrNextRunningSchedules(accountId, currentTime);
+		schedules = schedules.stream().filter(
+				schedule -> !schedule.getStartTime().isBefore(startOfDay) && schedule.getStartTime().isBefore(endOfDay))
+				.collect(Collectors.toList());
+		if (schedules.isEmpty()) {
+			throw new NotFoundException("Không tìm thấy schedule trong ngày hôm nay");
+		}
+		return Optional.of(schedules.get(0));
+	}
+
+	public CarEntity driverUpdateParking(DriverUpdateParkingDTO input) {
+		Optional<ScheduleEntity> optionalSchedule = getCurrentOrNextRunningSchedule(input.getAccountId());
+		if (optionalSchedule.isEmpty()) {
+			throw new NotFoundException("Không tìm thấy schedule trong ngày hôm nay");
+		}
+		Optional<CarEntity> optionalCar = carRepository.findById(optionalSchedule.get().getCar().getCarId());
+		if (optionalCar.isEmpty()) {
+			throw new NotFoundException("Không tìm thấy car id = " + optionalSchedule.get().getCar().getCarId());
+		}
+		Optional<ParkingEntity> optionalParking = parkingRepository.findById(input.getParkingId());
+		if (optionalParking.isEmpty()) {
+			throw new NotFoundException("Không tìm thấy parking id = " + input.getParkingId());
+		}
+		optionalCar.get().setParking(optionalParking.get());
+		return carRepository.save(optionalCar.get());
+	}
 }

@@ -14,45 +14,55 @@ import com.project.vsm.model.ScheduleEntity;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Long> {
+	@Query("SELECT s FROM ScheduleEntity s " + "WHERE s.account.id = :accountId " + "AND s.status = 'Đang chạy' "
+			+ "AND (" + "    (s.startTime <= :currentTime AND " + "     (SELECT COUNT(ss) FROM ScheduleEntity ss "
+			+ "      WHERE ss.account.id = :accountId " + "      AND ss.status = 'Đang chạy' "
+			+ "      AND ss.startTime > s.startTime AND ss.startTime <= :currentTime) = 0) "
+			+ "    OR s.startTime > :currentTime " + ") " + "ORDER BY s.startTime ASC")
+	List<ScheduleEntity> findCurrentOrNextRunningSchedules(@Param("accountId") Long accountId,
+			@Param("currentTime") LocalDateTime currentTime);
 
-    @Query("SELECT s FROM ScheduleEntity s WHERE s.car.id = :carId AND ABS(TIMESTAMPDIFF(HOUR, s.startTime, :startTime)) < 3")
-    List<ScheduleEntity> findConflictingSchedules(@Param("carId") Long carId,
-                                                  @Param("startTime") LocalDateTime startTime);
+	@Query("SELECT s FROM ScheduleEntity s " + "WHERE s.account.id = :accountId " + "AND DATE(s.startTime) = :day")
+	List<ScheduleEntity> findSchedulesByDayAndAccountId(@Param("day") LocalDate day,
+			@Param("accountId") Long accountId);
 
-    @Query("SELECT s FROM ScheduleEntity s WHERE s.account.id = :accountId AND ABS(TIMESTAMPDIFF(HOUR, s.startTime, :startTime)) < 3")
-    List<ScheduleEntity> findConflictingSchedulesByAccount(@Param("accountId") Long accountId,
-                                                           @Param("startTime") LocalDateTime startTime);
+	@Query("SELECT s FROM ScheduleEntity s WHERE s.car.id = :carId AND ABS(TIMESTAMPDIFF(HOUR, s.startTime, :startTime)) < 3")
+	List<ScheduleEntity> findConflictingSchedules(@Param("carId") Long carId,
+			@Param("startTime") LocalDateTime startTime);
 
-    @Query("""
-                SELECT s
-                FROM ScheduleEntity s
-                WHERE s.car.id = :carId
-                  AND DATE(s.startTime) = DATE(:startTime)
-                  AND s.startTime < :startTime
-                ORDER BY s.startTime DESC
-            """)
-    List<ScheduleEntity> findClosestScheduleSameDay(@Param("carId") Long carId,
-                                                    @Param("startTime") LocalDateTime startTime);
+	@Query("SELECT s FROM ScheduleEntity s WHERE s.account.id = :accountId AND ABS(TIMESTAMPDIFF(HOUR, s.startTime, :startTime)) < 3")
+	List<ScheduleEntity> findConflictingSchedulesByAccount(@Param("accountId") Long accountId,
+			@Param("startTime") LocalDateTime startTime);
 
-    @Query("""
-                SELECT s
-                FROM ScheduleEntity s
-                WHERE s.account.id = :driverId
-                  AND DATE(s.startTime) = DATE(:startTime)
-                  AND s.startTime < :startTime
-                ORDER BY s.startTime DESC
-            """)
-    List<ScheduleEntity> findClosestScheduleSameDayByDriver(@Param("driverId") Long driverId,
-                                                            @Param("startTime") LocalDateTime startTime);
+	@Query("""
+			    SELECT s
+			    FROM ScheduleEntity s
+			    WHERE s.car.id = :carId
+			      AND DATE(s.startTime) = DATE(:startTime)
+			      AND s.startTime < :startTime
+			    ORDER BY s.startTime DESC
+			""")
+	List<ScheduleEntity> findClosestScheduleSameDay(@Param("carId") Long carId,
+			@Param("startTime") LocalDateTime startTime);
 
-    List<ScheduleEntity> findByCar_CarIdOrAccount_Id(Long carId, Long accountId);
+	@Query("""
+			    SELECT s
+			    FROM ScheduleEntity s
+			    WHERE s.account.id = :driverId
+			      AND DATE(s.startTime) = DATE(:startTime)
+			      AND s.startTime < :startTime
+			    ORDER BY s.startTime DESC
+			""")
+	List<ScheduleEntity> findClosestScheduleSameDayByDriver(@Param("driverId") Long driverId,
+			@Param("startTime") LocalDateTime startTime);
 
+	List<ScheduleEntity> findByCar_CarIdOrAccount_Id(Long carId, Long accountId);
 
-    @Query(value = "select s from ScheduleEntity s where s.startLocation = ?1 and s.stopLocation = ?2 " +
-                   "and DATE (s.startTime) = DATE(?3)")
-    List<ScheduleEntity> findStartLocationStopLocationStartTime(String startLocation,
-                                                                   String stopLocation,
-                                                                   LocalDate startTime);
+	@Query(value = "select s from ScheduleEntity s where s.startLocation = ?1 and s.stopLocation = ?2 "
+			+ "and DATE (s.startTime) = DATE(?3)")
+	List<ScheduleEntity> findStartLocationStopLocationStartTime(String startLocation, String stopLocation,
+			LocalDate startTime);
+
 	@Query("SELECT s FROM ScheduleEntity s WHERE (DATE(s.startTime) = :startDate AND s.account.id = :driverId) "
 			+ "OR (DATE(s.startTime) = :startDate AND s.car.id = :carId)")
 	List<ScheduleEntity> findSchedulesByDriverOrCarForDate(@Param("driverId") Long driverId, @Param("carId") Long carId,
