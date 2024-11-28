@@ -13,6 +13,7 @@ import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import PersonIcon from "@mui/icons-material/Person";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import RouteIcon from "@mui/icons-material/Route";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -198,6 +199,13 @@ const Sidebar = () => {
               title="Bãi Đỗ Xe"
               to="/admin/parking"
               icon={<LocalParkingIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Tuyến Đường"
+              to="/admin/route"
+              icon={<RouteIcon />}
               selected={selected}
               setSelected={setSelected}
             />
