@@ -38,6 +38,7 @@ public class GoogleSheetsService {
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Không thể gửi dữ liệu lên Google Sheets.");
+            System.out.println("Không thể gửi dữ liệu lên Google Sheets 123");
         }
     }
 }
