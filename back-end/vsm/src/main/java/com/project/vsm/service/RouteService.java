@@ -1,7 +1,11 @@
 package com.project.vsm.service;
 
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
+import com.project.vsm.dto.response.RouteResponse;
+import com.project.vsm.model.ScheduleEntity;
+import com.project.vsm.repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +20,9 @@ public class RouteService {
 
 	@Autowired
 	private RouteRepository routeRepository;
+
+	@Autowired
+	private ScheduleRepository scheduleRepository;
 
 	public Iterable<RouteEntity> getAllRoutes() {
 		Iterable<RouteEntity> listRoutes = routeRepository.findAll();
@@ -63,4 +70,23 @@ public class RouteService {
 		routeRepository.delete(optionalRoute.get());
 		return optionalRoute.get();
 	}
+	public List<RouteResponse> getRouteWithSchedule(long scheduleId, long routeId, String startLocation,
+													String stopLocation, LocalDate startTime) {
+		List<RouteEntity> routes = routeRepository.findStartLocationStopLocationStartTime(
+				scheduleId, routeId, startLocation, stopLocation, startTime);
+
+		if (routes.isEmpty()) {
+			System.out.println("No schedules found.");
+			return Collections.emptyList();
+		}
+
+		List<RouteResponse> responses = new ArrayList<>();
+		for (RouteEntity route : routes) {
+			List<ScheduleEntity> schedules = scheduleRepository.findByRouteIdAndStartTime(route.getId(), startTime);
+			RouteResponse response = RouteResponse.mapRouteResponse(route, schedules);
+			responses.add(response);
+		}
+		return responses;
+	}
+
 }
