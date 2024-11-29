@@ -7,5 +7,6 @@ import com.project.vsm.model.RouteEntity;
 
 @Repository
 public interface RouteRepository extends JpaRepository<RouteEntity, Long> {
+	boolean existsByStartLocationAndStopLocation(String startLocation, String stopLocation);
 
 }
