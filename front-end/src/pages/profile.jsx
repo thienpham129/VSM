@@ -129,7 +129,6 @@ const Profile = () => {
         setDob(data.dob || "");
         setGender(data.gender || "");
         setSpecificAddress(data.address || "");
-        console.log("User data retrieved:", data);
       }
     } catch (error) {
       console.error("Failed to retrieve user data:", error);
@@ -221,43 +220,7 @@ const Profile = () => {
       transition: Bounce,
     });
 
-  const notifyWrongOTP = () =>
-    toast.error("Wrong verification code!", {
-      position: "bottom-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-      transition: Bounce,
-    });
-  const notifyErrorOTP = () =>
-    toast.error("Error verification.", {
-      position: "bottom-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-      transition: Bounce,
-    });
 
-  const notifyExpriedOTP = () =>
-    toast.warn("The OTP is exprired! Please resend the OTP", {
-      position: "bottom-right",
-      autoClose: 3500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-      transition: Bounce,
-    });
   //
 
   return (
@@ -418,7 +381,7 @@ const Profile = () => {
                                   value={address}
                                 />
                               </div>
-                            )} */}
+                             )} */}
                           </div>
                         </div>
                         <button

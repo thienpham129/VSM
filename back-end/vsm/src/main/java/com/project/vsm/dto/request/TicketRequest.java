@@ -27,11 +27,15 @@ public class TicketRequest {
     String voucher;
     String paymentMethod;
     String status;
+    String detailAddressToPickUp;
+    String detailAddressDropOff;
     String qrCode;
 
     public TicketEntity toEntity(AccountEntity account, PaymentEntity payment, VoucherEntity voucher, double totalPrice) {
         return TicketEntity.builder()
                 .selectedSeat(String.join("," , this.selectedSeat))
+                .detailAddressPickUp(this.detailAddressToPickUp)
+                .detailAddressDropOff(this.detailAddressDropOff)
                 .fullName(this.fullName)
                 .phoneNumber(this.phoneNumber)
                 .email(this.email)

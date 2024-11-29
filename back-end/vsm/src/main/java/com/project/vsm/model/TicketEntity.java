@@ -57,6 +57,12 @@ public class TicketEntity {
 
     @Column(name = "phone_number")
     String phoneNumber;
+    
+    @Column(name = "detail_address_pick_up")
+    String detailAddressPickUp;
+    
+    @Column(name = "detail_address_drop_off")
+    String detailAddressDropOff;
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "voucher_id")

@@ -26,6 +26,8 @@ import DetailCar from "scenes/car/detailCar/detailCar";
 import CreateCar from "scenes/car/create/createCar";
 import Schedule from "scenes/schedule";
 import AddSchedule from "scenes/schedule/addSchedule/AddSchedule";
+import DetailSchedule from "scenes/schedule/detailSchedule/DetailSchedule";
+import RouteAdmin from "scenes/route/Route";
 
 function AdminApp() {
   const [theme, colorMode] = useMode();
@@ -47,7 +49,9 @@ function AdminApp() {
               <Route path="/driver/:id" element={<DetailDriver />} />
               <Route path="/schedule" element={<Schedule />} />
               <Route path="/schedule/create" element={<AddSchedule />} />
+              <Route path="/schedule/:id" element={<DetailSchedule />} />
               <Route path="/parking" element={<ParkingLot />} />
+              <Route path="/route" element={<RouteAdmin />} />
               <Route path="/type" element={<TypeCar />} />
               <Route path="/car" element={<CarAdmin />} />
               <Route path="/car/create" element={<CreateCar />} />

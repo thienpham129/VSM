@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -41,7 +42,7 @@ public class CarSpecification {
         return this;
     }
 
-    public CarSpecification withStartDate(LocalDate startDate) {
+    public CarSpecification withStartDate(LocalDateTime startDate) {
         if (!ObjectUtils.isEmpty(startDate)) {
             specifications.add((root, query, criteriaBuilder) ->
                     criteriaBuilder.equal(root.get(FILED_START_DATE) , startDate));

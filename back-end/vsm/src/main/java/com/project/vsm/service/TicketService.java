@@ -80,7 +80,7 @@ public class TicketService {
 
         AccountEntity account = accountRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
-
+        
         TypeEntity type = typeRepository.findById(request.getTypeId())
                 .orElseThrow(() -> new RuntimeException("Type not found"));
 

@@ -39,7 +39,13 @@ public class TicketController {
     public ResponseEntity<TicketResponse> createTickets(@RequestBody TicketRequest ticketRequest) throws IOException {
         return new ResponseEntity<>(ticketService.createTicket(ticketRequest) , HttpStatus.OK);
     }
-
+    
+    @GetMapping("/public/ticket-with-schedule/{scheduleId}")
+    public ResponseEntity<List<TicketResponse>> getTicketByScheduleIdPublic (@PathVariable long scheduleId) {
+        return new ResponseEntity<>(ticketService.getTicketByScheduleId(scheduleId) , HttpStatus.OK);
+    }
+    
+    
     @PutMapping("/admin/update/ticket/{ticketId}")
     public ResponseEntity<TicketResponse> updateTicketById (@PathVariable long ticketId ,@RequestBody TicketRequest request){
         return new ResponseEntity<>(ticketService.updateTicketById(ticketId , request),HttpStatus.OK);

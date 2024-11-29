@@ -10,6 +10,9 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.project.vsm.model.CarEntity;
+import com.project.vsm.model.TypeEntity;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -56,5 +59,4 @@ public class CarResponse {
         }
         return response;
     }
-
 }

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.vsm.dto.ParkingDTO;
@@ -23,24 +22,24 @@ import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/admin")
+//@RequestMapping("/admin")
 public class ParkingController {
 
 	@Autowired
 	private ParkingService parkingService;
 
-	@PostMapping("/parking")
+	@PostMapping("/admin/parking")
 	public ResponseEntity<ParkingEntity> createNewParking(@Valid @RequestBody ParkingDTO parkingInput) {
 		return new ResponseEntity<>(parkingService.createNewParking(parkingInput), HttpStatus.OK);
 	}
 
-	@GetMapping("/parking/{id}")
+	@GetMapping("/driver/parking/{id}")
 	public ResponseEntity<ParkingEntity> getParkingById(@PathVariable long id) {
 		Optional<ParkingEntity> parkingEntity = parkingService.getParkingById(id);
 		return new ResponseEntity<>(parkingEntity.get(), HttpStatus.OK);
 	}
 
-	@GetMapping("/parkings")
+	@GetMapping("/driver/parkings")
 	public ResponseEntity<Iterable<ParkingEntity>> getAllParking() {
 		return new ResponseEntity<>(parkingService.getAllParkings(), HttpStatus.OK);
 	}
@@ -51,7 +50,7 @@ public class ParkingController {
 		return new ResponseEntity<>(parkingService.updateParkingById(id, parkingInput), HttpStatus.OK);
 	}
 
-	@DeleteMapping("/parking/{id}")
+	@DeleteMapping("/admin/parking/{id}")
 	public ResponseEntity<ParkingEntity> deleteParkingById(@PathVariable long id) {
 		return new ResponseEntity<>(parkingService.deleteParkingById(id), HttpStatus.OK);
 	}

@@ -96,7 +96,6 @@ const NavBarProfile = () => {
         setLastName(response.data.lastName);
 
         setFullName(`${response.data.firstName} ${response.data.lastName}`);
-        console.log("User data retrieved:", response.data);
       } else {
         console.log("Failed to retrieve user data");
       }
@@ -162,16 +161,7 @@ const NavBarProfile = () => {
           </a>
         </li>
         <li>
-          <a
-            href="/voucher"
-            className={location.pathname === "/voucher" ? "active" : ""}
-          >
-            <i className="fa fa-ticket" />
-            Mã giảm giá
-          </a>
-        </li>
-        <li>
-          <a href="login.html" onClick={handleLogout}>
+          <a onClick={handleLogout}>
             <i className="fa fa-sign-out" />
             Đăng xuất
           </a>

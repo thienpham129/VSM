@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.project.vsm.model.ScheduleEntity;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -18,7 +21,7 @@ import java.util.stream.Collectors;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ScheduleResponse {
-    long scheduleId;
+	long scheduleId;
     LocalDateTime startTime;
     LocalDateTime endTime;
     String status;
