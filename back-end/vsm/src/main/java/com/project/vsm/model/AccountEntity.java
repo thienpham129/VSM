@@ -67,12 +67,10 @@ public class AccountEntity {
 	@Column(name = "is_available")
 	private boolean isAvailable;
 
-	@Transient
-	private String newPassword;
-
 	@JsonIgnore
 	@OneToMany(mappedBy = "account" , cascade = CascadeType.ALL)
 	private List<TicketEntity> tickets = new ArrayList<>();
+	
 	@JsonIgnore
 	@OneToMany(mappedBy = "account" , cascade = CascadeType.ALL)
 	private List<ScheduleEntity> schedules = new ArrayList<>();

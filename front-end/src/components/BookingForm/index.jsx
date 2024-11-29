@@ -2,14 +2,40 @@
 import React, { useEffect, useState } from "react";
 import styles from "components/bookingTicket.module.css";
 import SellectAddress from "components/SellectAddress";
+import { ToastContainer, toast, Bounce } from "react-toastify";
 
 import {
   apiGetPublicDistrict,
   apiGetPublicProvinces,
   apiGetPublicWard,
 } from "services/app";
+import { root } from "helper/axiosClient";
+import { getTokenFromLocalStorage } from "utils/tokenUtils";
+import { useNavigate } from "react-router-dom";
+import MethodPayment from "pages/methodPayment";
 
-function BookingForm({ selectedSeats, totalPrice }) {
+function BookingForm({
+  selectedSeats,
+  totalPrice,
+  startTime,
+  startLocation,
+  stopLocation,
+  price,
+  scheduleId,
+  typeId,
+}) {
+  const navigate = useNavigate();
+
+  const [fullName, setFullName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
+  const [note, setNote] = useState("");
+  const [detailAddressToPickUp, setDetailAddressToPickUp] = useState("");
+  const [detailAddressDropOff, setDetailAddressDropOff] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("vietQR");
+  const [selectedSeat, setSelectedSeat] = useState([]);
+  const [errors, setErrors] = useState({});
+
   // Pick-up location state
   const [pickupSpecificAddress, setPickupSpecificAddress] = useState("");
   const [pickupProvinces, setPickupProvinces] = useState([]);
@@ -35,6 +61,53 @@ function BookingForm({ selectedSeats, totalPrice }) {
 
   const handleDropoffSpecificAddressChange = (event) => {
     setDropoffSpecificAddress(event.target.value);
+  };
+
+  const createAddressValuePickUp = () => {
+    const newAddressPickUp = `${pickupSpecificAddress} ${
+      pickupWard
+        ? `${
+            pickupWards?.find((item) => item.ward_id === pickupWard)?.ward_name
+          },`
+        : ""
+    } ${
+      pickupDistrict
+        ? `${
+            pickupDistricts?.find((item) => item.district_id === pickupDistrict)
+              ?.district_name
+          },`
+        : ""
+    } ${
+      pickupProvince
+        ? pickupProvinces?.find((item) => item.province_id === pickupProvince)
+            ?.province_name
+        : ""
+    }`;
+    setDetailAddressToPickUp(newAddressPickUp.trim());
+  };
+  const createAddressValueDropOff = () => {
+    const newAddressDropOff = `${dropoffSpecificAddress} ${
+      dropoffWard
+        ? `${
+            dropoffWards?.find((item) => item.ward_id === dropoffWard)
+              ?.ward_name
+          },`
+        : ""
+    } ${
+      dropoffDistrict
+        ? `${
+            dropoffDistricts?.find(
+              (item) => item.district_id === dropoffDistrict
+            )?.district_name
+          },`
+        : ""
+    } ${
+      dropoffProvince
+        ? dropoffProvinces?.find((item) => item.province_id === dropoffProvince)
+            ?.province_name
+        : ""
+    }`;
+    setDetailAddressDropOff(newAddressDropOff.trim());
   };
 
   // Fetch provinces once and use them for both pick-up and drop-off
@@ -101,28 +174,126 @@ function BookingForm({ selectedSeats, totalPrice }) {
     setDropoffWard("");
   }, [dropoffDistrict]);
 
+  useEffect(() => {
+    createAddressValuePickUp();
+    createAddressValueDropOff();
+  }, [
+    pickupWard,
+    pickupDistrict,
+    pickupProvince,
+    dropoffWard,
+    dropoffDistrict,
+    dropoffProvince,
+  ]);
+
+  useEffect(() => {
+    setSelectedSeat(selectedSeats); // Set selectedSeat to the count of selected seats
+  }, [selectedSeats]);
+
+  //
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!fullName.trim()) newErrors.fullName = "Họ tên là bắt buộc.";
+    if (!selectedSeats.length)
+      newErrors.selectedSeats = "Vui lòng chọn ít nhất một ghế.";
+    if (!phoneNumber.trim()) {
+      newErrors.phoneNumber = "Số điện thoại là bắt buộc.";
+    } else if (!/^\d{10}$/.test(phoneNumber)) {
+      newErrors.phoneNumber =
+        "Số điện thoại không hợp lệ. Vui lòng nhập đúng định dạng 10 chữ số.";
+    }
+    if (!email.trim()) {
+      newErrors.email = "Email là bắt buộc.";
+    }
+    if (!pickupSpecificAddress.trim())
+      newErrors.pickupSpecificAddress = "Vui lòng nhập địa chỉ điểm đi.";
+    if (!dropoffSpecificAddress.trim())
+      newErrors.dropoffSpecificAddress = "Vui lòng nhập địa chỉ điểm đến.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  //
+
+  // Create Ticket
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    const ticketData = {
+      fullName,
+      phoneNumber,
+      email,
+      note,
+      detailAddressToPickUp,
+      selectedSeat,
+      detailAddressDropOff,
+      paymentMethod,
+      scheduleId,
+      typeId,
+    };
+
+    // Gửi dữ liệu lên server (có thể dùng fetch hoặc axios)
+    try {
+      const token = getTokenFromLocalStorage();
+      const response = await root.post("/public/tickets/create", ticketData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        console.log("Booking successful:", response.data);
+        navigate("/methodPayment", {
+          state: {
+            fullName,
+            phoneNumber,
+            email,
+            note,
+            detailAddressToPickUp,
+            selectedSeat,
+            detailAddressDropOff,
+            totalPrice,
+            startTime,
+            startLocation,
+            stopLocation,
+          }
+        });
+      } else {
+        console.error("Error submitting booking");
+      }
+    } catch (error) {
+      console.error("Error submitting booking:", error);
+    }
+  };
+
   return (
     <div className={styles.bookingPage__tickets__item__collapse__booking__user}>
       <div
         className={styles.bookingPage__tickets__item__collapse__booking__title}
       >
         <h3>
-          SG: 35 Sài Gòn <span className="avicon icon-arrow-right" /> QN: 1 Quy
-          Nhơn
+          {startLocation} <i class="fa-solid fa-arrow-right" /> {stopLocation}
         </h3>
-        <p>19:00 - 15/10/2024</p>
+        <p>{new Date(startTime).toLocaleString()}</p>
       </div>
       <form
         method="POST"
         data-trip-choosableseat={1}
         data-form-trip-id="PLT0Tc1ybgN295oCg20241015"
+        onSubmit={handleSubmit}
       >
         <div className="d-none" data-content="additionPriceForUserType" />
 
         <div className={styles.form_group}>
           <label htmlFor="">Ghế đã chọn</label>
           <div data-content="listSeat" className={styles.list_seat}>
-            {selectedSeats.join(", ")}{" "}
+            {selectedSeats.join(", ")}
+
+            <span className={styles.error}>{errors.selectedSeats}</span>
           </div>
         </div>
         {/* <label htmlFor="seat_selected" className={styles.error} /> */}
@@ -140,47 +311,62 @@ function BookingForm({ selectedSeats, totalPrice }) {
           <label htmlFor="">
             Họ tên: <span className={styles.text_danger}>*</span>
           </label>
-          <input type="text" name="full_name" defaultValue="" />
-          <label htmlFor="full_name" className={styles.error} />
+          <input
+            type="text"
+            name="full_name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+          />
+          {errors.fullName && (
+            <span className={styles.error} style={{ marginLeft: "312px" }}>
+              {errors.fullName}
+            </span>
+          )}
         </div>
         <div className={styles.form_group}>
           <label htmlFor="">
             Số điện thoại: <span className={styles.text_danger}>*</span>
           </label>
-          <input type="text" name="phone" defaultValue="" />
-          <label htmlFor="phone" className={styles.error} />
-        </div>
-        <div className={`${styles.form_group} ${styles.useEmail}`}>
           <input
-            style={{ width: "30%" }}
-            data-action="useEmail"
-            data-trip-id="PLT0Tc1ybgN295oCg20241015"
-            defaultChecked=""
-            type="checkbox"
-            name="useEmail"
-            defaultValue=""
+            type="number"
+            name="phone"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
           />
-          <label
-            htmlFor="useEmail"
-            className="d-block"
-            style={{ width: "60%" }}
-          >
-            Gửi vé cho tôi qua email
-          </label>
+          {errors.phoneNumber && (
+            <span className={styles.error} style={{ marginLeft: "312px" }}>
+              {errors.phoneNumber}
+            </span>
+          )}
         </div>
+        <div className={`${styles.form_group} ${styles.useEmail}`}></div>
         <div className={styles.form_group} data-content="email">
           <label htmlFor="">
-            Email:{" "}
+            Email:
             <span className={styles.text_danger} required>
               *
             </span>
           </label>
-          <input type="text" name="email" defaultValue="" />
-          <label htmlFor="email" className={styles.error} />
+          <input
+            type="email"
+            name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          {errors.email && (
+            <span className={styles.error} style={{ marginLeft: "312px" }}>
+              {errors.email}
+            </span>
+          )}
         </div>
         <div className={styles.form_group}>
           <label htmlFor="">Ghi chú</label>
-          <textarea name="note" className="form-control" defaultValue={""} />
+          <textarea
+            name="note"
+            className="form-control"
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+          />
         </div>
         <div className={styles.form_group}>
           <label htmlFor="">
@@ -189,12 +375,16 @@ function BookingForm({ selectedSeats, totalPrice }) {
           <div className={styles.point_wrap}>
             <input
               type="text"
-              value={pickupSpecificAddress}
               onChange={handlePickupSpecificAddressChange}
+              value={pickupSpecificAddress}
               placeholder="Nhập địa chỉ cụ thể"
-              style={{width: '100%'}}
-
+              style={{ width: "100%" }}
             />
+            {errors.pickupSpecificAddress && (
+              <span className={styles.error}>
+                {errors.pickupSpecificAddress}
+              </span>
+            )}
 
             <div className="row">
               <div className="col-md-12 form-group">
@@ -224,7 +414,6 @@ function BookingForm({ selectedSeats, totalPrice }) {
                   label="Wards(phường)"
                 />
               </div>
-             
             </div>
           </div>
           <label htmlFor="pointUp" className={styles.error} />
@@ -236,11 +425,16 @@ function BookingForm({ selectedSeats, totalPrice }) {
           <div className={styles.point_wrap}>
             <input
               type="text"
-              value={dropoffSpecificAddress}
               onChange={handleDropoffSpecificAddressChange}
+              value={dropoffSpecificAddress}
               placeholder="Nhập địa chỉ cụ thể"
-              style={{width: '100%'}}
+              style={{ width: "100%" }}
             />
+            {errors.dropoffSpecificAddress && (
+              <span className={styles.error}>
+                {errors.dropoffSpecificAddress}
+              </span>
+            )}
             <div className="row">
               <div className="col-md-12 form-group">
                 <SellectAddress
@@ -269,7 +463,6 @@ function BookingForm({ selectedSeats, totalPrice }) {
                   label="Wards(phường)"
                 />
               </div>
-             
             </div>
           </div>
           <label htmlFor="pointDown" className={styles.error} />
@@ -279,8 +472,7 @@ function BookingForm({ selectedSeats, totalPrice }) {
           <input type="text" name="promotionCode" defaultValue="" />
         </div>
         <div
-          className={styles.form_group}
-          mb-2
+          className={`styles.form_group`}
           data-discount-trip="PLT0Tc1ybgN295oCg20241015"
         ></div>
         <div className="d-flex justify-content-end">
@@ -299,13 +491,11 @@ function BookingForm({ selectedSeats, totalPrice }) {
             Kiểm tra mã
           </button>
           <button
-            type="button"
+            type="submit"
             data-trip-id="PLT0Tc1ybgN295oCg20241015"
             className="js__toggleProcessBooking"
           >
-            <a href="/methodPayment" style={{ color: "#fff" }}>
-              Tiếp tục
-            </a>
+            <a style={{ color: "#fff" }}>Tiếp tục</a>
           </button>
         </div>
       </form>

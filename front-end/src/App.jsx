@@ -14,7 +14,6 @@ import { DEFAULT } from "constants";
 import Booking from "pages/booking";
 import News from "pages/newAndBlog";
 import ChangePassword from "pages/changePassword";
-import Voucher from "pages/voucher";
 import AdminApp from "admin/AdminApp";
 import OTP from "pages/OTP";
 import BookingTicket from "pages/bookingTicket";
@@ -24,6 +23,9 @@ import SidebarDriver from "pages/Driver/SidebarDriver";
 import Schedule from "pages/Driver/schedule";
 import Parking from "pages/Driver/Parking";
 import Map from "pages/Driver/Map";
+import ImageUploadFile from "components/ImageUploadFile";
+// import 'bootstrap/dist/css/bootstrap.min.css';
+
 function App() {
   const token = window.localStorage.getItem(DEFAULT.TOKEN);
 
@@ -60,7 +62,6 @@ function App() {
             <Route path="quickBooking" element={<QuickBooking />} />
             <Route path="booking" element={<Booking />} />
             <Route path="new" element={<News />} />
-            <Route path="voucher" element={<Voucher />} />
             <Route path="OTP" element={<OTP />} />
             <Route path="bookingTicket" element={<BookingTicket />} />
             <Route path="methodPayment" element={<MethodPayment />} />

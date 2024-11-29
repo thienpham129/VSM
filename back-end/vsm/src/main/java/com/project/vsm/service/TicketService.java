@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,6 +50,9 @@ public class TicketService {
                     .stopLocation(ticket.getStopLocation())
                     .status(ticket.getStatus())
                     .QRPayment(ticket.getQRPayment())
+                    .selectedSeat(ticket.getSelectedSeat() != null
+                            ? Arrays.asList(ticket.getSelectedSeat().split(","))
+                            : new ArrayList<>())
                     .build();
             ScheduleEntity schedule = ticket.getScheduleEntity();
             ScheduleResponse scheduleResponse = new ScheduleResponse();
@@ -78,7 +82,7 @@ public class TicketService {
                 .orElseThrow(() -> new RuntimeException("Account not found"));
         
         TypeEntity type = typeRepository.findById(request.getTypeId())
-        		.orElseThrow(() -> new RuntimeException("Type not found"));
+                .orElseThrow(() -> new RuntimeException("Type not found"));
 
         double priceOfSingleSeat = type.getPrice();
         double totalPrice = priceOfSingleSeat * request.getSelectedSeat().size();
@@ -110,23 +114,21 @@ public class TicketService {
         ticket.setStopLocation(schedule.getStopLocation());
         ticket.setScheduleEntity(schedule);
 
-        ticketRepository.save(ticket);
-
-        TicketResponse ticketResponse = TicketResponse.fromEntity(ticket);
-        ticketResponse.setStartTime(schedule.getStartTime());
-        ticketResponse.setEndTime(schedule.getEndTime());
+        ticket = ticketRepository.save(ticket);
 
         if (payment.getPaymentName().equalsIgnoreCase("vietQR")) {
             String qrCodeUrl = paymentService.generateQrCode(totalPrice, ticket.getTicketId(), account.getEmail());
-            ticketResponse.setPaymentUrl(qrCodeUrl);
+            ticket.setQRPayment(qrCodeUrl);
+            ticketRepository.save(ticket);
         }
         boolean paymentSuccess = checkPaymentStatus(ticket.getTicketId());
 
         if (paymentSuccess) {
             googleSheetsService.sendDataToGoogleSheet(ticket, totalPrice, payment.getPaymentName());
         }
-        return ticketResponse;
+        return TicketResponse.fromEntity(ticket);
     }
+
 
     private boolean checkPaymentStatus(long ticketId) {
         return true;
@@ -152,7 +154,7 @@ public class TicketService {
                 .orElseThrow(() -> new RuntimeException("Not found schedule with id : " + scheduleId));
 
         List<TicketEntity> tickets = ticketRepository.getTicketByScheduleId(scheduleId);
-        if(tickets.isEmpty()) {
+        if (tickets.isEmpty()) {
             throw new RuntimeException("Not found ticket with schedule id : " + scheduleId);
         }
 
@@ -161,7 +163,7 @@ public class TicketService {
                 .collect(Collectors.toList());
     }
 
-    public TicketResponse updateStatusTicketById (long ticketId , TicketRequest request) {
+    public TicketResponse updateStatusTicketById(long ticketId, TicketRequest request) {
         TicketEntity ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
 

@@ -1,8 +1,24 @@
 import React from "react";
 import styles from "pages/bookingTicket.module.css";
 import MethodPaymentMobile from "components/MethodPaymentMobile/MethodPaymentMobile";
+import { useLocation } from "react-router-dom";
 
 const MethodPayment = () => {
+  const location = useLocation();
+  const { state } = location; // Dữ liệu được truyền qua state
+  const {
+    fullName,
+    phoneNumber,
+    email,
+    note,
+    detailAddressToPickUp,
+    selectedSeat,
+    detailAddressDropOff,
+    totalPrice,
+    startTime,
+    startLocation,
+    stopLocation,
+  } = state || {};
   return (
     <div className="no-bottom no-top zebra" id="content">
       <div id="top" />
@@ -275,15 +291,15 @@ const MethodPayment = () => {
                       </div>
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Họ tên</label>
-                        <p>Nguyễn Xuân Quang</p>
+                        <p>{fullName}</p>
                       </div>
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Số điện thoại</label>
-                        <p>0777907831</p>
+                        <p>{phoneNumber}</p>
                       </div>
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Email</label>
-                        <p>123@gmail.com</p>
+                        <p>{email}</p>
                       </div>
                       <div className={styles.bookingPayment__info__title__line}>
                         <h4 className={styles.bookingPayment__info__title} />
@@ -295,34 +311,46 @@ const MethodPayment = () => {
                       </div>
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Tuyến</label>
-                        <p>Quy Nhơn - Đà Nẵng (Giường)</p>
+                        <p>
+                          {startLocation} - {stopLocation}
+                        </p>
                       </div>
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Giờ xuất bến</label>
-                        <p>11:00</p>
+                        <p>
+                          {new Date(startTime).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </p>
                       </div>
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Điểm đi</label>
-                        <p>QN</p>
+                        <p>{detailAddressToPickUp}</p>
                       </div>
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Điểm đến</label>
-                        <p>ĐN</p>
+                        <p>{detailAddressDropOff}</p>
+                      </div>
+                      <div className={styles.bookingPayment__info__item}>
+                        <label htmlFor="">Ghi chú</label>
+                        <p>{note}</p>
                       </div>
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Ghế</label>
                         <p className="list-seat">
-                          <span>A14</span>
+                          <span>
+                            {selectedSeat.length > 0
+                              ? selectedSeat.join(", ")
+                              : "Chưa chọn ghế"}
+                          </span>
                         </p>
                       </div>
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Mã khuyến mãi</label>
                         <p />
                       </div>
-                      <div className={styles.bookingPayment__info__item}>
-                        <label htmlFor="">Ghi chú</label>
-                        <p />
-                      </div>
+
                       <div className={styles.bookingPayment__submit}>
                         <button
                           type="submit"
@@ -342,7 +370,7 @@ const MethodPayment = () => {
                       />
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Tổng tiền</label>
-                        <p>240,000 đ</p>
+                        <p>{totalPrice.toLocaleString()} đ</p>
                       </div>
                     </div>
                   </div>
@@ -352,7 +380,19 @@ const MethodPayment = () => {
           </div>
         </form>
       </section>
-      <MethodPaymentMobile />
+      <MethodPaymentMobile
+        fullName={fullName}
+        phoneNumber={phoneNumber}
+        email={email}
+        note={note}
+        detailAddressToPickUp={detailAddressToPickUp}
+        selectedSeat={selectedSeat}
+        detailAddressDropOff={detailAddressDropOff}
+        totalPrice={totalPrice}
+        startTime={startTime}
+        startLocation={startLocation}
+        stopLocation={stopLocation}
+      />
     </div>
   );
 };

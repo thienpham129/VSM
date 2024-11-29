@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -20,7 +21,7 @@ import java.time.LocalDate;
 public class CarSearchRequest extends FilterRequest<CarEntity> {
     String startLocation;
     String stopLocation;
-    LocalDate startDate;
+    LocalDateTime startDate;
 
     @Override
     public Specification<CarEntity> specification() {

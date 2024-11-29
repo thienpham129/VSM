@@ -17,12 +17,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "Schedule")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ScheduleEntity {
@@ -58,6 +60,7 @@ public class ScheduleEntity {
 	@ManyToOne()
 	@JoinColumn(name = "car_id", referencedColumnName = "car_id")
 	private CarEntity car;
+
 	@JsonIgnore
 	@OneToMany(mappedBy = "scheduleEntity" , fetch = FetchType.LAZY)
 	private List<TicketEntity> tickets = new ArrayList<>();

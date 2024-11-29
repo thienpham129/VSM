@@ -24,7 +24,7 @@ import lombok.experimental.FieldDefaults;
 public class TicketController {
     TicketService ticketService;
 
-    @GetMapping("/admin/tickets")
+    @GetMapping("/public/tickets")
     public ResponseEntity<List<TicketResponse>> getAllTickets() {
         return new ResponseEntity<>(ticketService.getAllTicket(), HttpStatus.OK);
     }
@@ -39,7 +39,13 @@ public class TicketController {
     public ResponseEntity<TicketResponse> createTickets(@RequestBody TicketRequest ticketRequest) throws IOException {
         return new ResponseEntity<>(ticketService.createTicket(ticketRequest) , HttpStatus.OK);
     }
-
+    
+    @GetMapping("/public/ticket-with-schedule/{scheduleId}")
+    public ResponseEntity<List<TicketResponse>> getTicketByScheduleIdPublic (@PathVariable long scheduleId) {
+        return new ResponseEntity<>(ticketService.getTicketByScheduleId(scheduleId) , HttpStatus.OK);
+    }
+    
+    
     @PutMapping("/admin/update/ticket/{ticketId}")
     public ResponseEntity<TicketResponse> updateTicketById (@PathVariable long ticketId ,@RequestBody TicketRequest request){
         return new ResponseEntity<>(ticketService.updateTicketById(ticketId , request),HttpStatus.OK);
@@ -50,7 +56,7 @@ public class TicketController {
         return new ResponseEntity<>(ticketService.getTicketByScheduleId(scheduleId) , HttpStatus.OK);
     }
 
-    @PutMapping("/admin/update-status/ticket/{ticketId}")
+    @PutMapping("/driver/update-status/ticket/{ticketId}")
     public ResponseEntity<TicketResponse> updateStatusTicketById (@PathVariable long ticketId , @RequestBody TicketRequest request) {
         return new ResponseEntity<>(ticketService.updateStatusTicketById(ticketId , request) , HttpStatus.OK);
     }

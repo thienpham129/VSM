@@ -29,6 +29,7 @@ public class TicketRequest {
     String status;
     String detailAddressToPickUp;
     String detailAddressDropOff;
+    String qrCode;
 
     public TicketEntity toEntity(AccountEntity account, PaymentEntity payment, VoucherEntity voucher, double totalPrice) {
         return TicketEntity.builder()
@@ -44,6 +45,8 @@ public class TicketRequest {
                 .account(account)
                 .paymentEntity(payment)
                 .paymentMethod(this.paymentMethod)
+                .QRPayment(qrCode)
+                .status("PENDING")
                 .build();
     }
 }

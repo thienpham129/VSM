@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { dataScheduleDetail } from "./dataScheduleDetail";
+// import { dataScheduleDetail } from "./dataScheduleDetail";
 // import { dataSchedule } from "./dataSchedule";
 import DataTable from "react-data-table-component";
 import Button from "@mui/material/Button";
@@ -25,8 +25,10 @@ function Schedule() {
   const [valueInput, setValueInput] = useState("");
   const [statusUser, setStatusUSer] = useState("");
   const [dataSchedule, setDataSchedule] = useState([]);
-  // const [dataScheduleDetail, setDataScheduleDetail] = useState([]);
+  const [dataScheduleDetail, setDataScheduleDetail] = useState([]);
   const [dataScheduleFinal, setDataScheduleFinal] = useState([]);
+  const [ticketId, setTicketId] = useState("");
+  const [idSchedule, setIdSchedule] = useState("");
 
   const columns = [
     {
@@ -54,12 +56,12 @@ function Schedule() {
   const columnsScheduleDetail = [
     {
       name: "Họ Và Tên",
-      selector: (row) => <div title={row.name}> {row.name} </div>,
+      selector: (row) => <div title={row.fullName}> {row.fullName} </div>,
       width: "150px",
     },
     {
       name: "Số Điện Thoại",
-      selector: (row) => row.phone,
+      selector: (row) => row.phoneNumber,
       width: "130px",
     },
     {
@@ -69,17 +71,17 @@ function Schedule() {
     },
     {
       name: "Điểm Đón",
-      selector: (row) => row.start_address,
+      selector: (row) => row.detailAddressToPickUp,
       width: "230px",
     },
     {
       name: "Điểm Trả",
-      selector: (row) => row.end_address,
+      selector: (row) => row.detailAddressDropOff,
       width: "230px",
     },
     {
       name: "Chỗ Ngồi",
-      selector: (row) => row.seat_number,
+      selector: (row) => row.selectedSeat + " ",
       width: "100px",
     },
     {
@@ -110,11 +112,11 @@ function Schedule() {
     }
   }, [dataSchedule]);
 
-  // useEffect(() => {
-  //   if (dataScheduleDetail.length > 0) {
-  //     changeDataScheduleDetail();
-  //   }
-  // }, [dataScheduleDetail]);
+  useEffect(() => {
+    if (dataScheduleDetail.length > 0) {
+      changeDataScheduleDetail();
+    }
+  }, [dataScheduleDetail]);
 
   useEffect(() => {
     changeDataSchedule();
@@ -122,29 +124,36 @@ function Schedule() {
   }, [isClickDetail]);
 
   const fetchDataSchedule = async () => {
-    const url = `driver/schedules/${localStorage.getItem("userId")}`;
+    // const url = `driver/schedules/${localStorage.getItem("userId")}`;
+    const date = new Date();
+    const day =
+      date.getFullYear() + "-" + (+date.getMonth() + 1) + "-" + date.getDate();
+    const url = "driver/driver-schedule";
     try {
-      const response = await root.get(url);
+      const response = await root.post(url, {
+        accountId: localStorage.getItem("userId"),
+        day: day,
+      });
       if (response) {
         setDataSchedule(response.data);
+      }
+    } catch (error) {}
+  };
+
+  const fetchDataScheduleDetail = async (scheduleId) => {
+    const url = "/public/ticket-with-schedule";
+    try {
+      const response = await root.get(`${url}/${scheduleId}`);
+      if (response) {
+        setDataScheduleDetail(response.data);
         console.log(response.data);
       }
     } catch (error) {}
   };
 
-  // const fetchDataScheduleDetail = async (scheduleId) => {
-  //   const url = "/admin/ticket-with-schedule";
-  //   try {
-  //     const response = await root.get(`${url}/${scheduleId}`);
-  //     if (response) {
-  //       setDataScheduleDetail(response.data);
-  //       console.log(response.data);
-  //     }
-  //   } catch (error) {}
-  // };
-
   useEffect(() => {
     fetchDataSchedule();
+    fetchDataScheduleDetail();
   }, [isClickDetail]);
 
   // useEffect(() => {
@@ -156,7 +165,7 @@ function Schedule() {
     const tempArray = [];
     dataScheduleDetail.forEach((item, index) => {
       if (
-        item.name
+        item.fullName
           .toLocaleUpperCase()
           .includes(e.target.value.toLocaleUpperCase())
       ) {
@@ -170,8 +179,26 @@ function Schedule() {
     if (!statusUser) {
       notifyWarningUpdate();
     } else {
-      console.log(statusUser + "    This is status User");
-      notifyScucessUpadte();
+      const url = "/driver/update-status/ticket";
+      try {
+        const fetchUpdateStatusUser = async () => {
+          const response = await root.put(`${url}/${ticketId}`, {
+            status: statusUser,
+          });
+          if (response.data) {
+            notifyScucessUpadte();
+            setToggleModal(false);
+            fetchDataScheduleDetail(idSchedule);
+          } else {
+            console.log(
+              "Something went wrong with api of fetchUpdateStatusUser"
+            );
+          }
+        };
+        fetchUpdateStatusUser();
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -200,7 +227,8 @@ function Schedule() {
           onClick={(e) => {
             // navigate("/driver/schedule/*");
             // alert(item.id);
-            // fetchDataScheduleDetail(item.id);
+            setIdSchedule(item.id);
+            fetchDataScheduleDetail(item.id);
             setIsClickDetail(true);
             // e.stopPropagation();
           }}
@@ -240,6 +268,7 @@ function Schedule() {
             showPopUpDetailData(
               e.target.parentElement.parentElement.parentElement
             );
+            setTicketId(item.ticketId);
           }}
         >
           Cập Nhật
@@ -425,7 +454,7 @@ function Schedule() {
                       >
                         <MenuItem value={"Đã Lên Xe"}>Đã Lên Xe</MenuItem>
                         <MenuItem value={"Chưa Lên Xe"}>Chưa Lên Xe</MenuItem>
-                        <MenuItem value={"Đã Trả"}>Đã Trả</MenuItem>
+                        <MenuItem value={"Đã Xuống Xe"}>Đã Xuống Xe</MenuItem>
                         <MenuItem value={"Hủy"}>Hủy</MenuItem>
                       </Select>
                     </FormControl>
@@ -436,9 +465,9 @@ function Schedule() {
                         style={{ fontSize: "11px" }}
                         onClick={(e) => {
                           handleUpdate(e);
-                          if (statusUser) {
-                            setToggleModal(false);
-                          }
+                          // if (statusUser) {
+                          //   setToggleModal(false);
+                          // }
                         }}
                       >
                         Cập Nhật

@@ -79,8 +79,6 @@ const BookingSeatSevenMobile = () => {
             className={`${styles.bookingPage__search__wrap} ${styles.mobile_wrap}`}
             id="js-SearchTicketMobile"
           >
-            {/*TC0Cm1rweVdinjJi*/}
-            {/*3658*/}
             <div className={styles.searchTicket}>
               <div className={styles.searchTicket__item}>
                 <div className={styles.searchTicket__item__left}>

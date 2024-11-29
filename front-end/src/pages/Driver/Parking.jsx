@@ -14,33 +14,6 @@ import { Select } from "@mui/material";
 import { root } from "../../helper/axiosClient";
 
 function Parking() {
-  // const columns = [
-  //   {
-  //     name: "Tên Bãi Đỗ",
-  //     selector: (row) => row.name,
-  //   },
-  //   {
-  //     name: "Địa Điểm",
-  //     selector: (row) => row.address,
-  //   },
-  //   {
-  //     name: "Sức Chứa",
-  //     selector: (row) => row.capacity,
-  //   },
-  //   {
-  //     name: "Số Xe Đã Đỗ",
-  //     selector: (row) => row.number_of_parked_cars,
-  //   },
-  //   {
-  //     name: "Còn Trống",
-  //     selector: (row) => row.empty,
-  //   },
-  //   {
-  //     name: "",
-  //     selector: (row) => row.action,
-  //   },
-  // ];
-
   const columns = [
     {
       name: "Tên Bãi Đỗ",
@@ -102,14 +75,40 @@ function Parking() {
       transition: Bounce,
     });
 
+  const notifyWarnConfirm = () =>
+    toast.warn("Bãi Đỗ Xe Đã Hết Chỗ. Vui Lòng Chọn Bãi Đỗ Xe Khác.", {
+      position: "bottom-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+
   const [toggleModal, setToggleModal] = useState(false);
   const [nameParking, setNameParking] = useState("");
+  const [nameParkingRes, setNameParkingRes] = useState("");
   const [addressParking, setAddressParking] = useState("");
+  const [addressParkingRes, setAddressParkingRes] = useState("");
   const [dataParking, setDataParking] = useState([]);
   const [dataFilter, setDataFilter] = useState([]);
   const [dataInput, setDataInput] = useState("");
-  const [finalDataParking, setFinalDataParking] = useState([]);
+  const [allDataParkings, setAllDataParking] = useState([]);
   const [searchName, setSearchName] = useState(true);
+  const [isParkingEmpty, setIsParkingEmpty] = useState(true);
+  const [viewOption, setViewOption] = useState("");
+  const [daNangParkings, setDaNangParkings] = useState([]);
+  const [hueParkings, setHueParkings] = useState([]);
+  const [qnParkings, setQNParkings] = useState([]);
+  const [currentDestination, setCurrentDestination] = useState("");
+  const [currentDataParking, setCurrentDataParking] = useState([]);
+  const [carId, setCarId] = useState("");
+  const [parking, setParking] = useState("");
+  const [parkingId, setParkingId] = useState("");
+  const [isClickConfirm, setIsClickConfirm] = useState(false);
   const changeDataParking = () => {
     const updatedData = dataParking.map((item) => ({
       ...item,
@@ -118,8 +117,13 @@ function Parking() {
           <Button
             style={{ width: "75px", fontSize: "9px" }}
             variant="contained"
-            disabled={!item.empty}
+            // disabled={!item.empty}
             onClick={(e) => {
+              if (!item.empty) {
+                setIsParkingEmpty(false);
+              } else {
+                setIsParkingEmpty(true);
+              }
               setToggleModal(true);
               setNameParking(
                 e.target.parentElement.parentElement.parentElement.parentElement
@@ -129,6 +133,7 @@ function Parking() {
                 e.target.parentElement.parentElement.parentElement.parentElement
                   .firstChild.nextSibling.innerText
               );
+              setParkingId(item.id);
             }}
           >
             Xác Nhận
@@ -138,58 +143,287 @@ function Parking() {
     }));
 
     // setDataParking(updatedData);
-    setFinalDataParking(updatedData);
+    setAllDataParking(updatedData);
   };
 
-  const hanldeConfirm = () => {
-    const url = notifyScucessConfirm();
-    setToggleModal(false);
+  const classifyDataParking = () => {
+    const dncity = "Đà Nẵng";
+    const huecity = "Huế";
+    const qncity = "Quảng Nam";
+    const dnParkings = [];
+    const hueParkings = [];
+    const qnParkings = [];
+    allDataParkings.forEach((item, index) => {
+      if (
+        item.location
+          .toLocaleUpperCase()
+          .trim()
+          .includes(dncity.toLocaleUpperCase())
+      ) {
+        dnParkings.push(item);
+      }
+
+      if (
+        item.location
+          .toLocaleUpperCase()
+          .trim()
+          .includes(huecity.toLocaleUpperCase())
+      ) {
+        hueParkings.push(item);
+      }
+
+      if (
+        item.location
+          .toLocaleUpperCase()
+          .trim()
+          .includes(qncity.toLocaleUpperCase())
+      ) {
+        qnParkings.push(item);
+      }
+      setDaNangParkings(dnParkings);
+      setHueParkings(hueParkings);
+      setQNParkings(qnParkings);
+    });
+  };
+
+  const hanldeConfirm = async () => {
+    if (isParkingEmpty) {
+      const url = "driver/update-parking";
+      try {
+        const response = await root.post(url, {
+          accountId: localStorage.getItem("userId"),
+          parkingId: parkingId,
+        });
+        if (response.data) {
+          fetchCurrentScheduleData();
+          notifyScucessConfirm();
+          setToggleModal(false);
+        } else {
+          console.log(
+            "Something went wrong with call api update-parking driver"
+          );
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      notifyWarnConfirm();
+    }
   };
 
   const handleSearchParking = (e) => {
     if (searchName) {
-      setDataInput(e.target.value);
-      const tempArray = [];
-      finalDataParking.forEach((item, index) => {
-        if (
-          item.name
-            .toLocaleUpperCase()
-            .includes(e.target.value.toLocaleUpperCase())
-        ) {
-          tempArray.push(item);
+      if (viewOption) {
+        if (viewOption.toLocaleUpperCase() === "ĐÀ NẴNG") {
+          setDataInput(e.target.value);
+          const tempArray = [];
+          daNangParkings.forEach((item, index) => {
+            if (
+              item.name
+                .toLocaleUpperCase()
+                .includes(e.target.value.toLocaleUpperCase())
+            ) {
+              tempArray.push(item);
+            }
+          });
+          setDataFilter(tempArray);
         }
-      });
-      setDataFilter(tempArray);
+
+        if (viewOption.toLocaleUpperCase() === "HUẾ") {
+          setDataInput(e.target.value);
+          const tempArray = [];
+          hueParkings.forEach((item, index) => {
+            if (
+              item.name
+                .toLocaleUpperCase()
+                .includes(e.target.value.toLocaleUpperCase())
+            ) {
+              tempArray.push(item);
+            }
+          });
+          setDataFilter(tempArray);
+        }
+
+        if (viewOption.toLocaleUpperCase() === "QUẢNG NAM") {
+          setDataInput(e.target.value);
+          const tempArray = [];
+          qnParkings.forEach((item, index) => {
+            if (
+              item.name
+                .toLocaleUpperCase()
+                .includes(e.target.value.toLocaleUpperCase())
+            ) {
+              tempArray.push(item);
+            }
+          });
+          setDataFilter(tempArray);
+        }
+
+        if (viewOption.toLocaleUpperCase() === "ALL") {
+          setDataInput(e.target.value);
+          const tempArray = [];
+          allDataParkings.forEach((item, index) => {
+            if (
+              item.name
+                .toLocaleUpperCase()
+                .includes(e.target.value.toLocaleUpperCase())
+            ) {
+              tempArray.push(item);
+            }
+          });
+          setDataFilter(tempArray);
+        }
+      } else {
+        setDataInput(e.target.value);
+        const tempArray = [];
+        currentDataParking.forEach((item, index) => {
+          if (
+            item.name
+              .toLocaleUpperCase()
+              .includes(e.target.value.toLocaleUpperCase())
+          ) {
+            tempArray.push(item);
+          }
+        });
+        setDataFilter(tempArray);
+      }
     } else {
-      setDataInput(e.target.value);
-      const tempArray = [];
-      finalDataParking.forEach((item, index) => {
-        if (
-          item.location
-            .toLocaleUpperCase()
-            .includes(e.target.value.toLocaleUpperCase())
-        ) {
-          tempArray.push(item);
+      if (viewOption) {
+        if (viewOption.toLocaleUpperCase() === "ĐÀ NẴNG") {
+          setDataInput(e.target.value);
+          const tempArray = [];
+          daNangParkings.forEach((item, index) => {
+            if (
+              item.location
+                .toLocaleUpperCase()
+                .includes(e.target.value.toLocaleUpperCase())
+            ) {
+              tempArray.push(item);
+            }
+          });
+          setDataFilter(tempArray);
         }
-      });
-      setDataFilter(tempArray);
+
+        if (viewOption.toLocaleUpperCase() === "HUẾ") {
+          setDataInput(e.target.value);
+          const tempArray = [];
+          hueParkings.forEach((item, index) => {
+            if (
+              item.location
+                .toLocaleUpperCase()
+                .includes(e.target.value.toLocaleUpperCase())
+            ) {
+              tempArray.push(item);
+            }
+          });
+          setDataFilter(tempArray);
+        }
+
+        if (viewOption.toLocaleUpperCase() === "QUẢNG NAM") {
+          setDataInput(e.target.value);
+          const tempArray = [];
+          qnParkings.forEach((item, index) => {
+            if (
+              item.location
+                .toLocaleUpperCase()
+                .includes(e.target.value.toLocaleUpperCase())
+            ) {
+              tempArray.push(item);
+            }
+          });
+          setDataFilter(tempArray);
+        }
+
+        if (viewOption.toLocaleUpperCase() === "ALL") {
+          setDataInput(e.target.value);
+          const tempArray = [];
+          allDataParkings.forEach((item, index) => {
+            if (
+              item.location
+                .toLocaleUpperCase()
+                .includes(e.target.value.toLocaleUpperCase())
+            ) {
+              tempArray.push(item);
+            }
+          });
+          setDataFilter(tempArray);
+        }
+      } else {
+        setDataInput(e.target.value);
+        const tempArray = [];
+        currentDataParking.forEach((item, index) => {
+          if (
+            item.location
+              .toLocaleUpperCase()
+              .includes(e.target.value.toLocaleUpperCase())
+          ) {
+            tempArray.push(item);
+          }
+        });
+        setDataFilter(tempArray);
+      }
+    }
+  };
+
+  const fetchCurrentScheduleData = async () => {
+    const url = "/driver/find-schedule";
+    try {
+      const response = await root.get(
+        `${url}/${localStorage.getItem("userId")}`
+      );
+      if (response.data) {
+        setCurrentDestination(response.data.stopLocation);
+        setCarId(response.data.car.carId);
+        setNameParkingRes(response.data.car.parking.name);
+        setAddressParkingRes(response.data.car.parking.location);
+      } else {
+        console.log(
+          "Something went wrong when call api for fetchCurrentScheduleData function"
+        );
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const url = "/admin/parkings";
-      try {
-        const response = await root.get(url);
-        if (response) {
-          setDataParking(response.data);
-          console.log(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+    fetchCurrentScheduleData();
+  }, []);
 
+  useEffect(() => {
+    if (
+      currentDestination !== "" &&
+      daNangParkings &&
+      hueParkings &&
+      qnParkings
+    ) {
+      if (currentDestination.toLocaleUpperCase() === "ĐÀ NẴNG") {
+        setCurrentDataParking(daNangParkings);
+      }
+
+      if (currentDestination.toLocaleUpperCase() === "HUẾ") {
+        setCurrentDataParking(hueParkings);
+      }
+
+      if (currentDestination.toLocaleUpperCase() === "QUẢNG NAM") {
+        setCurrentDataParking(qnParkings);
+      }
+    }
+  }, [currentDestination, daNangParkings, hueParkings, qnParkings]);
+
+  const fetchData = async () => {
+    const url = "/driver/parkings";
+    try {
+      const response = await root.get(url);
+      if (response) {
+        setDataParking(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -199,11 +433,86 @@ function Parking() {
     }
   }, [dataParking]);
 
+  useEffect(() => {
+    if (allDataParkings.length > 0) {
+      classifyDataParking();
+    }
+  }, [allDataParkings]);
+
+  const getParkingById = async () => {
+    const url = "/driver/parking/";
+    // const response = root.get
+  };
+
+  const generateDataTable = (addressOption) => {
+    if (addressOption.toLocaleUpperCase() === "ĐÀ NẴNG") {
+      return <DataTable columns={columns} data={daNangParkings} />;
+    }
+
+    if (addressOption.toLocaleUpperCase() === "HUẾ") {
+      console.log(addressOption.toLocaleUpperCase());
+      return <DataTable columns={columns} data={hueParkings} />;
+    }
+
+    if (addressOption.toLocaleUpperCase() === "QUẢNG NAM") {
+      return <DataTable columns={columns} data={qnParkings} />;
+    } else {
+      return <DataTable columns={columns} data={allDataParkings} />;
+    }
+  };
+
   return (
     <div>
       <h1>Bãi Đỗ Xe</h1>
-      <div style={{ display: "flex", alignItems: "center", marginLeft: "65%" }}>
+      {/* <button
+        onClick={() => {
+          // console.log(daNangParkings);
+
+          // console.log(hueParkings);
+
+          // console.log(qnParkings);
+          // console.log(currentDestination);
+          // console.log(currentDataParking);
+          // console.log(hueParkings);
+          console.log(nameParkingRes);
+          console.log(addressParkingRes);
+          // alert(parking);
+        }}
+      >
+        test
+      </button> */}
+      <div style={{ display: "flex", alignItems: "center", marginLeft: "45%" }}>
         <FormControl style={{ width: "230px", height: "40px" }}>
+          <InputLabel
+            id="demo-simple-select-label"
+            style={{ fontSize: "13px" }}
+          >
+            Lựa Chọn Xem Bãi Đỗ
+          </InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Lựa Chọn Xem Bãi Đỗ"
+            value={viewOption}
+            // value={viewOption}
+            onChange={(e) => {
+              setViewOption(e.target.value);
+            }}
+            style={{ height: "40px" }}
+          >
+            <MenuItem value={currentDestination}>
+              Mặc Định (Xem Bãi Đỗ Theo Lịch Trình){" "}
+            </MenuItem>
+            <MenuItem value="ĐÀ NẴNG">Xem Bãi Đỗ Đà Nẵng</MenuItem>
+            <MenuItem value="HUẾ">Xem Bãi Đỗ Huế</MenuItem>
+            <MenuItem value="QUẢNG NAM">Xem Bãi Đỗ Quảng Nam</MenuItem>
+            <MenuItem value="ALL">Xem Tất Cả Bãi Đỗ</MenuItem>
+          </Select>
+        </FormControl>
+
+        <FormControl
+          style={{ width: "230px", height: "40px", marginLeft: "20px" }}
+        >
           <InputLabel
             id="demo-simple-select-label"
             style={{ fontSize: "13px" }}
@@ -214,6 +523,7 @@ function Parking() {
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="Lựa Chọn Tìm Kiếm"
+            // value={searchName ? 1 : 0}
             onChange={(e) => {
               e.target.value === 1 ? setSearchName(true) : setSearchName(false);
             }}
@@ -223,6 +533,7 @@ function Parking() {
             <MenuItem value={0}>Tìm Kiếm Theo Địa Điểm</MenuItem>
           </Select>
         </FormControl>
+
         {searchName ? (
           <input
             type="text"
@@ -257,15 +568,23 @@ function Parking() {
       </div>
       {dataInput ? (
         <DataTable columns={columns} data={dataFilter} />
+      ) : viewOption !== "" ? (
+        generateDataTable(viewOption)
       ) : (
-        <DataTable columns={columns} data={finalDataParking} />
+        generateDataTable(currentDestination)
       )}
-      {/* <DataTable columns={columns} data={dataParking} /> */}
-      <div className={styles.messages}>
+
+      <div
+        className={
+          nameParkingRes && addressParkingRes
+            ? styles.messages
+            : styles.hiddenMessage
+        }
+      >
         <img src={parkingIcon} alt="Parking Icon" style={{ width: "65px" }} />
         <ul>
-          <li>Xe Của Bạn Được Xác Nhận Đỗ Ở Bãi Đỗ Xe: {nameParking}</li>
-          <li>Tại Địa Điểm: {addressParking} </li>
+          <li>Xe Của Bạn Được Xác Nhận Đỗ Ở Bãi Đỗ Xe: {nameParkingRes}</li>
+          <li>Tại Địa Điểm: {addressParkingRes} </li>
         </ul>
       </div>
 
@@ -322,7 +641,10 @@ function Parking() {
               <Button
                 style={{ width: "90px", fontSize: "9px", marginLeft: "10px" }}
                 variant="contained"
-                onClick={hanldeConfirm}
+                onClick={() => {
+                  setIsClickConfirm(true);
+                  hanldeConfirm();
+                }}
               >
                 Xác Nhận
               </Button>

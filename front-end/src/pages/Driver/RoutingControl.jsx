@@ -18,12 +18,34 @@ const CreateRoutineMachineLayer = ({ position, start, end, color }) => {
         },
       ],
     },
+    show: true,
+    routeWhileDragging: false,
+    draggableWaypoints: false,
+    fitSelectedRoutes: true,
     showAlternatives: true,
   });
 
   instance.on("routesfound", function (e) {
     const route = e.routes[0]; // Get the first route
     console.log((route.summary.totalDistance / 1000).toFixed(1) + " km"); // Set distance in meters
+
+    setTimeout(() => {
+      const instructionContainer = document.querySelector(
+        ".leaflet-routing-container"
+      );
+
+      console.log(instructionContainer);
+
+      if (instructionContainer) {
+        instructionContainer.addEventListener("click", (event) => {
+          const target = event.target;
+
+          // Example: Log the clicked step
+          target.innerText = "abc";
+          console.log("Clicked instruction:", target.innerText);
+        });
+      }
+    }, 0.3); // Small delay to ensure DOM is ready
   });
 
   return instance;
