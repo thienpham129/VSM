@@ -31,7 +31,7 @@ const ParkingLot = () => {
 
   const fetchParkingLots = async () => {
     try {
-      const response = await request("get", "/admin/parkings");
+      const response = await request("get", "/driver/parkings");
       const formattedData = response.data.map((lot) => ({
         id: lot.id,
         name: lot.name,
