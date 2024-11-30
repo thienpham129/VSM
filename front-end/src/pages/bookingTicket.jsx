@@ -22,7 +22,7 @@ const BookingTicket = () => {
     }
 
     try {
-      const response = await root.get(`/public/route-with-schedule`, {
+      const response = await root.get(`/public/route/search`, {
         params: {
           startLocation,
           stopLocation,

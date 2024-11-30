@@ -66,7 +66,7 @@ const AccountBooking = () => {
           <div className="container">
             <div className="row">
               <div className="col-md-12 text-center">
-                <h1>My Orders</h1>
+                <h1>Lịch sử đặt vé</h1>
               </div>
               <div className="clearfix" />
             </div>
@@ -93,6 +93,9 @@ const AccountBooking = () => {
                           </th>
                           <th scope="col">
                             <span className="fs-12 text-gray">TÊN XE</span>
+                          </th>
+                          <th scope="col">
+                            <span className="fs-12 text-gray">Loại xe</span>
                           </th>
                           <th scope="col">
                             <span className="fs-12 text-gray">TUYẾN ĐƯỜNG</span>
@@ -135,10 +138,15 @@ const AccountBooking = () => {
                               <span className="bold">
                                 {ticket.schedules?.car?.name  ||
                                   "Không có dữ liệu"} 
-                                   {" "}
-                                  {ticket.schedules?.car?.type?.numSeat ||
-                                  "Không có dữ liệu"} chỗ
+                                  
                               </span>
+                            </td>
+                            <td>
+                              <span className="d-lg-none d-sm-block">
+                                Loại xe
+                              </span>
+                              {ticket.schedules?.car?.type?.numSeat ||
+                                  "Không có dữ liệu"} chỗ
                             </td>
                             <td>
                               <span className="d-lg-none d-sm-block">

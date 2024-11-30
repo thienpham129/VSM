@@ -45,7 +45,7 @@ public class RouteController {
 		return new ResponseEntity<>(route, HttpStatus.CREATED);
 	}
 
-	@GetMapping("/public/route-with-schedule")
+	@GetMapping("/public/route/search")
 	public ResponseEntity<List<RouteResponse>> getRouteWithSchedule(
 			@RequestParam(required = true) String startLocation,
 			@RequestParam(required = true) String stopLocation,

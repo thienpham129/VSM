@@ -1,10 +1,12 @@
 package com.project.vsm.dto.response;
 
+import com.project.vsm.model.CarEntity;
 import com.project.vsm.model.RouteEntity;
 import com.project.vsm.model.ScheduleEntity;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +21,7 @@ public class RouteResponse {
     String startLocation;
     String stopLocation;
     List<ScheduleResponse> schedules;
-
+    private CarResponse car;
     public static RouteResponse mapRouteResponse(RouteEntity route, List<ScheduleResponse> scheduleResponses) {
         RouteResponse response = new RouteResponse();
         response.setRouteId(route.getId());
