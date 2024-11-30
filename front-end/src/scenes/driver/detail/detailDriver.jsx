@@ -86,7 +86,7 @@ const DetailDriver = () => {
     try {
       const token = getAuthToken(); // Giả sử bạn có hàm lấy token xác thực
       await axios.put(
-        `http://localhost:8080/driver/updateDriver/${values.id}`, // URL cho API
+        `http://localhost:9000/driver/updateDriver/${values.id}`, // URL cho API
         formData,
         {
           headers: {

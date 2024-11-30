@@ -472,7 +472,7 @@ const BookingTicket = () => {
                     Số ghế: {schedule.car.numSeat}
                   </p>
                   {/* <p >
-                      Số ghế: {schedule.car.type.typeId}
+                      Số ghế: {schedule.route}
                     </p> */}
                   {/* Điều kiện hiển thị Schedule7Seat hoặc Schedule10Seat */}
                   {schedule.car.numSeat === 7 && (

@@ -469,7 +469,7 @@ const Schedule10SeatMobile = ({
                   styles.bookingPage__mobile__tickets__item__collapse__booking__seat_map__floor
                 }
               >
-                <h4>Xe 7 chỗ</h4>
+                <h4>Xe 10 chỗ</h4>
                 <table le="" className={styles.avseatmap}>
                   <tbody>
                     <tr>

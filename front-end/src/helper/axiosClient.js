@@ -2,7 +2,7 @@ import axios from "axios";
 import { DEFAULT } from "constants";
 
 export const axiosClient = axios.create({
-    baseURL: "http://localhost:8080/auth", // Main domain
+    baseURL: "http://localhost:9000/auth", // Main domain
     headers: {
         "Content-Type": "application/json",
         // 'Access-Control-Allow-Origin': '*',
@@ -10,7 +10,7 @@ export const axiosClient = axios.create({
     },
 });
 export const root = axios.create({
-    baseURL: "http://localhost:8080", // Base URL for user endpoints
+    baseURL: "http://localhost:9000", // Base URL for user endpoints
     headers: {
         "Content-Type": "application/json",
     },

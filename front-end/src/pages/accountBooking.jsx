@@ -27,6 +27,7 @@ const AccountBooking = () => {
         },
       });
       console.log("««««« response »»»»»", response.data);
+      console.log("««««« response »»»»»", response.data.length);
       setTickets(response.data);
     } catch (error) {
       console.error("Error fetching tickets:", error);

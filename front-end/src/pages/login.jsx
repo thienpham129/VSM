@@ -8,7 +8,20 @@ const getUserIdFromToken = (token) => {
   try {
     const decodedToken = jwtDecode(token);
     const userId = decodedToken.sub;
+    console.log('««««« decodedToken.sub »»»»»', decodedToken.a);
+
     return userId;
+  } catch (error) {
+    console.error("Invalid token");
+    return null;
+  }
+};
+
+const getRoleFromToken = (token) => {
+  try {
+    const decodedToken = jwtDecode(token);
+    const role = decodedToken.a;
+    return role;
   } catch (error) {
     console.error("Invalid token");
     return null;
@@ -39,11 +52,21 @@ const Login = () => {
 
       if (response && response.data.accessToken) {
         localStorage.setItem(DEFAULT.TOKEN, response.data.accessToken);
-        // console.log(response.data.accessToken);
-        // console.log(response.data + "response neeeeeeeeeeee!!!!");
         const accessToken = response.data.accessToken;
         const userId = getUserIdFromToken(accessToken);
         localStorage.setItem("userId", userId);
+
+        const role = getRoleFromToken(accessToken);
+        localStorage.setItem("role", role);
+
+
+        // Chuyển hướng dựa trên role
+        // if (role === "ROLE_ADMIN") {
+        //   window.location.href = "/admin/dashboard";
+        // } else {
+        //   window.location.href = "/home";
+        // }
+
         window.location.href = "/home";
       } else {
         setErrorMessage("Login failed. Invalid credentials.");

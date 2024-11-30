@@ -122,6 +122,21 @@ function BookingForm({
     fetchProvinces();
   }, []);
 
+ // Tự động set pickupProvince khi startLocation thay đổi
+ useEffect(() => {
+  if (startLocation && pickupProvinces.length > 0) {
+    // Tìm tỉnh có tên trùng với startLocation
+    const province = pickupProvinces.find(
+      (item) => item.province_name === startLocation
+    );
+    console.log('««««« province »»»»»', province);
+    if (province) {
+      setPickupProvince(province.province_id);
+      console.log('««««« province.province_id »»»»»', province.province_id); // Set province vào state
+    }
+  }
+}, [startLocation, pickupProvinces]);
+
   // Fetch districts and wards for pick-up location based on province and district selection
   useEffect(() => {
     const fetchPickupDistricts = async () => {
@@ -385,16 +400,17 @@ function BookingForm({
                 {errors.pickupSpecificAddress}
               </span>
             )}
+         
 
             <div className="row">
               <div className="col-md-12 form-group">
-                <SellectAddress
-                  type="province"
-                  value={pickupProvince}
-                  setValue={setPickupProvince}
-                  options={pickupProvinces}
-                  label="Province/City(Tỉnh)"
-                />
+              <SellectAddress
+                type="province"
+                value={pickupProvince}
+                setValue={setPickupProvince}
+                options={pickupProvinces}
+                label="Province/City(Tỉnh)"
+              />
               </div>
               <div className="col-md-12 form-group">
                 <SellectAddress
