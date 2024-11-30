@@ -20,12 +20,12 @@ public class RouteResponse {
     String stopLocation;
     List<ScheduleResponse> schedules;
 
-    public static RouteResponse mapRouteResponse(RouteEntity route, List<ScheduleEntity> schedules) {
+    public static RouteResponse mapRouteResponse(RouteEntity route, List<ScheduleResponse> scheduleResponses) {
         RouteResponse response = new RouteResponse();
         response.setRouteId(route.getId());
         response.setStartLocation(route.getStartLocation());
         response.setStopLocation(route.getStopLocation());
-        response.setSchedules(schedules.stream().map(ScheduleResponse::mapScheduleResponse).collect(Collectors.toList()));
+        response.setSchedules(scheduleResponses);
         return response;
     }
 

@@ -22,7 +22,7 @@ const BookingTicket = () => {
     }
 
     try {
-      const response = await root.get(`/public/schedule/search`, {
+      const response = await root.get(`/public/route-with-schedule`, {
         params: {
           startLocation,
           stopLocation,
@@ -196,6 +196,7 @@ const BookingTicket = () => {
                       type="date"
                       value={startTime}
                       onChange={(e) => setStartTime(e.target.value)}
+                      min={new Date().toISOString().split("T")[0]}
                     />
                   </div>
                 </div>
@@ -238,42 +239,40 @@ const BookingTicket = () => {
               {schedules.length > 0 ? (
                 schedules.map((schedule) => (
                   <div
-                    key={schedule.scheduleId}
                     className={styles.bookingPage__ticket}
+                    key={schedule.routeId}
                   >
-                    <p style={{ display: "none" }}>
-                      Số ghế: {schedule.car.numSeat}
-                    </p>
-                    {/* <p >
-                      Số ghế: {schedule.car.type.typeId}
-                    </p> */}
-                    {/* Điều kiện hiển thị Schedule7Seat hoặc Schedule10Seat */}
-                    {schedule.car.numSeat === 7 && (
-                      <Schedule7Seat
-                        key={schedule.scheduleId}
-                        scheduleId={schedule.scheduleId}
-                        startTime={schedule.startTime}
-                        startLocation={schedule.startLocation}
-                        stopLocation={schedule.stopLocation}
-                        car={schedule.car}
-                        numSeat={schedule.car.numSeat}
-                        typeId={schedule.car.type.typeId}
-                        price={schedule.car.price}
-                      />
-                    )}
-                    {schedule.car.numSeat === 10 && (
-                      <Schedule10Seat
-                        key={schedule.scheduleId}
-                        startTime={schedule.startTime}
-                        scheduleId={schedule.scheduleId}
-                        startLocation={schedule.startLocation}
-                        stopLocation={schedule.stopLocation}
-                        car={schedule.car}
-                        numSeat={schedule.car.numSeat}
-                        price={schedule.car.price}
-                        typeId={schedule.car.type.typeId}
-                      />
-                    )}
+                    {/* Lặp qua tất cả các lịch trình trong schedules */}
+                    {schedule.schedules.map((item, index) => (
+                      <div key={index}>
+                        {item.car.type?.numSeat === 7 && (
+                          <Schedule7Seat
+                            key={item.scheduleId}
+                            startTime={item.startTime}
+                            scheduleId={item.scheduleId}
+                            startLocation={schedule.startLocation}
+                            stopLocation={schedule.stopLocation}
+                            car={item.car}
+                            numSeat={item.car.type?.numSeat}
+                            price={item.car.type?.price}
+                            typeId={item.car.type?.typeId}
+                          />
+                        )}
+                        {item.car.type?.numSeat === 10 && (
+                          <Schedule10Seat
+                            key={item.scheduleId}
+                            startTime={item.startTime}
+                            scheduleId={item.scheduleId}
+                            startLocation={schedule.startLocation}
+                            stopLocation={schedule.stopLocation}
+                            car={item.car}
+                            numSeat={item.car.type?.numSeat}
+                            price={item.car.type?.price}
+                            typeId={item.car.type?.typeId}
+                          />
+                        )}
+                      </div>
+                    ))}
                   </div>
                 ))
               ) : (
@@ -437,6 +436,7 @@ const BookingTicket = () => {
                       type="date"
                       value={startTime}
                       onChange={(e) => setStartTime(e.target.value)}
+                      min={new Date().toISOString().split("T")[0]}
                     />
                   </div>
                 </div>
@@ -465,42 +465,40 @@ const BookingTicket = () => {
             {schedules.length > 0 ? (
               schedules.map((schedule) => (
                 <div
-                  key={schedule.scheduleId}
                   className={styles.bookingPage__ticket}
+                  key={schedule.routeId}
                 >
-                  <p style={{ display: "none" }}>
-                    Số ghế: {schedule.car.numSeat}
-                  </p>
-                  {/* <p >
-                      Số ghế: {schedule.route}
-                    </p> */}
-                  {/* Điều kiện hiển thị Schedule7Seat hoặc Schedule10Seat */}
-                  {schedule.car.numSeat === 7 && (
-                    <Schedule7SeatMobile
-                      key={schedule.scheduleId}
-                      scheduleId={schedule.scheduleId}
-                      startTime={schedule.startTime}
-                      startLocation={schedule.startLocation}
-                      stopLocation={schedule.stopLocation}
-                      car={schedule.car}
-                      numSeat={schedule.car.numSeat}
-                      typeId={schedule.car.type.typeId}
-                      price={schedule.car.price}
-                    />
-                  )}
-                  {schedule.car.numSeat === 10 && (
-                    <Schedule10SeatMobile
-                      key={schedule.scheduleId}
-                      startTime={schedule.startTime}
-                      scheduleId={schedule.scheduleId}
-                      startLocation={schedule.startLocation}
-                      stopLocation={schedule.stopLocation}
-                      car={schedule.car}
-                      numSeat={schedule.car.numSeat}
-                      price={schedule.car.price}
-                      typeId={schedule.car.type.typeId}
-                    />
-                  )}
+                  {/* Lặp qua tất cả các lịch trình trong schedules */}
+                  {schedule.schedules.map((item, index) => (
+                    <div key={index}>
+                      {item.car.type?.numSeat === 7 && (
+                        <Schedule7SeatMobile
+                          key={item.scheduleId}
+                          startTime={item.startTime}
+                          scheduleId={item.scheduleId}
+                          startLocation={schedule.startLocation}
+                          stopLocation={schedule.stopLocation}
+                          car={item.car}
+                          numSeat={item.car.type?.numSeat}
+                          price={item.car.type?.price}
+                          typeId={item.car.type?.typeId}
+                        />
+                      )}
+                      {item.car.type?.numSeat === 10 && (
+                        <Schedule10SeatMobile
+                          key={item.scheduleId}
+                          startTime={item.startTime}
+                          scheduleId={item.scheduleId}
+                          startLocation={schedule.startLocation}
+                          stopLocation={schedule.stopLocation}
+                          car={item.car}
+                          numSeat={item.car.type?.numSeat}
+                          price={item.car.type?.price}
+                          typeId={item.car.type?.typeId}
+                        />
+                      )}
+                    </div>
+                  ))}
                 </div>
               ))
             ) : (

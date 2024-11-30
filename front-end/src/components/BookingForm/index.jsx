@@ -35,6 +35,7 @@ function BookingForm({
   const [paymentMethod, setPaymentMethod] = useState("vietQR");
   const [selectedSeat, setSelectedSeat] = useState([]);
   const [errors, setErrors] = useState({});
+  const [ticketId, setTicketId] = useState(null);
 
   // Pick-up location state
   const [pickupSpecificAddress, setPickupSpecificAddress] = useState("");
@@ -250,7 +251,6 @@ function BookingForm({
       typeId,
     };
 
-    // Gửi dữ liệu lên server (có thể dùng fetch hoặc axios)
     try {
       const token = getTokenFromLocalStorage();
       const response = await root.post("/public/tickets/create", ticketData, {
@@ -262,6 +262,8 @@ function BookingForm({
 
       if (response.status === 200) {
         console.log("Booking successful:", response.data);
+        // setTicketId(response.data.ticketId);
+        // console.log('««««« ticketId456 »»»»»', response.data.ticketId);
         navigate("/methodPayment", {
           state: {
             fullName,
@@ -275,6 +277,7 @@ function BookingForm({
             startTime,
             startLocation,
             stopLocation,
+            ticketId: response.data.ticketId
           }
         });
       } else {

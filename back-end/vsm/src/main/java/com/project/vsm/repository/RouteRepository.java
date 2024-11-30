@@ -17,12 +17,9 @@ public interface RouteRepository extends JpaRepository<RouteEntity, Long> {
 
 	@Query("SELECT DISTINCT r " +
 			"FROM ScheduleEntity s JOIN RouteEntity r ON s.route.id = r.id " +
-			"WHERE s.id = :scheduleId AND r.id = :routeId " +
-			"AND r.startLocation = :startLocation AND r.stopLocation = :stopLocation " +
+			"WHERE r.startLocation = :startLocation AND r.stopLocation = :stopLocation " +
 			"AND DATE(s.startTime) = :startTime")
 	List<RouteEntity> findStartLocationStopLocationStartTime(
-			@Param("scheduleId") long scheduleId,
-			@Param("routeId") long routeId,
 			@Param("startLocation") String startLocation,
 			@Param("stopLocation") String stopLocation,
 			@Param("startTime") LocalDate startTime);

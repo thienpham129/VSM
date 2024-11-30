@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "pages/bookingTicket.module.css";
 import MethodPaymentMobile from "components/MethodPaymentMobile/MethodPaymentMobile";
 import { useLocation } from "react-router-dom";
+import { root } from "helper/axiosClient";
 
 const MethodPayment = () => {
   const location = useLocation();
-  const { state } = location; // Dữ liệu được truyền qua state
+  const { state } = location; 
   const {
     fullName,
     phoneNumber,
@@ -18,7 +19,31 @@ const MethodPayment = () => {
     startTime,
     startLocation,
     stopLocation,
+    ticketId,
   } = state || {};
+  const [paymentUrl, setPaymentUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handlePayment = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await root.get(`/api/v1/payment/pay/${ticketId}`);
+
+
+      if (response.status === 200) {
+        setPaymentUrl(response.data.data.paymentUrl); 
+      } else {
+        setError("Failed to fetch payment URL");
+      }
+    } catch (err) {
+      setError("An error occurred during payment.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="no-bottom no-top zebra" id="content">
       <div id="top" />
@@ -237,27 +262,16 @@ const MethodPayment = () => {
                 <div className="row">
                   <div className="col-xs-12 col-sm-12 col-md-7 col-lg-7">
                     <div className={styles.bookingPayment__method}>
-                      {/* <label
-                      className="js--toggle__active-item bookingPayment__method__item active"
-                      htmlFor="payment_method_ck"
-                    >
-                      <input
-                        type="radio"
-                        className="d-none"
-                        name="payment_method"
-                        data-target="ck"
-                        id="payment_method_ck"
-                        defaultValue="ck"
-                        defaultChecked=""
-                      />
-                      <span className={styles.bookingPayment__method__item__check} />
-                      <p>
-                        <span className="avicon icon-payment-card" />
-                        <b>
-                          Thanh toán bằng thẻ ATM đã đăng ký Internet Banking
-                        </b>
-                      </p>
-                    </label> */}
+                      {paymentUrl && (
+                        <div>
+                          <h3>Scan để thanh toán:</h3>
+                          <img
+                            src={paymentUrl}
+                            alt="Payment QR Code"
+                            style={{ width: "300px", height: "300px" }}
+                          />
+                        </div>
+                      )}
                     </div>
                     <div>
                       <p>
@@ -350,11 +364,11 @@ const MethodPayment = () => {
                         <label htmlFor="">Mã khuyến mãi</label>
                         <p />
                       </div>
-
-                      <div className={styles.bookingPayment__submit}>
+                      {/* <div className={styles.bookingPayment__submit}>
                         <button
                           type="submit"
                           className={styles.bookingPayment__submit__continue}
+                          onClick={handlePayment}
                         >
                           Thanh toán{" "}
                         </button>
@@ -364,6 +378,11 @@ const MethodPayment = () => {
                         >
                           Huỷ đặt xe{" "}
                         </a>
+                      </div> */}
+                      <div className={styles.bookingPayment__submit}>
+                        <button onClick={handlePayment} disabled={isLoading}>
+                          {isLoading ? "Processing..." : "Thanh toán"}
+                        </button>
                       </div>
                       <div
                         className={styles.bookingPayment__info__item__line}
