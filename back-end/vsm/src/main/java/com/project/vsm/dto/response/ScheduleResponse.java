@@ -31,12 +31,13 @@ public class ScheduleResponse {
     CarResponse car;
     List<TicketResponse> tickets;
 
-    public static ScheduleResponse mapScheduleResponse(ScheduleEntity schedule) {
+    public static ScheduleResponse mapScheduleResponse(ScheduleEntity schedule , CarResponse carResponse) {
         ScheduleResponse response = new ScheduleResponse();
         response.setScheduleId(schedule.getId());
         response.setStartTime(schedule.getStartTime());
         response.setStartLocation(schedule.getStartLocation());
         response.setStopLocation(schedule.getStopLocation());
+        response.setCar(carResponse);
         return response;
     }
 

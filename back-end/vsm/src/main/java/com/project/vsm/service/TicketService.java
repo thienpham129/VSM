@@ -168,8 +168,8 @@ public class TicketService {
                 .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
 
         ticket.setStatus(request.getStatus());
+        ticket.setPaid(true);
         ticketRepository.save(ticket);
-
         return TicketResponse.fromEntity(ticket);
     }
 

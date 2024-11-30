@@ -269,26 +269,27 @@ public class ScheduleService {
 	}
 
 	public List<ScheduleResponse> getSchedulesWithCars(String startLocation, String stopLocation, LocalDate startTime) {
-		System.out.println("startLocation: " + startLocation);
-		System.out.println("stopLocation: " + stopLocation);
-		System.out.println("startTime: " + startTime);
-		List<ScheduleEntity> schedules = scheduleRepository.findStartLocationStopLocationStartTime(startLocation,
-				stopLocation, startTime);
-		if (schedules.isEmpty()) {
-			System.out.println("No schedules found.");
-			return Collections.emptyList();
-		}
-		List<ScheduleResponse> responses = new ArrayList<>();
-		for (ScheduleEntity schedule : schedules) {
-			ScheduleResponse response = ScheduleResponse.mapScheduleResponse(schedule);
-			CarEntity car = schedule.getCar();
-			if (car != null) {
-				CarResponse carResponse = CarResponse.mapCarResponse(car);
-				response.setCar(carResponse);
-			}
-			responses.add(response);
-		}
-		return responses;
+//		System.out.println("startLocation: " + startLocation);
+//		System.out.println("stopLocation: " + stopLocation);
+//		System.out.println("startTime: " + startTime);
+//		List<ScheduleEntity> schedules = scheduleRepository.findStartLocationStopLocationStartTime(startLocation,
+//				stopLocation, startTime);
+//		if (schedules.isEmpty()) {
+//			System.out.println("No schedules found.");
+//			return Collections.emptyList();
+//		}
+//		List<ScheduleResponse> responses = new ArrayList<>();
+//		for (ScheduleEntity schedule : schedules) {
+//			ScheduleResponse response = ScheduleResponse.mapScheduleResponse(schedule , c);
+//			CarEntity car = schedule.getCar();
+//			if (car != null) {
+//				CarResponse carResponse = CarResponse.mapCarResponse(car);
+//				response.setCar(carResponse);
+//			}
+//			responses.add(response);
+//		}
+//		return responses;
+		return null;
 	}
 
 	public Optional<ScheduleEntity> getCurrentOrNextRunningSchedule(Long accountId) {
