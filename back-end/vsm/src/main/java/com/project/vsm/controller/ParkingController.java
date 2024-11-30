@@ -44,7 +44,7 @@ public class ParkingController {
 		return new ResponseEntity<>(parkingService.getAllParkings(), HttpStatus.OK);
 	}
 
-	@PutMapping("/parking/{id}")
+	@PutMapping("/admin/parking/{id}")
 	public ResponseEntity<ParkingEntity> updateParkingById(@PathVariable long id,
 			@Valid @RequestBody ParkingDTO parkingInput) {
 		return new ResponseEntity<>(parkingService.updateParkingById(id, parkingInput), HttpStatus.OK);

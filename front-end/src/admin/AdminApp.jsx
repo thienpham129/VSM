@@ -28,6 +28,7 @@ import Schedule from "scenes/schedule";
 import AddSchedule from "scenes/schedule/addSchedule/AddSchedule";
 import DetailSchedule from "scenes/schedule/detailSchedule/DetailSchedule";
 import RouteAdmin from "scenes/route/Route";
+import Ticket from "scenes/ticket/Ticket";
 
 function AdminApp() {
   const [theme, colorMode] = useMode();
@@ -43,6 +44,7 @@ function AdminApp() {
             <Topbar setIsSidebar={setIsSidebar} />
             <Routes>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/ticket" element={<Ticket />} />
               <Route path="/voucher" element={<VoucherAdmin />} />
               <Route path="/user" element={<UserAdmin />} />
               <Route path="/driver" element={<DriverAdmin />} />

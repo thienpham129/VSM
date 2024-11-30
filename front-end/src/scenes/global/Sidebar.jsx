@@ -14,6 +14,8 @@ import PersonIcon from "@mui/icons-material/Person";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import RouteIcon from "@mui/icons-material/Route";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -131,15 +133,15 @@ const Sidebar = () => {
             </Typography>
             <Item
               title="Vé Xe"
-              to="/admin/user"
-              icon={<PersonIcon />}
+              to="/admin/ticket"
+              icon={<ConfirmationNumberIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Lịch Trình"
               to="/admin/schedule"
-              icon={<PersonIcon />}
+              icon={<CalendarMonthIcon />}
               selected={selected}
               setSelected={setSelected}
             />
