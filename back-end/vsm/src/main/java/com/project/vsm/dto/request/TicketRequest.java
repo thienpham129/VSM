@@ -46,7 +46,7 @@ public class TicketRequest {
                 .paymentEntity(payment)
                 .paymentMethod(this.paymentMethod)
                 .QRPayment(qrCode)
-                .status("PENDING")
+                .status("Đang chờ xử lý")
                 .build();
     }
 }

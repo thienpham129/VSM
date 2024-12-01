@@ -131,7 +131,8 @@ const Schedule7Seat = ({
     };
 
     fetchBookedSeats();
-  }, [scheduleId]);
+  },
+   [scheduleId]);
   return (
     <div
       className={`${styles.bookingPage__tickets__item} ${styles.allowBook}`}

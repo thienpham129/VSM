@@ -372,7 +372,7 @@ function Parking() {
         `${url}/${localStorage.getItem("userId")}`
       );
       if (response.data) {
-        setCurrentDestination(response.data.stopLocation);
+        setCurrentDestination(response.data.route.stopLocation);
         setCarId(response.data.car.carId);
         setNameParkingRes(response.data.car.parking.name);
         setAddressParkingRes(response.data.car.parking.location);

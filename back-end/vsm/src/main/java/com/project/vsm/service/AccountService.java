@@ -140,6 +140,7 @@ public class AccountService {
 			accountEntity.setLastName(request.getLastName());
 			accountEntity.setAddress(request.getAddress());
 			accountEntity.setDob(request.getDob());
+			accountEntity.setPhoneNumber(request.getPhoneNumber());
 			return accountRepository.save(accountEntity);
 		} catch (RuntimeException e) {
 			throw new RuntimeException("Update info fail!");

@@ -1,7 +1,7 @@
 import { DEFAULT } from "constants";
 import React, { useEffect, useState } from "react";
 import { axiosClient, root } from "helper/axiosClient";
-import { getTokenFromLocalStorage } from "utils/tokenUtils";
+import { getTokenFromLocalStorage, removeTokenFromLocalStorage } from "utils/tokenUtils";
 import { jwtDecode } from "jwt-decode";
 
 const Header = () => {
@@ -61,7 +61,7 @@ const Header = () => {
       if (response && response.data) {
         setEmail(response.data.email);
         setUrlImage(response.data.urlImage);
-        setFullName(`${response.data.firstName} ${response.data.lastName}`);
+        setFullName(`${response.data.firstName || ""} ${response.data.lastName || ""}`.trim());
       } else {
         console.log("Failed to retrieve user data");
       }
@@ -91,6 +91,11 @@ const Header = () => {
   //   };
   //   getUserById();
   // }, []);
+
+  const handleLogout = () => {
+    removeTokenFromLocalStorage();
+    window.location.href = "/home";
+  };
 
   return (
     <header className="transparent scroll-light has-topbar">
@@ -259,10 +264,7 @@ const Header = () => {
                                 <li>
                                   <a
                                     href=""
-                                    onClick={() => {
-                                      localStorage.clear();
-                                      window.location.href = "/home";
-                                    }}
+                                    onClick={handleLogout}
                                   >
                                     <i className="fa fa-sign-out" />
                                     Đăng xuất

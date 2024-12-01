@@ -1,7 +1,7 @@
 import "./App.css";
 import AuthLayout from "components/layer/auth";
 import HomePage from "pages/home";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "pages/login";
 import AboutUs from "pages/aboutUs";
 import NonAuthLayout from "components/layer/nonAuth";
@@ -24,10 +24,16 @@ import Schedule from "pages/Driver/schedule";
 import Parking from "pages/Driver/Parking";
 import Map from "pages/Driver/Map";
 import ImageUploadFile from "components/ImageUploadFile";
-// import 'bootstrap/dist/css/bootstrap.min.css';
+import { getTokenFromLocalStorage } from "utils/tokenUtils";
+// import RequireAuth from "RequireAuth";
+// import Page403 from "Page403";
 
 function App() {
-  const token = window.localStorage.getItem(DEFAULT.TOKEN);
+  // const token = window.localStorage.getItem(DEFAULT.TOKEN);
+  const token = getTokenFromLocalStorage();
+  {
+    /* <Route index element={<Navigate to="home" replace />} /> */
+  }
 
   return (
     <>

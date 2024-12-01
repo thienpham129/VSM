@@ -33,11 +33,11 @@ function Schedule() {
   const columns = [
     {
       name: "Điểm Khởi Hành",
-      selector: (row) => row.startLocation,
+      selector: (row) => row.route.startLocation,
     },
     {
       name: "Điểm Đến",
-      selector: (row) => row.stopLocation,
+      selector: (row) => row.route.stopLocation,
     },
     {
       name: "Giờ Khỏi Hành",
@@ -136,6 +136,7 @@ function Schedule() {
       });
       if (response) {
         setDataSchedule(response.data);
+        console.log(response.data);
       }
     } catch (error) {}
   };

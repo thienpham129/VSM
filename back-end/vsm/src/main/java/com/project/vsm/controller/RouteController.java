@@ -45,15 +45,13 @@ public class RouteController {
 		return new ResponseEntity<>(route, HttpStatus.CREATED);
 	}
 
-	@GetMapping("/public/route-with-schedule")
+	@GetMapping("/public/route/search")
 	public ResponseEntity<List<RouteResponse>> getRouteWithSchedule(
-			@RequestParam(required = true) long scheduleId,
-			@RequestParam(required = true) long routeId,
 			@RequestParam(required = true) String startLocation,
 			@RequestParam(required = true) String stopLocation,
 			@RequestParam(required = true) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startTime) {
 
-		List<RouteResponse> responses = routeService.getRouteWithSchedule(scheduleId, routeId, startLocation, stopLocation, startTime);
+		List<RouteResponse> responses = routeService.getRouteWithSchedule(startLocation, stopLocation, startTime);
 		return new ResponseEntity<>(responses, HttpStatus.OK);
 	}
 }

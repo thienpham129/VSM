@@ -35,6 +35,7 @@ function BookingForm({
   const [paymentMethod, setPaymentMethod] = useState("vietQR");
   const [selectedSeat, setSelectedSeat] = useState([]);
   const [errors, setErrors] = useState({});
+  const [ticketId, setTicketId] = useState(null);
 
   // Pick-up location state
   const [pickupSpecificAddress, setPickupSpecificAddress] = useState("");
@@ -121,6 +122,21 @@ function BookingForm({
     };
     fetchProvinces();
   }, []);
+
+ // Tự động set pickupProvince khi startLocation thay đổi
+ useEffect(() => {
+  if (startLocation && pickupProvinces.length > 0) {
+    // Tìm tỉnh có tên trùng với startLocation
+    const province = pickupProvinces.find(
+      (item) => item.province_name === startLocation
+    );
+    console.log('««««« province »»»»»', province);
+    if (province) {
+      setPickupProvince(province.province_id);
+      console.log('««««« province.province_id »»»»»', province.province_id); // Set province vào state
+    }
+  }
+}, [startLocation, pickupProvinces]);
 
   // Fetch districts and wards for pick-up location based on province and district selection
   useEffect(() => {
@@ -235,7 +251,6 @@ function BookingForm({
       typeId,
     };
 
-    // Gửi dữ liệu lên server (có thể dùng fetch hoặc axios)
     try {
       const token = getTokenFromLocalStorage();
       const response = await root.post("/public/tickets/create", ticketData, {
@@ -247,6 +262,8 @@ function BookingForm({
 
       if (response.status === 200) {
         console.log("Booking successful:", response.data);
+        // setTicketId(response.data.ticketId);
+        // console.log('««««« ticketId456 »»»»»', response.data.ticketId);
         navigate("/methodPayment", {
           state: {
             fullName,
@@ -260,6 +277,7 @@ function BookingForm({
             startTime,
             startLocation,
             stopLocation,
+            ticketId: response.data.ticketId
           }
         });
       } else {
@@ -385,16 +403,17 @@ function BookingForm({
                 {errors.pickupSpecificAddress}
               </span>
             )}
+         
 
             <div className="row">
               <div className="col-md-12 form-group">
-                <SellectAddress
-                  type="province"
-                  value={pickupProvince}
-                  setValue={setPickupProvince}
-                  options={pickupProvinces}
-                  label="Province/City(Tỉnh)"
-                />
+              <SellectAddress
+                type="province"
+                value={pickupProvince}
+                setValue={setPickupProvince}
+                options={pickupProvinces}
+                label="Province/City(Tỉnh)"
+              />
               </div>
               <div className="col-md-12 form-group">
                 <SellectAddress
