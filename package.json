@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@mantine/core": "^7.14.0",
-    "@maptiler/geocoding-control": "^2.0.1",
-    "maplibre-gl": "^4.7.1"
-  }
-}
