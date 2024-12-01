@@ -302,7 +302,7 @@ const Map = () => {
   };
 
   useEffect(() => {
-    if (!optionSearch) {
+    if (optionSearch) {
       navigator.geolocation.getCurrentPosition((position) => {
         setCurrentLat(position.coords.latitude);
         setCurrentLong(position.coords.longitude);
