@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.vsm.dto.DriverFindScheduleByDateDTO;
 import com.project.vsm.dto.DriverUpdateParkingDTO;
+import com.project.vsm.dto.DriverUpdateScheduleDTO;
 import com.project.vsm.dto.ScheduleCreateDTO;
 import com.project.vsm.dto.ScheduleFindDTO;
 import com.project.vsm.dto.ScheduleUpdateDTO;
@@ -97,5 +98,12 @@ public class ScheduleController {
 	public ResponseEntity<CarEntity> updateParking(@Valid @RequestBody DriverUpdateParkingDTO input) {
 		CarEntity car = scheduleService.driverUpdateParking(input);
 		return new ResponseEntity<>(car, HttpStatus.CREATED);
+	}
+
+	@PutMapping("driver/update-status-schedule")
+	public ResponseEntity<ScheduleEntity> updateStatusSchedule(
+			@Valid @RequestBody DriverUpdateScheduleDTO scheduleDTO) {
+		ScheduleEntity schedule = scheduleService.driverUpdateScheduleById(scheduleDTO);
+		return new ResponseEntity<>(schedule, HttpStatus.CREATED);
 	}
 }
