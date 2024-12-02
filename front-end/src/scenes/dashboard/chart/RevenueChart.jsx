@@ -1,4 +1,3 @@
-// RevenueChart.js
 import React from "react";
 import { Bar } from "react-chartjs-2";
 import {
@@ -11,7 +10,6 @@ import {
   Legend,
 } from "chart.js";
 
-// Đăng ký các thành phần của Chart.js
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -22,7 +20,6 @@ ChartJS.register(
 );
 
 const RevenueChart = () => {
-  // Mock data doanh thu 12 tháng
   const mockData = {
     labels: [
       "Tháng 1",
@@ -49,13 +46,13 @@ const RevenueChart = () => {
     ],
   };
 
-  // Cấu hình options
   const options = {
     responsive: true,
+    maintainAspectRatio: false, // Đảm bảo biểu đồ chiếm 100% diện tích container
     plugins: {
       legend: {
         labels: {
-          color: "#ffffff", // Màu sắc cho các nhãn trong chú thích (legend)
+          color: "#ffffff", // Màu chú thích
         },
       },
       title: {
@@ -67,7 +64,7 @@ const RevenueChart = () => {
     scales: {
       x: {
         ticks: {
-          color: "#ffffff", // Màu nhãn trục X
+          color: "#ffcc00", // Màu nhãn trục X
         },
         grid: {
           color: "rgba(255, 255, 255, 0.2)", // Màu lưới trục X
@@ -75,7 +72,7 @@ const RevenueChart = () => {
       },
       y: {
         ticks: {
-          color: "#ffffff", // Màu nhãn trục Y
+          color: "#00ffcc", // Màu nhãn trục Y
         },
         grid: {
           color: "rgba(255, 255, 255, 0.2)", // Màu lưới trục Y

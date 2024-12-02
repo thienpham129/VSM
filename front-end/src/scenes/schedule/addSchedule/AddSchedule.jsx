@@ -229,7 +229,7 @@ const AddSchedule = () => {
                     ) : (
                       cars.map((car) => (
                         <MenuItem key={car.carId} value={car.carId}>
-                          {`Xe ${car.name}: ${
+                          {`Xe ${car.plateNumber}: ${
                             car.type.numSeat
                           } chỗ, ${car.type.price.toLocaleString()} VND`}
                         </MenuItem>
