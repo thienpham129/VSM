@@ -123,6 +123,7 @@ const Map = () => {
 
       if (response.data) {
         setCurrentScheduleId(response.data.id);
+        console.log(response.data + " HEREEEEEEEEEEEEEEEEEE");
       } else {
         console.log(
           "Something went wrong when call api for fetchCurrentSchedule function"
@@ -165,10 +166,26 @@ const Map = () => {
     }
   };
 
+  useEffect(() => {
+    if (currScheduleId !== "") {
+      fetchTicketsInCurrentShedule(currScheduleId);
+    }
+  }, [currScheduleId]);
+
+  useEffect(() => {
+    fetchCurrentSchedule();
+  }, []);
+
   const fetchAllDataScheduleCurrentDay = async () => {
     const date = new Date();
-    const day =
-      date.getFullYear() + "-" + (+date.getMonth() + 1) + "-" + date.getDate();
+    let day = date.getFullYear() + "-" + (+date.getMonth() + 1) + "-";
+    let dateTime = "";
+    if (date.getDate() < 10) {
+      dateTime = "0" + date.getDate();
+    } else {
+      dateTime = date.getDate();
+    }
+    day = day + dateTime;
     const url = "driver/driver-schedule";
     try {
       const response = await root.post(url, {
@@ -186,16 +203,6 @@ const Map = () => {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    if (currScheduleId !== "") {
-      fetchTicketsInCurrentShedule(currScheduleId);
-    }
-  }, [currScheduleId]);
-
-  useEffect(() => {
-    fetchCurrentSchedule();
-  }, []);
 
   useEffect(() => {
     if (allDataCurrentDay.length > 0) {
@@ -226,7 +233,10 @@ const Map = () => {
     if (arrayPickUpAddress.length > 0) {
       arrayPickUpAddress.forEach((item, index) => {
         console.log(item.address);
-        // getCors(item.address, item.name);
+      });
+
+      arrayDropAddress.forEach((item, index) => {
+        console.log(item.address);
       });
     }
   }, [arrayPickUpAddress]);
@@ -312,14 +322,14 @@ const Map = () => {
 
   return (
     <>
-      {/* <button
+      <button
         onClick={() => {
           // console.log(arrayPickUpAddress);
-          getLatLon();
+          console.log(currScheduleId);
         }}
       >
         test
-      </button> */}
+      </button>
 
       <div style={{ display: "flex" }}>
         <FormControl
@@ -444,7 +454,7 @@ const Map = () => {
         </Button>
       </div>
 
-      {isClickCurrentSeach ? (
+      {/* {isClickCurrentSeach ? (
         <>
           <MapContainer
             center={[currentLat, currentLong]}
@@ -490,7 +500,7 @@ const Map = () => {
             </LayersControl.BaseLayer>
           </LayersControl>
         </MapContainer>
-      )}
+      )} */}
 
       {/* <MapContainer
         center={start}

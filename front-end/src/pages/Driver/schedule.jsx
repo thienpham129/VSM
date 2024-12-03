@@ -126,8 +126,15 @@ function Schedule() {
   const fetchDataSchedule = async () => {
     // const url = `driver/schedules/${localStorage.getItem("userId")}`;
     const date = new Date();
-    const day =
-      date.getFullYear() + "-" + (+date.getMonth() + 1) + "-" + date.getDate();
+    let day = date.getFullYear() + "-" + (+date.getMonth() + 1) + "-";
+    let dateTime = "";
+    if (date.getDate() < 10) {
+      dateTime = "0" + date.getDate();
+    } else {
+      dateTime = date.getDate();
+    }
+    day = day + dateTime;
+    console.log(day);
     const url = "driver/driver-schedule";
     try {
       const response = await root.post(url, {

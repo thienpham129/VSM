@@ -71,19 +71,19 @@ public class ScheduleService {
 			throw new InvalidInputException("Tài xế hoặc xe sắp lịch phải cách nhau ít nhất 3 tiếng");
 		}
 
-		String carStopLocation = findClosestStopLocation(scheduleDTO.getCarId(), scheduleDTO.getStartTime());
-		String driverStopLocation = findClosestStopLocationByDriver(scheduleDTO.getAccountId(),
-				scheduleDTO.getStartTime());
+//		String carStopLocation = findClosestStopLocation(scheduleDTO.getCarId(), scheduleDTO.getStartTime());
+//		String driverStopLocation = findClosestStopLocationByDriver(scheduleDTO.getAccountId(),
+//				scheduleDTO.getStartTime());
 
 		// Kiểm tra nếu không có lịch trình trước đó, bỏ qua kiểm tra điểm bắt đầu
-		if (carStopLocation != null && !carStopLocation.equals(optionalRoute.get().getStartLocation())) {
-			throw new InvalidInputException(
-					"Điểm bắt đầu của lịch phải phù hợp với điểm dừng của lịch trước đó cho xe.");
-		}
-		if (driverStopLocation != null && !driverStopLocation.equals(optionalRoute.get().getStartLocation())) {
-			throw new InvalidInputException(
-					"Điểm bắt đầu của lịch phải phù hợp với điểm dừng của lịch trước đó cho tài xế.");
-		}
+//		if (carStopLocation != null && !carStopLocation.equals(optionalRoute.get().getStartLocation())) {
+//			throw new InvalidInputException(
+//					"Điểm bắt đầu của lịch phải phù hợp với điểm dừng của lịch trước đó cho xe.");
+//		}
+//		if (driverStopLocation != null && !driverStopLocation.equals(optionalRoute.get().getStartLocation())) {
+//			throw new InvalidInputException(
+//					"Điểm bắt đầu của lịch phải phù hợp với điểm dừng của lịch trước đó cho tài xế.");
+//		}
 
 		// Tạo đối tượng ScheduleEntity mới
 		ScheduleEntity schedule = new ScheduleEntity();
