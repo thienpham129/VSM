@@ -119,10 +119,13 @@ const Sidebar = () => {
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
             <Item
               title="Dashboard"
-              to="/admin/"
+              to="/admin/dashboard"
               icon={<HomeOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
+              onClick={() => {
+                window.location.reload(); // Reload lại trang
+              }}
             />
             <Typography
               variant="h6"

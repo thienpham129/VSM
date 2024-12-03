@@ -45,7 +45,8 @@
     padding: 5px;
     display: flex;
     margin-right: 10px;
-    width: 22%;
+    /* width: 22%; */
+    width: 23%;
     position: relative;
     overflow: hidden
 }

@@ -18412,6 +18412,11 @@ select#select-address {
     cursor: pointer;
     color: #333;
 }
+p.no_schedule {
+    font-size: 24px;
+    text-align: center;
+    padding: 25px 0px;
+}
 
 /* .table .de_table th,
 td {

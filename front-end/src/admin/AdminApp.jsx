@@ -43,7 +43,7 @@ function AdminApp() {
           <main className="content">
             <Topbar setIsSidebar={setIsSidebar} />
             <Routes>
-              <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/ticket" element={<Ticket />} />
               <Route path="/voucher" element={<VoucherAdmin />} />
               <Route path="/user" element={<UserAdmin />} />

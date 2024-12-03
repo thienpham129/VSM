@@ -1,7 +1,7 @@
 import "./App.css";
 import AuthLayout from "components/layer/auth";
 import HomePage from "pages/home";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import Login from "pages/login";
 import AboutUs from "pages/aboutUs";
 import NonAuthLayout from "components/layer/nonAuth";
@@ -21,15 +21,25 @@ import MethodPayment from "pages/methodPayment";
 import ForgetPassword from "pages/forgetPassword";
 import ImageUploadFile from "components/ImageUploadFile";
 import { getTokenFromLocalStorage } from "utils/tokenUtils";
-// import RequireAuth from "RequireAuth";
+import AdminRoute from "admin/AdminRoute";
+import { useEffect } from "react";
 // import Page403 from "Page403";
 
 function App() {
   // const token = window.localStorage.getItem(DEFAULT.TOKEN);
+
   const token = getTokenFromLocalStorage();
-  {
-    /* <Route index element={<Navigate to="home" replace />} /> */
-  }
+  const navigate = useNavigate();
+  const role = localStorage.getItem("role");
+
+  useEffect(() => {
+    if (token) {
+      if (role === "ROLE_ADMIN") {
+        navigate("/admin/dashboard"); 
+        // window.location.reload();
+      } 
+    }
+  }, []);
 
   return (
     <>
@@ -71,58 +81,16 @@ function App() {
           </Route>
         </Routes>
       )}
-      <Routes>
-        <Route path="/admin/*" element={<AdminApp />} />
-      </Routes>
-      {/* <Routes>
-        <Route element={<NonAuthLayout />}>
-          <Route path="home" element={<HomePage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="aboutUs" element={<AboutUs />} />
-          <Route path="accountBooking" element={<AccountBooking />} />
-          <Route path="contact" element={<Contact />} />
-          <Route path="listCars" element={<ListCars />} />
-          <Route path="quickBooking" element={<QuickBooking />} />
-          <Route path="new" element={<News />} />
-          <Route path="booking" element={<Booking />} />
-          <Route path="OTP" element={<OTP />} />
-          <Route path="identify" element={<ForgetPassword />} />
-          <Route path="bookingTicket" element={<BookingTicket />} />
-        </Route>
-
-        <Route
-          element={
-            <RequireAuth allowedRoles={["ROLE_USER"]}>
-              <AuthLayout />
-            </RequireAuth>
-          }
-        >
-          <Route path="home" element={<HomePage />} />
-          <Route path="aboutUs" element={<AboutUs />} />
-          <Route path="accountBooking" element={<AccountBooking />} />
-          <Route path="changePassword" element={<ChangePassword />} />
-          <Route path="contact" element={<Contact />} />
-          <Route path="listCars" element={<ListCars />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="quickBooking" element={<QuickBooking />} />
-          <Route path="booking" element={<Booking />} />
-          <Route path="new" element={<News />} />
-          <Route path="OTP" element={<OTP />} />
-          <Route path="bookingTicket" element={<BookingTicket />} />
-          <Route path="methodPayment" element={<MethodPayment />} />
-        </Route>
-
+     <Routes>
         <Route
           path="/admin/*"
           element={
-            <RequireAuth allowedRoles={["ROLE_ADMIN"]}>
+            <AdminRoute>
               <AdminApp />
-            </RequireAuth>
+            </AdminRoute>
           }
         />
-        
-      </Routes> */}
-      
+      </Routes>
     </>
   );
 }

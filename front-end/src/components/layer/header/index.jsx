@@ -1,7 +1,10 @@
 import { DEFAULT } from "constants";
 import React, { useEffect, useState } from "react";
 import { axiosClient, root } from "helper/axiosClient";
-import { getTokenFromLocalStorage, removeTokenFromLocalStorage } from "utils/tokenUtils";
+import {
+  getTokenFromLocalStorage,
+  removeTokenFromLocalStorage,
+} from "utils/tokenUtils";
 import { jwtDecode } from "jwt-decode";
 
 const Header = () => {
@@ -30,11 +33,11 @@ const Header = () => {
       try {
         // Decode the token to extract user information
         const decodedToken = jwtDecode(token);
-        console.log('««««« decodedToken »»»»»', decodedToken.sub);
-        
+        console.log("««««« decodedToken »»»»»", decodedToken.sub);
+
         const userId = decodedToken.sub;
         if (userId) {
-          setUserId(userId); 
+          setUserId(userId);
           setIsLoggedIn(true);
           getUserById(userId);
         } else {
@@ -61,7 +64,11 @@ const Header = () => {
       if (response && response.data) {
         setEmail(response.data.email);
         setUrlImage(response.data.urlImage);
-        setFullName(`${response.data.firstName || ""} ${response.data.lastName || ""}`.trim());
+        setFullName(
+          `${response.data.firstName || ""} ${
+            response.data.lastName || ""
+          }`.trim()
+        );
       } else {
         console.log("Failed to retrieve user data");
       }
@@ -73,7 +80,7 @@ const Header = () => {
   //   getUserById();
   // }, []);
 
-   // useEffect(() => {
+  // useEffect(() => {
   //   const getUserById = async () => {
   //     try {
   //       const url = `/user/${localStorage.getItem("userId")}`;
@@ -94,7 +101,8 @@ const Header = () => {
 
   const handleLogout = () => {
     removeTokenFromLocalStorage();
-    window.location.href = "/home";
+    localStorage.removeItem("role");
+    window.location.href = "/login";
   };
 
   return (
@@ -223,16 +231,19 @@ const Header = () => {
                             className="de-menu-profile"
                             onClick={test}
                           >
-                            {urlImage ? (<img
-                              src={urlImage}
-                              className="img-fluid"
-                              alt=""
-                            />) : (<img
-                              src="images/avatar_user.png"
-                              className="img-fluid"
-                              alt=""
-                            />)}
-                            
+                            {urlImage ? (
+                              <img
+                                src={urlImage}
+                                className="img-fluid"
+                                alt=""
+                              />
+                            ) : (
+                              <img
+                                src="images/avatar_user.png"
+                                className="img-fluid"
+                                alt=""
+                              />
+                            )}
                           </span>
                           {showSubMenu ? (
                             <div id="de-submenu-profile" className="de-submenu">
@@ -260,12 +271,9 @@ const Header = () => {
                                     Thay đổi mật khẩu
                                   </a>
                                 </li>
-                                
+
                                 <li>
-                                  <a
-                                    href=""
-                                    onClick={handleLogout}
-                                  >
+                                  <a href="" onClick={handleLogout}>
                                     <i className="fa fa-sign-out" />
                                     Đăng xuất
                                   </a>

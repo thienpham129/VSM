@@ -3,12 +3,13 @@ import { axiosClient } from "helper/axiosClient";
 import { DEFAULT } from "constants";
 import OTP from "./OTP.jsx";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const getUserIdFromToken = (token) => {
   try {
     const decodedToken = jwtDecode(token);
     const userId = decodedToken.sub;
-    console.log('««««« decodedToken.sub »»»»»', decodedToken.a);
+    console.log("««««« decodedToken.sub »»»»»", decodedToken.a);
 
     return userId;
   } catch (error) {
@@ -29,6 +30,8 @@ const getRoleFromToken = (token) => {
 };
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassWord] = useState("");
@@ -59,12 +62,12 @@ const Login = () => {
         const role = getRoleFromToken(accessToken);
         localStorage.setItem("role", role);
 
-
         // Chuyển hướng dựa trên role
         // if (role === "ROLE_ADMIN") {
-        //   window.location.href = "/admin/dashboard";
+        //   navigate("/admin/dashboard");
         // } else {
-        //   window.location.href = "/home";
+        //   navigate("/home");
+
         // }
 
         window.location.href = "/home";
