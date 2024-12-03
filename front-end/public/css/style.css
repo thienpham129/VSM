@@ -18417,6 +18417,9 @@ p.no_schedule {
     text-align: center;
     padding: 25px 0px;
 }
+select#searchPointUp {
+    padding: 7px 2px;
+}
 
 /* .table .de_table th,
 td {

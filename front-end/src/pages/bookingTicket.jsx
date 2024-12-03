@@ -39,18 +39,18 @@ const BookingTicket = () => {
   console.log("««««« schedules »»»»»", schedules);
 
   const locations = {
-    "Quảng Nam": [
-      { value: "Quảng Nam", label: "QN: 92 Quảng Nam" },
-      { value: "Đà Nẵng", label: "ĐN: 43 Đà Nẵng" },
-      { value: "Huế", label: "H: 57 Huế" },
+    "Tỉnh Quảng Nam": [
+      { value: "Tỉnh Quảng Nam", label: "QN: 92 Quảng Nam" },
+      { value: "Thành Phố Đà Nẵng", label: "ĐN: 43 Đà Nẵng" },
+      { value: "Thừa Thiên Huế", label: "H: 57 Huế" },
     ],
-    "Đà Nẵng": [
-      { value: "Quảng Nam", label: "QN: 92 Quảng Nam" },
-      { value: "Huế", label: "H: 57 Huế" },
+    "Thành Phố Đà Nẵng": [
+      { value: "Tỉnh Quảng Nam", label: "QN: 92 Quảng Nam" },
+      { value: "Thừa Thiên Huế", label: "H: 57 Huế" },
     ],
-    Huế: [
-      { value: "Quảng Nam", label: "QN: 92 Quảng Nam" },
-      { value: "Đà Nẵng", label: "ĐN: 43 Đà Nẵng" },
+    "Thừa Thiên Huế": [
+      { value: "Tỉnh Quảng Nam", label: "QN: 92 Quảng Nam" },
+      { value: "Thành Phố Đà Nẵng", label: "ĐN: 43 Đà Nẵng" },
     ],
   };
 
@@ -108,17 +108,17 @@ const BookingTicket = () => {
                       onChange={(e) => setStartLocation(e.target.value)}
                     >
                       <option value="">Chọn điểm đi</option>
-                      <optgroup label="Quảng Nam">
+                      <optgroup label="Tỉnh Quảng Nam">
                         <option
-                          value="Quảng Nam"
+                          value="Tỉnh Quảng Nam"
                           data-route-id="R0U11yleLOCho9m,R0Tu1yipwtweLFh,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0Tu1yiptmYVave,R0DA1s6Bu8rN9mg,R0NY1wD4MMlyUEQ,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0NY1wD4LJD2IxB,R0DA1s6C94QCePS,R0DA1s6Bk8LFiei,R0DB1s6UOpGDcXh"
                         >
                           QN: 92 Quảng Nam
                         </option>
                       </optgroup>
-                      <optgroup label="Đà Nẵng">
+                      <optgroup label="Thành Phố Đà Nẵng">
                         <option
-                          value="Đà Nẵng"
+                          value="Thành Phố Đà Nẵng"
                           data-route-id="R0U11yleLOCho9m,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0DA1s6Bu8rN9mg,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0DB1s6UOpGDcXh"
                         >
                           ĐN: 43 Đà Nẵng
@@ -127,7 +127,7 @@ const BookingTicket = () => {
 
                       <optgroup label="Thừa Thiên Huế">
                         <option
-                          value="Huế"
+                          value="Thừa Thiên Huế"
                           data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
                         >
                           H: 57 Huế
@@ -165,9 +165,15 @@ const BookingTicket = () => {
                     >
                       <option value="">Chọn điểm tới</option>
                       {getStopLocations().map((location) => (
-                        <option key={location.value} value={location.value}>
-                          {location.label}
-                        </option>
+                        <optgroup label={location.value}>
+                          <option
+                            key={location.value}
+                            value={location.value}
+                            data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
+                          >
+                            {location.label}
+                          </option>
+                        </optgroup>
                       ))}
                     </select>
                   </div>
@@ -392,29 +398,29 @@ const BookingTicket = () => {
                       onChange={(e) => setStartLocation(e.target.value)}
                     >
                       <option value="">Chọn điểm lên</option>
-                      <optgroup label="Quảng Nam">
+                      <optgroup label="Tỉnh Quảng Nam">
                         <option
-                          value="Quảng Nam"
+                          value="Tỉnh Quảng Nam"
                           data-route-id="R0U11yleLOCho9m,R0Tu1yipwtweLFh,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0Tu1yiptmYVave,R0DA1s6Bu8rN9mg,R0NY1wD4MMlyUEQ,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0NY1wD4LJD2IxB,R0DA1s6C94QCePS,R0DA1s6Bk8LFiei,R0DB1s6UOpGDcXh"
                         >
-                          QN: 1 Quảng Nam
+                          QN: 92 Quảng Nam
                         </option>
                       </optgroup>
-                      <optgroup label="Đà Nẵng">
+                      <optgroup label="Thành Phố Đà Nẵng">
                         <option
-                          value="Đà Nẵng"
+                          value="Thành Phố Đà Nẵng"
                           data-route-id="R0U11yleLOCho9m,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0DA1s6Bu8rN9mg,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0DB1s6UOpGDcXh"
                         >
-                          ĐN: 21 Đà Nẵng
+                          ĐN: 43 Đà Nẵng
                         </option>
                       </optgroup>
 
                       <optgroup label="Thừa Thiên Huế">
                         <option
-                          value="Huế"
+                          value="Thừa Thiên Huế"
                           data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
                         >
-                          H: 28 Huế
+                          H: Huế
                         </option>
                       </optgroup>
                     </select>
@@ -451,35 +457,16 @@ const BookingTicket = () => {
                     >
                       <option value="">Chọn điểm tới</option>
                       {getStopLocations().map((location) => (
-                        <option key={location.value} value={location.value}>
-                          {location.label}
-                        </option>
+                        <optgroup label={location.value}>
+                          <option
+                            key={location.value}
+                            value={location.value}
+                            data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
+                          >
+                            {location.label}
+                          </option>
+                        </optgroup>
                       ))}
-                      {/* <optgroup label="Quảng Nam">
-                        <option
-                          value="Quảng Nam"
-                          data-route-id="R0U11yleLOCho9m,R0Tu1yipwtweLFh,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0Tu1yiptmYVave,R0DA1s6Bu8rN9mg,R0NY1wD4MMlyUEQ,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0NY1wD4LJD2IxB,R0DA1s6C94QCePS,R0DA1s6Bk8LFiei,R0DB1s6UOpGDcXh"
-                        >
-                          QN: 1 Quảng Nam
-                        </option>
-                      </optgroup>
-                      <optgroup label="Đà Nẵng">
-                        <option
-                          value="Đà Nẵng"
-                          data-route-id="R0U11yleLOCho9m,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0DA1s6Bu8rN9mg,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0DB1s6UOpGDcXh"
-                        >
-                          ĐN: 21 Đà Nẵng
-                        </option>
-                      </optgroup>
-
-                      <optgroup label="Thừa Thiên Huế">
-                        <option
-                          value="Huế"
-                          data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
-                        >
-                          H: 28 Huế
-                        </option>
-                      </optgroup> */}
                     </select>
                   </div>
                 </div>

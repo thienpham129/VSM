@@ -13,6 +13,7 @@ import { root } from "helper/axiosClient";
 import { getTokenFromLocalStorage } from "utils/tokenUtils";
 import { useNavigate } from "react-router-dom";
 import MethodPayment from "pages/methodPayment";
+import { jwtDecode } from "jwt-decode";
 
 function BookingForm({
   selectedSeats,
@@ -26,6 +27,7 @@ function BookingForm({
 }) {
   const navigate = useNavigate();
 
+  const [userId, setUserId] = useState("");
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
@@ -123,20 +125,20 @@ function BookingForm({
     fetchProvinces();
   }, []);
 
- // Tự động set pickupProvince khi startLocation thay đổi
- useEffect(() => {
-  if (startLocation && pickupProvinces.length > 0) {
-    // Tìm tỉnh có tên trùng với startLocation
-    const province = pickupProvinces.find(
-      (item) => item.province_name === startLocation
-    );
-    console.log('««««« province »»»»»', province);
-    if (province) {
-      setPickupProvince(province.province_id);
-      console.log('««««« province.province_id »»»»»', province.province_id); // Set province vào state
+  // Tự động set pickupProvince khi startLocation thay đổi
+  useEffect(() => {
+    if (startLocation && pickupProvinces.length > 0) {
+      // Tìm tỉnh có tên trùng với startLocation
+      const province = pickupProvinces.find(
+        (item) => item.province_name === startLocation
+      );
+      console.log("««««« province »»»»»", province);
+      if (province) {
+        setPickupProvince(province.province_id);
+        console.log("««««« province.province_id »»»»»", province.province_id); // Set province vào state
+      }
     }
-  }
-}, [startLocation, pickupProvinces]);
+  }, [startLocation, pickupProvinces]);
 
   // Fetch districts and wards for pick-up location based on province and district selection
   useEffect(() => {
@@ -277,8 +279,8 @@ function BookingForm({
             startTime,
             startLocation,
             stopLocation,
-            ticketId: response.data.ticketId
-          }
+            ticketId: response.data.ticketId,
+          },
         });
       } else {
         console.error("Error submitting booking");
@@ -287,6 +289,50 @@ function BookingForm({
       console.error("Error submitting booking:", error);
     }
   };
+
+  //
+  const fetchUser = async (userId) => {
+    const token = getTokenFromLocalStorage();
+    try {
+      const response = await root.get(`/user/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = response.data;
+      console.log("««««« data »»»»»", data);
+      if (data) {
+        setEmail(data.email || "");
+        setPhoneNumber(data.phoneNumber || "");
+        setFullName(
+          `${response.data.firstName || ""} ${
+            response.data.lastName || ""
+          }`.trim()
+        );
+      }
+    } catch (error) {
+      console.error("Failed to retrieve user data:", error);
+    }
+  };
+
+  useEffect(() => {
+    const token = getTokenFromLocalStorage();
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.sub;
+        if (userId) {
+          setUserId(userId);
+          fetchUser(userId);
+        } else {
+          console.error("userId not found in token");
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    }
+  }, []);
+  //
 
   return (
     <div className={styles.bookingPage__tickets__item__collapse__booking__user}>
@@ -403,17 +449,16 @@ function BookingForm({
                 {errors.pickupSpecificAddress}
               </span>
             )}
-         
 
             <div className="row">
               <div className="col-md-12 form-group">
-              <SellectAddress
-                type="province"
-                value={pickupProvince}
-                setValue={setPickupProvince}
-                options={pickupProvinces}
-                label="Province/City(Tỉnh)"
-              />
+                <SellectAddress
+                  type="province"
+                  value={pickupProvince}
+                  setValue={setPickupProvince}
+                  options={pickupProvinces}
+                  label="Province/City(Tỉnh)"
+                />
               </div>
               <div className="col-md-12 form-group">
                 <SellectAddress
