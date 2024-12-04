@@ -64,7 +64,7 @@ function App() {
       ) : (
         <Routes>
           <Route path="/" element={<AuthLayout />}>
-            <Route path="home" element={<HomePage />} />
+            <Route path="home" element={<HomePage departureTime="10:00:00"/>} />
             <Route path="aboutUs" element={<AboutUs />} />
             <Route path="accountBooking" element={<AccountBooking />} />
             <Route path="changePassword" element={<ChangePassword />} />
