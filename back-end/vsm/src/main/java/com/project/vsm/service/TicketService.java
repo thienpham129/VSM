@@ -215,11 +215,11 @@ public class TicketService {
 			throw new NotFoundException("Not found Ticket with id " + id);
 		}
 		RouteEntity routeEntity = routeRepository.findByStartLocationAndStopLocation(
-				optionalTicket.get().getStartLocation(), optionalTicket.get().getStopLocation()).get(0);
+				optionalTicket.get().getScheduleEntity().getRoute().getStartLocation(),
+				optionalTicket.get().getScheduleEntity().getRoute().getStopLocation()).get(0);
 		if (routeEntity == null) {
 			throw new NotFoundException("Not found Route ");
 		}
-		System.out.println(routeEntity);
 		TicketResponseAdminDTO ticketDetail = TicketResponseAdminDTO.builder()
 				.ticketId(optionalTicket.get().getTicketId()).price(optionalTicket.get().getPrice())
 				.paymentMethod(optionalTicket.get().getPaymentMethod()).isPaid(optionalTicket.get().isPaid())
@@ -229,7 +229,6 @@ public class TicketService {
 				.phoneNumber(optionalTicket.get().getPhoneNumber())
 				.detailAddressDropOff(optionalTicket.get().getDetailAddressDropOff())
 				.detailAddressPickUp(optionalTicket.get().getDetailAddressPickUp()).route(routeEntity).build();
-		System.out.println(ticketDetail.getRoute());
 		return ticketDetail;
 	}
 }

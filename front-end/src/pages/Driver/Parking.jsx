@@ -195,6 +195,7 @@ function Parking() {
           parkingId: parkingId,
         });
         if (response.data) {
+          fetchData();
           fetchCurrentScheduleData();
           notifyScucessConfirm();
           setToggleModal(false);

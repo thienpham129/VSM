@@ -20,6 +20,7 @@ function Schedule() {
   const navigate = useNavigate();
   const [isClickDetail, setIsClickDetail] = useState(false);
   const [toggleModal, setToggleModal] = useState(false);
+  const [toggleModalWarning, setToggleModalWarning] = useState(false);
   const [rowDataPopUp, setRowDataPopUp] = useState([]);
   const [tempDataScheduleDetail, setTempDataScheduleDetail] = useState([]);
   const [valueInput, setValueInput] = useState("");
@@ -29,6 +30,14 @@ function Schedule() {
   const [dataScheduleFinal, setDataScheduleFinal] = useState([]);
   const [ticketId, setTicketId] = useState("");
   const [idSchedule, setIdSchedule] = useState("");
+  const [statusSchedule, setStatusSchedule] = useState("");
+  const [startHourSchedule, setStartHourSchedule] = useState("");
+  const [scheduleIdByRow, setScheduleIdByRow] = useState("");
+  const [warningUpdateSchedule, setWarningUpdateSchedule] = useState(false);
+  const [arrayTicketInCar, setArrayTicketInCar] = useState([]);
+  const [arrayTicketNotInCar, setArrayTicketNotInCar] = useState([]);
+  const [updateAnyWay, SetUpdateAnyWay] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
 
   const columns = [
     {
@@ -48,8 +57,18 @@ function Schedule() {
       },
     },
     {
+      name: "Trạng Thái",
+      selector: (row) => row.status,
+      width: "130px",
+    },
+    {
       name: "",
-      selector: (row) => row.action,
+      selector: (row) => row.detail,
+      width: "110px",
+    },
+    {
+      name: "",
+      selector: (row) => row.update,
     },
   ];
 
@@ -115,6 +134,21 @@ function Schedule() {
   useEffect(() => {
     if (dataScheduleDetail.length > 0) {
       changeDataScheduleDetail();
+      let tempArrayInCar = [];
+      let tempArrayNotInCar = [];
+      dataScheduleDetail.forEach((item, index) => {
+        if (item.status.toLocaleUpperCase() === "ĐÃ LÊN XE") {
+          setWarningUpdateSchedule(true);
+          tempArrayInCar.push(item.fullName);
+        }
+
+        if (item.status.toLocaleUpperCase() === "CHƯA LÊN XE") {
+          setWarningUpdateSchedule(true);
+          tempArrayNotInCar.push(item.fullName);
+        }
+      });
+      setArrayTicketInCar(tempArrayInCar);
+      setArrayTicketNotInCar(tempArrayNotInCar);
     }
   }, [dataScheduleDetail]);
 
@@ -134,7 +168,6 @@ function Schedule() {
       dateTime = date.getDate();
     }
     day = day + dateTime;
-    console.log(day);
     const url = "driver/driver-schedule";
     try {
       const response = await root.post(url, {
@@ -143,7 +176,6 @@ function Schedule() {
       });
       if (response) {
         setDataSchedule(response.data);
-        console.log(response.data);
       }
     } catch (error) {}
   };
@@ -152,9 +184,43 @@ function Schedule() {
     const url = "/public/ticket-with-schedule";
     try {
       const response = await root.get(`${url}/${scheduleId}`);
-      if (response) {
+      if (response.data) {
         setDataScheduleDetail(response.data);
         console.log(response.data);
+      }
+    } catch (error) {}
+  };
+
+  const CheckIsScheduleComplete = async (scheduleId) => {
+    const url = "/public/schedule";
+    try {
+      const response = await root.get(`${url}/${scheduleId}`);
+      if (response.data) {
+        if (response.data.status.toLocaleUpperCase() === "ĐÃ HOÀN THÀNH") {
+          setIsComplete(true);
+        } else {
+          setIsComplete(false);
+        }
+      } else {
+        console.log(
+          "Something went wrong with call api of CheckIsScheduleComplete"
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //setStartHourSchedule(row.startTime.split("T")[1].split(":")[0]);
+
+  const getStartHourByScheduleRow = async (scheduleId) => {
+    const url = "/public/schedule";
+    try {
+      const response = await root.get(`${url}/${scheduleId}`);
+      if (response.data) {
+        setStartHourSchedule(
+          response.data.startTime.split("T")[1].split(":")[0]
+        );
       }
     } catch (error) {}
   };
@@ -210,8 +276,74 @@ function Schedule() {
     }
   };
 
+  const handleUpdateSchedule = async () => {
+    if (updateAnyWay) {
+      const url = "driver/update-status-schedule";
+      try {
+        const response = await root.put(url, {
+          status: statusSchedule,
+          schduleId: scheduleIdByRow,
+        });
+        if (response.data) {
+          fetchDataSchedule();
+          SetUpdateAnyWay(false);
+          notifyScucessUpadte();
+        } else {
+          console.log(
+            "Something went wrong with call api of handleUpdateSchedule "
+          );
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      if (!statusSchedule) {
+        notifyWarningUpdate();
+      } else {
+        const date = new Date();
+        if (date.getHours() < +startHourSchedule) {
+          console.log(date.getHours());
+          console.log(+startHourSchedule);
+          notifyErrorUpdateSchedule();
+        } else {
+          if (
+            !warningUpdateSchedule ||
+            statusSchedule.toLocaleUpperCase() !== "ĐÃ HOÀN THÀNH"
+          ) {
+            const url = "driver/update-status-schedule";
+            try {
+              const response = await root.put(url, {
+                status: statusSchedule,
+                schduleId: scheduleIdByRow,
+              });
+              if (response.data) {
+                fetchDataSchedule();
+                notifyScucessUpadte();
+              } else {
+                console.log(
+                  "Something went wrong with call api of handleUpdateSchedule "
+                );
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          } else {
+            setToggleModalWarning(true);
+          }
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (updateAnyWay) {
+      handleUpdateSchedule();
+    }
+  }, [updateAnyWay]);
+
   const showPopUpDetailData = (rowData) => {
     setStatusUSer("");
+    setStatusSchedule("");
     let count = 1;
     let rowDataArray = [];
     rowData.childNodes.forEach((item, index) => {
@@ -228,41 +360,49 @@ function Schedule() {
   const changeDataSchedule = () => {
     const tempArray = dataSchedule.map((item, index) => ({
       ...item,
-      action: (
+      detail: (
         <Button
           style={{ width: "75px", fontSize: "9px" }}
           variant="contained"
           onClick={(e) => {
-            // navigate("/driver/schedule/*");
-            // alert(item.id);
+            console.log(item.id);
             setIdSchedule(item.id);
             fetchDataScheduleDetail(item.id);
+            CheckIsScheduleComplete(item.id);
             setIsClickDetail(true);
-            // e.stopPropagation();
           }}
         >
           Xem Chi Tiết
         </Button>
       ),
+
+      update: (
+        <Button
+          style={{ width: "75px", fontSize: "9px" }}
+          variant="contained"
+          onClick={(e) => {
+            setToggleModal(true);
+            showPopUpDetailData(
+              e.target.parentElement.parentElement.parentElement
+            );
+            getStartHourByScheduleRow(item.id);
+            setScheduleIdByRow(item.id);
+          }}
+          disabled={item.status.toLocaleUpperCase() === "ĐÃ HOÀN THÀNH"}
+        >
+          Cập Nhật
+        </Button>
+      ),
     }));
 
     setDataScheduleFinal(tempArray);
-    // dataSchedule.forEach((item, index) => {
-    //   item.action = (
-    //     <Button
-    //       style={{ width: "75px", fontSize: "9px" }}
-    //       variant="contained"
-    //       onClick={(e) => {
-    //         // navigate("/driver/schedule/*");
-    //         setIsClickDetail(true);
-    //         e.stopPropagation();
-    //       }}
-    //     >
-    //       Xem Chi Tiết
-    //     </Button>
-    //   );
-    // });
   };
+
+  useEffect(() => {
+    if (scheduleIdByRow) {
+      fetchDataScheduleDetail(scheduleIdByRow);
+    }
+  }, [scheduleIdByRow]);
 
   const changeDataScheduleDetail = () => {
     dataScheduleDetail.forEach((item, index) => {
@@ -270,6 +410,7 @@ function Schedule() {
         <Button
           style={{ width: "75px", fontSize: "9px" }}
           variant="contained"
+          disabled={isComplete}
           onClick={(e) => {
             // handleUpdate(e);
             setToggleModal(true);
@@ -331,6 +472,22 @@ function Schedule() {
       transition: Bounce,
     });
 
+  const notifyErrorUpdateSchedule = () =>
+    toast.error(
+      "Không Thể Cập Nhật Trạng Thái Của Lịch Trình Khi Chưa Tới Giờ!",
+      {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+      }
+    );
+
   const handleApply = () => {
     notifyScucessApply();
   };
@@ -344,6 +501,8 @@ function Schedule() {
             style={{ cursor: "pointer" }}
             color="primary"
             onClick={() => {
+              setDataScheduleDetail([]);
+              setIsComplete(false);
               setIsClickDetail(false);
             }}
           />
@@ -515,6 +674,195 @@ function Schedule() {
           <h1>Lịch Trình</h1>
           {/* <DataTable columns={columns} data={dataScheduleFinal}></DataTable> */}
           <DataTable columns={columns} data={dataScheduleFinal}></DataTable>
+          {toggleModal ? (
+            <div className={styles.modal}>
+              <div
+                className={styles.overlay}
+                onClick={() => {
+                  setToggleModal(false);
+                }}
+              ></div>
+              <div className={styles.modal_content}>
+                <ul>
+                  <li>
+                    <h4>
+                      Điểm Khởi Hành:{" "}
+                      <span className={styles.content_popup}>
+                        {rowDataPopUp[0]}{" "}
+                      </span>
+                    </h4>
+                  </li>
+                  <li>
+                    <h4>
+                      Điểm Đến:{" "}
+                      <span className={styles.content_popup}>
+                        {rowDataPopUp[1]}{" "}
+                      </span>
+                    </h4>
+                  </li>
+                  <li>
+                    <h4>
+                      Giờ Khởi Hành:{" "}
+                      <span className={styles.content_popup}>
+                        {rowDataPopUp[2]}{" "}
+                      </span>
+                    </h4>
+                  </li>
+                  <li>
+                    <h4>
+                      Trạng Thái:{" "}
+                      <span className={styles.content_popup}>
+                        {rowDataPopUp[3]}{" "}
+                      </span>
+                    </h4>
+                  </li>
+                  <li>
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">
+                        Trạng Thái
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={statusSchedule}
+                        label="Trạng Thái"
+                        onChange={(e) => {
+                          setStatusSchedule(e.target.value);
+                        }}
+                      >
+                        <MenuItem value={"Đã lên lịch"}>Đã lên lịch</MenuItem>
+                        <MenuItem value={"Đang chạy"}>Đang chạy</MenuItem>
+                        <MenuItem value={"Đã hoàn thành"}>
+                          Đã hoàn thành
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+
+                    <li className={styles.updateBtn_modal}>
+                      <Button
+                        variant="contained"
+                        style={{ fontSize: "11px" }}
+                        onClick={(e) => {
+                          handleUpdateSchedule();
+                          if (statusSchedule) {
+                            setToggleModal(false);
+                          }
+                        }}
+                      >
+                        Cập Nhật
+                      </Button>
+                    </li>
+                  </li>
+                </ul>
+
+                <HighlightOffIcon
+                  className={styles.close_modal}
+                  onClick={() => {
+                    setToggleModal(false);
+                  }}
+                />
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
+          {toggleModalWarning &&
+          statusSchedule.toLocaleUpperCase() === "ĐÃ HOÀN THÀNH" ? (
+            <div className={styles.modal}>
+              <div
+                className={styles.overlay}
+                onClick={() => {
+                  setToggleModal(false);
+                }}
+              ></div>
+              <div className={styles.modal_content}>
+                {arrayTicketInCar.map((item, index) => (
+                  <ul>
+                    <li>
+                      <h4>
+                        Hành Khách <span style={{ color: "red" }}>{item}</span>{" "}
+                        vẫn đang ở trạng thái{" "}
+                        <span style={{ color: "red" }}>Đã Lên Xe</span>{" "}
+                      </h4>
+                    </li>
+                  </ul>
+                ))}
+
+                {arrayTicketNotInCar.map((item, index) => (
+                  <ul>
+                    <li>
+                      <h4>
+                        Hành Khách <span style={{ color: "red" }}>{item}</span>{" "}
+                        vẫn đang ở trạng thái{" "}
+                        <span style={{ color: "red" }}>Chưa Lên Xe</span>{" "}
+                      </h4>
+                    </li>
+                  </ul>
+                ))}
+                <ul style={{ listStyle: "none" }}>
+                  <li>
+                    <h4>Bạn Vẫn Muốn Cập Nhật Lịch Trình Này Chứ ?</h4>
+                  </li>
+                </ul>
+
+                <div
+                  style={{
+                    margin: "0 auto",
+                    width: "fit-content",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    style={{ fontSize: "11px", marginRight: "10px" }}
+                    onClick={(e) => {
+                      SetUpdateAnyWay(true);
+                      if (statusSchedule) {
+                        setToggleModal(false);
+                        setToggleModalWarning(false);
+                      }
+                    }}
+                  >
+                    Cập Nhật
+                  </Button>
+
+                  <Button
+                    variant="contained"
+                    style={{ fontSize: "11px" }}
+                    onClick={(e) => {
+                      setToggleModal(false);
+                      setToggleModalWarning(false);
+                    }}
+                  >
+                    Hủy
+                  </Button>
+                </div>
+                <HighlightOffIcon
+                  className={styles.close_modal}
+                  onClick={() => {
+                    setToggleModal(false);
+                    setToggleModalWarning(false);
+                  }}
+                />
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
+          <ToastContainer
+            position="bottom-right"
+            autoClose={1500}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+            transition={Bounce}
+          />
         </div>
       )}
     </>
