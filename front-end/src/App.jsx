@@ -19,10 +19,15 @@ import OTP from "pages/OTP";
 import BookingTicket from "pages/bookingTicket";
 import MethodPayment from "pages/methodPayment";
 import ForgetPassword from "pages/forgetPassword";
+import SidebarDriver from "pages/Driver/SidebarDriver";
+import Schedule from "pages/Driver/schedule";
+import Parking from "pages/Driver/Parking";
+import Map from "pages/Driver/Map";
 import ImageUploadFile from "components/ImageUploadFile";
 import { getTokenFromLocalStorage } from "utils/tokenUtils";
 import AdminRoute from "admin/AdminRoute";
 import { useEffect } from "react";
+import ProfileDriver from "pages/Driver/ProfileDriver";
 // import Page403 from "Page403";
 
 function App() {
@@ -35,9 +40,9 @@ function App() {
   useEffect(() => {
     if (token) {
       if (role === "ROLE_ADMIN") {
-        navigate("/admin/dashboard"); 
+        navigate("/admin/dashboard");
         // window.location.reload();
-      } 
+      }
     }
   }, []);
 
@@ -58,13 +63,16 @@ function App() {
             <Route path="OTP" element={<OTP />} />
             <Route path="identify" element={<ForgetPassword />} />
             <Route path="bookingTicket" element={<BookingTicket />} />
-
+            <Route path="methodPayment" element={<MethodPayment />} />
           </Route>
         </Routes>
       ) : (
         <Routes>
           <Route path="/" element={<AuthLayout />}>
-            <Route path="home" element={<HomePage departureTime="10:00:00"/>} />
+            <Route
+              path="home"
+              element={<HomePage departureTime="10:00:00" />}
+            />
             <Route path="aboutUs" element={<AboutUs />} />
             <Route path="accountBooking" element={<AccountBooking />} />
             <Route path="changePassword" element={<ChangePassword />} />
@@ -77,11 +85,18 @@ function App() {
             <Route path="OTP" element={<OTP />} />
             <Route path="bookingTicket" element={<BookingTicket />} />
             <Route path="methodPayment" element={<MethodPayment />} />
-
           </Route>
         </Routes>
       )}
-     <Routes>
+      <Routes>
+        <Route path="/driver" element={<SidebarDriver />}>
+          <Route path="/driver/schedule" element={<Schedule />} />
+          <Route path="/driver/parking" element={<Parking />} />
+          <Route path="/driver/map" element={<Map />} />
+          <Route path="/driver/profile" element={<ProfileDriver />} />
+        </Route>
+      </Routes>
+      <Routes>
         <Route
           path="/admin/*"
           element={

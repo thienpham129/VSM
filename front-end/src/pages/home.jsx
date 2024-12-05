@@ -19,7 +19,10 @@ function HomePage({ departureTime }) {
   // handle time left
   useEffect(() => {
     const targetTime = new Date();
-    const [hours, minutes, seconds] = departureTime.split(":").map(Number);
+    const defaultTime = "00:00:00"; // Thời gian mặc định
+    const [hours, minutes, seconds] = (departureTime || defaultTime)
+      .split(":")
+      .map(Number);
     targetTime.setHours(hours, minutes, seconds);
 
     const interval = setInterval(() => {

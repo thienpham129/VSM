@@ -15,16 +15,15 @@ import java.util.List;
 public interface RouteRepository extends JpaRepository<RouteEntity, Long> {
 	boolean existsByStartLocationAndStopLocation(String startLocation, String stopLocation);
 
-	@Query("SELECT DISTINCT r " +
-			"FROM ScheduleEntity s JOIN RouteEntity r ON s.route.id = r.id " +
-			"WHERE r.startLocation = :startLocation AND r.stopLocation = :stopLocation " +
-			"AND DATE(s.startTime) = :startTime")
-	List<RouteEntity> findStartLocationStopLocationStartTime(
-			@Param("startLocation") String startLocation,
-			@Param("stopLocation") String stopLocation,
-			@Param("startTime") LocalDate startTime);
+	@Query("SELECT DISTINCT r " + "FROM ScheduleEntity s JOIN RouteEntity r ON s.route.id = r.id "
+			+ "WHERE r.startLocation = :startLocation AND r.stopLocation = :stopLocation "
+			+ "AND DATE(s.startTime) = :startTime")
+	List<RouteEntity> findStartLocationStopLocationStartTime(@Param("startLocation") String startLocation,
+			@Param("stopLocation") String stopLocation, @Param("startTime") LocalDate startTime);
 
 	@Query("SELECT s FROM ScheduleEntity s WHERE s.route.id = :routeId AND DATE(s.startTime) = :startTime")
-	List<ScheduleEntity> findByRouteIdAndStartTime(@Param("routeId") long routeId, @Param("startTime") LocalDate startTime);
+	List<ScheduleEntity> findByRouteIdAndStartTime(@Param("routeId") long routeId,
+			@Param("startTime") LocalDate startTime);
 
+	List<RouteEntity> findByStartLocationAndStopLocation(String startLocation, String stopLocation);
 }

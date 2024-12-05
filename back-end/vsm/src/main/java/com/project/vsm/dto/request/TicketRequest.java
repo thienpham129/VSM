@@ -17,7 +17,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class TicketRequest {
-    long typeId;
+	long typeId;
     long scheduleId;
     List<String> selectedSeat;
     String fullName;

@@ -8,16 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.project.vsm.dto.DriverFindScheduleByDateDTO;
 import com.project.vsm.dto.DriverUpdateParkingDTO;
+import com.project.vsm.dto.DriverUpdateScheduleDTO;
 import com.project.vsm.dto.ScheduleCreateDTO;
 import com.project.vsm.dto.ScheduleFindDTO;
 import com.project.vsm.dto.ScheduleUpdateDTO;
@@ -97,5 +92,12 @@ public class ScheduleController {
 	public ResponseEntity<CarEntity> updateParking(@Valid @RequestBody DriverUpdateParkingDTO input) {
 		CarEntity car = scheduleService.driverUpdateParking(input);
 		return new ResponseEntity<>(car, HttpStatus.CREATED);
+	}
+
+	@PutMapping("driver/update-status-schedule")
+	public ResponseEntity<ScheduleEntity> updateStatusSchedule(
+			@Valid @RequestBody DriverUpdateScheduleDTO scheduleDTO) {
+		ScheduleEntity schedule = scheduleService.driverUpdateScheduleById(scheduleDTO);
+		return new ResponseEntity<>(schedule, HttpStatus.CREATED);
 	}
 }
