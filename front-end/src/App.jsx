@@ -28,6 +28,7 @@ import { getTokenFromLocalStorage } from "utils/tokenUtils";
 import AdminRoute from "admin/AdminRoute";
 import { useEffect } from "react";
 import ProfileDriver from "pages/Driver/ProfileDriver";
+import PaymentSuccess from "pages/PaymentSuccess";
 // import Page403 from "Page403";
 
 function App() {
@@ -41,7 +42,6 @@ function App() {
     if (token) {
       if (role === "ROLE_ADMIN") {
         navigate("/admin/dashboard");
-        // window.location.reload();
       }
     }
   }, []);
@@ -51,7 +51,7 @@ function App() {
       {!token ? (
         <Routes>
           <Route path="/" element={<NonAuthLayout />}>
-            <Route path="home" element={<HomePage />} />
+            <Route path="home" element={<HomePage departureTime="10:00:00"/>} />
             <Route path="login" element={<Login />} />
             <Route path="aboutUs" element={<AboutUs />} />
             <Route path="accountBooking" element={<AccountBooking />} />
@@ -71,7 +71,7 @@ function App() {
           <Route path="/" element={<AuthLayout />}>
             <Route
               path="home"
-              element={<HomePage departureTime="10:00:00" />}
+              element={<HomePage />}
             />
             <Route path="aboutUs" element={<AboutUs />} />
             <Route path="accountBooking" element={<AccountBooking />} />
@@ -85,6 +85,7 @@ function App() {
             <Route path="OTP" element={<OTP />} />
             <Route path="bookingTicket" element={<BookingTicket />} />
             <Route path="methodPayment" element={<MethodPayment />} />
+            <Route path="paymentSuccess" element={<PaymentSuccess />} />
           </Route>
         </Routes>
       )}

@@ -278,7 +278,7 @@ public class ScheduleService {
 //		}
 //		List<ScheduleResponse> responses = new ArrayList<>();
 //		for (ScheduleEntity schedule : schedules) {
-//			ScheduleResponse response = ScheduleResponse.mapScheduleResponse(schedule);
+//			ScheduleResponse response = ScheduleResponse.mapScheduleResponse(schedule , c);
 //			CarEntity car = schedule.getCar();
 //			if (car != null) {
 //				CarResponse carResponse = CarResponse.mapCarResponse(car);

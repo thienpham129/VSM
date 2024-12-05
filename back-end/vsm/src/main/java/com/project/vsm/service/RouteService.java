@@ -76,13 +76,13 @@ public class RouteService {
 		routeRepository.delete(optionalRoute.get());
 		return optionalRoute.get();
 	}
-
-	public List<RouteResponse> getRouteWithSchedule(String startLocation, String stopLocation, LocalDate startTime) {
+	public List<RouteResponse> getRouteWithSchedule(String startLocation,
+													String stopLocation, LocalDate startTime) {
 		System.out.println("Start : " + startLocation);
 		System.out.println("Stop : " + stopLocation);
 		System.out.println("Date : " + startTime);
-		List<RouteEntity> routes = routeRepository.findStartLocationStopLocationStartTime(startLocation, stopLocation,
-				startTime);
+		List<RouteEntity> routes = routeRepository.findStartLocationStopLocationStartTime
+				(startLocation, stopLocation, startTime);
 
 		if (routes.isEmpty()) {
 			System.out.println("No schedules found.");

@@ -282,6 +282,7 @@ const Profile = () => {
   //
 
   return (
+    
     <div className="no-bottom no-top zebra" id="content">
       <div id="top" />
       <section id="subheader" className="jarallax text-light">

@@ -7,7 +7,7 @@ import { Modal, Button } from "react-bootstrap";
 
 const AccountBooking = () => {
   const [tickets, setTickets] = useState([]);
-  // const [loading, setLoading] = useState(true);
+  // const [statusPayment, setStatusPaymen] =("");
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
   const ticketsPerPage = 5; // Số vé tối đa mỗi trang
 

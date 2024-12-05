@@ -51,15 +51,16 @@ public class TicketController {
 		return new ResponseEntity<>(ticketService.getTicketByScheduleId(scheduleId), HttpStatus.OK);
 	}
 
-    @PutMapping("/driver/update-status/ticket/{ticketId}")
-    public ResponseEntity<TicketResponse> updateStatusTicketById (@PathVariable long ticketId , @RequestBody TicketRequest request) {
-        return new ResponseEntity<>(ticketService.updateStatusTicketById(ticketId , request) , HttpStatus.OK);
-    }
-	@PutMapping("/admin/update/ticket/{ticketId}")
-	public ResponseEntity<TicketResponse> updateTicketById(@PathVariable long ticketId,
+	@PutMapping("/admin/update-status/ticket/{ticketId}")
+	public ResponseEntity<TicketResponse> updateStatusTicketById(@PathVariable String ticketId,
 			@RequestBody TicketRequest request) {
-		return new ResponseEntity<>(ticketService.updateTicketById(ticketId, request), HttpStatus.OK);
+		return new ResponseEntity<>(ticketService.updateStatusTicketById(ticketId, request), HttpStatus.OK);
 	}
+
+	 @PutMapping("/admin/update/ticket/{ticketId}")
+	    public ResponseEntity<TicketResponse> updateTicketById (@PathVariable String ticketId ,@RequestBody TicketRequest request){
+	        return new ResponseEntity<>(ticketService.updateTicketById(ticketId , request),HttpStatus.OK);
+	    }
 
 	@GetMapping("/admin/ticket-with-schedule/{scheduleId}")
 	public ResponseEntity<List<TicketResponse>> getTicketByScheduleId(@PathVariable long scheduleId) {
@@ -67,9 +68,11 @@ public class TicketController {
 	}
 
 	// @PutMapping("/admin/update-status/ticket/{ticketId}")
-	// public ResponseEntity<TicketResponse> updateStatusTicketById(@PathVariable long ticketId,
-	// 		@RequestBody TicketRequest request) {
-	// 	return new ResponseEntity<>(ticketService.updateStatusTicketById(ticketId, request), HttpStatus.OK);
+	// public ResponseEntity<TicketResponse> updateStatusTicketById(@PathVariable
+	// long ticketId,
+	// @RequestBody TicketRequest request) {
+	// return new ResponseEntity<>(ticketService.updateStatusTicketById(ticketId,
+	// request), HttpStatus.OK);
 	// }
 
 	@GetMapping("/admin/tickets")

@@ -143,44 +143,20 @@ public class TicketService {
 		return true;
 	}
 
-	public TicketResponse updateTicketById(long ticketId, TicketRequest request) {
-		TicketEntity ticket = ticketRepository.findById(ticketId)
-				.orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
+	public TicketResponse updateTicketById(String ticketId, TicketRequest request) {
+        TicketEntity ticket = ticketRepository.findById(Long.valueOf(ticketId))
+                .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
 
-		ticket.setEmail(request.getEmail());
-		ticket.setFullName(request.getFullName());
-		ticket.setNote(request.getNote());
-		ticket.setPhoneNumber(request.getPhoneNumber());
-		ticket.setSelectedSeat(request.getSelectedSeat().toString());
+        ticket.setEmail(request.getEmail());
+        ticket.setFullName(request.getFullName());
+        ticket.setNote(request.getNote());
+        ticket.setPhoneNumber(request.getPhoneNumber());
+        ticket.setSelectedSeat(request.getSelectedSeat().toString());
 
-		ticketRepository.save(ticket);
+        ticketRepository.save(ticket);
 
-		return TicketResponse.fromEntity(ticket);
-	}
-
-	public List<TicketResponse> getTicketByScheduleId(long scheduleId) {
-		ScheduleEntity schedule = scheduleRepository.findById(scheduleId)
-				.orElseThrow(() -> new RuntimeException("Not found schedule with id : " + scheduleId));
-
-		List<TicketEntity> tickets = ticketRepository.getTicketByScheduleId(scheduleId);
-		if (tickets.isEmpty()) {
-			throw new RuntimeException("Not found ticket with schedule id : " + scheduleId);
-		}
-
-		return tickets.stream().map(TicketResponse::fromEntity).collect(Collectors.toList());
-	}
-
-	public TicketResponse updateStatusTicketById(long ticketId, TicketRequest request) {
-		TicketEntity ticket = ticketRepository.findById(ticketId)
-				.orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
-
-		ticket.setStatus(request.getStatus());
-		ticket.setPaid(true);
-		ticketRepository.save(ticket);
-		return TicketResponse.fromEntity(ticket);
-	}
-
-        
+        return TicketResponse.fromEntity(ticket);
+    }      
     
 	public List<TicketResponse> getAllTicketAdmin() {
 		List<TicketEntity> ticketEntities = ticketRepository.findAll();
@@ -208,6 +184,36 @@ public class TicketService {
 		}
 		return ticketResponses;
 	}
+
+
+
+    private boolean checkPaymentStatus(String ticketId) {
+        return true;
+    }
+
+    public List<TicketResponse> getTicketByScheduleId(long scheduleId) {
+        ScheduleEntity schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new RuntimeException("Not found schedule with id : " + scheduleId));
+
+        List<TicketEntity> tickets = ticketRepository.getTicketByScheduleId(scheduleId);
+        if (tickets.isEmpty()) {
+            throw new RuntimeException("Not found ticket with schedule id : " + scheduleId);
+        }
+
+        return tickets.stream()
+                .map(TicketResponse::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public TicketResponse updateStatusTicketById(String ticketId, TicketRequest request) {
+        TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
+                .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
+
+        ticket.setStatus(request.getStatus());
+        ticket.setPaid(true);
+        ticketRepository.save(ticket);
+        return TicketResponse.fromEntity(ticket);
+    }
 
 	public TicketResponseAdminDTO getTicketByIDAdmin(long id) {
 		Optional<TicketEntity> optionalTicket = ticketRepository.findById(id);

@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.UUID;
+
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -15,16 +18,15 @@ import lombok.experimental.FieldDefaults;
 @Builder
 public class TicketEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ticket_id")
-	long ticketId;
+    @Id
+    @Column(name = "ticket_id", nullable = false, unique = true, length = 10)
+    String ticketId;
 
 	@Column(name = "price")
 	double price;
 
-	@Column(name = "payment_method")
-	String paymentMethod;
+    @Column(name = "payment_method")
+    String paymentMethod;
 
 	@Column(name = "is_paid")
 	boolean isPaid;
@@ -74,18 +76,12 @@ public class TicketEntity {
 	@JoinColumn(name = "account_id")
 	AccountEntity account;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "schedule_id")
-	ScheduleEntity scheduleEntity;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "schedule_id")
+    ScheduleEntity scheduleEntity;
 
-	@Override
-	public String toString() {
-		return "TicketEntity [ticketId=" + ticketId + ", price=" + price + ", paymentMethod=" + paymentMethod
-				+ ", isPaid=" + isPaid + ", startLocation=" + startLocation + ", stopLocation=" + stopLocation
-				+ ", status=" + status + ", QRPayment=" + QRPayment + ", selectedSeat=" + selectedSeat + ", note="
-				+ note + ", email=" + email + ", fullName=" + fullName + ", phoneNumber=" + phoneNumber
-				+ ", detailAddressPickUp=" + detailAddressPickUp + ", detailAddressDropOff=" + detailAddressDropOff
-				+ ", voucher=" + voucher + ", paymentEntity=" + paymentEntity + ", account=" + account
-				+ ", scheduleEntity=" + scheduleEntity + "]";
-	}
+    @PrePersist
+    private void generateShortUuid() {
+        this.ticketId = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+    }
 }

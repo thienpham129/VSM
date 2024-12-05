@@ -67,6 +67,26 @@ const MethodPayment = () => {
     }
   };
 
+//   const checkPaymentStatus = async () => {
+//     const navigate = useNavigate(); // Khởi tạo navigate
+
+//     try {
+//         const response = await root.get(`/api/v1/google-sheet/check-ticket/${ticketId}`);
+//         // Giả sử API trả về trạng thái thanh toán trong response.data.paid
+//         if (response.data.paid === true) {
+//             console.log("Vé đã được thanh toán.");
+//             navigate('/paymentSuccess'); // Điều hướng đến trang paymentSuccess nếu thanh toán thành công
+//             return true; // Đã thanh toán
+//         } else {
+//             console.log("Vé chưa được thanh toán.");
+//             return false; // Chưa thanh toán
+//         }
+//     } catch (error) {
+//         console.error("Đã xảy ra lỗi khi kiểm tra trạng thái thanh toán:", error);
+//         return null; // Lỗi
+//     }
+// };
+
   return (
     <div className="no-bottom no-top zebra" id="content">
       <div id="top" />
