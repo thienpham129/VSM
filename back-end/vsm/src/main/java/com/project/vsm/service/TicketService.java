@@ -130,12 +130,12 @@ public class TicketService {
     }
 
 
-    private boolean checkPaymentStatus(long ticketId) {
+    private boolean checkPaymentStatus(String ticketId) {
         return true;
     }
 
-    public TicketResponse updateTicketById(long ticketId, TicketRequest request) {
-        TicketEntity ticket = ticketRepository.findById(ticketId)
+    public TicketResponse updateTicketById(String ticketId, TicketRequest request) {
+        TicketEntity ticket = ticketRepository.findById(Long.valueOf(ticketId))
                 .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
 
         ticket.setEmail(request.getEmail());
@@ -163,8 +163,8 @@ public class TicketService {
                 .collect(Collectors.toList());
     }
 
-    public TicketResponse updateStatusTicketById(long ticketId, TicketRequest request) {
-        TicketEntity ticket = ticketRepository.findById(ticketId)
+    public TicketResponse updateStatusTicketById(String ticketId, TicketRequest request) {
+        TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
                 .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
 
         ticket.setStatus(request.getStatus());

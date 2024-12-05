@@ -20,7 +20,7 @@ import java.util.List;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TicketResponse {
-    long ticketId;
+    String ticketId;
     List<String> selectedSeat;
     double totalPrice;
     String fullName;
