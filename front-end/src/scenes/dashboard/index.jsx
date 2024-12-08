@@ -4,19 +4,34 @@ import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import TrafficIcon from "@mui/icons-material/Traffic";
+import PaymentsIcon from "@mui/icons-material/Payments";
 import Header from "../../components/Header";
 import StatBox from "../../components/StatBox";
 import RevenueWidget from "./RevenueWidget";
-import DriverPerformanceChart from "./chart/DriverPerformanceChart";
 import DriverPerformanceWidget from "./DriverPerformanceWidget";
 import RouteFrequencyPieWidget from "./RouteFrequencyPieWidget";
 import TicketBookingLineWidget from "./TicketBookingLineWidget";
+import { useEffect, useState } from "react";
+import { request } from "admin/helpers/axios_helper";
 
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-
+  const [revenue, setRevenue] = useState(null);
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const fetchRevenues = async () => {
+    try {
+      const response = await request("get", "/admin/dashboard/revenues");
+      setRevenue(response.data);
+      const total = response.data.reduce((acc, curr) => acc + curr, 0);
+      setTotalRevenue(total);
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu doanh thu 12 tháng:", error);
+    }
+  };
+  useEffect(() => {
+    fetchRevenues();
+  }, []);
   return (
     <Box m="20px">
       {/* HEADER */}
@@ -46,6 +61,25 @@ const Dashboard = () => {
         gridAutoRows="140px"
         gap="20px"
       >
+        <Box
+          gridColumn="span 3"
+          backgroundColor={colors.primary[400]}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <StatBox
+            title="1,325,134"
+            subtitle="Doanh Thu"
+            progress="0.80"
+            increase="+43%"
+            icon={
+              <PaymentsIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              />
+            }
+          />
+        </Box>
         {/* ROW 1 */}
         <Box
           gridColumn="span 3"
@@ -104,31 +138,12 @@ const Dashboard = () => {
             }
           />
         </Box>
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="1,325,134"
-            subtitle="Traffic Received"
-            progress="0.80"
-            increase="+43%"
-            icon={
-              <TrafficIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-        </Box>
       </Box>
 
       <Grid container spacing={2} style={{ marginTop: "25px" }}>
         {/* ROW 1 */}
         <Grid item xs={12} md={8}>
-          <RevenueWidget />
+          <RevenueWidget totalRevenue={totalRevenue} revenue={revenue} />
         </Grid>
 
         <Grid item xs={12} md={4}>

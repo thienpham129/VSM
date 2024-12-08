@@ -180,8 +180,6 @@ public class TicketService {
 		return TicketResponse.fromEntity(ticket);
 	}
 
-        
-    
 	public List<TicketResponse> getAllTicketAdmin() {
 		List<TicketEntity> ticketEntities = ticketRepository.findAll();
 		List<TicketResponse> ticketResponses = new ArrayList<>();

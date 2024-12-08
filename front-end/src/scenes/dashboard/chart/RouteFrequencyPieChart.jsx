@@ -1,18 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { request } from "admin/helpers/axios_helper";
+import { Typography } from "@mui/material";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const RouteFrequencyPieChart = ({ data }) => {
-  // Dữ liệu biểu đồ
+  const [routes, setRoutes] = useState([]);
+
+  const fetchRoutes = async () => {
+    try {
+      const response = await request("get", "/admin/routes");
+      const formattedRoutes = response.data.map(
+        (route) => `${route.startLocation} → ${route.stopLocation}`
+      );
+      setRoutes(formattedRoutes);
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu tuyến đường:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchRoutes();
+  }, []);
+
   const chartData = {
-    labels: [
-      "Huế → Đà Nẵng",
-      "Đà Nẵng → Huế",
-      "Huế → Hội An",
-      "Đà Nẵng → Hội An",
-    ],
+    labels: routes,
     datasets: [
       {
         label: "Tần suất các tuyến đường",
@@ -41,6 +55,17 @@ const RouteFrequencyPieChart = ({ data }) => {
         position: "right",
         labels: {
           color: "#ffffff",
+          font: {
+            size: 14,
+          },
+        },
+      },
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem) => {
+            const value = tooltipItem.raw;
+            return `${tooltipItem.label}: ${value} lượt`;
+          },
         },
       },
     },
@@ -48,7 +73,13 @@ const RouteFrequencyPieChart = ({ data }) => {
 
   return (
     <div style={{ width: "100%", maxWidth: "500px", margin: "auto" }}>
-      <Pie data={chartData} options={options} />
+      {data.some((val) => val > 0) ? (
+        <Pie data={chartData} options={options} />
+      ) : (
+        <Typography variant="h6" color="#ffffff" textAlign="center">
+          Không có dữ liệu cho tháng này.
+        </Typography>
+      )}
     </div>
   );
 };

@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { request } from "admin/helpers/axios_helper";
 
 ChartJS.register(
   CategoryScale,
@@ -19,7 +20,7 @@ ChartJS.register(
   Legend
 );
 
-const RevenueChart = () => {
+const RevenueChart = (props) => {
   const mockData = {
     labels: [
       "Tháng 1",
@@ -37,8 +38,8 @@ const RevenueChart = () => {
     ],
     datasets: [
       {
-        label: "Doanh thu (triệu đồng)",
-        data: [50, 70, 80, 90, 100, 120, 150, 170, 140, 130, 160, 180],
+        label: "Doanh thu (VNĐ)",
+        data: props.revenue,
         backgroundColor: "rgba(75, 192, 192, 0.6)",
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
