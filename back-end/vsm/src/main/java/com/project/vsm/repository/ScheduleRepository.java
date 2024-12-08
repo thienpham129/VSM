@@ -81,4 +81,10 @@ public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Long> 
 			+ "WHERE YEAR(s.startTime) = :year " + "GROUP BY s.account.id, MONTH(s.startTime) "
 			+ "ORDER BY s.account.id, MONTH(s.startTime)")
 	List<Object[]> findDriverScheduleCountByMonth(@Param("year") int year);
+
+	@Query("SELECT COUNT(s) FROM ScheduleEntity s WHERE EXTRACT(MONTH FROM s.startTime) = :month AND EXTRACT(YEAR FROM s.startTime) = :year")
+	long countSchedulesByMonthAndYear(int month, int year);
+
+	@Query("SELECT COUNT(s) FROM ScheduleEntity s WHERE EXTRACT(MONTH FROM s.startTime) = :prevMonth AND EXTRACT(YEAR FROM s.startTime) = :year")
+	long countSchedulesByPreviousMonthAndYear(int prevMonth, int year);
 }

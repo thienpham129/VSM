@@ -1,6 +1,9 @@
 package com.project.vsm.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,8 +16,11 @@ import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.project.vsm.dto.DashboardStatsDTO;
+import com.project.vsm.dto.RevenueStatDTO;
 import com.project.vsm.model.RouteEntity;
 import com.project.vsm.model.TicketEntity;
+import com.project.vsm.repository.AccountRepository;
 import com.project.vsm.repository.RouteRepository;
 import com.project.vsm.repository.ScheduleRepository;
 import com.project.vsm.repository.TicketRepository;
@@ -27,6 +33,8 @@ public class DashboardService {
 	private RouteRepository routeRepository;
 	@Autowired
 	private ScheduleRepository scheduleRepository;
+	@Autowired
+	private AccountRepository accountRepository;
 
 	public List<Double> getListRevenue() {
 		List<TicketEntity> ticketEntities = ticketRepository.findAll();
@@ -110,6 +118,102 @@ public class DashboardService {
 			result.add(routeData);
 		}
 
+		return result;
+	}
+
+	public RevenueStatDTO getCurrentMonthRevenueStat() {
+		// Lấy tháng và năm hiện tại
+		LocalDate now = LocalDate.now();
+		YearMonth currentMonth = YearMonth.from(now);
+		YearMonth previousMonth = currentMonth.minusMonths(1);
+
+		// Tính tổng doanh thu của tháng hiện tại
+		double currentMonthRevenue = ticketRepository.sumRevenueByMonth(currentMonth.getYear(),
+				currentMonth.getMonthValue());
+
+		// Tính tổng doanh thu của tháng trước
+		double previousMonthRevenue = ticketRepository.sumRevenueByMonth(previousMonth.getYear(),
+				previousMonth.getMonthValue());
+
+		// Tính % tăng trưởng
+		double increasePercentage = 0.0;
+		if (previousMonthRevenue > 0) {
+			increasePercentage = ((currentMonthRevenue - previousMonthRevenue) / previousMonthRevenue) * 100;
+		}
+
+		// Tạo đối tượng kết quả
+		RevenueStatDTO revenueStat = new RevenueStatDTO();
+		revenueStat.setTitle(String.format("%.2f", currentMonthRevenue)); // Định dạng doanh thu
+		revenueStat.setIncrease(String.format("%.2f", increasePercentage) + "%"); // Định dạng tăng trưởng
+
+		return revenueStat;
+	}
+
+	public DashboardStatsDTO getTicketStatsForCurrentMonth() {
+		LocalDate today = LocalDate.now();
+		int currentMonth = today.getMonthValue();
+		int currentYear = today.getYear();
+
+		// Lấy tổng số vé đã đặt trong tháng hiện tại
+		long currentMonthTickets = ticketRepository.countTicketsByMonthAndYear(currentMonth, currentYear);
+
+		// Lấy tổng số vé đã đặt trong tháng trước
+		int previousMonth = (currentMonth == 1) ? 12 : currentMonth - 1;
+		int previousYear = (currentMonth == 1) ? currentYear - 1 : currentYear;
+		long previousMonthTickets = ticketRepository.countTicketsByMonthAndYear(previousMonth, previousYear);
+
+		// Tính tỷ lệ tăng trưởng
+		double increase = 0.0;
+		if (previousMonthTickets > 0) {
+			increase = ((double) (currentMonthTickets - previousMonthTickets) / previousMonthTickets) * 100;
+		}
+
+		// Trả về kết quả
+		return new DashboardStatsDTO(String.valueOf(currentMonthTickets), // Title (Số vé trong tháng hiện tại)
+				String.format("%.2f", increase) + "%" // Increase (% so với tháng trước)
+		);
+	}
+
+	public Map<String, Object> getScheduleStatsForCurrentMonth() {
+		LocalDateTime now = LocalDateTime.now();
+		int currentMonth = now.getMonthValue();
+		int currentYear = now.getYear();
+		int previousMonth = (currentMonth == 1) ? 12 : currentMonth - 1;
+		// Get total number of schedules for the current month
+		long currentMonthSchedules = scheduleRepository.countSchedulesByMonthAndYear(currentMonth, currentYear);
+		// Get total number of schedules for the previous month
+		long previousMonthSchedules = scheduleRepository.countSchedulesByPreviousMonthAndYear(previousMonth,
+				currentYear);
+		// Calculate the increase percentage
+		double increase = 0.0;
+		if (previousMonthSchedules > 0) {
+			increase = ((double) (currentMonthSchedules - previousMonthSchedules) / previousMonthSchedules) * 100;
+		}
+		// Prepare response
+		Map<String, Object> result = new HashMap<>();
+		result.put("title", currentMonthSchedules);
+		result.put("increase", String.format("%.2f%%", increase));
+		return result;
+	}
+
+	public Map<String, Object> getAccountStats() {
+		LocalDateTime now = LocalDateTime.now();
+		int currentMonth = now.getMonthValue();
+		int currentYear = now.getYear();
+		int previousMonth = (currentMonth == 1) ? 12 : currentMonth - 1;
+		// Lấy tổng số tài khoản được tạo trong tháng hiện tại
+		long currentMonthAccounts = accountRepository.countAccountsByCurrentMonth(currentMonth, currentYear);
+		// Lấy tổng số tài khoản được tạo trong tháng trước
+		long previousMonthAccounts = accountRepository.countAccountsByPreviousMonth(previousMonth, currentYear);
+		// Tính phần trăm thay đổi
+		double increase = 0.0;
+		if (previousMonthAccounts > 0) {
+			increase = ((double) (currentMonthAccounts - previousMonthAccounts) / previousMonthAccounts) * 100;
+		}
+		// Trả về kết quả
+		Map<String, Object> result = new HashMap<>();
+		result.put("title", currentMonthAccounts); // Tổng tài khoản tạo trong tháng hiện tại
+		result.put("increase", String.format("%.2f%%", increase)); // Tính phần trăm tăng trưởng
 		return result;
 	}
 //	public List<Double> getListRevenue() {

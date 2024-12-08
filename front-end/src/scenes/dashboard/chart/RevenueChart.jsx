@@ -9,7 +9,6 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { request } from "admin/helpers/axios_helper";
 
 ChartJS.register(
   CategoryScale,

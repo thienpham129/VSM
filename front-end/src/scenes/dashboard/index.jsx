@@ -19,6 +19,11 @@ const Dashboard = () => {
   const colors = tokens(theme.palette.mode);
   const [revenue, setRevenue] = useState(null);
   const [totalRevenue, setTotalRevenue] = useState(0);
+  const [statRevenue, setStatRevenue] = useState(0);
+  const [statTicket, setStatTicket] = useState(0);
+  const [statSchedule, setStatSchedule] = useState(0);
+  const [statAccount, setStatAccount] = useState(0);
+
   const fetchRevenues = async () => {
     try {
       const response = await request("get", "/admin/dashboard/revenues");
@@ -32,6 +37,66 @@ const Dashboard = () => {
   useEffect(() => {
     fetchRevenues();
   }, []);
+  const fetchStatsAccount = async () => {
+    try {
+      const response = await request("get", "/admin/dashboard/stat-account");
+      setStatAccount(response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu stats account:", error);
+    }
+  };
+  useEffect(() => {
+    fetchStatsAccount();
+  }, []);
+  const fetchStatsSchedule = async () => {
+    try {
+      const response = await request("get", "/admin/dashboard/stat-schedule");
+      setStatSchedule(response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu stats schedule:", error);
+    }
+  };
+  useEffect(() => {
+    fetchStatsSchedule();
+  }, []);
+
+  const fetchStatsTicket = async () => {
+    try {
+      const response = await request("get", "/admin/dashboard/stat-ticket");
+      setStatTicket(response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu stats ticket:", error);
+    }
+  };
+  useEffect(() => {
+    fetchStatsTicket();
+  }, []);
+
+  const fetchStatRevenue = async () => {
+    try {
+      const response = await request("get", "/admin/dashboard/stat-revenue");
+
+      // Định dạng title thành VND
+      const formattedTitle = new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+        // minimumFractionDigits: 2, // Đảm bảo có 2 chữ số thập phân
+        // maximumFractionDigits: 2, // Đảm bảo có 2 chữ số thập phân
+      }).format(response.data.title);
+
+      // Cập nhật state với title đã được định dạng
+      setStatRevenue({
+        title: formattedTitle,
+        increase: response.data.increase,
+      });
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu doanh thu 12 tháng:", error);
+    }
+  };
+  useEffect(() => {
+    fetchStatRevenue();
+  }, []);
+
   return (
     <Box m="20px">
       {/* HEADER */}
@@ -69,10 +134,10 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="1,325,134"
+            title={statRevenue.title}
             subtitle="Doanh Thu"
             progress="0.80"
-            increase="+43%"
+            increase={statRevenue.increase}
             icon={
               <PaymentsIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -89,10 +154,10 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="12,361"
+            title={statTicket.title}
             subtitle="Vé Xe"
             progress="0.75"
-            increase="+14%"
+            increase={statTicket.increase}
             icon={
               <ConfirmationNumberIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -108,10 +173,10 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="431,225"
+            title={statSchedule.title}
             subtitle="Lịch Trình"
             progress="0.50"
-            increase="+21%"
+            increase={statSchedule.increase}
             icon={
               <CalendarMonthIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -127,10 +192,10 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="32,441"
+            title={statAccount.title}
             subtitle="Người Dùng"
             progress="0.30"
-            increase="+5%"
+            increase={statAccount.increase}
             icon={
               <PersonAddIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}

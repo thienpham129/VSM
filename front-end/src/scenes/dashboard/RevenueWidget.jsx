@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Box, Typography, IconButton } from "@mui/material";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import RevenueChart from "./chart/RevenueChart";
 import { tokens } from "../../theme";
 import { useTheme } from "@emotion/react";
-import { request } from "admin/helpers/axios_helper";
 
 const RevenueWidget = (props) => {
   const theme = useTheme();

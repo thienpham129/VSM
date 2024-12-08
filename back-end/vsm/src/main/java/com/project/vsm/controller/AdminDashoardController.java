@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.vsm.dto.DashboardStatsDTO;
+import com.project.vsm.dto.RevenueStatDTO;
 import com.project.vsm.service.DashboardService;
 
 @RestController
@@ -36,5 +38,25 @@ public class AdminDashoardController {
 	@GetMapping("/dashboard/routes-tickets")
 	public ResponseEntity<List<Map<String, Object>>> getAllTicketRoutes() {
 		return new ResponseEntity<>(dashboardService.getRouteTicketStatistics(), HttpStatus.OK);
+	}
+
+	@GetMapping("/dashboard/stat-revenue")
+	public ResponseEntity<RevenueStatDTO> getStatRevenue() {
+		return new ResponseEntity<>(dashboardService.getCurrentMonthRevenueStat(), HttpStatus.OK);
+	}
+
+	@GetMapping("/dashboard/stat-ticket")
+	public ResponseEntity<DashboardStatsDTO> getStatTicket() {
+		return new ResponseEntity<>(dashboardService.getTicketStatsForCurrentMonth(), HttpStatus.OK);
+	}
+
+	@GetMapping("/dashboard/stat-schedule")
+	public ResponseEntity<Map<String, Object>> getStatSchedule() {
+		return new ResponseEntity<>(dashboardService.getScheduleStatsForCurrentMonth(), HttpStatus.OK);
+	}
+
+	@GetMapping("/dashboard/stat-account")
+	public ResponseEntity<Map<String, Object>> getStatAccount() {
+		return new ResponseEntity<>(dashboardService.getAccountStats(), HttpStatus.OK);
 	}
 }
