@@ -1,7 +1,7 @@
 import "./App.css";
 import AuthLayout from "components/layer/auth";
 import HomePage from "pages/home";
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Login from "pages/login";
 import AboutUs from "pages/aboutUs";
 import NonAuthLayout from "components/layer/nonAuth";
@@ -37,6 +37,8 @@ function App() {
   const token = getTokenFromLocalStorage();
   const navigate = useNavigate();
   const role = localStorage.getItem("role");
+  const location = useLocation();
+
 
   useEffect(() => {
     if (token) {
@@ -45,6 +47,22 @@ function App() {
       }
     }
   }, []);
+
+
+  useEffect(() => {
+    if (
+      location.pathname === "/driver/schedule" ||
+      location.pathname === "/driver/parking" ||
+      location.pathname === "/driver/map" ||
+      location.pathname === "/driver/profile"
+    ) {
+      document.body.style.overflowX = "hidden";
+      document.body.style.overflowY = "auto";
+    } else {
+      document.body.style.overflowX = "visible";
+      document.body.style.overflowY = "visible";
+    }
+  }, [location]);
 
   return (
     <>

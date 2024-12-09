@@ -120,8 +120,8 @@ public class TicketService {
 				.orElseThrow(() -> new RuntimeException("Schedule not found"));
 
 		TicketEntity ticket = request.toEntity(account, payment, voucher, totalPrice);
-		ticket.setStartLocation(schedule.getStartLocation());
-		ticket.setStopLocation(schedule.getStopLocation());
+		ticket.setStartLocation(schedule.getRoute().getStartLocation());
+		ticket.setStopLocation(schedule.getRoute().getStopLocation());
 		ticket.setScheduleEntity(schedule);
 
 		ticket = ticketRepository.save(ticket);

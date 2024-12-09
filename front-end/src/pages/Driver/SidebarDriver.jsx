@@ -3,7 +3,60 @@ import boxicons from "boxicons";
 import { Outlet } from "react-router-dom";
 import profileImage from "./4.jpg";
 import logo from "./logo_vsm.png";
+import { getTokenFromLocalStorage } from "utils/tokenUtils";
+import { root } from "helper/axiosClient";
+import { jwtDecode } from "jwt-decode";
+
 function SidebarDriver() {
+  const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [userId, setUserId] = useState("");
+
+
+  useEffect(() => {
+    const token = getTokenFromLocalStorage();
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        console.log("««««« decodedToken »»»»»", decodedToken.sub);
+
+        const userId = decodedToken.sub;
+        if (userId) {
+          setUserId(userId);
+          getUserById(userId);
+        } else {
+          console.error("userId not found in token");
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    }
+  }, []);
+
+  const getUserById = async (userId) => {
+    const token = getTokenFromLocalStorage();
+    try {
+      const response = await root.get(`/user/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response && response.data) {
+        setEmail(response.data.email);
+        setFullName(
+          `${response.data.firstName || ""} ${
+            response.data.lastName || ""
+          }`.trim()
+        );
+      } else {
+        console.log("Failed to retrieve user data");
+      }
+    } catch (error) {
+      console.log("Failed to retrieve user data:", error);
+    }
+  };
   return (
     <>
       <div className="sidebar">
@@ -89,8 +142,8 @@ function SidebarDriver() {
             <div className="profile_details">
               <img src={profileImage} alt="" />
               <div className="name_job">
-                <div className="name">Nguyen Van A</div>
-                <div className="job"> Tài Xế xe 7 chỗ</div>
+                <div className="name">{fullName}</div>
+                <div className="email">{email}</div>
               </div>
             </div>
             <box-icon

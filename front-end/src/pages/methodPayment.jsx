@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "pages/bookingTicket.module.css";
 import MethodPaymentMobile from "components/MethodPaymentMobile/MethodPaymentMobile";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { root } from "helper/axiosClient";
 
 const MethodPayment = () => {
@@ -24,8 +24,9 @@ const MethodPayment = () => {
   const [paymentUrl, setPaymentUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-
   const [schedules, setSchedules] = useState([]);
+
+  const navigate = useNavigate();
 
   const handleSearch = async () => {
     if (!startLocation || !stopLocation || !startTime) {
@@ -42,7 +43,6 @@ const MethodPayment = () => {
         },
       });
       setSchedules(response.data);
-      console.log("««««« response.data »»»»»", response.data);
     } catch (error) {
       console.error("Lỗi khi gọi API:", error);
       alert("Không tìm thấy lịch trình phù hợp.");
@@ -67,25 +67,51 @@ const MethodPayment = () => {
     }
   };
 
-//   const checkPaymentStatus = async () => {
-//     const navigate = useNavigate(); // Khởi tạo navigate
+  // Check payment ticket
 
-//     try {
-//         const response = await root.get(`/api/v1/google-sheet/check-ticket/${ticketId}`);
-//         // Giả sử API trả về trạng thái thanh toán trong response.data.paid
-//         if (response.data.paid === true) {
-//             console.log("Vé đã được thanh toán.");
-//             navigate('/paymentSuccess'); // Điều hướng đến trang paymentSuccess nếu thanh toán thành công
-//             return true; // Đã thanh toán
-//         } else {
-//             console.log("Vé chưa được thanh toán.");
-//             return false; // Chưa thanh toán
-//         }
-//     } catch (error) {
-//         console.error("Đã xảy ra lỗi khi kiểm tra trạng thái thanh toán:", error);
-//         return null; // Lỗi
-//     }
-// };
+  const checkPayment = async () => {
+    if (!ticketId) {
+      alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra thanh toán.");
+      return;
+    }
+
+    try {
+      const response = await root.get(
+        `/api/v1/google-sheet/check-ticket/${ticketId}`
+      );
+
+      if (response.status === 200) {
+        console.log("««««« response.data »»»»»", response.data);
+        if (response.data.paid === true) {
+          // alert(`Vé đã được thanh toán`);
+          console.log("««««« Vé đã được thanh toán »»»»»");
+          navigate("/paymentSuccess");
+          return true;
+        } else {
+          // alert(`Vé chưa được thanh toán`);
+          console.log("««««« Vé chưa được thanh toán` »»»»»");
+          return false;
+        }
+      } else {
+        setError("Không thể kiểm tra trạng thái thanh toán.");
+      }
+    } catch (err) {
+      console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
+      setError("Đã xảy ra lỗi trong quá trình kiểm tra thanh toán.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!ticketId) return;
+
+    const interval = setInterval(() => {
+      checkPayment();
+    }, 10000); // Gọi hàm mỗi 5 giây
+
+    return () => clearInterval(interval); // Xóa interval khi component bị unmount
+  }, [ticketId, navigate]);
 
   return (
     <div className="no-bottom no-top zebra" id="content">
@@ -301,7 +327,7 @@ const MethodPayment = () => {
                           <img
                             src={paymentUrl}
                             alt="Payment QR Code"
-                            style={{ width: "300px", height: "300px" }}
+                            style={{ width: "500px", height: "500px" }}
                           />
                         </div>
                       )}
@@ -357,6 +383,12 @@ const MethodPayment = () => {
                         </span>
                       </div>
                       <div className={styles.bookingPayment__info__item}>
+                        <label htmlFor="">Mã Vé</label>
+                        <p >
+                          {ticketId}
+                        </p>
+                      </div>
+                      <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Tuyến</label>
                         <p>
                           {startLocation} - {stopLocation}
@@ -393,25 +425,11 @@ const MethodPayment = () => {
                           </span>
                         </p>
                       </div>
-                      <div className={styles.bookingPayment__info__item}>
+                      {/* <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Mã khuyến mãi</label>
-                        <p />
-                      </div>
-                      {/* <div className={styles.bookingPayment__submit}>
-                        <button
-                          type="submit"
-                          className={styles.bookingPayment__submit__continue}
-                          onClick={handlePayment}
-                        >
-                          Thanh toán{" "}
-                        </button>
-                        <a
-                          href="/index.php?mod=datve&page=datve&sub=cancleBooking"
-                          className={styles.bookingPayment__submit__cancle}
-                        >
-                          Huỷ đặt xe{" "}
-                        </a>
+                        <p>{voucher}</p>
                       </div> */}
+
                       <div className={styles.bookingPayment__submit}>
                         <button onClick={handlePayment} disabled={isLoading}>
                           {isLoading ? "Processing..." : "Thanh toán"}
@@ -421,8 +439,19 @@ const MethodPayment = () => {
                         className={styles.bookingPayment__info__item__line}
                       />
                       <div className={styles.bookingPayment__info__item}>
-                        <label htmlFor="">Tổng tiền</label>
-                        <p>{totalPrice.toLocaleString()} đ</p>
+                        <label
+                          htmlFor=""
+                          style={{
+                            fontSize: "24px",
+                            fontWeight: "bold",
+                            color: "#333",
+                          }}
+                        >
+                          Tổng tiền :
+                        </label>
+                        <p style={{ fontSize: "26px", paddingTop: "7px" }}>
+                          {totalPrice.toLocaleString()} đ
+                        </p>
                       </div>
                     </div>
                   </div>

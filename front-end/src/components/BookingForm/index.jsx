@@ -38,6 +38,7 @@ function BookingForm({
   const [selectedSeat, setSelectedSeat] = useState([]);
   const [errors, setErrors] = useState({});
   const [ticketId, setTicketId] = useState(null);
+  const [voucher, setVoucher] = useState(null);
 
   // Pick-up location state
   const [pickupSpecificAddress, setPickupSpecificAddress] = useState("");
@@ -251,6 +252,7 @@ function BookingForm({
       paymentMethod,
       scheduleId,
       typeId,
+      ...(voucher && { voucher }),
     };
 
     try {
@@ -264,8 +266,6 @@ function BookingForm({
 
       if (response.status === 200) {
         console.log("Booking successful:", response.data);
-        // setTicketId(response.data.ticketId);
-        // console.log('««««« ticketId456 »»»»»', response.data.ticketId);
         navigate("/methodPayment", {
           state: {
             fullName,
@@ -275,11 +275,12 @@ function BookingForm({
             detailAddressToPickUp,
             selectedSeat,
             detailAddressDropOff,
-            totalPrice,
+            totalPrice : response.data.totalPrice,
             startTime,
             startLocation,
             stopLocation,
             ticketId: response.data.ticketId,
+            // voucher : response.data.voucher
           },
         });
       } else {
@@ -533,8 +534,13 @@ function BookingForm({
         </div>
         <div className={styles.form_group}>
           <label htmlFor="">Mã khuyến mãi:</label>
-          <input type="text" name="promotionCode" defaultValue="" />
+          <input type="text" name="promotionCode" defaultValue=""
+            className="form-control"
+            value={voucher}
+            onChange={(e) => setVoucher(e.target.value)}
+          />
         </div>
+        
         <div
           className={`styles.form_group`}
           data-discount-trip="PLT0Tc1ybgN295oCg20241015"

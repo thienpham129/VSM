@@ -244,56 +244,7 @@ const BookingTicket = () => {
         <div
           className={`${styles.bookingPage__tickets} ${styles.js__booking__destop}`}
         >
-          {/* <div className={styles.container}>
-            <div className={styles.bookingPage__tickets__wrap}>
-              {schedules.length > 0 ? (
-                schedules.map((schedule) => (
-                  <div
-                    className={styles.bookingPage__ticket}
-                    key={schedule.routeId}
-                  >
-                    {schedule.schedules.map((item, index) => {
-                      
-                      (
-                      <div key={index}>
-                        <h1>startTime={item.startTime}</h1>
-                        {item.car.type?.numSeat === 7 && (
-                          <Schedule7Seat
-                            key={item.scheduleId}
-                            startTime={item.startTime}
-                            scheduleId={item.scheduleId}
-                            startLocation={schedule.startLocation}
-                            stopLocation={schedule.stopLocation}
-                            car={item.car}
-                            numSeat={item.car.type?.numSeat}
-                            price={item.car.type?.price}
-                            typeId={item.car.type?.typeId}
-                          />
-                        )}
-                        {item.car.type?.numSeat === 10 && (
-                          <Schedule10Seat
-                            key={item.scheduleId}
-                            startTime={item.startTime}
-                            scheduleId={item.scheduleId}
-                            startLocation={schedule.startLocation}
-                            stopLocation={schedule.stopLocation}
-                            car={item.car}
-                            numSeat={item.car.type?.numSeat}
-                            price={item.car.type?.price}
-                            typeId={item.car.type?.typeId}
-                          />
-                        )}
-                      </div>
-                    )})}
-                  </div>
-                ))
-              ) : (
-                <p className="no_schedule">
-                  Không tìm thấy lịch trình nào! Vui lòng chọn địa điểm khác
-                </p>
-              )}
-            </div>
-          </div> */}
+          
           <div className={styles.container}>
             <div className={styles.bookingPage__tickets__wrap}>
               {schedules.length > 0 ? (

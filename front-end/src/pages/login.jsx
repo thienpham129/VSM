@@ -76,7 +76,7 @@ const Login = () => {
       }
     } catch (error) {
       console.error("Login failed:", error);
-      setErrorMessage("Error logging in. Please check your credentials.");
+      setErrorMessage("Có lỗi khi đăng nhập! Vui lòng kiểm tra lại thông tin đăng nhập");
     } finally {
       setIsSubmitting(false);
     }

@@ -12,19 +12,19 @@ import { getTokenFromLocalStorage } from "utils/tokenUtils";
 import { root } from "helper/axiosClient";
 import { jwtDecode } from "jwt-decode";
 
-const checkoutSchema = yup.object().shape({
-  address: yup.string().required("Vui lòng nhập địa chỉ của tài xế"),
-  dob: yup.string().required("Vui lòng nhập ngày sinh của tài xê"),
-  email: yup
-    .string()
-    .email("Vui lòng nhập email hợp lệ")
-    .required("Vui lòng nhập email tài xế"),
-  firstName: yup.string().required("Vui lòng nhập tên tài xế"),
-  lastName: yup.string().required("Vui lòng nhập họ tài xế"),
-  phoneNumber: yup.string().required("Vui lòng nhập số điện thoại của tài xế"),
-  imgDriverLisence1: yup.mixed(),
-  imgDriverLisence2: yup.mixed(),
-});
+// const checkoutSchema = yup.object().shape({
+//   address: yup.string().required("Vui lòng nhập địa chỉ của tài xế"),
+//   dob: yup.string().required("Vui lòng nhập ngày sinh của tài xê"),
+//   email: yup
+//     .string()
+//     .email("Vui lòng nhập email hợp lệ")
+//     .required("Vui lòng nhập email tài xế"),
+//   firstName: yup.string().required("Vui lòng nhập tên tài xế"),
+//   lastName: yup.string().required("Vui lòng nhập họ tài xế"),
+//   phoneNumber: yup.string().required("Vui lòng nhập số điện thoại của tài xế"),
+//   imgDriverLisence1: yup.mixed(),
+//   imgDriverLisence2: yup.mixed(),
+// });
 
 const ProfileDriver = () => {
   const [firstName, setFirstName] = useState("");
@@ -41,6 +41,25 @@ const ProfileDriver = () => {
   const navigate = useNavigate();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+
+
+  useEffect(() => {
+    const token = getTokenFromLocalStorage();
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        const id = decodedToken.sub;
+        if (id) {
+          setUserId(id);
+          fetchUser(id);
+        } else {
+          console.error("id not found in token");
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    }
+  }, []);
 
   const fetchUser = async (id) => {
     const token = getTokenFromLocalStorage();
@@ -67,35 +86,10 @@ const ProfileDriver = () => {
     }
   };
 
-  useEffect(() => {
-    const token = getTokenFromLocalStorage();
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-        const id = decodedToken.sub;
-        if (id) {
-          setUserId(id);
-          fetchUser(id);
-        } else {
-          console.error("id not found in token");
-        }
-      } catch (error) {
-        console.error("Error decoding token:", error);
-      }
-    }
-  }, []);
-
   const handleFormSubmit = async (values) => {
     const formData = new FormData();
-    let dobFormatted = "";
-    if (dob) {
-      try {
-        const dobParsed = parseISO(values.dob);
-        dobFormatted = format(dobParsed, "dd/MM/yyyy");
-      } catch (error) {
-        console.error("Failed to parse DOB:", error);
-      }
-    }
+    const dobParsed = parseISO(values.dob); // Chuyển chuỗi ngày thành đối tượng Date
+    const dobFormatted = format(dobParsed, "dd/MM/yyyy"); // Định dạng thành dd/MM/yyyy
     // Thêm các trường thông tin vào formData
     formData.append("firstName", values.firstName);
     formData.append("lastName", values.lastName);
@@ -125,9 +119,17 @@ const ProfileDriver = () => {
         }
       );
 
-      fetchUser();
+      await fetchUser(id);
       setSnackbarMessage("Lưu thông tin tài xế thành công!");
-      // setSnackbarColor("success");
+      setFirstName(values.firstName);
+      setLastName(values.lastName);
+      // setDob(dobFormatted);
+      setPhoneNumber(values.phoneNumber);
+      setAddress(values.address);
+      if (values.imgDriverLisence1)
+        setImgDriverLisence1(URL.createObjectURL(values.imgDriverLisence1));
+      if (values.imgDriverLisence2)
+        setImgDriverLisence2(URL.createObjectURL(values.imgDriverLisence2));
     } catch (error) {
       console.error(
         "Error updating driver:",
@@ -139,11 +141,10 @@ const ProfileDriver = () => {
     }
   };
 
-
   return (
     <Box m="20px">
       <Header
-        title="Chi Tiết Thông Tin Tài Xế"
+        title="Thông Tin Cá Nhân Tài Xế"
         subtitle={
           <>
             <span
@@ -157,19 +158,20 @@ const ProfileDriver = () => {
       />
 
       <Formik
+        enableReinitialize
         onSubmit={handleFormSubmit}
         initialValues={{
-          id: id,
-          address: address,
-          dob: dob,
-          email: email,
-          firstName: firstName,
-          lastName: lastName,
-          phoneNumber: phoneNumber,
+          // id: id,
+          address,
+          dob,
+          email,
+          firstName,
+          lastName,
+          phoneNumber,
           imgDriverLisence1: null,
           imgDriverLisence2: null,
         }}
-        validationSchema={checkoutSchema}
+        // validationSchema={checkoutSchema}
       >
         {({
           values,
@@ -189,7 +191,7 @@ const ProfileDriver = () => {
                 "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
               }}
             >
-              <TextField
+              {/* <TextField
                 fullWidth
                 variant="filled"
                 type="text"
@@ -200,7 +202,7 @@ const ProfileDriver = () => {
                   readOnly: true,
                 }}
                 sx={{ gridColumn: "span 4" }}
-              />
+              /> */}
 
               <TextField
                 fullWidth

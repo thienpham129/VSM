@@ -34,6 +34,7 @@ const UserAdmin = () => {
     try {
       const response = await request("get", "/admin/users");
       setListUser(response.data); // Cập nhật danh sách người dùng
+      console.log('««««« response.data »»»»»', response.data);
     } catch (error) {
       console.error("Lỗi khi lấy danh sách người dùng:", error);
     }

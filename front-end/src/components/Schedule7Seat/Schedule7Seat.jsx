@@ -3,58 +3,32 @@ import styles from "pages/bookingTicket.module.css";
 import BookingForm from "components/BookingForm";
 import { root } from "helper/axiosClient";
 
-const Seat = ({ seatId, seatStatus, onSelect, bookedSeats }) => {
-  // const isBooked = bookedSeats.includes(seatId);
-  const isSold = bookedSeats.soldSeats.includes(seatId); // paid: true
-  const isBooked = bookedSeats.bookedSeats.includes(seatId); // paid: false
+const Seat = ({ seatId, onSelect, bookedSeats }) => {
+  const status = bookedSeats[seatId];
   const [isSelected, setIsSelected] = useState(false);
 
   const handleSeatClick = () => {
-    if (isSold || isBooked) return; // Không cho chọn nếu ghế đã đặt hoặc bán
+    if (status === "Đã thanh toán" || status === "Đang chờ xử lý") return;
     setIsSelected((prev) => !prev);
     onSelect(seatId, !isSelected);
   };
 
-  return (
-    //   <td
-    //   className={${styles.avseat} ${
-    //     isBooked ? styles.bookedSeat  : ""
-    //   }}
-    //   onClick={handleSeatClick}
-    //   data-seat-id={seatId}
-    //   title={seatId}
-    // >
-    //    <div
-    //     className={avicon ${
-    //       isBooked
-    //         ? "icon-seat-booked"
-    //         : isSelected
-    //         ? "icon-seat-selected"
-    //         : "icon-seat-empty"
-    //     }}
-    //   />
-    //   <span className={styles.showSeatId}>{seatId}</span>
-    // </td>
+  const getSeatIcon = () => {
+    if (isSelected) return "icon-seat-selected"; 
+    if (status === "Đang chờ xử lý") return "icon-seat-booked";
+    if (status === "Đã thanh toán") return "icon-seat-sold";
+    if (status === "Hủy đặt vé") return "icon-seat-empty";
+    return "icon-seat-empty";
+  };
 
+  return (
     <td
-      className={`${styles.avseat} ${
-        isSold ? styles.soldSeat : isBooked ? styles.bookedSeat : ""
-      }`}
+      className={styles.avseat}
       onClick={handleSeatClick}
       data-seat-id={seatId}
       title={seatId}
     >
-      <div
-        className={`avicon ${
-          isSold
-            ? "icon-seat-sold" // paid: true
-            : isBooked
-            ? "icon-seat-booked" // paid: false
-            : isSelected
-            ? "icon-seat-selected"
-            : "icon-seat-empty"
-        }`}
-      />
+      <div className={`avicon ${getSeatIcon()}`} />
       <span className={styles.showSeatId}>{seatId}</span>
     </td>
   );
@@ -74,7 +48,6 @@ const Schedule7Seat = ({
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [toggle, setToggle] = useState(false);
-  // const [bookedSeats, setBookedSeats] = useState([]);
   const [bookedSeats, setBookedSeats] = useState({
     soldSeats: [],
     bookedSeats: [],
@@ -104,35 +77,21 @@ const Schedule7Seat = ({
         const response = await root.get(
           `/public/ticket-with-schedule/${scheduleId}`
         );
-        // Lấy ghế paid: true và paid: false
-        const seatsPaidTrue = response.data
-          .filter((ticket) => ticket.paid)
-          .map((ticket) => ticket.selectedSeat)
-          .flat();
 
-        const seatsPaidFalse = response.data
-          .filter((ticket) => !ticket.paid)
-          .map((ticket) => ticket.selectedSeat)
-          .flat();
+        const seatStatusMap = response.data.reduce((acc, ticket) => {
+          acc[ticket.selectedSeat] = ticket.status; 
+          return acc;
+        }, {});
 
-        // Lưu danh sách ghế theo trạng thái
-        setBookedSeats({
-          soldSeats: seatsPaidTrue, // paid: true
-          bookedSeats: seatsPaidFalse, // paid: false
-        });
-
-        // const seats = response.data.map((ticket) => ticket.selectedSeat).flat();
-        // setBookedSeats(seats); // Lưu danh sách ghế đã đặt
+        setBookedSeats(seatStatusMap);
         console.log("««««« response.data »»»»»", response.data);
       } catch (err) {
         console.log("««««« err »»»»»", err);
-      } finally {
       }
     };
 
     fetchBookedSeats();
-  },
-   [scheduleId]);
+  }, [scheduleId]);
   return (
     <div
       className={`${styles.bookingPage__tickets__item} ${styles.allowBook}`}
@@ -142,14 +101,12 @@ const Schedule7Seat = ({
       <div className={styles.bookingPage__tickets__item__thumb}>
         <div className={styles.bookingPage__tickets__item__thumb__time}>
           <span className="avicon icon-clock"></span>
-          {/* <div className={styles.times}> */}
           <h3 className={styles.times}>
             {new Date(startTime).toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
             })}
           </h3>
-          {/* </div> */}
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__route}>
           <span className="avicon icon-bus" style={{ marginRight: "14px" }} />
@@ -181,7 +138,6 @@ const Schedule7Seat = ({
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__view_button}>
           <a
-            // className="js--toggleCreateMap"
             data-trip-id="PLT0Tc1ybgN295oCg20241015"
             href="#"
             data-parent="#tripPLT0Tc1ybgN295oCg20241015"
