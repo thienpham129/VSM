@@ -51,10 +51,12 @@ public class TicketController {
 		return new ResponseEntity<>(ticketService.getTicketByScheduleId(scheduleId), HttpStatus.OK);
 	}
 
-    @PutMapping("/driver/update-status/ticket/{ticketId}")
-    public ResponseEntity<TicketResponse> updateStatusTicketById (@PathVariable long ticketId , @RequestBody TicketRequest request) {
-        return new ResponseEntity<>(ticketService.updateStatusTicketById(ticketId , request) , HttpStatus.OK);
-    }
+	@PutMapping("/driver/update-status/ticket/{ticketId}")
+	public ResponseEntity<TicketResponse> updateStatusTicketById(@PathVariable long ticketId,
+			@RequestBody TicketRequest request) {
+		return new ResponseEntity<>(ticketService.updateStatusTicketById(ticketId, request), HttpStatus.OK);
+	}
+
 	@PutMapping("/admin/update/ticket/{ticketId}")
 	public ResponseEntity<TicketResponse> updateTicketById(@PathVariable long ticketId,
 			@RequestBody TicketRequest request) {
@@ -67,9 +69,11 @@ public class TicketController {
 	}
 
 	// @PutMapping("/admin/update-status/ticket/{ticketId}")
-	// public ResponseEntity<TicketResponse> updateStatusTicketById(@PathVariable long ticketId,
-	// 		@RequestBody TicketRequest request) {
-	// 	return new ResponseEntity<>(ticketService.updateStatusTicketById(ticketId, request), HttpStatus.OK);
+	// public ResponseEntity<TicketResponse> updateStatusTicketById(@PathVariable
+	// long ticketId,
+	// @RequestBody TicketRequest request) {
+	// return new ResponseEntity<>(ticketService.updateStatusTicketById(ticketId,
+	// request), HttpStatus.OK);
 	// }
 
 	@GetMapping("/admin/tickets")
@@ -81,5 +85,10 @@ public class TicketController {
 	public ResponseEntity<TicketResponseAdminDTO> getTicketByIdAdmin(@PathVariable long id) {
 		TicketResponseAdminDTO ticket = ticketService.getTicketByIDAdmin(id);
 		return new ResponseEntity<>(ticket, HttpStatus.OK);
+	}
+
+	@GetMapping("public/ticket/check/{id}")
+	public ResponseEntity<Boolean> checkTicketPaid(@PathVariable long id) {
+		return new ResponseEntity<>(ticketService.checkTicketPaid(id), HttpStatus.OK);
 	}
 }
