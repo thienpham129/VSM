@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import com.project.vsm.dto.request.TicketRequest;
-import com.project.vsm.model.TicketEntity;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,6 +57,11 @@ public class TicketController {
     @PutMapping("/admin/update-status/ticket/{ticketId}")
     public ResponseEntity<TicketResponse> updateStatusTicketById (@PathVariable String ticketId , @RequestBody TicketRequest request) {
         return new ResponseEntity<>(ticketService.updateStatusTicketById(ticketId , request) , HttpStatus.OK);
+    }
+
+    @PutMapping("/admin/update-status-map/ticket/{ticketId}")
+    public ResponseEntity<TicketResponse> updateStatusMapByTicketId (@PathVariable String ticketId , @RequestBody TicketRequest request) {
+        return new ResponseEntity<>(ticketService.updateMapByTicketId(ticketId , request) ,HttpStatus.OK);
     }
 
 }

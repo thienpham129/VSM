@@ -43,11 +43,6 @@ public class ScheduleEntity {
 	@Column(name = "status", nullable = false)
 	private String status;
 
-	@Column(name = "start_location")
-	private String startLocation;
-
-	@Column(name = "stop_location")
-	private String stopLocation;
 
 	@ManyToOne
 	@JoinColumn(name = "route_id", referencedColumnName = "id")

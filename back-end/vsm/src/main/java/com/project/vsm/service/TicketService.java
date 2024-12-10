@@ -3,10 +3,8 @@ package com.project.vsm.service;
 import com.project.vsm.dto.request.TicketRequest;
 import com.project.vsm.dto.response.ScheduleResponse;
 import com.project.vsm.dto.response.TicketResponse;
-import com.project.vsm.dto.response.VNPayResponse;
 import com.project.vsm.model.*;
 import com.project.vsm.repository.*;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -33,7 +31,7 @@ public class TicketService {
     GoogleSheetsService googleSheetsService;
     ScheduleRepository scheduleRepository;
     TypeRepository typeRepository;
-
+    RouteRepository routeRepository;
 
     public List<TicketResponse> getAllTicket() {
         List<TicketEntity> ticketEntities = ticketRepository.findAll();
@@ -110,10 +108,9 @@ public class TicketService {
                 .orElseThrow(() -> new RuntimeException("Schedule not found"));
 
         TicketEntity ticket = request.toEntity(account, payment, voucher, totalPrice);
-        ticket.setStartLocation(schedule.getStartLocation());
-        ticket.setStopLocation(schedule.getStopLocation());
         ticket.setScheduleEntity(schedule);
-
+        ticket.setStartLocation(schedule.getRoute().getStartLocation());
+        ticket.setStopLocation(schedule.getRoute().getStopLocation());
         ticket = ticketRepository.save(ticket);
 
         if (payment.getPaymentName().equalsIgnoreCase("vietQR")) {
@@ -173,5 +170,16 @@ public class TicketService {
         return TicketResponse.fromEntity(ticket);
     }
 
+    public TicketResponse updateMapByTicketId (String ticketId , TicketRequest request) {
+        TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
+                .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
 
+        ticket.setMapPickUp(request.getMapPickUp());
+        ticket.setMapDrop(request.getMapDrop());
+        ticket.setMapStatus(request.isMapStatus());
+
+        ticketRepository.save(ticket);
+
+        return TicketResponse.fromEntity(ticket);
+    }
 }

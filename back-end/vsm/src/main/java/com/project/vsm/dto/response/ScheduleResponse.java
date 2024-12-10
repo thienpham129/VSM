@@ -35,8 +35,6 @@ public class ScheduleResponse {
         ScheduleResponse response = new ScheduleResponse();
         response.setScheduleId(schedule.getId());
         response.setStartTime(schedule.getStartTime());
-        response.setStartLocation(schedule.getStartLocation());
-        response.setStopLocation(schedule.getStopLocation());
         response.setCar(carResponse);
         return response;
     }
@@ -44,8 +42,6 @@ public class ScheduleResponse {
     public static ScheduleResponse fromEntity(ScheduleEntity schedule) {
         return ScheduleResponse.builder()
                 .scheduleId(schedule.getId())
-                .startLocation(schedule.getStartLocation())
-                .stopLocation(schedule.getStopLocation())
                 .startTime(schedule.getStartTime())
                 .endTime(schedule.getEndTime())
                 .status(schedule.getStatus())

@@ -1,6 +1,5 @@
 package com.project.vsm.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -64,6 +63,15 @@ public class TicketEntity {
 
     @Column(name = "detail_address_drop_off")
     String detailAddressDropOff;
+
+    @Column(name = "map_pick_up")
+    String mapPickUp;
+
+    @Column(name = "map_drop")
+    String mapDrop;
+
+    @Column(name = "map_status")
+    boolean mapStatus;
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "voucher_id")

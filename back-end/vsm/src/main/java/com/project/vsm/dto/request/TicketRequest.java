@@ -30,6 +30,10 @@ public class TicketRequest {
     String detailAddressToPickUp;
     String detailAddressDropOff;
     String qrCode;
+    String mapPickUp;
+    String mapDrop;
+    boolean mapStatus;
+    long routeId;
 
     public TicketEntity toEntity(AccountEntity account, PaymentEntity payment, VoucherEntity voucher, double totalPrice) {
         return TicketEntity.builder()
@@ -41,6 +45,9 @@ public class TicketRequest {
                 .email(this.email)
                 .note(this.note)
                 .price(totalPrice)
+                .mapPickUp(this.mapPickUp)
+                .mapDrop(this.mapDrop)
+                .mapStatus(this.mapStatus)
                 .voucher(voucher)
                 .account(account)
                 .paymentEntity(payment)
