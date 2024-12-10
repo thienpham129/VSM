@@ -1,8 +1,10 @@
 // BookingForm.js
 import React, { useEffect, useState } from "react";
 import styles from "components/bookingTicket.module.css";
+import Button from "@mui/material/Button";
 import SellectAddress from "components/SellectAddress";
 import { ToastContainer, toast, Bounce } from "react-toastify";
+import location_icon from "./location_icon.png";
 
 import {
   apiGetPublicDistrict,
@@ -54,6 +56,12 @@ function BookingForm({
   const [dropoffProvince, setDropoffProvince] = useState("");
   const [dropoffDistrict, setDropoffDistrict] = useState("");
   const [dropoffWard, setDropoffWard] = useState("");
+  const [pickUpAddress, setPickUpAddress] = useState("");
+  const [dropAddress, setDropAddress] = useState("");
+  const [suggesstPickUpAddress, setSuggestPickUpAddress] = useState([]);
+  const [suggesstDropAddress, setSuggestDropAddress] = useState([]);
+  const [isShowSuggestPickUp, setIsShowSuggestPickup] = useState(false);
+  const [isShowSuggestDrop, setIsShowSuggestDrop] = useState(false);
 
   // Handle change for specific addresses
   const handlePickupSpecificAddressChange = (event) => {
@@ -84,7 +92,8 @@ function BookingForm({
             ?.province_name
         : ""
     }`;
-    setDetailAddressToPickUp(newAddressPickUp.trim());
+    // setDetailAddressToPickUp(newAddressPickUp.trim());
+    setDetailAddressToPickUp(pickUpAddress);
   };
   const createAddressValueDropOff = () => {
     const newAddressDropOff = `${dropoffSpecificAddress} ${
@@ -108,7 +117,8 @@ function BookingForm({
             ?.province_name
         : ""
     }`;
-    setDetailAddressDropOff(newAddressDropOff.trim());
+    // setDetailAddressDropOff(newAddressDropOff.trim());
+    setDetailAddressDropOff(dropAddress);
   };
 
   // Fetch provinces once and use them for both pick-up and drop-off
@@ -123,20 +133,20 @@ function BookingForm({
     fetchProvinces();
   }, []);
 
- // Tự động set pickupProvince khi startLocation thay đổi
- useEffect(() => {
-  if (startLocation && pickupProvinces.length > 0) {
-    // Tìm tỉnh có tên trùng với startLocation
-    const province = pickupProvinces.find(
-      (item) => item.province_name === startLocation
-    );
-    console.log('««««« province »»»»»', province);
-    if (province) {
-      setPickupProvince(province.province_id);
-      console.log('««««« province.province_id »»»»»', province.province_id); // Set province vào state
+  // Tự động set pickupProvince khi startLocation thay đổi
+  useEffect(() => {
+    if (startLocation && pickupProvinces.length > 0) {
+      // Tìm tỉnh có tên trùng với startLocation
+      const province = pickupProvinces.find(
+        (item) => item.province_name === startLocation
+      );
+      console.log("««««« province »»»»»", province);
+      if (province) {
+        setPickupProvince(province.province_id);
+        console.log("««««« province.province_id »»»»»", province.province_id); // Set province vào state
+      }
     }
-  }
-}, [startLocation, pickupProvinces]);
+  }, [startLocation, pickupProvinces]);
 
   // Fetch districts and wards for pick-up location based on province and district selection
   useEffect(() => {
@@ -222,9 +232,9 @@ function BookingForm({
     if (!email.trim()) {
       newErrors.email = "Email là bắt buộc.";
     }
-    if (!pickupSpecificAddress.trim())
+    if (!pickUpAddress.trim())
       newErrors.pickupSpecificAddress = "Vui lòng nhập địa chỉ điểm đi.";
-    if (!dropoffSpecificAddress.trim())
+    if (!dropAddress.trim())
       newErrors.dropoffSpecificAddress = "Vui lòng nhập địa chỉ điểm đến.";
 
     setErrors(newErrors);
@@ -277,8 +287,8 @@ function BookingForm({
             startTime,
             startLocation,
             stopLocation,
-            ticketId: response.data.ticketId
-          }
+            ticketId: response.data.ticketId,
+          },
         });
       } else {
         console.error("Error submitting booking");
@@ -287,6 +297,56 @@ function BookingForm({
       console.error("Error submitting booking:", error);
     }
   };
+
+  useEffect(() => {
+    if (pickUpAddress) {
+      const delayDebounceFn = setTimeout(() => {
+        const query = pickUpAddress.trim();
+        if (query) {
+          const fetchAddressData = async () => {
+            try {
+              const response = await fetch(
+                `https://rsapi.goong.io/Place/AutoComplete?api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo&input=${query}`
+              );
+              const data = await response.json();
+              setSuggestPickUpAddress(data.predictions);
+            } catch (error) {
+              console.log(error);
+            }
+          };
+          fetchAddressData();
+        }
+      }, 1000);
+      return () => clearTimeout(delayDebounceFn);
+    } else {
+      setIsShowSuggestPickup(false);
+    }
+  }, [pickUpAddress]);
+
+  useEffect(() => {
+    if (dropAddress) {
+      const delayDebounceFn = setTimeout(() => {
+        const query = dropAddress.trim();
+        if (query) {
+          const fetchAddressData = async () => {
+            try {
+              const response = await fetch(
+                `https://rsapi.goong.io/Place/AutoComplete?api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo&input=${query}`
+              );
+              const data = await response.json();
+              setSuggestDropAddress(data.predictions);
+            } catch (error) {
+              console.log(error);
+            }
+          };
+          fetchAddressData();
+        }
+      }, 1000);
+      return () => clearTimeout(delayDebounceFn);
+    } else {
+      setIsShowSuggestDrop(false);
+    }
+  }, [dropAddress]);
 
   return (
     <div className={styles.bookingPage__tickets__item__collapse__booking__user}>
@@ -391,21 +451,59 @@ function BookingForm({
             Điểm đi: <span className={styles.text_danger}>*</span>
           </label>
           <div className={styles.point_wrap}>
-            <input
+            {/* <input
               type="text"
               onChange={handlePickupSpecificAddressChange}
               value={pickupSpecificAddress}
               placeholder="Nhập địa chỉ cụ thể"
               style={{ width: "100%" }}
+            /> */}
+
+            <input
+              type="text"
+              placeholder="Nhập địa chỉ cụ thể"
+              className={styles.input_box}
+              id="input-box"
+              value={pickUpAddress}
+              style={{ width: "100%" }}
+              onChange={(e) => {
+                setIsShowSuggestPickup(true);
+                setPickUpAddress(e.target.value);
+              }}
+              autoComplete="off"
             />
+            {suggesstPickUpAddress.length > 0 && isShowSuggestPickUp ? (
+              <div className={styles.result_box}>
+                <ul>
+                  {suggesstPickUpAddress.map((item) => (
+                    <li
+                      onClick={() => {
+                        setPickUpAddress(item.description);
+                        setIsShowSuggestPickup(false);
+                      }}
+                    >
+                      {" "}
+                      <img
+                        src={location_icon}
+                        alt="location_icon"
+                        style={{ width: "24px", height: "24px" }}
+                      />{" "}
+                      {item.description}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              ""
+            )}
+
             {errors.pickupSpecificAddress && (
               <span className={styles.error}>
                 {errors.pickupSpecificAddress}
               </span>
             )}
-         
 
-            <div className="row">
+            {/* <div className="row">
               <div className="col-md-12 form-group">
               <SellectAddress
                 type="province"
@@ -433,7 +531,7 @@ function BookingForm({
                   label="Wards(phường)"
                 />
               </div>
-            </div>
+            </div> */}
           </div>
           <label htmlFor="pointUp" className={styles.error} />
         </div>
@@ -442,19 +540,57 @@ function BookingForm({
             Điểm đến: <span className={styles.text_danger}>*</span>
           </label>
           <div className={styles.point_wrap}>
-            <input
+            {/* <input
               type="text"
               onChange={handleDropoffSpecificAddressChange}
               value={dropoffSpecificAddress}
               placeholder="Nhập địa chỉ cụ thể"
               style={{ width: "100%" }}
+            /> */}
+
+            <input
+              type="text"
+              placeholder="Nhập địa chỉ cụ thể"
+              className={styles.input_box}
+              id="input-box"
+              value={dropAddress}
+              style={{ width: "100%" }}
+              onChange={(e) => {
+                setIsShowSuggestDrop(true);
+                setDropAddress(e.target.value);
+              }}
+              autoComplete="off"
             />
+            {suggesstDropAddress.length > 0 && isShowSuggestDrop ? (
+              <div className={styles.result_box}>
+                <ul>
+                  {suggesstDropAddress.map((item) => (
+                    <li
+                      onClick={() => {
+                        setDropAddress(item.description);
+                        setIsShowSuggestDrop(false);
+                      }}
+                    >
+                      {" "}
+                      <img
+                        src={location_icon}
+                        alt="location_icon"
+                        style={{ width: "24px", height: "24px" }}
+                      />{" "}
+                      {item.description}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              ""
+            )}
             {errors.dropoffSpecificAddress && (
               <span className={styles.error}>
                 {errors.dropoffSpecificAddress}
               </span>
             )}
-            <div className="row">
+            {/* <div className="row">
               <div className="col-md-12 form-group">
                 <SellectAddress
                   type="province"
@@ -482,7 +618,7 @@ function BookingForm({
                   label="Wards(phường)"
                 />
               </div>
-            </div>
+            </div> */}
           </div>
           <label htmlFor="pointDown" className={styles.error} />
         </div>
