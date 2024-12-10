@@ -177,7 +177,9 @@ function Schedule() {
       if (response) {
         setDataSchedule(response.data);
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const fetchDataScheduleDetail = async (scheduleId) => {
@@ -185,10 +187,18 @@ function Schedule() {
     try {
       const response = await root.get(`${url}/${scheduleId}`);
       if (response.data) {
-        setDataScheduleDetail(response.data);
+        let tempArrayScheduleDetail = [];
+        response.data.forEach((item, index) => {
+          if (item.status.toLocaleUpperCase() !== "HỦY ĐẶT VÉ") {
+            tempArrayScheduleDetail.push(item);
+          }
+        });
+        setDataScheduleDetail(tempArrayScheduleDetail);
         console.log(response.data);
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const CheckIsScheduleComplete = async (scheduleId) => {
@@ -219,7 +229,8 @@ function Schedule() {
       const response = await root.get(`${url}/${scheduleId}`);
       if (response.data) {
         setStartHourSchedule(
-          response.data.startTime.split("T")[1].split(":")[0]
+          +response.data.startTime.split("T")[1].split(":")[0] +
+            +response.data.startTime.split("T")[1].split(":")[1] / 60
         );
       }
     } catch (error) {}
@@ -290,7 +301,7 @@ function Schedule() {
           notifyScucessUpadte();
         } else {
           console.log(
-            "Something went wrong with call api of handleUpdateSchedule "
+            "Something went wrong with call api of handleUpdateSchedule"
           );
         }
       } catch (error) {
@@ -301,8 +312,8 @@ function Schedule() {
         notifyWarningUpdate();
       } else {
         const date = new Date();
-        if (date.getHours() < +startHourSchedule) {
-          console.log(date.getHours());
+        if (date.getHours() + date.getMinutes() / 60 < +startHourSchedule) {
+          console.log(date.getHours() + date.getMinutes() / 60);
           console.log(+startHourSchedule);
           notifyErrorUpdateSchedule();
         } else {
@@ -365,7 +376,6 @@ function Schedule() {
           style={{ width: "75px", fontSize: "9px" }}
           variant="contained"
           onClick={(e) => {
-            console.log(item.id);
             setIdSchedule(item.id);
             fetchDataScheduleDetail(item.id);
             CheckIsScheduleComplete(item.id);
@@ -493,7 +503,7 @@ function Schedule() {
   };
 
   return (
-    <>
+    <div className={styles.schdule}>
       {isClickDetail ? (
         <div className="schedule_detail">
           <h1>Lịch Trình Cụ Thể </h1>
@@ -865,7 +875,7 @@ function Schedule() {
           />
         </div>
       )}
-    </>
+    </div>
   );
 }
 

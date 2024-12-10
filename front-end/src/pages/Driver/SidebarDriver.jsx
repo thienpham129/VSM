@@ -5,7 +5,7 @@ import profileImage from "./4.jpg";
 import logo from "./logo_vsm.png";
 function SidebarDriver() {
   return (
-    <>
+    <div>
       <div className="sidebar">
         <div className="logo_content">
           <div className="logo">
@@ -94,7 +94,7 @@ function SidebarDriver() {
       <div className="home_content">
         <Outlet />
       </div>
-    </>
+    </div>
   );
 }
 

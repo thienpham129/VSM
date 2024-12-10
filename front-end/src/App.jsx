@@ -25,6 +25,9 @@ import Parking from "pages/Driver/Parking";
 import Map from "pages/Driver/Map";
 import ImageUploadFile from "components/ImageUploadFile";
 import { getTokenFromLocalStorage } from "utils/tokenUtils";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
 // import RequireAuth from "RequireAuth";
 // import Page403 from "Page403";
 
@@ -34,6 +37,22 @@ function App() {
   {
     /* <Route index element={<Navigate to="home" replace />} /> */
   }
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (
+      location.pathname === "/driver/schedule" ||
+      location.pathname === "/driver/parking" ||
+      location.pathname === "/driver/map"
+    ) {
+      document.body.style.overflowX = "hidden";
+      document.body.style.overflowY = "auto";
+    } else {
+      document.body.style.overflowX = "visible";
+      document.body.style.overflowY = "visible";
+    }
+  }, [location]);
 
   return (
     <>
