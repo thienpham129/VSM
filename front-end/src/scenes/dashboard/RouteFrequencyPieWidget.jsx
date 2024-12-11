@@ -1,21 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, MenuItem, Select, FormControl } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import { tokens } from "../../theme";
 import RouteFrequencyPieChart from "./chart/RouteFrequencyPieChart";
+import { request } from "admin/helpers/axios_helper";
 
 // Mock dữ liệu theo tháng
-const mockData = {
-  1: [30, 40, 20, 10], // Tháng 1
-  2: [25, 35, 30, 10], // Tháng 2
-  3: [20, 30, 40, 10], // Tháng 3
-  12: [40, 30, 20, 10], // Tháng 12
-};
 
 const RouteFrequencyPieWidget = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [frequency, setFrequency] = useState([]);
 
+  const fetchFrequency = async () => {
+    try {
+      const response = await request("get", "/admin/dashboard/routes");
+      setFrequency(response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu tuyến đường:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFrequency();
+  }, []);
   // Lấy tháng hiện tại làm giá trị mặc định
   const currentMonth = new Date().getMonth() + 1;
 
@@ -28,7 +36,7 @@ const RouteFrequencyPieWidget = () => {
   };
 
   // Lấy dữ liệu phù hợp với tháng được chọn
-  const dataForSelectedMonth = mockData[selectedMonth] || [0, 0, 0, 0];
+  const dataForSelectedMonth = frequency[selectedMonth] || [0, 0, 0, 0];
 
   return (
     <Box

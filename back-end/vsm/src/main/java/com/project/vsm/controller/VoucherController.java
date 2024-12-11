@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.vsm.dto.SendVoucherDTO;
 import com.project.vsm.dto.VoucherDTO;
 import com.project.vsm.model.VoucherEntity;
 import com.project.vsm.service.VoucherService;
@@ -58,6 +59,11 @@ public class VoucherController {
 	@PutMapping("/public/voucher")
 	public ResponseEntity<VoucherEntity> updateVoucherByCode(@RequestParam String code) {
 		return new ResponseEntity<>(voucherService.updateUseVoucher(code), HttpStatus.OK);
+	}
+
+	@PostMapping("/admin/send-voucher")
+	public ResponseEntity<String> sendVoucher(@Valid @RequestBody SendVoucherDTO input) {
+		return new ResponseEntity<>(voucherService.sendVoucher(input), HttpStatus.OK);
 	}
 
 }

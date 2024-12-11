@@ -85,4 +85,9 @@ public class TicketController {
 		TicketResponseAdminDTO ticket = ticketService.getTicketByIDAdmin(id);
 		return new ResponseEntity<>(ticket, HttpStatus.OK);
 	}
+
+	@GetMapping("public/ticket/check/{id}")
+	public ResponseEntity<Boolean> checkTicketPaid(@PathVariable long id) {
+		return new ResponseEntity<>(ticketService.checkTicketPaid(id), HttpStatus.OK);
+	}
 }

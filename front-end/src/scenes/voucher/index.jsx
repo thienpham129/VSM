@@ -22,6 +22,7 @@ const VoucherAdmin = () => {
   const colors = tokens(theme.palette.mode);
 
   const [open, setOpen] = useState(false);
+  const [openSend, setOpenSend] = useState(false); // Modal gửi mã giảm giá
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [vouchers, setVouchers] = useState([]);
@@ -55,8 +56,6 @@ const VoucherAdmin = () => {
   const fetchVouchers = async () => {
     try {
       const response = await request("GET", "/admin/vouchers");
-      console.log("Dữ liệu nhận được:", response.data);
-
       const formattedData = response.data.map((voucher) => ({
         id: voucher.voucherID,
         code: voucher.code,
@@ -82,11 +81,29 @@ const VoucherAdmin = () => {
     setOpen(false);
   };
 
+  const handleClickOpenSend = () => {
+    setOpenSend(true);
+  };
+
+  const handleCloseSend = () => {
+    setOpenSend(false);
+  };
+
   const validationSchema = Yup.object({
     number: Yup.number()
-      .required("Vio lòng nhập Số lượng ")
+      .required("Vui lòng nhập Số lượng")
       .positive("Số lượng phải lớn hơn 0")
       .integer("Số lượng phải là số nguyên"),
+    discount: Yup.number()
+      .required("Vui lòng nhập Giảm giá")
+      .min(1, "Giảm giá phải từ 1 đến 100")
+      .max(100, "Giảm giá phải từ 1 đến 100"),
+  });
+
+  const validationSendSchema = Yup.object({
+    content: Yup.string()
+      .required("Vui lòng nhập nội dung.")
+      .max(500, "Nội dung không được vượt quá 500 ký tự."),
     discount: Yup.number()
       .required("Vui lòng nhập Giảm giá")
       .min(1, "Giảm giá phải từ 1 đến 100")
@@ -103,6 +120,14 @@ const VoucherAdmin = () => {
       <Box display="flex" justifyContent="flex-end" mb={-5}>
         <Button variant="contained" color="secondary" onClick={handleClickOpen}>
           Thêm Mã Giảm Giá
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleClickOpenSend}
+          sx={{ marginLeft: "10px" }}
+        >
+          Gửi Mã Giảm Giá
         </Button>
       </Box>
 
@@ -145,6 +170,7 @@ const VoucherAdmin = () => {
         />
       </Box>
 
+      {/* Modal Thêm Voucher */}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Thêm Voucher</DialogTitle>
         <DialogContent>
@@ -153,17 +179,15 @@ const VoucherAdmin = () => {
             validationSchema={validationSchema}
             onSubmit={async (values) => {
               try {
-                // Gọi API để thêm voucher
                 const response = await request("POST", "/admin/voucher", {
-                  discount: values.discount, // Gửi giá trị discount
-                  quantity: values.number, // Gửi giá trị quantity
+                  discount: values.discount,
+                  quantity: values.number,
                 });
 
                 console.log("Thêm voucher thành công:", response.data);
                 setSnackbarMessage("Thêm voucher thành công!");
                 setSnackbarOpen(true);
-                handleClose(); // Đóng modal
-                // Gọi lại fetchVouchers để làm mới danh sách voucher
+                handleClose();
                 await fetchVouchers();
               } catch (error) {
                 console.error("Lỗi khi thêm voucher:", error);
@@ -209,22 +233,17 @@ const VoucherAdmin = () => {
                     sx={{
                       backgroundColor: "gray",
                       color: "white",
-                      "&:hover": {
-                        backgroundColor: "darkgray",
-                      },
+                      "&:hover": { backgroundColor: "darkgray" },
                     }}
                   >
                     Hủy
                   </Button>
-
                   <Button
                     type="submit"
                     sx={{
                       backgroundColor: "green",
                       color: "white",
-                      "&:hover": {
-                        backgroundColor: "darkgreen",
-                      },
+                      "&:hover": { backgroundColor: "darkgreen" },
                     }}
                   >
                     Tạo Mới
@@ -236,6 +255,90 @@ const VoucherAdmin = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Modal Gửi Mã Giảm Giá */}
+      <Dialog open={openSend} onClose={handleCloseSend}>
+        <DialogTitle>Gửi Mã Giảm Giá</DialogTitle>
+        <DialogContent>
+          <Formik
+            initialValues={{ content: "", discount: "" }}
+            validationSchema={validationSendSchema}
+            onSubmit={async (values) => {
+              try {
+                const response = await request("POST", "/admin/send-voucher", {
+                  content: values.content,
+                  discount: values.discount,
+                });
+                console.log("Gửi mã giảm giá thành công:", response.data);
+                setSnackbarMessage("Gửi mã giảm giá thành công!");
+                setSnackbarOpen(true);
+                handleCloseSend();
+              } catch (error) {
+                console.error("Lỗi khi gửi mã giảm giá:", error);
+                setSnackbarMessage("Có lỗi xảy ra khi gửi mã giảm giá.");
+                setSnackbarOpen(true);
+              }
+            }}
+          >
+            {({ errors, touched }) => (
+              <Form>
+                <Field name="content">
+                  {({ field }) => (
+                    <TextField
+                      {...field}
+                      margin="dense"
+                      label="Nội Dung"
+                      multiline
+                      rows={4}
+                      fullWidth
+                      variant="outlined"
+                      error={touched.content && !!errors.content}
+                      helperText={touched.content && errors.content}
+                    />
+                  )}
+                </Field>
+                <Field name="discount">
+                  {({ field }) => (
+                    <TextField
+                      {...field}
+                      margin="dense"
+                      label="Giảm Giá"
+                      type="number"
+                      fullWidth
+                      variant="outlined"
+                      error={touched.discount && !!errors.discount}
+                      helperText={touched.discount && errors.discount}
+                    />
+                  )}
+                </Field>
+                <DialogActions>
+                  <Button
+                    onClick={handleCloseSend}
+                    sx={{
+                      backgroundColor: "gray",
+                      color: "white",
+                      "&:hover": { backgroundColor: "darkgray" },
+                    }}
+                  >
+                    Hủy
+                  </Button>
+                  <Button
+                    type="submit"
+                    sx={{
+                      backgroundColor: "green",
+                      color: "white",
+                      "&:hover": { backgroundColor: "darkgreen" },
+                    }}
+                  >
+                    Gửi Mã Giảm Giá
+                  </Button>
+                </DialogActions>
+              </Form>
+            )}
+          </Formik>
+        </DialogContent>
+      </Dialog>
+
+      {/* Snackbar thông báo */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}

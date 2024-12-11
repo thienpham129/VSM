@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -237,4 +240,23 @@ public class TicketService {
 				.detailAddressPickUp(optionalTicket.get().getDetailAddressPickUp()).route(routeEntity).build();
 		return ticketDetail;
 	}
+
+	public Boolean checkTicketPaid(long id) {
+        Optional<TicketEntity> optionalTicket = ticketRepository.findById(id);
+        if (!optionalTicket.isPresent()) {
+            throw new NotFoundException("Not found Ticket with id " + id);
+        }
+        TicketEntity ticket = optionalTicket.get();
+        if (!ticket.isPaid()) {
+            ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+            scheduler.schedule(() -> {
+                if (!ticket.isPaid()) { 
+                    ticket.setStatus("Hủy Đặt Vé");
+                    ticketRepository.save(ticket); 
+                }
+            }, 3, TimeUnit.MINUTES);
+            scheduler.shutdown(); 
+        }
+        return ticket.isPaid(); 
+    }
 }
