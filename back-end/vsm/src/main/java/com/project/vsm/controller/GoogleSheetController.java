@@ -23,7 +23,7 @@ public class GoogleSheetController {
     private GoogleSheetsService googleSheetsService;
 
     @GetMapping("/check-ticket/{ticketId}")
-    public ResponseEntity<TicketGoogleSheetResponse> updateStatusTicketBaseGoogleSheet (@PathVariable long ticketId) {
+    public ResponseEntity<TicketGoogleSheetResponse> updateStatusTicketBaseGoogleSheet (@PathVariable String ticketId) {
         return new ResponseEntity<>(googleSheetsService.updateTicketStatusFromGoogleSheet(ticketId) , HttpStatus.OK);
     }
 

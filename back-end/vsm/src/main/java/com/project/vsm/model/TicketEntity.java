@@ -1,9 +1,11 @@
 package com.project.vsm.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.UUID;
+
 
 @Getter
 @Setter
@@ -15,16 +17,15 @@ import lombok.experimental.FieldDefaults;
 @Builder
 public class TicketEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ticket_id")
-	long ticketId;
+    @Id
+    @Column(name = "ticket_id", nullable = false, unique = true, length = 10)
+    String ticketId;
 
 	@Column(name = "price")
 	double price;
 
-	@Column(name = "payment_method")
-	String paymentMethod;
+    @Column(name = "payment_method")
+    String paymentMethod;
 
 	@Column(name = "is_paid")
 	boolean isPaid;
@@ -56,15 +57,24 @@ public class TicketEntity {
 	@Column(name = "phone_number")
 	String phoneNumber;
 
-	@Column(name = "detail_address_pick_up")
-	String detailAddressPickUp;
+    @Column(name = "detail_address_pick_up")
+    String detailAddressPickUp;
 
-	@Column(name = "detail_address_drop_off")
-	String detailAddressDropOff;
+    @Column(name = "detail_address_drop_off")
+    String detailAddressDropOff;
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH })
-	@JoinColumn(name = "voucher_id")
-	VoucherEntity voucher;
+    @Column(name = "map_pick_up")
+    String mapPickUp;
+
+    @Column(name = "map_drop")
+    String mapDrop;
+
+    @Column(name = "map_status")
+    String mapStatus;
+
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "voucher_id")
+    VoucherEntity voucher;
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "payment_id")
@@ -74,18 +84,12 @@ public class TicketEntity {
 	@JoinColumn(name = "account_id")
 	AccountEntity account;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "schedule_id")
-	ScheduleEntity scheduleEntity;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "schedule_id")
+    ScheduleEntity scheduleEntity;
 
-	@Override
-	public String toString() {
-		return "TicketEntity [ticketId=" + ticketId + ", price=" + price + ", paymentMethod=" + paymentMethod
-				+ ", isPaid=" + isPaid + ", startLocation=" + startLocation + ", stopLocation=" + stopLocation
-				+ ", status=" + status + ", QRPayment=" + QRPayment + ", selectedSeat=" + selectedSeat + ", note="
-				+ note + ", email=" + email + ", fullName=" + fullName + ", phoneNumber=" + phoneNumber
-				+ ", detailAddressPickUp=" + detailAddressPickUp + ", detailAddressDropOff=" + detailAddressDropOff
-				+ ", voucher=" + voucher + ", paymentEntity=" + paymentEntity + ", account=" + account
-				+ ", scheduleEntity=" + scheduleEntity + "]";
-	}
+    @PrePersist
+    private void generateShortUuid() {
+        this.ticketId = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+    }
 }

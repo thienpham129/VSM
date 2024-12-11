@@ -116,7 +116,7 @@ public class GoogleSheetsService {
         }
     }
 
-    public TicketGoogleSheetResponse updateTicketStatusFromGoogleSheet(long ticketId) {
+    public TicketGoogleSheetResponse updateTicketStatusFromGoogleSheet(String ticketId) {
         try {
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> response = restTemplate.getForEntity(SHEET_URL, String.class);
@@ -126,8 +126,8 @@ public class GoogleSheetsService {
                 List<String> rows = parseRowsFromGoogleSheet(content);
 
                 for (String row : rows) {
-                    if (row.contains(String.valueOf(ticketId))) {
-                        TicketEntity ticket = ticketRepository.findById(ticketId)
+                    if (row.toLowerCase().contains(String.valueOf(ticketId).toLowerCase())) {
+                        TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
                                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
                         if (!ticket.isPaid()) {
                             ticket.setStatus("Đã thanh toán");

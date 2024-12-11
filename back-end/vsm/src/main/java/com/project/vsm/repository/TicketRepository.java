@@ -7,11 +7,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface TicketRepository extends JpaRepository<TicketEntity , Long> {
+public interface TicketRepository extends JpaRepository<TicketEntity , String> {
     @Query("select t from TicketEntity  t where t.scheduleEntity.id = ?1")
     List<TicketEntity> getTicketByScheduleId (long scheduleId);
-    
-  
+
+    Optional<TicketEntity> findByTicketId (String ticketId);
+
 }

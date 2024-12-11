@@ -17,10 +17,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class PaymentController {
     private final PaymentService paymentService;
-    private final TicketService ticketService;
 
     @GetMapping("/pay/{ticketId}")
-    public ResponseObject<VNPayResponse> payForTicket(@PathVariable Long ticketId) {
+    public ResponseObject<VNPayResponse> payForTicket(@PathVariable String ticketId) {
        try {
            return ResponseObject.<VNPayResponse>builder()
                    .code(200)

@@ -58,10 +58,10 @@ public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Long> 
 
 	List<ScheduleEntity> findByCar_CarIdOrAccount_Id(Long carId, Long accountId);
 
-	@Query(value = "select s from ScheduleEntity s where s.startLocation = ?1 and s.stopLocation = ?2 "
-			+ "and DATE (s.startTime) = DATE(?3)")
-	List<ScheduleEntity> findStartLocationStopLocationStartTime(String startLocation, String stopLocation,
-			LocalDate startTime);
+//	@Query(value = "select s from ScheduleEntity s where s.startLocation = ?1 and s.stopLocation = ?2 "
+//			+ "and DATE (s.startTime) = DATE(?3)")
+//	List<ScheduleEntity> findStartLocationStopLocationStartTime(String startLocation, String stopLocation,
+//			LocalDate startTime);
 
 	@Query("SELECT s FROM ScheduleEntity s WHERE (DATE(s.startTime) = :startDate AND s.account.id = :driverId) "
 			+ "OR (DATE(s.startTime) = :startDate AND s.car.id = :carId)")

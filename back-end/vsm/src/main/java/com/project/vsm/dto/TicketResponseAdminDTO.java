@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class TicketResponseAdminDTO {
-	long ticketId;
+	String ticketId;
 	double price;
 	String paymentMethod;
 	boolean isPaid;

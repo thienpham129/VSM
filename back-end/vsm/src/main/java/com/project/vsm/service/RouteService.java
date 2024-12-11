@@ -6,6 +6,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.project.vsm.dto.response.CarResponse;
+import com.project.vsm.dto.response.RouteResponse;
+import com.project.vsm.dto.response.ScheduleResponse;
+import com.project.vsm.model.CarEntity;
+import com.project.vsm.model.ScheduleEntity;
+import com.project.vsm.repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -76,13 +82,13 @@ public class RouteService {
 		routeRepository.delete(optionalRoute.get());
 		return optionalRoute.get();
 	}
-
-	public List<RouteResponse> getRouteWithSchedule(String startLocation, String stopLocation, LocalDate startTime) {
+	public List<RouteResponse> getRouteWithSchedule(String startLocation,
+													String stopLocation, LocalDate startTime) {
 		System.out.println("Start : " + startLocation);
 		System.out.println("Stop : " + stopLocation);
 		System.out.println("Date : " + startTime);
-		List<RouteEntity> routes = routeRepository.findStartLocationStopLocationStartTime(startLocation, stopLocation,
-				startTime);
+		List<RouteEntity> routes = routeRepository.findStartLocationStopLocationStartTime
+				(startLocation, stopLocation, startTime);
 
 		if (routes.isEmpty()) {
 			System.out.println("No schedules found.");

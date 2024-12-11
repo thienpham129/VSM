@@ -29,7 +29,7 @@ public class PaymentService {
     String TEMPLATE;
 
 
-    public String generateQrCode(double totalPrice, long ticketId, String email) {
+    public String generateQrCode(double totalPrice, String ticketId, String email) {
         String bankID = BANK_ID;
         String accountNo = ACCOUNT_NO;
         String template = TEMPLATE;
@@ -43,9 +43,9 @@ public class PaymentService {
                 email);
     }
 
-    public VNPayResponse generatePaymentUrl(Long ticketId) {
-        TicketEntity ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+    public VNPayResponse generatePaymentUrl(String ticketId) {
+        TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found !"));
 
         if (!"vietQR".equalsIgnoreCase(ticket.getPaymentEntity().getPaymentName())) {
             throw new RuntimeException("Unsupported payment method");

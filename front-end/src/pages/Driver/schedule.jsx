@@ -233,7 +233,9 @@ function Schedule() {
             +response.data.startTime.split("T")[1].split(":")[1] / 60
         );
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -264,25 +266,32 @@ function Schedule() {
     if (!statusUser) {
       notifyWarningUpdate();
     } else {
-      const url = "/driver/update-status/ticket";
-      try {
-        const fetchUpdateStatusUser = async () => {
-          const response = await root.put(`${url}/${ticketId}`, {
-            status: statusUser,
-          });
-          if (response.data) {
-            notifyScucessUpadte();
-            setToggleModal(false);
-            fetchDataScheduleDetail(idSchedule);
-          } else {
-            console.log(
-              "Something went wrong with api of fetchUpdateStatusUser"
-            );
-          }
-        };
-        fetchUpdateStatusUser();
-      } catch (error) {
-        console.log(error);
+      const date = new Date();
+      if (date.getHours() + date.getMinutes() / 60 < +startHourSchedule) {
+        console.log(date.getHours() + date.getMinutes() / 60);
+        console.log(+startHourSchedule);
+        notifyErrorUpdateTicket();
+      } else {
+        const url = "/driver/update-status/ticket";
+        try {
+          const fetchUpdateStatusUser = async () => {
+            const response = await root.put(`${url}/${ticketId}`, {
+              status: statusUser,
+            });
+            if (response.data) {
+              notifyScucessUpadte();
+              setToggleModal(false);
+              fetchDataScheduleDetail(idSchedule);
+            } else {
+              console.log(
+                "Something went wrong with api of fetchUpdateStatusUser"
+              );
+            }
+          };
+          fetchUpdateStatusUser();
+        } catch (error) {
+          console.log(error);
+        }
       }
     }
   };
@@ -428,6 +437,7 @@ function Schedule() {
               e.target.parentElement.parentElement.parentElement
             );
             setTicketId(item.ticketId);
+            getStartHourByScheduleRow(idSchedule);
           }}
         >
           Cập Nhật
@@ -498,6 +508,19 @@ function Schedule() {
       }
     );
 
+  const notifyErrorUpdateTicket = () =>
+    toast.error("Không Thể Cập Nhật Trạng Thái Của Vé Khi Chưa Tới Giờ!", {
+      position: "bottom-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+
   const handleApply = () => {
     notifyScucessApply();
   };
@@ -514,6 +537,7 @@ function Schedule() {
               setDataScheduleDetail([]);
               setIsComplete(false);
               setIsClickDetail(false);
+              setStartHourSchedule("");
             }}
           />
           <input
