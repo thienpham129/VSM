@@ -241,8 +241,8 @@ public class TicketService {
 		return ticketDetail;
 	}
 
-	public Boolean checkTicketPaid(long id) {
-        Optional<TicketEntity> optionalTicket = ticketRepository.findById(id);
+	public Boolean checkTicketPaid(String id) {
+        Optional<TicketEntity> optionalTicket = ticketRepository.findByTicketId(id);
         if (!optionalTicket.isPresent()) {
             throw new NotFoundException("Not found Ticket with id " + id);
         }

@@ -87,7 +87,7 @@ public class TicketController {
 	}
 
 	@GetMapping("public/ticket/check/{id}")
-	public ResponseEntity<Boolean> checkTicketPaid(@PathVariable long id) {
+	public ResponseEntity<Boolean> checkTicketPaid(@PathVariable String id) {
 		return new ResponseEntity<>(ticketService.checkTicketPaid(id), HttpStatus.OK);
 	}
 }
