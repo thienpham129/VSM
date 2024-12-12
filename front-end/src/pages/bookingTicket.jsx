@@ -14,15 +14,6 @@ const BookingTicket = () => {
   const [stopLocation, setStopLocation] = useState("");
   const [startTime, setStartTime] = useState("");
   const [schedules, setSchedules] = useState([]);
-  const [availableSeats, setAvailableSeats] = useState({});
-
-  // Hàm cập nhật availableSeats
-  const updateAvailableSeats = (scheduleId, seats) => {
-    setAvailableSeats((prevSeats) => ({
-      ...prevSeats,
-      [scheduleId]: seats,
-    }));
-  };
 
   const handleSearch = async () => {
     if (!startLocation || !stopLocation || !startTime) {
@@ -274,10 +265,8 @@ const BookingTicket = () => {
                       })
                       .map((item, index) => {
                         const startTime = item.startTime;
-                        const availableSeatsForThisSchedule = item.car.type?.availableSeats || 0;
-                        console.log('««««« availableSeatsForThisSchedule »»»»»', availableSeatsForThisSchedule);
+
                         return (
-                          availableSeatsForThisSchedule > 0 && (
                           <div key={index}>
                             {item.car.type?.numSeat === 7 && (
                               <Schedule7Seat
@@ -290,8 +279,6 @@ const BookingTicket = () => {
                                 numSeat={item.car.type?.numSeat}
                                 price={item.car.type?.price}
                                 typeId={item.car.type?.typeId}
-                                availableSeats={availableSeatsForThisSchedule}
-                                updateAvailableSeats={updateAvailableSeats}
                               />
                             )}
                             {item.car.type?.numSeat === 10 && (
@@ -308,7 +295,6 @@ const BookingTicket = () => {
                               />
                             )}
                           </div>
-                           )
                         );
                       })}
                   </div>
