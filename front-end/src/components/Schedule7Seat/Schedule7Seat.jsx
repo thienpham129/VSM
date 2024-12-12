@@ -3,32 +3,41 @@ import styles from "pages/bookingTicket.module.css";
 import BookingForm from "components/BookingForm";
 import { root } from "helper/axiosClient";
 
-const Seat = ({ seatId, onSelect, bookedSeats }) => {
-  const status = bookedSeats[seatId];
+const Seat = ({ seatId, seatStatus, onSelect, bookedSeats }) => {
+  const isSold = bookedSeats.soldSeats.includes(seatId); // Đã thanh toán
+  const isBooked = bookedSeats.bookedSeats.includes(seatId); // Đang chờ xử lý
+  const isCanceled = bookedSeats.canceledSeats.includes(seatId); // Đã hủy vé
   const [isSelected, setIsSelected] = useState(false);
 
+
   const handleSeatClick = () => {
-    if (status === "Đã thanh toán" || status === "Đang chờ xử lý") return;
+    if (isSold || isBooked) return; // Không cho chọn nếu ghế đã đặt hoặc bán
     setIsSelected((prev) => !prev);
     onSelect(seatId, !isSelected);
   };
 
-  const getSeatIcon = () => {
-    if (isSelected) return "icon-seat-selected"; 
-    if (status === "Đang chờ xử lý") return "icon-seat-booked";
-    if (status === "Đã thanh toán") return "icon-seat-sold";
-    if (status === "Hủy đặt vé") return "icon-seat-empty";
-    return "icon-seat-empty";
-  };
-
   return (
     <td
-      className={styles.avseat}
+      className={`${styles.avseat} ${
+        isSold ? styles.soldSeat : isBooked ? styles.bookedSeat : ""
+      }`}
       onClick={handleSeatClick}
       data-seat-id={seatId}
       title={seatId}
     >
-      <div className={`avicon ${getSeatIcon()}`} />
+      <div
+        className={`avicon ${
+          isSold
+            ? "icon-seat-sold" // Đã thanh toán
+            : isBooked
+            ? "icon-seat-booked" // Đang chờ xử lý
+            : isCanceled
+            ? "icon-seat-empty" // Đã hủy vé
+            : isSelected
+            ? "icon-seat-selected"
+            : "icon-seat-empty"
+        }`}
+      />
       <span className={styles.showSeatId}>{seatId}</span>
     </td>
   );
@@ -51,7 +60,11 @@ const Schedule7Seat = ({
   const [bookedSeats, setBookedSeats] = useState({
     soldSeats: [],
     bookedSeats: [],
+    canceledSeats: [], // Thêm trạng thái "Đã hủy vé"
   });
+
+  const [availableSeats, setAvailableSeats] = useState(0); // Số ghế còn trống
+
 
   const handleSeatSelection = (seatId, isSelected) => {
     setSelectedSeats((prev) => {
@@ -77,13 +90,34 @@ const Schedule7Seat = ({
         const response = await root.get(
           `/public/ticket-with-schedule/${scheduleId}`
         );
+        // Lấy ghế có status "Đang chờ xử lý", "Đã thanh toán", và "Đã hủy vé"
+        const seatsPending = response.data
+          .filter((ticket) => ticket.status === "Đang chờ xử lý")
+          .map((ticket) => ticket.selectedSeat)
+          .flat();
 
-        const seatStatusMap = response.data.reduce((acc, ticket) => {
-          acc[ticket.selectedSeat] = ticket.status; 
-          return acc;
-        }, {});
+        const seatsPaid = response.data
+          .filter((ticket) => ticket.status === "Đã thanh toán")
+          .map((ticket) => ticket.selectedSeat)
+          .flat();
 
-        setBookedSeats(seatStatusMap);
+        const seatsCanceled = response.data
+          .filter((ticket) => ticket.status === "Đã hủy vé")
+          .map((ticket) => ticket.selectedSeat)
+          .flat();
+
+        // Lưu danh sách ghế theo trạng thái
+        setBookedSeats({
+          soldSeats: seatsPaid, // Đã thanh toán
+          bookedSeats: seatsPending, // Đang chờ xử lý
+          canceledSeats: seatsCanceled, // Đã hủy vé
+        });
+
+        // Đếm số ghế còn trống
+        const totalSeats = 6; // Xe có 6 ghế
+        const soldAndBookedSeats = new Set([...seatsPaid, ...seatsPending]); // Ghế đã bán hoặc đang chờ xử lý
+        const availableSeats = totalSeats - soldAndBookedSeats.size;
+        setAvailableSeats(availableSeats);
       } catch (err) {
         console.log("««««« err »»»»»", err);
       }
@@ -91,6 +125,7 @@ const Schedule7Seat = ({
 
     fetchBookedSeats();
   }, [scheduleId]);
+
   return (
     <div
       className={`${styles.bookingPage__tickets__item} ${styles.allowBook}`}
@@ -123,13 +158,13 @@ const Schedule7Seat = ({
                 data-content="totalEmptySeat"
                 data-seat-empty={14}
                 data-trip-id="PLT0Tc1ybgN295oCg20241015"
-                data-seatmap-id="SM0Tc1ybgBNa7yys"
               >
-                {numSeat}
+                {/* {numSeat} */}
+                {availableSeats}
               </b>{" "}
-              chỗ ngồi
+              chỗ ngồi còn trống
             </h3>
-            <span>Xe {car.name}</span>
+            <span>{car.name} - {numSeat} chỗ</span>
           </div>
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__price}>
@@ -137,8 +172,8 @@ const Schedule7Seat = ({
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__view_button}>
           <a
-            data-trip-id="PLT0Tc1ybgN295oCg20241015"
             href="#"
+            data-trip-id="PLT0Tc1ybgN295oCg20241015"
             data-parent="#tripPLT0Tc1ybgN295oCg20241015"
             data-toggle="collapse"
             onClick={handelClickDetail}
@@ -200,10 +235,8 @@ const Schedule7Seat = ({
                         <span className={styles.showSeatId}>TAI</span>
                       </td>
                       <td />
-
                       <Seat
                         seatId="A1"
-                        // seatStatus="available"
                         bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
                       />
@@ -211,19 +244,16 @@ const Schedule7Seat = ({
                     <tr>
                       <Seat
                         seatId="A2"
-                        // seatStatus="sold"
                         bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
                       />
                       <Seat
                         seatId="A3"
-                        // seatStatus="available"
                         bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
                       />
                       <Seat
                         seatId="A4"
-                        // seatStatus="available"
                         bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
                       />
@@ -231,22 +261,17 @@ const Schedule7Seat = ({
                     <tr>
                       <Seat
                         seatId="A5"
-                        // seatStatus="available"
                         bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
                       />
+                      <td />
+
                       <Seat
                         seatId="A6"
-                        // seatStatus="available"
                         bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
                       />
-                      <Seat
-                        seatId="A7"
-                        // seatStatus="available"
-                        bookedSeats={bookedSeats}
-                        onSelect={handleSeatSelection}
-                      />
+                      
                     </tr>
                   </tbody>
                 </table>

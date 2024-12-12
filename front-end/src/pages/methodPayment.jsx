@@ -115,40 +115,40 @@ const MethodPayment = () => {
 
 
   // Check cancle ticket
-  // const checkCancelTicket = async () => {
-  //   if (!ticketId) {
-  //     alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra.");
-  //     return;
-  //   }
+  const checkCancelTicket = async () => {
+    if (!ticketId) {
+      alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra.");
+      return;
+    }
 
-  //   try {
-  //     const response = await root.get(
-  //       `public/ticket/check/${ticketId}`
-  //     );
+    try {
+      const response = await root.get(
+        `public/ticket/check/${ticketId}`
+      );
 
-  //     if (response.status === 200) {
-  //       console.log("««««« response.data123 »»»»»", response.data);
-  //       if (response.data === true) {
-  //         console.log("««««« Vé đã được thanh toán »»»»»");
-  //         return true;
-  //       } else {
-  //         console.log("««««« Vé chưa được xử lý »»»»»");
-  //         // navigate("/home");
-  //         return false;
-  //       }
-  //     } else {
-  //       setError("Không thể kiểm tra trạng thái thanh toán.");
-  //     }
-  //   } catch (err) {
-  //     console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+      if (response.status === 200) {
+        console.log("««««« response.data123 »»»»»", response.data);
+        if (response.data === true) {
+          console.log("««««« Vé đã được thanh toán »»»»»");
+          return true;
+        } else {
+          console.log("««««« Vé chưa được xử lý »»»»»");
+          // navigate("/home");
+          return false;
+        }
+      } else {
+        setError("Không thể kiểm tra trạng thái thanh toán.");
+      }
+    } catch (err) {
+      console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  // useEffect(() => {
-  //   checkCancelTicket();
-  // },[]);
+  useEffect(() => {
+    checkCancelTicket();
+  },[]);
 
 
   return (
