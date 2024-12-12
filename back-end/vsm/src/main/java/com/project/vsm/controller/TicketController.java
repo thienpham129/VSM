@@ -36,7 +36,7 @@ public class TicketController {
 	}
 
 	@DeleteMapping("/admin/ticket/{ticketId}")
-	public String deleteTicketById(@PathVariable int ticketId) {
+	public String deleteTicketById(@PathVariable String ticketId) {
 		ticketService.deleteTicket(ticketId);
 		return "Delete ticket has successfully";
 	}
@@ -57,10 +57,11 @@ public class TicketController {
 		return new ResponseEntity<>(ticketService.updateStatusTicketById(ticketId, request), HttpStatus.OK);
 	}
 
-	 @PutMapping("/admin/update/ticket/{ticketId}")
-	    public ResponseEntity<TicketResponse> updateTicketById (@PathVariable String ticketId ,@RequestBody TicketRequest request){
-	        return new ResponseEntity<>(ticketService.updateTicketById(ticketId , request),HttpStatus.OK);
-	    }
+	@PutMapping("/admin/update/ticket/{ticketId}")
+	public ResponseEntity<TicketResponse> updateTicketById(@PathVariable String ticketId,
+			@RequestBody TicketRequest request) {
+		return new ResponseEntity<>(ticketService.updateTicketById(ticketId, request), HttpStatus.OK);
+	}
 
 	@GetMapping("/admin/ticket-with-schedule/{scheduleId}")
 	public ResponseEntity<List<TicketResponse>> getTicketByScheduleId(@PathVariable long scheduleId) {
@@ -81,7 +82,7 @@ public class TicketController {
 	}
 
 	@GetMapping("driver/ticket/{id}")
-	public ResponseEntity<TicketResponseAdminDTO> getTicketByIdAdmin(@PathVariable long id) {
+	public ResponseEntity<TicketResponseAdminDTO> getTicketByIdAdmin(@PathVariable String id) {
 		TicketResponseAdminDTO ticket = ticketService.getTicketByIDAdmin(id);
 		return new ResponseEntity<>(ticket, HttpStatus.OK);
 	}

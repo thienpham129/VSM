@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.project.vsm.model.TicketEntity;
 
 @Repository
-public interface TicketRepository extends JpaRepository<TicketEntity, Long> {
+public interface TicketRepository extends JpaRepository<TicketEntity, String> {
 	@Query("select t from TicketEntity  t where t.scheduleEntity.id = ?1")
 	List<TicketEntity> getTicketByScheduleId(long scheduleId);
 

@@ -81,6 +81,11 @@ const DetailTicket = () => {
     "Đã xác nhận",
     "Đang di chuyển",
     "Hoàn thành",
+    "Hủy đặt vé",
+    "Đã lên xe",
+    "Chưa lên xe",
+    "Đã xuống xe",
+    "Hủy",
   ];
 
   // Paid options
