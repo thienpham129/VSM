@@ -84,7 +84,6 @@ const Schedule7Seat = ({
         }, {});
 
         setBookedSeats(seatStatusMap);
-        console.log("««««« response.data »»»»»", response.data);
       } catch (err) {
         console.log("««««« err »»»»»", err);
       }

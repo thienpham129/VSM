@@ -75,7 +75,7 @@ function App() {
             <Route path="accountBooking" element={<AccountBooking />} />
             <Route path="contact" element={<Contact />} />
             <Route path="listCars" element={<ListCars />} />
-            <Route path="quickBooking" element={<QuickBooking />} />
+            {/* <Route path="quickBooking" element={<QuickBooking />} /> */}
             <Route path="new" element={<News />} />
             <Route path="booking" element={<Booking />} />
             <Route path="OTP" element={<OTP />} />
@@ -97,7 +97,7 @@ function App() {
             <Route path="contact" element={<Contact />} />
             <Route path="listCars" element={<ListCars />} />
             <Route path="profile" element={<Profile />} />
-            <Route path="quickBooking" element={<QuickBooking />} />
+            {/* <Route path="quickBooking" element={<QuickBooking />} /> */}
             <Route path="booking" element={<Booking />} />
             <Route path="new" element={<News />} />
             <Route path="OTP" element={<OTP />} />

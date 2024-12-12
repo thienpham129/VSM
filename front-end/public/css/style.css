@@ -681,6 +681,10 @@ header .header-col.mid .social-icons {
     font-weight: 500;
 }
 
+#mainmenu li>a:hover {
+    color: #1ECB15;
+}
+
 #mainmenu li.has-child>a {
     padding-right: 0px;
 }

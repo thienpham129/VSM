@@ -18,14 +18,6 @@ const Header = () => {
   const [fullName, setFullName] = useState("");
   const [urlImage, setUrlImage] = useState();
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem(DEFAULT.TOKEN);
-  //   setUserId(localStorage.getItem("userId"));
-  //   if (token) {
-  //     setIsLoggedIn(true);
-  //     setUserName("Xuan Quang");
-  //   }
-  // }, []);
 
   useEffect(() => {
     const token = getTokenFromLocalStorage();
@@ -76,28 +68,6 @@ const Header = () => {
       console.log("Failed to retrieve user data:", error);
     }
   };
-  // useEffect(() => {
-  //   getUserById();
-  // }, []);
-
-  // useEffect(() => {
-  //   const getUserById = async () => {
-  //     try {
-  //       const url = `/user/${localStorage.getItem("userId")}`;
-  //       const response = await root.get(url);
-  //       if (response) {
-  //         setEmail(response.data.account.email);
-  //         console.log(response.data.account.email);
-  //         console.log("OK");
-  //       } else {
-  //         console.log("Get User By Id Fail");
-  //       }
-  //     } catch (error) {
-  //       console.log(error + "  Fail Get user By id");
-  //     }
-  //   };
-  //   getUserById();
-  // }, []);
 
   const handleLogout = () => {
     removeTokenFromLocalStorage();
@@ -184,20 +154,7 @@ const Header = () => {
                     <a className="menu-item" href="/bookingTicket">
                       Đặt vé
                     </a>
-                    <ul>
-                      <li>
-                        <a className="menu-item new" href="/quickBooking">
-                          Đặt vé nhanh
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="/bookingTicket">
-                          Đặt vé
-                        </a>
-                      </li>
-                    </ul>
                   </li>
-
                   <li>
                     <a className="menu-item" href="/aboutUs">
                       Giới Thiệu

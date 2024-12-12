@@ -44,7 +44,6 @@ const NavBarProfile = () => {
       if (response.status === 200) {
         alert("Cập nhật ảnh đại diện thành công!");
         setUrlImage(filePreview);
-        console.log("««««« response »»»»»", response.data);
       }
     } catch (error) {
       console.log("Lỗi khi cập nhật ảnh đại diện:", error);

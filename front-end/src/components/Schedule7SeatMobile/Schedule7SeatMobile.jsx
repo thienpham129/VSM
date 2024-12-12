@@ -11,6 +11,8 @@ import {
 } from "services/app";
 import { getTokenFromLocalStorage } from "utils/tokenUtils";
 import { root } from "helper/axiosClient";
+import { jwtDecode } from "jwt-decode";
+
 
 const Seat = ({ seatId, seatStatus, onSelect, bookedSeats }) => {
   const isSold = bookedSeats.soldSeats.includes(seatId);
@@ -70,6 +72,7 @@ const Schedule7SeatMobile = ({
   });
 
   //
+  const [userId, setUserId] = useState("");
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
@@ -373,6 +376,7 @@ const Schedule7SeatMobile = ({
             startTime,
             startLocation,
             stopLocation,
+            ticketId: response.data.ticketId,
           },
         });
       } else {
@@ -382,6 +386,51 @@ const Schedule7SeatMobile = ({
       console.error("Error submitting booking:", error);
     }
   };
+
+  //
+  const fetchUser = async (userId) => {
+    const token = getTokenFromLocalStorage();
+    try {
+      const response = await root.get(`/user/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = response.data;
+      console.log("««««« data »»»»»", data);
+      if (data) {
+        setEmail(data.email || "");
+        setPhoneNumber(data.phoneNumber || "");
+        setFullName(
+          `${response.data.firstName || ""} ${
+            response.data.lastName || ""
+          }`.trim()
+        );
+      }
+    } catch (error) {
+      console.error("Failed to retrieve user data:", error);
+    }
+  };
+
+  useEffect(() => {
+    const token = getTokenFromLocalStorage();
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.sub;
+        if (userId) {
+          setUserId(userId);
+          fetchUser(userId);
+        } else {
+          console.error("userId not found in token");
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    }
+  }, []);
+  //
+
   return (
     <div
       className={styles.bookingPage__mobile__item}
@@ -795,7 +844,7 @@ const Schedule7SeatMobile = ({
                     defaultValue=""
                   />
                 </div>
-                <div className="" style={{ textAlign: "right" }}>
+                {/* <div className="" style={{ textAlign: "right" }}>
                   <button
                     type="button"
                     className="btn btn-info"
@@ -805,7 +854,7 @@ const Schedule7SeatMobile = ({
                     <i className="fa fa-search mr-2" aria-hidden="true" />
                     Kiểm tra mã
                   </button>
-                </div>
+                </div> */}
                 <div
                   className="form-group mb-2"
                   data-discount-trip="PLT0Tc1ybgN295oCg20241015"

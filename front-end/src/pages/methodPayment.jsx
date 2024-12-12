@@ -113,6 +113,44 @@ const MethodPayment = () => {
     return () => clearInterval(interval); // Xóa interval khi component bị unmount
   }, [ticketId, navigate]);
 
+
+  // Check cancle ticket
+  // const checkCancelTicket = async () => {
+  //   if (!ticketId) {
+  //     alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await root.get(
+  //       `public/ticket/check/${ticketId}`
+  //     );
+
+  //     if (response.status === 200) {
+  //       console.log("««««« response.data123 »»»»»", response.data);
+  //       if (response.data === true) {
+  //         console.log("««««« Vé đã được thanh toán »»»»»");
+  //         return true;
+  //       } else {
+  //         console.log("««««« Vé chưa được xử lý »»»»»");
+  //         // navigate("/home");
+  //         return false;
+  //       }
+  //     } else {
+  //       setError("Không thể kiểm tra trạng thái thanh toán.");
+  //     }
+  //   } catch (err) {
+  //     console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   checkCancelTicket();
+  // },[]);
+
+
   return (
     <div className="no-bottom no-top zebra" id="content">
       <div id="top" />
@@ -312,8 +350,6 @@ const MethodPayment = () => {
         </div>
         <form
           target="_self"
-          action="/index.php?mod=datve&page=datve&sub=doBooking"
-          method="POST"
         >
           <div className={styles.bookingPayment}>
             <div className={styles.container}>
@@ -327,7 +363,7 @@ const MethodPayment = () => {
                           <img
                             src={paymentUrl}
                             alt="Payment QR Code"
-                            style={{ width: "500px", height: "500px" }}
+                            style={{ width: "500px", height: "500px", marginLeft: "80px"}}
                           />
                         </div>
                       )}
@@ -339,7 +375,7 @@ const MethodPayment = () => {
                           style={{ fontSize: "1.4em" }}
                         >
                           QUÝ KHÁCH VUI LÒNG THANH TOÁN TRONG VÒNG{" "}
-                          <strong>60 PHÚT</strong>, QUÁ THỜI HẠN MÃ VÉ SẼ BỊ
+                          <strong>3 PHÚT</strong>, QUÁ THỜI HẠN MÃ VÉ SẼ BỊ
                           HUỶ. CẦN HỖ TRỢ XIN LIÊN HỆ TỔNG ĐÀI:{" "}
                           <strong>1900969671</strong>.
                         </span>
