@@ -71,7 +71,7 @@ public class TicketEntity {
     String mapDrop;
 
     @Column(name = "map_status")
-    boolean mapStatus;
+    String mapStatus;
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "voucher_id")

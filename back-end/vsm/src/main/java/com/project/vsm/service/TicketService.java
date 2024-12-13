@@ -31,7 +31,6 @@ public class TicketService {
     GoogleSheetsService googleSheetsService;
     ScheduleRepository scheduleRepository;
     TypeRepository typeRepository;
-    RouteRepository routeRepository;
 
     public List<TicketResponse> getAllTicket() {
         List<TicketEntity> ticketEntities = ticketRepository.findAll();
@@ -78,7 +77,7 @@ public class TicketService {
 
         AccountEntity account = accountRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
-        
+
         TypeEntity type = typeRepository.findById(request.getTypeId())
                 .orElseThrow(() -> new RuntimeException("Type not found"));
 
@@ -170,14 +169,18 @@ public class TicketService {
         return TicketResponse.fromEntity(ticket);
     }
 
-    public TicketResponse updateMapByTicketId (String ticketId , TicketRequest request) {
+    public TicketResponse updateMapByTicketId(String ticketId, TicketRequest request) {
         TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
                 .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
-
-        ticket.setMapPickUp(request.getMapPickUp());
-        ticket.setMapDrop(request.getMapDrop());
-        ticket.setMapStatus(request.isMapStatus());
-
+        if (request.getMapPickUp() != null) {
+            ticket.setMapPickUp(request.getMapPickUp());
+        }
+        if (request.getMapDrop() != null) {
+            ticket.setMapDrop(request.getMapDrop());
+        }
+        if (request.getMapStatus() != null) {
+            ticket.setMapStatus(request.getMapStatus());
+        }
         ticketRepository.save(ticket);
 
         return TicketResponse.fromEntity(ticket);

@@ -42,7 +42,7 @@ public class TicketResponse {
     String detailAddressDropOff;
     String mapPickUp;
     String mapDrop;
-    boolean mapStatus;
+    String mapStatus;
 
     public static TicketResponse fromEntity(TicketEntity ticket) {
         return TicketResponse.builder()
@@ -64,7 +64,7 @@ public class TicketResponse {
                 .status(ticket.getStatus())
                 .mapPickUp(ticket.getMapPickUp())
                 .mapDrop(ticket.getMapDrop())
-                .mapStatus(ticket.isMapStatus())
+                .mapStatus(ticket.getMapStatus())
                 .isPaid(ticket.isPaid())
                 .build();
     }

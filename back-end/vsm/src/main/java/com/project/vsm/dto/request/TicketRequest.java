@@ -32,7 +32,7 @@ public class TicketRequest {
     String qrCode;
     String mapPickUp;
     String mapDrop;
-    boolean mapStatus;
+    String mapStatus;
     long routeId;
 
     public TicketEntity toEntity(AccountEntity account, PaymentEntity payment, VoucherEntity voucher, double totalPrice) {

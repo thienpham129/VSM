@@ -1,14 +1,13 @@
 package com.project.vsm.controller;
 
+import com.project.vsm.dto.request.ChangePasswordRequest;
+import com.project.vsm.dto.response.ResponseObject;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.project.vsm.dto.RegisterUserDto;
 import com.project.vsm.dto.VerifyUserDto;
@@ -20,6 +19,7 @@ import com.project.vsm.service.AuthService;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/auth")
+@Slf4j
 public class AuthController {
 
 	@Autowired
@@ -55,5 +55,22 @@ public class AuthController {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
+	@PostMapping("/outbound/authentication")
+	public ResponseObject<LoginResponse> authenticate(@RequestParam String code) {
+		LoginResponse response = authService.outboundAuthentication(code);
+		log.info("Access Token to return to FE: {}", response.getAccessToken());
+		return ResponseObject.<LoginResponse>builder()
+				.data(response)
+				.build();
+	}
+	@GetMapping("/forgot-password")
+	public ResponseEntity<?> forgotPassword (@RequestParam String email){
+		return new ResponseEntity<>(authService.forgotPassword(email) , HttpStatus.OK);
+	}
+	@GetMapping("/reset-password")
+	public ResponseEntity<?> resetPassword (@RequestParam String email , @RequestBody ChangePasswordRequest request) {
+		return new ResponseEntity<>(authService.resetPassword(email , request) , HttpStatus.OK);
+	}
+
 
 }
