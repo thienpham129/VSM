@@ -1,49 +1,37 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function HomePage({ departureTime }) {
-  const navigate = useNavigate();
-  const [selectedPrice, setSelectedPrice] = useState("150.000 VNĐ");
-
-  const handleSelection = (price) => {
-    setSelectedPrice(price);
-  };
-
-  const handleContinueQuickBooking = (e) => {
-    e.preventDefault();
-    navigate("/quickBooking");
-  };
-
-  const [timeLeft, setTimeLeft] = useState("");
+function HomePage() {
+  // const [timeLeft, setTimeLeft] = useState("");
 
   // handle time left
-  useEffect(() => {
-    const targetTime = new Date();
-    const defaultTime = "00:00:00"; // Thời gian mặc định
-    const [hours, minutes, seconds] = (departureTime || defaultTime)
-      .split(":")
-      .map(Number);
-    targetTime.setHours(hours, minutes, seconds);
+  // useEffect(() => {
+  //   const targetTime = new Date();
+  //   const defaultTime = "00:00:00"; // Thời gian mặc định
+  //   const [hours, minutes, seconds] = (departureTime || defaultTime)
+  //     .split(":")
+  //     .map(Number);
+  //   targetTime.setHours(hours, minutes, seconds);
 
-    const interval = setInterval(() => {
-      const now = new Date();
-      const difference = targetTime - now;
+  //   const interval = setInterval(() => {
+  //     const now = new Date();
+  //     const difference = targetTime - now;
 
-      if (difference <= 0) {
-        clearInterval(interval);
-        setTimeLeft("Đã khởi hành");
-      } else {
-        const hoursLeft = Math.floor(difference / (1000 * 60 * 60));
-        const minutesLeft = Math.floor(
-          (difference % (1000 * 60 * 60)) / (1000 * 60)
-        );
-        const secondsLeft = Math.floor((difference % (1000 * 60)) / 1000);
-        setTimeLeft(`${hoursLeft}h ${minutesLeft}m ${secondsLeft}s`);
-      }
-    }, 1000);
+  //     if (difference <= 0) {
+  //       clearInterval(interval);
+  //       setTimeLeft("Đã khởi hành");
+  //     } else {
+  //       const hoursLeft = Math.floor(difference / (1000 * 60 * 60));
+  //       const minutesLeft = Math.floor(
+  //         (difference % (1000 * 60 * 60)) / (1000 * 60)
+  //       );
+  //       const secondsLeft = Math.floor((difference % (1000 * 60)) / 1000);
+  //       setTimeLeft(`${hoursLeft}h ${minutesLeft}m ${secondsLeft}s`);
+  //     }
+  //   }, 1000);
 
-    return () => clearInterval(interval);
-  }, [departureTime]);
+  //   return () => clearInterval(interval);
+  // }, [departureTime]);
 
   //
   return (
@@ -62,288 +50,26 @@ function HomePage({ departureTime }) {
                 <div className="spacer-double d-lg-none d-sm-block" />
                 <div className="spacer-double d-lg-none d-sm-block" />
                 <div className="spacer-double d-lg-none d-sm-block" />
-                {/*  */}
                 <div className="row align-items-center">
-                  <div className="col-lg-6">
-                    <div className="spacer-single sm-hide" />
-                    <div
-                      className="p-4 rounded-3 shadow-soft text-light"
-                      style={{
-                        backgroundColor: "rgba(0, 0, 0, .6)",
-                        marginLeft: "80px",
-                      }}
-                    >
-                      <div name="contactForm" id="contact_form" method="post">
-                        <div className="de_form de_radio row g-3">
-                          <div className="radio-img col-lg-6 col-sm-3 col-6">
-                            <input
-                              id="radio-1b"
-                              name="Car_Type"
-                              type="radio"
-                              defaultValue="Office"
-                              value="150.000 VNĐ"
-                              onChange={() => handleSelection("150.000 VNĐ")}
-                            />
-                            <label htmlFor="radio-1b">
-                              <img src="images/select-form/van.png" alt="" />
-                              Xe 7 chỗ (150.000)
-                            </label>
-                          </div>
-                          <div className="radio-img col-lg-6 col-sm-3 col-6">
-                            <input
-                              id="radio-1c"
-                              name="Car_Type"
-                              type="radio"
-                              defaultValue="Commercial"
-                              value="120.000 VNĐ"
-                              onChange={() => handleSelection("120.000 VNĐ")}
-                            />
-                            <label htmlFor="radio-1c">
-                              <img
-                                src="images/select-form/minibus.png"
-                                alt=""
-                              />
-                              Xe 10 chỗ (120.000)
-                            </label>
-                          </div>
-                          <table className="info_lobby">
-                            <tr>
-                              <th>Thời gian chuẩn bị xe chạy</th>
-                              <th>Địa điểm đi và đến</th>
-                              <th>Giá vé</th>
-                              <th>Số ghế còn trống</th>
-                            </tr>
-                            <tr>
-                              <td>
-                                {" "}
-                                <p>{timeLeft}</p>
-                              </td>
-                              <td>Đà Nẵng đến Huế</td>
-                              <td>{selectedPrice}</td>
-                              <td>10/50</td>
-                            </tr>
-                          </table>
-                        </div>
-                        <div className="spacer-20" />
-                        <input
-                          type="submit"
-                          className="btn-main pull-right"
-                          value={"Chọn chuyến đi này"}
-                          onClick={handleContinueQuickBooking}
-                        />
-                        <div className="clearfix" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-lg-6">
-                    <div className="spacer-single sm-hide" />
-                    <div
-                      className="p-4 rounded-3 shadow-soft text-light"
-                      style={{
-                        backgroundColor: "rgba(0, 0, 0, .6)",
-                        marginLeft: "80px",
-                      }}
-                    >
-                      <div name="contactForm" id="contact_form" method="post">
-                        <div className="de_form de_radio row g-3">
-                          <div className="radio-img col-lg-6 col-sm-3 col-6">
-                            <input
-                              id="radio-1b"
-                              name="Car_Type"
-                              type="radio"
-                              defaultValue="Office"
-                              value="150.000 VNĐ"
-                              onChange={() => handleSelection("150.000 VNĐ")}
-                            />
-                            <label htmlFor="radio-1b">
-                              <img src="images/select-form/van.png" alt="" />
-                              Xe 7 chỗ (150.000)
-                            </label>
-                          </div>
-                          <div className="radio-img col-lg-6 col-sm-3 col-6">
-                            <input
-                              id="radio-1c"
-                              name="Car_Type"
-                              type="radio"
-                              defaultValue="Commercial"
-                              value="120.000 VNĐ"
-                              onChange={() => handleSelection("120.000 VNĐ")}
-                            />
-                            <label htmlFor="radio-1c">
-                              <img
-                                src="images/select-form/minibus.png"
-                                alt=""
-                              />
-                              Xe 10 chỗ (120.000)
-                            </label>
-                          </div>
-                          <table className="info_lobby">
-                            <tr>
-                              <th>Thời gian chuẩn bị xe chạy</th>
-                              <th>Địa điểm đi và đến</th>
-                              <th>Giá vé</th>
-                              <th>Số ghế còn trống</th>
-                            </tr>
-                            <tr>
-                              <td>7 :00</td>
-                              <td>Đà Nẵng đến Huế</td>
-                              <td>{selectedPrice}</td>
-                              <td>10/50</td>
-                            </tr>
-                          </table>
-                        </div>
-                        <div className="spacer-20" />
-
-                        <input
-                          type="submit"
-                          className="btn-main pull-right"
-                          value={"Chọn chuyến đi này"}
-                        />
-                        <div className="clearfix" />
-                      </div>
-                    </div>
+                  <div className="col-lg-6 text-light">
+                    <h4>
+                      <span className="id-color">
+                        Fast and Easy Way to Rent a Car
+                      </span>
+                    </h4>
+                    <div className="spacer-10" />
+                    <h1 className="mb-2">
+                      Khám phá thế giới với chiếc xe và dịch vụ thoải mái của
+                      chúng tôi
+                    </h1>
+                    <div className="spacer-10" />
+                    <p className="lead">
+                      Hãy bắt đầu những cuộc phiêu lưu khó quên và khám phá thế
+                      giới trong sự thoải mái và phong cách vô song với đội xe
+                      cực kỳ thoải mái của chúng tôi.
+                    </p>
                   </div>
                 </div>
-                {/*  */}
-                <div className="row align-items-center">
-                  <div className="col-lg-6">
-                    <div className="spacer-single sm-hide" />
-                    <div
-                      className="p-4 rounded-3 shadow-soft text-light"
-                      style={{
-                        backgroundColor: "rgba(0, 0, 0, .6)",
-                        marginLeft: "80px",
-                      }}
-                    >
-                      <div name="contactForm" id="contact_form" method="post">
-                        <div className="de_form de_radio row g-3">
-                          <div className="radio-img col-lg-6 col-sm-3 col-6">
-                            <input
-                              id="radio-1b"
-                              name="Car_Type"
-                              type="radio"
-                              defaultValue="Office"
-                              value="150.000 VNĐ"
-                              onChange={() => handleSelection("150.000 VNĐ")}
-                            />
-                            <label htmlFor="radio-1b">
-                              <img src="images/select-form/van.png" alt="" />
-                              Xe 7 chỗ (150.000)
-                            </label>
-                          </div>
-                          <div className="radio-img col-lg-6 col-sm-3 col-6">
-                            <input
-                              id="radio-1c"
-                              name="Car_Type"
-                              type="radio"
-                              defaultValue="Commercial"
-                              value="120.000 VNĐ"
-                              onChange={() => handleSelection("120.000 VNĐ")}
-                            />
-                            <label htmlFor="radio-1c">
-                              <img
-                                src="images/select-form/minibus.png"
-                                alt=""
-                              />
-                              Xe 10 chỗ (120.000)
-                            </label>
-                          </div>
-                          <table className="info_lobby">
-                            <tr>
-                              <th>Thời gian chuẩn bị xe chạy</th>
-                              <th>Địa điểm đi và đến</th>
-                              <th>Giá vé</th>
-                              <th>Số ghế còn trống</th>
-                            </tr>
-                            <tr>
-                              <td>7 :00</td>
-                              <td>Đà Nẵng đến Huế</td>
-                              <td>{selectedPrice}</td>
-                              <td>10/50</td>
-                            </tr>
-                          </table>
-                        </div>
-                        <div className="spacer-20" />
-
-                        <input
-                          type="submit"
-                          className="btn-main pull-right"
-                          value={"Chọn chuyến đi này"}
-                        />
-                        <div className="clearfix" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-lg-6">
-                    <div className="spacer-single sm-hide" />
-                    <div
-                      className="p-4 rounded-3 shadow-soft text-light"
-                      style={{
-                        backgroundColor: "rgba(0, 0, 0, .6)",
-                        marginLeft: "80px",
-                      }}
-                    >
-                      <div name="contactForm" id="contact_form" method="post">
-                        <div className="de_form de_radio row g-3">
-                          <div className="radio-img col-lg-6 col-sm-3 col-6">
-                            <input
-                              id="radio-1b"
-                              name="Car_Type"
-                              type="radio"
-                              defaultValue="Office"
-                              value="150.000 VNĐ"
-                              onChange={() => handleSelection("150.000 VNĐ")}
-                            />
-                            <label htmlFor="radio-1b">
-                              <img src="images/select-form/van.png" alt="" />
-                              Xe 7 chỗ (150.000)
-                            </label>
-                          </div>
-                          <div className="radio-img col-lg-6 col-sm-3 col-6">
-                            <input
-                              id="radio-1c"
-                              name="Car_Type"
-                              type="radio"
-                              defaultValue="Commercial"
-                              value="120.000 VNĐ"
-                              onChange={() => handleSelection("120.000 VNĐ")}
-                            />
-                            <label htmlFor="radio-1c">
-                              <img
-                                src="images/select-form/minibus.png"
-                                alt=""
-                              />
-                              Xe 10 chỗ (120.000)
-                            </label>
-                          </div>
-                          <table className="info_lobby">
-                            <tr>
-                              <th>Thời gian chuẩn bị xe chạy</th>
-                              <th>Địa điểm đi và đến</th>
-                              <th>Giá vé</th>
-                              <th>Số ghế còn trống</th>
-                            </tr>
-                            <tr>
-                              <td>7 :00</td>
-                              <td>Đà Nẵng đến Huế</td>
-                              <td>{selectedPrice}</td>
-                              <td>10/50</td>
-                            </tr>
-                          </table>
-                        </div>
-                        <div className="spacer-20" />
-
-                        <input
-                          type="submit"
-                          className="btn-main pull-right"
-                          value={"Chọn chuyến đi này"}
-                        />
-                        <div className="clearfix" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/*  */}
                 <div className="spacer-double d-lg-none d-sm-block" />
                 <div className="spacer-double d-lg-none d-sm-block" />
               </div>
