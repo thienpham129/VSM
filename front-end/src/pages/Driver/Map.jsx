@@ -838,6 +838,7 @@ const Map = () => {
 
   useEffect(() => {
     if (resultSearchVoice) {
+      console.log(currentCity);
       if (resultSearchVoice.includes("&")) {
         let tempAddressStartVoice =
           resultSearchVoice.split("&&")[0].trim() + " " + currentCity;

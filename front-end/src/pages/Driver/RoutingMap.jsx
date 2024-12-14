@@ -26,7 +26,7 @@ const GoongMapWithDirections = ({
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: `https://tiles.goong.io/assets/goong_map_web.json?api_key=${GOONG_MAPS_TILE_API_KEY}`,
-      center: [105.85, 21.03], // Default center (Hanoi, Vietnam)
+      center: [105.85, 21.03],
       zoom: 12,
     });
 
@@ -41,8 +41,8 @@ const GoongMapWithDirections = ({
       let popUpText = "";
       if (userName && userAddress && userPhone) {
         popUpText = `Tên: ${userName}<br/>
-                     SĐT: ${userAddress}<br/>
-                     ĐC: ${userPhone}<br/>`;
+                     SĐT: ${userPhone}<br/>
+                     ĐC: ${userAddress}<br/>`;
       }
       try {
         const response = await fetch(
