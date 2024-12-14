@@ -83,12 +83,10 @@ const MethodPayment = () => {
       if (response.status === 200) {
         console.log("««««« response.data »»»»»", response.data);
         if (response.data.paid === true) {
-          // alert(`Vé đã được thanh toán`);
           console.log("««««« Vé đã được thanh toán »»»»»");
           navigate("/paymentSuccess");
           return true;
         } else {
-          // alert(`Vé chưa được thanh toán`);
           console.log("««««« Vé chưa được thanh toán` »»»»»");
           return false;
         }
@@ -133,7 +131,6 @@ const MethodPayment = () => {
           return true;
         } else {
           console.log("««««« Vé chưa được xử lý »»»»»");
-          // navigate("/home");
           return false;
         }
       } else {
