@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import styles from "./schedule.module.css";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { root } from "helper/axiosClient";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 function Schedule() {
   const navigate = useNavigate();
   const [isClickDetail, setIsClickDetail] = useState(false);
@@ -38,6 +39,11 @@ function Schedule() {
   const [arrayTicketNotInCar, setArrayTicketNotInCar] = useState([]);
   const [updateAnyWay, SetUpdateAnyWay] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [isSuccessUpdateUser, setIsSuccessUpdateUser] = useState(false);
+  const [isPickingUp, setIsPickingUp] = useState(true);
+  const [isDoneUpdateMapStatus, setIsDoneUpdateMapStatus] = useState(false);
+  const [currentLat, setCurrentLat] = useState("");
+  const [currentLong, setCurrentLong] = useState("");
 
   const columns = [
     {
@@ -136,6 +142,8 @@ function Schedule() {
       changeDataScheduleDetail();
       let tempArrayInCar = [];
       let tempArrayNotInCar = [];
+      let countNotInCar = 0;
+      let tempArraydataScheduleDetail = [];
       dataScheduleDetail.forEach((item, index) => {
         if (item.status.toLocaleUpperCase() === "ĐÃ LÊN XE") {
           setWarningUpdateSchedule(true);
@@ -146,7 +154,14 @@ function Schedule() {
           setWarningUpdateSchedule(true);
           tempArrayNotInCar.push(item.fullName);
         }
+
+        if (item.status.toLocaleUpperCase() === "") {
+        }
+        if (item.mapStatus === "0") {
+          countNotInCar += 1;
+        }
       });
+
       setArrayTicketInCar(tempArrayInCar);
       setArrayTicketNotInCar(tempArrayNotInCar);
     }
@@ -194,7 +209,7 @@ function Schedule() {
           }
         });
         setDataScheduleDetail(tempArrayScheduleDetail);
-        console.log(response.data);
+        console.log(tempArrayScheduleDetail);
       }
     } catch (error) {
       console.log(error);
@@ -280,6 +295,7 @@ function Schedule() {
             });
             if (response.data) {
               notifyScucessUpadte();
+              setIsSuccessUpdateUser(true);
               setToggleModal(false);
               fetchDataScheduleDetail(idSchedule);
             } else {
@@ -295,6 +311,188 @@ function Schedule() {
       }
     }
   };
+
+  useEffect(() => {
+    if (isSuccessUpdateUser) {
+      console.log(statusUser);
+      try {
+        const updateStatusMap = async (status) => {
+          const responseMap = await root.put(
+            `/public/update-status-map/ticket/${ticketId}`,
+            {
+              mapStatus: status,
+            }
+          );
+          if (!responseMap.data) {
+            console.log(
+              "Something went wrong with call api of updateStatusMap"
+            );
+          } else {
+            setIsDoneUpdateMapStatus(true);
+            setIsSuccessUpdateUser(false);
+          }
+        };
+        if (statusUser.toLocaleUpperCase() === "ĐÃ LÊN XE") {
+          updateStatusMap("1");
+        } else if (statusUser.toLocaleUpperCase() === "CHƯA LÊN XE") {
+          updateStatusMap("0");
+        } else if (statusUser.toLocaleUpperCase() === "ĐÃ XUỐNG XE") {
+          updateStatusMap("2");
+        } else {
+          updateStatusMap("3");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [isSuccessUpdateUser]);
+
+  useEffect(() => {
+    if (dataScheduleDetail.length > 0 && isDoneUpdateMapStatus) {
+      const findNextDestination = async () => {
+        let countNotInCar = 0;
+        let arrayNotIncarUser = [];
+        let arrayIncarUser = [];
+        dataScheduleDetail.forEach((item, index) => {
+          if (item.status.toLocaleUpperCase().trim() === "CHƯA LÊN XE") {
+            countNotInCar += 1;
+            arrayNotIncarUser.push(item);
+          }
+
+          if (item.status.toLocaleUpperCase().trim() === "ĐÃ LÊN XE") {
+            arrayIncarUser.push(item);
+          }
+        });
+        console.log(arrayNotIncarUser);
+        console.log(arrayIncarUser);
+        if (arrayIncarUser.length > 0 || arrayNotIncarUser.length > 0) {
+          if (countNotInCar !== 0) {
+            let oldPositionOfShortestDistance = 0;
+            let destination = "";
+            arrayNotIncarUser.forEach((item, index) => {
+              if (index === arrayNotIncarUser.length - 1) {
+                destination += item.mapPickUp;
+              } else {
+                destination += item.mapPickUp + "%7C";
+              }
+            });
+            let elementsArray = [];
+            if (currentLat && currentLong) {
+              const responseMap = await fetch(
+                `https://rsapi.goong.io/DistanceMatrix?origins=${currentLat},${currentLong}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+              );
+              const data = await responseMap.json();
+              elementsArray = data.rows[0].elements;
+            }
+            console.log(elementsArray);
+            console.log(currentLat + "         " + currentLong);
+            console.log(destination);
+            let testArray = [];
+            elementsArray.forEach((item, index) => {
+              testArray.push(item.distance.value);
+            });
+            for (let i = 0; i < 1; i++) {
+              for (let j = i + 1; j < testArray.length; j++) {
+                if (testArray[i] > testArray[j]) {
+                  oldPositionOfShortestDistance = j;
+                  let temp = testArray[i];
+                  testArray[i] = testArray[j];
+                  testArray[j] = temp;
+                }
+              }
+            }
+            arrayNotIncarUser.forEach((item, index) => {
+              if (oldPositionOfShortestDistance === index) {
+                try {
+                  const updateStatusMap = async () => {
+                    const responseMap = await root.put(
+                      `/public/update-status-map/ticket/${item.ticketId}`,
+                      {
+                        mapStatus: "5",
+                      }
+                    );
+                    if (!responseMap.data) {
+                      console.log(
+                        "Something went wrong with call api of updateStatusMap"
+                      );
+                    }
+                  };
+                  updateStatusMap();
+                } catch (error) {
+                  console.log(error);
+                }
+              }
+            });
+          } else {
+            let oldPositionOfShortestDistance = 0;
+            let destination = "";
+            arrayIncarUser.forEach((item, index) => {
+              if (index === arrayIncarUser.length - 1) {
+                destination += item.mapDrop;
+              } else {
+                destination += item.mapDrop + "%7C";
+              }
+            });
+            let elementsArray = [];
+            if (currentLat && currentLong) {
+              const responseMap = await fetch(
+                `https://rsapi.goong.io/DistanceMatrix?origins=${currentLat},${currentLong}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+              );
+              const data = await responseMap.json();
+              elementsArray = data.rows[0].elements;
+            }
+            console.log(elementsArray);
+            console.log(currentLat + "         " + currentLong);
+            console.log(destination);
+            let testArray = [];
+            elementsArray.forEach((item, index) => {
+              testArray.push(item.distance.value);
+            });
+            for (let i = 0; i < 1; i++) {
+              for (let j = i + 1; j < testArray.length; j++) {
+                if (testArray[i] > testArray[j]) {
+                  oldPositionOfShortestDistance = j;
+                  let temp = testArray[i];
+                  testArray[i] = testArray[j];
+                  testArray[j] = temp;
+                }
+              }
+            }
+            arrayIncarUser.forEach((item, index) => {
+              if (oldPositionOfShortestDistance === index) {
+                try {
+                  const updateStatusMap = async () => {
+                    const responseMap = await root.put(
+                      `/public/update-status-map/ticket/${item.ticketId}`,
+                      {
+                        mapStatus: "5",
+                      }
+                    );
+                    if (!responseMap.data) {
+                      console.log(
+                        "Something went wrong with call api of updateStatusMap"
+                      );
+                    }
+                  };
+                  updateStatusMap();
+                } catch (error) {
+                  console.log(error);
+                }
+              }
+            });
+          }
+        }
+      };
+      findNextDestination();
+    }
+  }, [isDoneUpdateMapStatus, dataScheduleDetail]);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      setCurrentLat(position.coords.latitude);
+      setCurrentLong(position.coords.longitude);
+    });
+  }, []);
 
   const handleUpdateSchedule = async () => {
     if (updateAnyWay) {

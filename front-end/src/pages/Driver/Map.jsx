@@ -7,8 +7,9 @@ import "leaflet-routing-machine";
 import { root } from "../../helper/axiosClient";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
-import { MenuItem } from "@mui/material";
+import { alertClasses, MenuItem } from "@mui/material";
 import { Select } from "@mui/material";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import Button from "@mui/material/Button";
 import ReactMapGL from "@goongmaps/goong-map-react";
 import MapGL from "@goongmaps/goong-map-react";
@@ -19,25 +20,36 @@ import { Marker } from "react-leaflet";
 import { Popup } from "react-leaflet";
 import car_icon from "./car-icon.png";
 import destination_icon from "./destination-icon.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
+import GoongMapWithDirections from "./RoutingMap";
 
 const maps = {
   // base: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-  base: "https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=4D4kbtoB1PV8gjRJMqgB",
+  base: "https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=Y6lAo3CsQyyqIuPGhSl3",
 };
 
+var SpeechRecognition =
+  window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = new SpeechRecognition();
+recognition.lang = "vi-VI";
+recognition.continuous = false;
+
 const driverIcon = new L.Icon({
-  iconUrl: car_icon, // Path to your custom driver marker image
-  iconSize: [50, 50], // Size of the icon
-  iconAnchor: [16, 32], // Point of the icon which will correspond to the marker's position
-  popupAnchor: [0, -32], // Position of the popup relative to the icon
+  iconUrl: car_icon,
+  iconSize: [50, 50],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
 });
 
 const destinationIcon = new L.Icon({
-  iconUrl: destination_icon, // Path to your custom destination marker image
-  iconSize: [50, 50], // Size of the icon
-  iconAnchor: [16, 32], // Point of the icon which will correspond to the marker's position
-  popupAnchor: [0, -32], // Position of the popup relative to the icon
+  iconUrl: destination_icon,
+  iconSize: [50, 50],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
 });
+
+//ROUTIMNG OSRM HERE
 
 const RoutingControl = createControlComponent(
   ({ position, start, end, color }) => {
@@ -58,16 +70,9 @@ const RoutingControl = createControlComponent(
       fitSelectedRoutes: true,
       showAlternatives: false,
       createMarker: function () {
-        return null; // This removes the markers from the waypoints
+        return null;
       },
     });
-
-    // const translateLaguage = async (text) => {
-    //   const res = await fetch(
-    //     `https://api.mymemory.translated.net/get?q=${text}&langpair=en|vi`
-    //   );
-    //   console.log(await res.json());
-    // };
 
     instance.on("routesfound", function (e) {
       const route = e.routes[0]; // Get the first route
@@ -77,29 +82,8 @@ const RoutingControl = createControlComponent(
         const instructionContainer = document.querySelector(
           ".leaflet-routing-container"
         );
-
         console.log(instructionContainer);
         instructionContainer.style.display = "none";
-
-        // if (instructionContainer) {
-        //   // Apply styles to the instruction container
-        //   instructionContainer.style.backgroundColor = "white";
-        //   instructionContainer.style.maxHeight = "400px";
-        //   instructionContainer.style.maxWidth = "400px";
-        //   instructionContainer.style.overflowY = "auto";
-        //   instructionContainer.style.padding = "10px";
-        //   instructionContainer.style.border = "1px solid #ccc";
-        //   instructionContainer.style.borderRadius = "5px";
-
-        //   // instructionContainer.addEventListener("click", (event) => {
-        //   //   const target = event.target;
-
-        //   //   // Example: Log the clicked step
-        //   //   translateLaguage(target.innerText);
-
-        //   //   console.log("Clicked instruction:", target.innerText);
-        //   // });
-        // }
       }, 300);
     });
 
@@ -107,15 +91,9 @@ const RoutingControl = createControlComponent(
   }
 );
 
-const Map = () => {
-  // const [viewport, setViewport] = useState({
-  //   width: "100%",
-  //   height: "100vh",
-  //   latitude: 37.7577,
-  //   longitude: -122.4376,
-  //   zoom: 8,
-  // });
+//ROUTIMNG OSRM HERE
 
+const Map = () => {
   const [viewport, setViewport] = useState({
     latitude: 37.8,
     longitude: -122.4,
@@ -171,6 +149,34 @@ const Map = () => {
   const [isShowSuggestPhase1, setIsShowSuggestPhase1] = useState(false);
   const [isShowSuggestPhase2, setIsShowSuggestPhase2] = useState(false);
 
+  // const [userPickUpLat, setUserPickUpLat] = useState("");
+  // const [userPickUpLon, setUserPickUpLon] = useState("");
+  // const [userDropLat, setUserDropLat] = useState("");
+  // const [userDropLon, setUserDropLon] = useState("");
+  const [schduleId, setSchduleId] = useState("");
+  const [userLat, setUserLat] = useState("");
+  const [userLon, setUserLon] = useState("");
+  const [userName, setUserName] = useState("");
+  const [userAddress, setUserAddress] = useState("");
+  const [userPhone, setUserPhone] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
+  const [inforVoice, setInforVoice] = useState("");
+  const [resultSearchVoice, setResultSeatchVoice] = useState("");
+  const [voiceSearchOnceLat, setVoiceSearchOnceLat] = useState("");
+  const [voiceSearchOnceLon, setVoiceSearchOnceLon] = useState("");
+
+  const [voiceSearchAddress1Lat, setVoiceSearchAddress1Lat] = useState("");
+  const [voiceSearchAddress1Lon, setVoiceSearchAddress1Lon] = useState("");
+
+  const [voiceSearchAddress2Lat, setVoiceSearchAddress2Lat] = useState("");
+  const [voiceSearchAddress2Lon, setVoiceSearchAddress2Lon] = useState("");
+
+  const [addressOneVoice, setAddressOnceVoice] = useState("");
+  const [addressStartVoice, setAddressStartVoice] = useState("");
+  const [addressEndVoice, setAddressEndVoice] = useState("");
+
+  const [currentCity, setCurrentCity] = useState("");
+
   const fetchCurrentSchedule = async () => {
     const url = "/driver/find-schedule";
 
@@ -181,7 +187,7 @@ const Map = () => {
 
       if (response.data) {
         setCurrentScheduleId(response.data.id);
-        console.log(response.data + " HEREEEEEEEEEEEEEEEEEE");
+        setSchduleId(response.data.id);
       } else {
         console.log(
           "Something went wrong when call api for fetchCurrentSchedule function"
@@ -193,29 +199,229 @@ const Map = () => {
     }
   };
 
+  // useEffect(() => {
+  //   alert(currentLat);
+  //   alert(currentLong);
+  // }, [currentLat, currentLong]);
+
   const fetchTicketsInCurrentShedule = async (scheduleId) => {
     const url = "/public/ticket-with-schedule";
     try {
       const response = await root.get(`${url}/${scheduleId}`);
       if (response.data) {
-        let tempArrayPickUp = [];
-        let tempArrayDrop = [];
+        console.log("Hakdfkjahfahdfjhadjfhjadhfjadhfkjahdfjah");
+        console.log(response.data);
+        let countInitial = 0;
+        let countNextDes = 0;
+        let arrayTicket = [];
         response.data.forEach((item, index) => {
-          const tempItemPickUp = {
-            id: item.ticketId,
-            name: item.fullName,
-            address: item.detailAddressToPickUp,
-          };
-          const tempItemDrop = {
-            id: item.ticketId,
-            name: item.fullName,
-            address: item.detailAddressDropOff,
-          };
-          tempArrayPickUp.push(tempItemPickUp);
-          tempArrayDrop.push(tempItemDrop);
+          if (
+            // item.mapStatus === "0" &&
+            item.status.toLocaleUpperCase().trim() === "ĐÃ THANH TOÁN" ||
+            item.status.toLocaleUpperCase().trim() === "CHƯA LÊN XE" ||
+            item.status.toLocaleUpperCase().trim() === "ĐÃ XUỐNG XE" ||
+            item.status.toLocaleUpperCase().trim() === "HỦY" ||
+            item.status.toLocaleUpperCase().trim() === "ĐÃ LÊN XE"
+          ) {
+            arrayTicket.push(item);
+          }
         });
-        setArrayDropAddress(tempArrayDrop);
-        setArrayPickUpAddress(tempArrayPickUp);
+
+        console.log(arrayTicket);
+        let arrayDuplicateMapStatus_5 = [];
+        let checkIsPickingUp = 0;
+        arrayTicket.forEach((item, index) => {
+          if (item.mapStatus === "0") {
+            countInitial += 1;
+          }
+          if (item.mapStatus === "5") {
+            arrayDuplicateMapStatus_5.push(item);
+            countNextDes += 1;
+          }
+          if (
+            item.status.toLocaleUpperCase().trim() === "CHƯA LÊN XE" ||
+            item.status.toLocaleUpperCase().trim() === "ĐÃ THANH TOÁN"
+          ) {
+            checkIsPickingUp += 1;
+          }
+        });
+
+        if (checkIsPickingUp > 0) {
+          if (countNextDes > 1) {
+            let oldPositionOfShortestDistance = 0;
+            let destination = "";
+            arrayDuplicateMapStatus_5.forEach((item, index) => {
+              if (index === arrayDuplicateMapStatus_5.length - 1) {
+                destination += item.mapPickUp;
+              } else {
+                destination += item.mapPickUp + "%7C";
+              }
+            });
+            console.log(currentLat + "    " + currentLong);
+            console.log(destination + "   des");
+            let elementsArray = [];
+            if (currentLat && currentLong) {
+              const responseMap = await fetch(
+                `https://rsapi.goong.io/DistanceMatrix?origins=${currentLat},${currentLong}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+              );
+              const data = await responseMap.json();
+              elementsArray = data.rows[0].elements;
+            }
+            console.log(elementsArray);
+            let testArray = [];
+            elementsArray.forEach((item, index) => {
+              testArray.push(item.distance.value);
+            });
+            for (let i = 0; i < 1; i++) {
+              for (let j = i + 1; j < testArray.length; j++) {
+                if (testArray[i] > testArray[j]) {
+                  oldPositionOfShortestDistance = j;
+                  let temp = testArray[i];
+                  testArray[i] = testArray[j];
+                  testArray[j] = temp;
+                }
+              }
+            }
+            console.log(oldPositionOfShortestDistance + "   old");
+            arrayDuplicateMapStatus_5.forEach((item, index) => {
+              if (index === oldPositionOfShortestDistance) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                  setCurrentLat(position.coords.latitude);
+                  setCurrentLong(position.coords.longitude);
+                });
+                setUserName(item.fullName);
+                setUserAddress(item.detailAddressToPickUp);
+                setUserPhone(item.phoneNumber);
+                setUserLat(item.mapPickUp.split(",")[0]);
+                setUserLon(item.mapPickUp.split(",")[1]);
+              }
+            });
+          }
+
+          if (countNextDes === 1) {
+            const nextDesInfor = arrayTicket.find(
+              (item) => item.mapStatus === "5"
+            );
+            setUserLat(nextDesInfor.mapPickUp.split(",")[0]);
+            setUserLon(nextDesInfor.mapPickUp.split(",")[1]);
+            setUserName(nextDesInfor.fullName);
+            setUserAddress(nextDesInfor.detailAddressToPickUp);
+            setUserPhone(nextDesInfor.phoneNumber);
+          }
+
+          if (countInitial === arrayTicket.length) {
+            let oldPositionOfShortestDistance = 0;
+            let destination = "";
+            arrayTicket.forEach((item, index) => {
+              if (index === arrayTicket.length - 1) {
+                destination += item.mapPickUp;
+              } else {
+                destination += item.mapPickUp + "%7C";
+              }
+            });
+            console.log(currentLat + "    " + currentLong);
+            console.log(destination + "   des");
+            let elementsArray = [];
+            if (currentLat && currentLong) {
+              const responseMap = await fetch(
+                `https://rsapi.goong.io/DistanceMatrix?origins=${currentLat},${currentLong}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+              );
+              const data = await responseMap.json();
+              elementsArray = data.rows[0].elements;
+            }
+            console.log(elementsArray);
+            let testArray = [];
+            elementsArray.forEach((item, index) => {
+              testArray.push(item.distance.value);
+            });
+            for (let i = 0; i < 1; i++) {
+              for (let j = i + 1; j < testArray.length; j++) {
+                if (testArray[i] > testArray[j]) {
+                  oldPositionOfShortestDistance = j;
+                  let temp = testArray[i];
+                  testArray[i] = testArray[j];
+                  testArray[j] = temp;
+                }
+              }
+            }
+            console.log(oldPositionOfShortestDistance + "   old");
+            arrayTicket.forEach((item, index) => {
+              if (index === oldPositionOfShortestDistance) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                  setCurrentLat(position.coords.latitude);
+                  setCurrentLong(position.coords.longitude);
+                });
+                setUserName(item.fullName);
+                setUserAddress(item.detailAddressToPickUp);
+                setUserPhone(item.phoneNumber);
+                setUserLat(item.mapPickUp.split(",")[0]);
+                setUserLon(item.mapPickUp.split(",")[1]);
+              }
+            });
+          }
+        } else {
+          if (countNextDes > 1) {
+            let oldPositionOfShortestDistance = 0;
+            let destination = "";
+            arrayDuplicateMapStatus_5.forEach((item, index) => {
+              if (index === arrayDuplicateMapStatus_5.length - 1) {
+                destination += item.mapDrop;
+              } else {
+                destination += item.mapDrop + "%7C";
+              }
+            });
+            console.log(currentLat + "    " + currentLong);
+            console.log(destination + "   des");
+            let elementsArray = [];
+            if (currentLat && currentLong) {
+              const responseMap = await fetch(
+                `https://rsapi.goong.io/DistanceMatrix?origins=${currentLat},${currentLong}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+              );
+              const data = await responseMap.json();
+              elementsArray = data.rows[0].elements;
+            }
+            console.log(elementsArray);
+            let testArray = [];
+            elementsArray.forEach((item, index) => {
+              testArray.push(item.distance.value);
+            });
+            for (let i = 0; i < 1; i++) {
+              for (let j = i + 1; j < testArray.length; j++) {
+                if (testArray[i] > testArray[j]) {
+                  oldPositionOfShortestDistance = j;
+                  let temp = testArray[i];
+                  testArray[i] = testArray[j];
+                  testArray[j] = temp;
+                }
+              }
+            }
+            console.log(oldPositionOfShortestDistance + "   old");
+            arrayDuplicateMapStatus_5.forEach((item, index) => {
+              if (index === oldPositionOfShortestDistance) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                  setCurrentLat(position.coords.latitude);
+                  setCurrentLong(position.coords.longitude);
+                });
+                setUserName(item.fullName);
+                setUserAddress(item.detailAddressDropOff);
+                setUserPhone(item.phoneNumber);
+                setUserLat(item.mapDrop.split(",")[0]);
+                setUserLon(item.mapDrop.split(",")[1]);
+              }
+            });
+          }
+
+          if (countNextDes === 1) {
+            const nextDesInfor = arrayTicket.find(
+              (item) => item.mapStatus === "5"
+            );
+            setUserName(nextDesInfor.fullName);
+            setUserAddress(nextDesInfor.detailAddressDropOff);
+            setUserPhone(nextDesInfor.phoneNumber);
+            setUserLat(nextDesInfor.mapDrop.split(",")[0]);
+            setUserLon(nextDesInfor.mapDrop.split(",")[1]);
+          }
+        }
       } else {
         console.log(
           "Something went wrong when call api for fetchTicketsInCurrentShedule function"
@@ -285,6 +491,7 @@ const Map = () => {
         }
       }
       setPreparedScheduleId(tempArrayCurrentDay[0].id);
+      setSchduleId(tempArrayCurrentDay[0].id);
     }
   }, [allDataCurrentDay]);
 
@@ -310,11 +517,11 @@ const Map = () => {
       }
 
       const data = await response.json();
-      const route = data.routes[0]; // Access the first route
-      const distanceInKm = (route.distance / 1000).toFixed(1); // Convert meters to kilometers
+      const route = data.routes[0];
+      const distanceInKm = (route.distance / 1000).toFixed(1);
       console.log("Distance:", distanceInKm);
 
-      setDistance(distanceInKm); // Save to state
+      setDistance(distanceInKm);
     } catch (error) {
       console.error("Error calculating distance:", error);
     }
@@ -364,42 +571,37 @@ const Map = () => {
     }
   }, [arrayPickUpAddress]);
 
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   const fetchGeocode = async (address) => {
-    const apiKey = "4D4kbtoB1PV8gjRJMqgB";
-    const url = `https://api.maptiler.com/geocoding/${encodeURIComponent(
-      address
-    )}.json?key=${apiKey}`;
+    // const apiKey = "4D4kbtoB1PV8gjRJMqgB";
+    // const url = `https://api.maptiler.com/geocoding/${encodeURIComponent(
+    //   address
+    // )}.json?key=${apiKey}`;
+
+    // try {
+    //   const response = await fetch(url);
+    //   if (!response.ok) {
+    //     throw new Error("Failed to fetch geocoding data");
+    //   }
+    //   const data = await response.json();
+    //   return data;
+    // } catch (error) {
+    //   console.error("Error:", error);
+    // }
 
     try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error("Failed to fetch geocoding data");
-      }
+      const response = await fetch(
+        `https://rsapi.goong.io/geocode?address=${address}&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+      );
       const data = await response.json();
-      return data;
+      if (data) {
+        return data;
+      }
     } catch (error) {
-      console.error("Error:", error);
+      console.log(error);
     }
   };
-
-  useEffect(() => {
-    if (optionSearch) {
-      // navigator.geolocation.getCurrentPosition((position) => {
-      //   setCurrentLat(position.coords.latitude);
-      //   setCurrentLong(position.coords.longitude);
-      // });
-      setInputCurrent("");
-      setCorsSearchCurrentLat("");
-      setCorsSearchCurrentLon("");
-    } else {
-      setInputPhase1("");
-      setInputPhase2("");
-      setCorsSearchLat_1("");
-      setCorsSearchLon_1("");
-      setCorsSearchLat_2("");
-      setCorsSearchLon_2("");
-    }
-  }, [optionSearch]);
 
   useEffect(() => {
     if (inputCurrent) {
@@ -426,46 +628,43 @@ const Map = () => {
     }
   }, [inputCurrent]);
 
-  const handleSearchInCurrent = () => {
+  const handleSearchInCurrent = async () => {
+    // fetchGeocode(inputCurrent.trim()).then((data) => {
+    //   if (data && data.features && data.features.length > 0) {
+    //     const { center } = data.features[0];
+    //     console.log("Coordinates:", center);
+    //     setCorsSearchCurrentLat(center[1]);
+    //     setCorsSearchCurrentLon(center[0]);
+    //   }
+    // });
+    navigator.geolocation.getCurrentPosition((position) => {
+      setCurrentLat(position.coords.latitude);
+      setCurrentLong(position.coords.longitude);
+    });
     fetchGeocode(inputCurrent.trim()).then((data) => {
-      if (data && data.features && data.features.length > 0) {
-        const { center } = data.features[0];
-        console.log("Coordinates:", center);
-        setCorsSearchCurrentLat(center[1]);
-        setCorsSearchCurrentLon(center[0]);
+      if (data) {
+        console.log("Coordinates:", data.results[0].geometry.location.lat);
+        setCorsSearchCurrentLat(data.results[0].geometry.location.lat);
+        setCorsSearchCurrentLon(data.results[0].geometry.location.lng);
       }
     });
     navigator.geolocation.getCurrentPosition((position) => {
       setCurrentLat(position.coords.latitude);
       setCurrentLong(position.coords.longitude);
     });
+    setUserLat("");
+    setUserLon("");
+    setVoiceSearchAddress1Lat("");
+    setVoiceSearchAddress1Lon("");
+    setVoiceSearchAddress2Lat("");
+    setVoiceSearchAddress2Lon("");
+    setVoiceSearchOnceLat("");
+    setVoiceSearchOnceLon("");
+    setCorsSearchLat_1("");
+    setCorsSearchLon_1("");
+    setCorsSearchLat_2("");
+    setCorsSearchLon_2("");
   };
-
-  // useEffect(() => {
-  //   if (inputPhase1) {
-  //     fetchGeocode(inputPhase1).then((data) => {
-  //       if (data && data.features && data.features.length > 0) {
-  //         const { center } = data.features[0];
-  //         console.log("Coordinates:", center);
-  //         setCorsSearchLat_1(center[1]);
-  //         setCorsSearchLon_1(center[0]);
-  //       }
-  //     });
-  //   }
-  // }, [inputPhase1]);
-
-  // useEffect(() => {
-  //   if (inputPhase2) {
-  //     fetchGeocode(inputPhase2).then((data) => {
-  //       if (data && data.features && data.features.length > 0) {
-  //         const { center } = data.features[0];
-  //         console.log("Coordinates:", center);
-  //         setCorsSearchLat_2(center[1]);
-  //         setCorsSearchLon_2(center[0]);
-  //       }
-  //     });
-  //   }
-  // }, [inputPhase2]);
 
   useEffect(() => {
     if (inputPhase1) {
@@ -518,27 +717,39 @@ const Map = () => {
   }, [inputPhase2]);
 
   const handleSearchTwoPlaces = () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      setCurrentLat(position.coords.latitude);
+      setCurrentLong(position.coords.longitude);
+    });
     if (inputPhase1) {
-      fetchGeocode(inputPhase1).then((data) => {
-        if (data && data.features && data.features.length > 0) {
-          const { center } = data.features[0];
-          console.log("Coordinates:", center);
-          setCorsSearchLat_1(center[1]);
-          setCorsSearchLon_1(center[0]);
+      fetchGeocode(inputPhase1.trim()).then((data) => {
+        if (data) {
+          console.log("Coordinates:", data.results[0].geometry.location.lat);
+          setCorsSearchLat_1(data.results[0].geometry.location.lat);
+          setCorsSearchLon_1(data.results[0].geometry.location.lng);
         }
       });
     }
 
     if (inputPhase2) {
-      fetchGeocode(inputPhase2).then((data) => {
-        if (data && data.features && data.features.length > 0) {
-          const { center } = data.features[0];
-          console.log("Coordinates:", center);
-          setCorsSearchLat_2(center[1]);
-          setCorsSearchLon_2(center[0]);
+      fetchGeocode(inputPhase2.trim()).then((data) => {
+        if (data) {
+          console.log("Coordinates:", data.results[0].geometry.location.lat);
+          setCorsSearchLat_2(data.results[0].geometry.location.lat);
+          setCorsSearchLon_2(data.results[0].geometry.location.lng);
         }
       });
     }
+    setUserLat("");
+    setUserLon("");
+    setCorsSearchCurrentLat("");
+    setCorsSearchCurrentLon("");
+    setVoiceSearchAddress1Lat("");
+    setVoiceSearchAddress1Lon("");
+    setVoiceSearchAddress2Lat("");
+    setVoiceSearchAddress2Lon("");
+    setVoiceSearchOnceLat("");
+    setVoiceSearchOnceLon("");
   };
 
   useEffect(() => {
@@ -546,6 +757,179 @@ const Map = () => {
       console.log(suggesstAddress);
     }
   }, [suggesstAddress]);
+
+  useEffect(() => {
+    console.log(userLat + "   " + userLon + "    userLat and userLon");
+  }, [userLat, userLon]);
+
+  const searchByVoice = () => {
+    setUserLat("");
+    setUserLon("");
+    setCorsSearchCurrentLat("");
+    setCorsSearchCurrentLon("");
+    setVoiceSearchAddress1Lat("");
+    setVoiceSearchAddress1Lon("");
+    setVoiceSearchAddress2Lat("");
+    setVoiceSearchAddress2Lon("");
+    setVoiceSearchOnceLat("");
+    setVoiceSearchOnceLon("");
+    setCorsSearchLat_1("");
+    setCorsSearchLon_1("");
+    setCorsSearchLat_2("");
+    setCorsSearchLon_2("");
+    setAddressStartVoice("");
+    setAddressEndVoice("");
+    setAddressOnceVoice("");
+    setCurrentCity("");
+    setInforVoice("");
+    navigator.geolocation.getCurrentPosition((position) => {
+      setCurrentLat(position.coords.latitude);
+      setCurrentLong(position.coords.longitude);
+    });
+    setIsRecording(true);
+    recognition.start();
+  };
+
+  recognition.onspeechend = () => {
+    recognition.stop();
+  };
+
+  recognition.onerror = (err) => {
+    console.error(err);
+  };
+
+  recognition.onresult = async (e) => {
+    console.log("onresult", e);
+    const text = e.results[0][0].transcript;
+    setInforVoice(text);
+    setIsRecording(false);
+    if (currentLat && currentLong) {
+      const response = await fetch(
+        `https://rsapi.goong.io/Geocode?latlng=${currentLat},${currentLong}&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+      );
+      const data = await response.json();
+      if (data) {
+        setCurrentCity(data.results[0].compound.province);
+        console.log(data.results[0].compound.province);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (inforVoice) {
+      getAddressSearchVoice();
+    }
+  }, [inforVoice]);
+
+  const getAddressSearchVoice = async () => {
+    const genAI = new GoogleGenerativeAI(
+      "AIzaSyBg4x4lMwU59_atcwAU-h0TuuGfwVQq51Y"
+    );
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+    const prompt = `Hãy đưa cho tôi đoạn text của các địa chỉ trong câu sau theo format: địa chỉ 1 && địa chỉ 2. Chỉ đưa đoạn text không nhắn gì thêm, để tôi có thể lấy được đoạn text một cách dễ dàng. Đoạn text như sau: ${inforVoice}`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+    console.log(text);
+    setResultSeatchVoice(text);
+  };
+
+  useEffect(() => {
+    if (resultSearchVoice) {
+      if (resultSearchVoice.includes("&")) {
+        let tempAddressStartVoice =
+          resultSearchVoice.split("&&")[0].trim() + " " + currentCity;
+        setAddressStartVoice(tempAddressStartVoice);
+        let tempAddressEndVoice =
+          resultSearchVoice.split("&&")[1].trim() + " " + currentCity;
+        setAddressEndVoice(tempAddressEndVoice);
+      } else {
+        console.log("ONCEEEEEEEEEE");
+        let tempAddressOnceVoice = resultSearchVoice.trim() + " " + currentCity;
+        setAddressOnceVoice(tempAddressOnceVoice);
+      }
+    }
+  }, [resultSearchVoice]);
+
+  useEffect(() => {
+    if (addressStartVoice) {
+      console.log("start:  " + addressStartVoice);
+      try {
+        const getCoorsStartVoice = async () => {
+          const response = await fetch(
+            `https://rsapi.goong.io/geocode?address=${addressStartVoice}&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+          );
+          const data = await response.json();
+          if (data) {
+            setVoiceSearchAddress1Lat(data.results[0].geometry.location.lat);
+            setVoiceSearchAddress1Lon(data.results[0].geometry.location.lng);
+          }
+        };
+
+        getCoorsStartVoice();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [addressStartVoice]);
+
+  useEffect(() => {
+    if (addressEndVoice) {
+      console.log("end:  " + addressEndVoice);
+      try {
+        const getCoorsStartVoice = async () => {
+          const response = await fetch(
+            `https://rsapi.goong.io/geocode?address=${addressEndVoice}&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+          );
+          const data = await response.json();
+          if (data) {
+            setVoiceSearchAddress2Lat(data.results[0].geometry.location.lat);
+            setVoiceSearchAddress2Lon(data.results[0].geometry.location.lng);
+          }
+        };
+
+        getCoorsStartVoice();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [addressEndVoice]);
+
+  useEffect(() => {
+    if (addressOneVoice) {
+      console.log("end:  " + addressOneVoice);
+      try {
+        const getCoorsStartVoice = async () => {
+          const response = await fetch(
+            `https://rsapi.goong.io/geocode?address=${addressOneVoice}&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+          );
+          const data = await response.json();
+          if (data) {
+            setVoiceSearchOnceLat(data.results[0].geometry.location.lat);
+            setVoiceSearchOnceLon(data.results[0].geometry.location.lng);
+          }
+        };
+
+        getCoorsStartVoice();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [addressOneVoice]);
+
+  useEffect(() => {
+    console.log(voiceSearchAddress1Lat);
+    console.log(voiceSearchAddress1Lon);
+    console.log(voiceSearchAddress2Lat);
+    console.log(voiceSearchAddress2Lon);
+  }, [
+    voiceSearchAddress1Lat,
+    voiceSearchAddress1Lon,
+    voiceSearchAddress2Lat,
+    voiceSearchAddress2Lon,
+  ]);
 
   return (
     <>
@@ -559,32 +943,32 @@ const Map = () => {
         test
       </button> */}
 
-      {/* <FormControl
-          style={{ width: "170px", height: "40px", marginRight: "20px" }}
-        >
-          <InputLabel
-            id="demo-simple-select-label"
-            style={{ fontSize: "13px" }}
-          >
-            Chọn Ngôn Ngữ
-          </InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Chọn Ngôn Ngữ"
-            onChange={(e) => {
-              e.target.value === 1
-                ? setIsVietNamese(false)
-                : setIsVietNamese(true);
-            }}
-            style={{ height: "40px" }}
-          >
-            <MenuItem value={1}>Tiếng Anh</MenuItem>
-            <MenuItem value={0}>Tiếng Việt</MenuItem>
-          </Select>
-        </FormControl> */}
-
       <div style={{ display: "flex" }}>
+        {isRecording ? (
+          <FontAwesomeIcon
+            icon={faMicrophone}
+            beatFade
+            style={{
+              color: "#ff0000",
+              marginTop: "15px",
+              height: "30px",
+              marginLeft: "10px",
+              cursor: "pointer",
+            }}
+          />
+        ) : (
+          <FontAwesomeIcon
+            icon={faMicrophone}
+            style={{
+              color: "#B197FC",
+              marginTop: "15px",
+              height: "30px",
+              marginLeft: "10px",
+              cursor: "pointer",
+            }}
+            onClick={searchByVoice}
+          />
+        )}
         <FormControl
           style={{
             width: "230px",
@@ -631,10 +1015,10 @@ const Map = () => {
                   }}
                   value={inputCurrent}
                   onChange={(e) => {
-                    setCorsSearchCurrentLat("");
-                    setCorsSearchCurrentLon("");
                     setIsShowSuggest(true);
                     setInputCurrent(e.target.value);
+                    setCorsSearchCurrentLat("");
+                    setCorsSearchCurrentLon("");
                   }}
                   autoComplete="off"
                 />
@@ -649,6 +1033,40 @@ const Map = () => {
                   onClick={handleSearchInCurrent}
                 >
                   Tìm Kiếm
+                </Button>
+                <Button
+                  style={{
+                    width: "90px",
+                    height: "40px",
+                    fontSize: "6px",
+                    marginLeft: "20px",
+                    fontWeight: "bold",
+                  }}
+                  variant="contained"
+                  onClick={() => {
+                    setUserLat("");
+                    setUserLon("");
+                    setCorsSearchCurrentLat("");
+                    setCorsSearchCurrentLon("");
+                    setVoiceSearchAddress1Lat("");
+                    setVoiceSearchAddress1Lon("");
+                    setVoiceSearchAddress2Lat("");
+                    setVoiceSearchAddress2Lon("");
+                    setVoiceSearchOnceLat("");
+                    setVoiceSearchOnceLon("");
+                    setCorsSearchLat_1("");
+                    setCorsSearchLon_1("");
+                    setCorsSearchLat_2("");
+                    setCorsSearchLon_2("");
+                    setAddressStartVoice("");
+                    setAddressEndVoice("");
+                    setAddressOnceVoice("");
+                    setCurrentCity("");
+                    setInforVoice("");
+                    fetchTicketsInCurrentShedule(schduleId);
+                  }}
+                >
+                  Xem Theo Lịch Trình
                 </Button>
               </div>
               {suggesstAddress.length > 0 && isShowSuggest ? (
@@ -683,7 +1101,7 @@ const Map = () => {
               <div className={styles.row} style={{ padding: " 10px" }}>
                 <input
                   type="text"
-                  placeholder="Nhập Địa Chỉ Đi"
+                  placeholder="Nhập Địa Chỉ Bắt Đầu"
                   className={styles.input_box}
                   id="input-box"
                   style={{
@@ -695,6 +1113,8 @@ const Map = () => {
                   onChange={(e) => {
                     setIsShowSuggestPhase1(true);
                     setInputPhase1(e.target.value);
+                    setCorsSearchLat_1("");
+                    setCorsSearchLon_1("");
                   }}
                   autoComplete="off"
                 />
@@ -740,6 +1160,8 @@ const Map = () => {
                   onChange={(e) => {
                     setIsShowSuggestPhase2(true);
                     setInputPhase2(e.target.value);
+                    setCorsSearchLat_2("");
+                    setCorsSearchLon_2("");
                   }}
                   autoComplete="off"
                 />
@@ -755,6 +1177,39 @@ const Map = () => {
                   onClick={handleSearchTwoPlaces}
                 >
                   Tìm Kiếm
+                </Button>
+                <Button
+                  style={{
+                    width: "90px",
+                    height: "40px",
+                    fontSize: "8px",
+                    marginLeft: "20px",
+                  }}
+                  variant="contained"
+                  onClick={() => {
+                    setUserLat("");
+                    setUserLon("");
+                    setCorsSearchCurrentLat("");
+                    setCorsSearchCurrentLon("");
+                    setVoiceSearchAddress1Lat("");
+                    setVoiceSearchAddress1Lon("");
+                    setVoiceSearchAddress2Lat("");
+                    setVoiceSearchAddress2Lon("");
+                    setVoiceSearchOnceLat("");
+                    setVoiceSearchOnceLon("");
+                    setCorsSearchLat_1("");
+                    setCorsSearchLon_1("");
+                    setCorsSearchLat_2("");
+                    setCorsSearchLon_2("");
+                    setAddressStartVoice("");
+                    setAddressEndVoice("");
+                    setAddressOnceVoice("");
+                    setCurrentCity("");
+                    setInforVoice("");
+                    fetchTicketsInCurrentShedule(schduleId);
+                  }}
+                >
+                  Xem Theo Lịch Trình
                 </Button>
               </div>
               {suggestAddressPhase2.length > 0 && isShowSuggestPhase2 ? (
@@ -786,7 +1241,10 @@ const Map = () => {
         )}
       </div>
 
-      {corsSearchCurrentLat && corsSearchCurrentLon ? (
+      {/* {corsSearchCurrentLat &&
+      corsSearchCurrentLon &&
+      currentLat &&
+      currentLong ? (
         <MapContainer
           center={[currentLat, currentLong]}
           zoom={13}
@@ -868,43 +1326,35 @@ const Map = () => {
         ""
       )}
 
-      {/* {isClickCurrentSeach ? (
-        <>
-          <MapContainer
-            center={[currentLat, currentLong]}
-            zoom={13}
-            zoomControl={true}
-            style={{ height: "100vh", width: "100%" }}
-          >
-            <RoutingControl
-              position={"topleft"}
-              start={[currentLat, currentLong]}
-              end={[corsSearchCurrentLat, corsSearchCurrentLon]}
-              color={"blue"}
-            />
-            <LayersControl position="topright">
-              <LayersControl.BaseLayer checked name="Map">
-                <TileLayer
-                  attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                  url={maps.base}
-                />
-              </LayersControl.BaseLayer>
-            </LayersControl>
-          </MapContainer>{" "}
-        </>
-      ) : (
+      {userLat && userLon && currentLat && currentLong ? (
         <MapContainer
-          center={[corsSearchLat_1, corsSearchLon_1]}
+          center={[currentLat, currentLong]}
           zoom={13}
           zoomControl={true}
           style={{ height: "100vh", width: "100%" }}
         >
           <RoutingControl
             position={"topleft"}
-            start={[corsSearchLat_1, corsSearchLon_1]}
-            end={[corsSearchLat_2, corsSearchLon_2]}
+            start={[currentLat, currentLong]}
+            end={[userLat, userLon]}
             color={"blue"}
           />
+
+          <Marker position={[currentLat, currentLong]} icon={driverIcon}>
+            <Popup>Vị Trí Của Bạn Hiện Tại</Popup>
+          </Marker>
+
+          <Marker position={[userLat, userLon]} icon={destinationIcon}>
+            <Popup>
+              Điểm Đến
+              <ul>
+                <li>Tên Khách Hàng: {userName}</li>
+                <li>Địa Chỉ: {userAddress}</li>
+                <li>SĐT: {userPhone}</li>
+              </ul>
+            </Popup>
+          </Marker>
+
           <LayersControl position="topright">
             <LayersControl.BaseLayer checked name="Map">
               <TileLayer
@@ -914,51 +1364,145 @@ const Map = () => {
             </LayersControl.BaseLayer>
           </LayersControl>
         </MapContainer>
+      ) : (
+        ""
+      )}
+
+      {voiceSearchAddress1Lat &&
+      voiceSearchAddress1Lon &&
+      voiceSearchAddress2Lat &&
+      voiceSearchAddress2Lon ? (
+        <MapContainer
+          center={[voiceSearchAddress1Lat, voiceSearchAddress1Lon]}
+          zoom={13}
+          zoomControl={true}
+          style={{ height: "100vh", width: "100%" }}
+        >
+          <RoutingControl
+            position={"topleft"}
+            start={[voiceSearchAddress1Lat, voiceSearchAddress1Lon]}
+            end={[voiceSearchAddress2Lat, voiceSearchAddress2Lon]}
+            color={"blue"}
+          />
+
+          <Marker
+            position={[voiceSearchAddress1Lat, voiceSearchAddress1Lon]}
+            icon={driverIcon}
+          >
+            <Popup>Điểm Bắt Đầu</Popup>
+          </Marker>
+
+          <Marker
+            position={[voiceSearchAddress2Lat, voiceSearchAddress2Lon]}
+            icon={destinationIcon}
+          >
+            <Popup>Điểm Đến</Popup>
+          </Marker>
+
+          <LayersControl position="topright">
+            <LayersControl.BaseLayer checked name="Map">
+              <TileLayer
+                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                url={maps.base}
+              />
+            </LayersControl.BaseLayer>
+          </LayersControl>
+        </MapContainer>
+      ) : (
+        ""
+      )}
+
+      {voiceSearchOnceLat && voiceSearchOnceLon && currentLat && currentLong ? (
+        <MapContainer
+          center={[currentLat, currentLong]}
+          zoom={13}
+          zoomControl={true}
+          style={{ height: "100vh", width: "100%" }}
+        >
+          <RoutingControl
+            position={"topleft"}
+            start={[currentLat, currentLong]}
+            end={[voiceSearchOnceLat, voiceSearchOnceLon]}
+            color={"blue"}
+          />
+
+          <Marker position={[currentLat, currentLong]} icon={driverIcon}>
+            <Popup>Điểm Bắt Đầu: Vị Trí Của Bạn</Popup>
+          </Marker>
+
+          <Marker
+            position={[voiceSearchOnceLat, voiceSearchOnceLon]}
+            icon={destinationIcon}
+          >
+            <Popup>Điểm Đến</Popup>
+          </Marker>
+
+          <LayersControl position="topright">
+            <LayersControl.BaseLayer checked name="Map">
+              <TileLayer
+                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                url={maps.base}
+              />
+            </LayersControl.BaseLayer>
+          </LayersControl>
+        </MapContainer>
+      ) : (
+        ""
       )} */}
 
-      {/* <MapContainer
-        center={start}
-        zoom={13}
-        zoomControl={true}
-        style={{ height: "100vh", width: "100%" }} // Fixed style property
-      >
-        <RoutingControl
-          position={"topleft"}
-          start={start}
-          end={end}
-          color={"blue"}
+      {voiceSearchAddress1Lat &&
+      voiceSearchAddress1Lon &&
+      voiceSearchAddress2Lat &&
+      voiceSearchAddress2Lon ? (
+        <GoongMapWithDirections
+          origin={`${voiceSearchAddress1Lat},${voiceSearchAddress1Lon}`}
+          destination={`${voiceSearchAddress2Lat},${voiceSearchAddress2Lon}`}
         />
-        <LayersControl position="topright">
-          <LayersControl.BaseLayer checked name="Map">
-            <TileLayer
-              attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-              url={maps.base}
-            />
-          </LayersControl.BaseLayer>
-        </LayersControl>
-      </MapContainer> */}
+      ) : (
+        ""
+      )}
 
-      {/* <MapContainer
-        center={start}
-        zoom={13}
-        zoomControl={true}
-        style={{ height: "100vh", width: "100%" }} // Fixed style property
-      >
-        <RoutingControl
-          position={"topleft"}
-          start={start}
-          end={end}
-          color={"blue"}
+      {voiceSearchOnceLat && voiceSearchOnceLon ? (
+        <GoongMapWithDirections
+          origin={`${currentLat},${currentLong}`}
+          destination={`${voiceSearchOnceLat},${voiceSearchOnceLon}`}
         />
-        <LayersControl position="topright">
-          <LayersControl.BaseLayer checked name="Map">
-            <TileLayer
-              attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-              url={maps.base}
-            />
-          </LayersControl.BaseLayer>
-        </LayersControl>
-      </MapContainer> */}
+      ) : (
+        ""
+      )}
+
+      {corsSearchCurrentLat && corsSearchCurrentLon ? (
+        <GoongMapWithDirections
+          origin={`${currentLat},${currentLong}`}
+          destination={`${corsSearchCurrentLat},${corsSearchCurrentLon}`}
+        />
+      ) : (
+        ""
+      )}
+
+      {corsSearchLat_1 &&
+      corsSearchLon_1 &&
+      corsSearchLat_2 &&
+      corsSearchLon_2 ? (
+        <GoongMapWithDirections
+          origin={`${corsSearchLat_1},${corsSearchLon_1}`}
+          destination={`${corsSearchLat_2},${corsSearchLon_2}`}
+        />
+      ) : (
+        ""
+      )}
+
+      {userLat && userLon && currentLat && currentLong ? (
+        <GoongMapWithDirections
+          origin={`${currentLat},${currentLong}`}
+          destination={`${userLat},${userLon}`}
+          userName={userName}
+          userAddress={userAddress}
+          userPhone={userPhone}
+        />
+      ) : (
+        ""
+      )}
     </>
   );
 };

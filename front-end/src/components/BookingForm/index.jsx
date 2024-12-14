@@ -62,6 +62,10 @@ function BookingForm({
   const [suggesstDropAddress, setSuggestDropAddress] = useState([]);
   const [isShowSuggestPickUp, setIsShowSuggestPickup] = useState(false);
   const [isShowSuggestDrop, setIsShowSuggestDrop] = useState(false);
+  const [pickUpLat, setPickUpLat] = useState("");
+  const [pickUpLon, setPickUpLon] = useState("");
+  const [dropLat, setDropLat] = useState("");
+  const [dropLon, setDropLon] = useState("");
 
   // Handle change for specific addresses
   const handlePickupSpecificAddressChange = (event) => {
@@ -204,12 +208,14 @@ function BookingForm({
     createAddressValuePickUp();
     createAddressValueDropOff();
   }, [
-    pickupWard,
-    pickupDistrict,
-    pickupProvince,
-    dropoffWard,
-    dropoffDistrict,
-    dropoffProvince,
+    // pickupWard,
+    // pickupDistrict,
+    // pickupProvince,
+    // dropoffWard,
+    // dropoffDistrict,
+    // dropoffProvince,
+    pickUpAddress,
+    dropAddress,
   ]);
 
   useEffect(() => {
@@ -271,7 +277,7 @@ function BookingForm({
       });
 
       if (response.status === 200) {
-        console.log("Booking successful:", response.data);
+        console.log("Booking successful:", response.data.ticketId);
         // setTicketId(response.data.ticketId);
         // console.log('««««« ticketId456 »»»»»', response.data.ticketId);
         navigate("/methodPayment", {

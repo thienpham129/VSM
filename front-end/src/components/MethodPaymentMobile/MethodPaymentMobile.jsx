@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "components/bookingTicket.module.css";
+import { root } from "helper/axiosClient";
 
 const MethodPaymentMobile = ({
   fullName,
@@ -13,7 +14,92 @@ const MethodPaymentMobile = ({
   startTime,
   startLocation,
   stopLocation,
+  ticketId,
 }) => {
+  // useEffect(() => {
+  //   console.log(fullName);
+  //   console.log(ticketId);
+  // if ((ticketId, pickUpAddress, dropAddress)) {
+  //   let pickUpLat = "";
+  //   let pickUpLon = "";
+  //   let dropLat = "";
+  //   let dropLon = "";
+  //   if (pickUpAddress) {
+  //     fetchGeocode(pickUpAddress).then((data) => {
+  //       if (data && data.features && data.features.length > 0) {
+  //         const { center } = data.features[0];
+  //         pickUpLat = center[1];
+  //         pickUpLon = center[0];
+  //         // setPickUpLat(center[1]);
+  //         // setPickUpLon(center[0]);
+  //       }
+  //     });
+  //   }
+
+  //   if (dropAddress) {
+  //     fetchGeocode(dropAddress).then((data) => {
+  //       if (data && data.features && data.features.length > 0) {
+  //         const { center } = data.features[0];
+  //         dropLat = center[1];
+  //         dropLon = center[0];
+  //         // setDropLat(center[1]);
+  //         // setDropLon(center[0]);
+  //       }
+  //     });
+  //   }
+  //   const mapPickUp = `${pickUpLat},${pickUpLon}`;
+  //   const mapDrop = `${dropLat},${dropLon}`;
+  //   const mapStatus = "0";
+
+  //   console.log(mapPickUp + "   " + mapDrop + "   " + mapStatus);
+
+  //   console.log(
+  //     typeof mapPickUp + "   " + typeof mapDrop + "   " + typeof mapStatus
+  //   );
+
+  //   try {
+  //     const updateTicKetMap = async () => {
+  //       const url = "/driver/update-status-map/ticket";
+  //       const response = await root.put(`${url}/${ticketId}`, {
+  //         mapPickUp,
+  //         mapDrop,
+  //         mapStatus,
+  //       });
+  //       if (response.data) {
+  //         console.log(response.data);
+  //       }
+  //       if (!response.data) {
+  //         console.log(
+  //           "Something went wrong with call api of updateTicKetMap"
+  //         );
+  //       }
+  //     };
+
+  //     updateTicKetMap();
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+  // }, []);
+
+  // const fetchGeocode = async (address) => {
+  //   const apiKey = "4D4kbtoB1PV8gjRJMqgB";
+  //   const url = `https://api.maptiler.com/geocoding/${encodeURIComponent(
+  //     address
+  //   )}.json?key=${apiKey}`;
+
+  //   try {
+  //     const response = await fetch(url);
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch geocoding data");
+  //     }
+  //     const data = await response.json();
+  //     return data;
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+  // };
+
   return (
     <section
       className={`${styles.bookingPage__mobile} ${styles.bookingPayment__mobile}`}

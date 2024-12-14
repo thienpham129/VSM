@@ -261,9 +261,20 @@ public TicketResponse createTicket(TicketRequest request) {
         TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
                 .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
 
-        ticket.setMapPickUp(request.getMapPickUp());
-        ticket.setMapDrop(request.getMapDrop());
-        ticket.setMapStatus(request.getMapStatus());
+//        ticket.setMapPickUp(request.getMapPickUp());
+//        ticket.setMapDrop(request.getMapDrop());
+//        ticket.setMapStatus(request.getMapStatus());
+        if(request.getMapPickUp() != null) {
+        	ticket.setMapPickUp(request.getMapPickUp());
+        }
+        
+        if(request.getMapDrop() != null) {
+        	ticket.setMapDrop(request.getMapDrop());
+        }
+        
+        if(request.getMapStatus() != null) {
+        	ticket.setMapStatus(request.getMapStatus());
+        }
 
         ticketRepository.save(ticket);
 
