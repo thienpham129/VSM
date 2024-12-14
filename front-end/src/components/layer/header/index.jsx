@@ -165,12 +165,6 @@ const Header = () => {
                       Liên Hệ
                     </a>
                   </li>
-                  <li>
-                    <a className="menu-item" href="/new">
-                      Tin Tức
-                    </a>
-                  </li>
-                  <li></li>
                 </ul>
               </div>
 
@@ -240,7 +234,6 @@ const Header = () => {
                           ) : (
                             ""
                           )}
-                          <span id="menu-btn" />
                         </div>
                       </div>
                     </div>

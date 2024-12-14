@@ -38,7 +38,6 @@ import PaymentSuccess from "pages/PaymentSuccess";
 // import Page403 from "Page403";
 
 function App() {
-  // const token = window.localStorage.getItem(DEFAULT.TOKEN);
 
   const token = getTokenFromLocalStorage();
   const navigate = useNavigate();

@@ -17466,10 +17466,12 @@ img {
     #menu-btn {
         display: block;
         float: right;
+        margin-left: 550px;
         z-index: 1000;
         top: 0;
         right: 0;
         background: #333;
+        margin-top: 30px;
     }
     .inner-padding {
         padding: 40px;
@@ -17764,6 +17766,7 @@ img {
         width: 100%;
     }
     header.header-mobile #mainmenu li {
+        padding-top: 30px;
         border-bottom: solid 1px #eee;
         margin: 0;
         width: 100%;

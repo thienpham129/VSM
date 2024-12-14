@@ -82,8 +82,8 @@ public class TicketService {
 		return ticketResponses;
 	}
 
-	public void deleteTicket(long tichketId) {
-		TicketEntity ticket = ticketRepository.findById(tichketId)
+	public void deleteTicket(String tichketId) {
+		TicketEntity ticket = ticketRepository.findByTicketId(tichketId)
 				.orElseThrow(() -> new RuntimeException("Cannot found ticket with id : " + tichketId));
 		ticketRepository.delete(ticket);
 	}
@@ -147,8 +147,10 @@ public class TicketService {
 	}
 
 	public TicketResponse updateTicketById(String ticketId, TicketRequest request) {
-        TicketEntity ticket = ticketRepository.findById(Long.valueOf(ticketId))
-                .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
+//        TicketEntity ticket = ticketRepository.findById(Long.valueOf(ticketId))
+//                .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
+        TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
+				.orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
 
         ticket.setEmail(request.getEmail());
         ticket.setFullName(request.getFullName());
@@ -218,8 +220,8 @@ public class TicketService {
         return TicketResponse.fromEntity(ticket);
     }
 
-	public TicketResponseAdminDTO getTicketByIDAdmin(long id) {
-		Optional<TicketEntity> optionalTicket = ticketRepository.findById(id);
+	public TicketResponseAdminDTO getTicketByIDAdmin(String id) {
+		Optional<TicketEntity> optionalTicket = ticketRepository.findByTicketId(id);
 		if (!optionalTicket.isPresent()) {
 			throw new NotFoundException("Not found Ticket with id " + id);
 		}
@@ -242,21 +244,21 @@ public class TicketService {
 	}
 
 	public Boolean checkTicketPaid(String id) {
-        Optional<TicketEntity> optionalTicket = ticketRepository.findByTicketId(id);
-        if (!optionalTicket.isPresent()) {
-            throw new NotFoundException("Not found Ticket with id " + id);
-        }
-        TicketEntity ticket = optionalTicket.get();
-        if (!ticket.isPaid()) {
-            ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-            scheduler.schedule(() -> {
-                if (!ticket.isPaid()) { 
-                    ticket.setStatus("Hủy Đặt Vé");
-                    ticketRepository.save(ticket); 
-                }
-            }, 3, TimeUnit.MINUTES);
-            scheduler.shutdown(); 
-        }
-        return ticket.isPaid(); 
-    }
+		Optional<TicketEntity> optionalTicket = ticketRepository.findByTicketId(id);
+		if (!optionalTicket.isPresent()) {
+			throw new NotFoundException("Not found Ticket with id " + id);
+		}
+		TicketEntity ticket = optionalTicket.get();
+		if (!ticket.isPaid()) {
+			ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+			scheduler.schedule(() -> {
+				if (!ticket.isPaid()) {
+					ticket.setStatus("Hủy đặt vé");
+					ticketRepository.save(ticket);
+				}
+			}, 3, TimeUnit.MINUTES);
+			scheduler.shutdown();
+		}
+		return ticket.isPaid();
+	}
 }

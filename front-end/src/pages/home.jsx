@@ -54,7 +54,7 @@ function HomePage() {
                   <div className="col-lg-6 text-light">
                     <h4>
                       <span className="id-color">
-                        Fast and Easy Way to Rent a Car
+                        DỄ DÀNG ĐẶT XE TRÊN WEBSITE CỦA CHÚNG TÔI
                       </span>
                     </h4>
                     <div className="spacer-10" />
@@ -315,114 +315,7 @@ function HomePage() {
           </div>
         </section>
 
-        {/* <section id="section-img-with-tab" className="bg-dark text-light">
-          <div className="container">
-            <div className="row align-items-center">
-              <div className="col-lg-5 offset-lg-7">
-                <h2>Only Quality For Clients</h2>
-                <div className="spacer-20" />
-                <ul
-                  className="nav nav-pills mb-3"
-                  id="pills-tab"
-                  role="tablist"
-                >
-                  <li className="nav-item" role="presentation">
-                    <button
-                      className="nav-link active"
-                      id="pills-home-tab"
-                      data-bs-toggle="pill"
-                      data-bs-target="#pills-home"
-                      type="button"
-                      role="tab"
-                      aria-controls="pills-home"
-                      aria-selected="true"
-                    >
-                      Luxury
-                    </button>
-                  </li>
-                  <li className="nav-item" role="presentation">
-                    <button
-                      className="nav-link"
-                      id="pills-profile-tab"
-                      data-bs-toggle="pill"
-                      data-bs-target="#pills-profile"
-                      type="button"
-                      role="tab"
-                      aria-controls="pills-profile"
-                      aria-selected="false"
-                    >
-                      Comfort
-                    </button>
-                  </li>
-                  <li className="nav-item" role="presentation">
-                    <button
-                      className="nav-link"
-                      id="pills-contact-tab"
-                      data-bs-toggle="pill"
-                      data-bs-target="#pills-contact"
-                      type="button"
-                      role="tab"
-                      aria-controls="pills-contact"
-                      aria-selected="false"
-                    >
-                      Prestige
-                    </button>
-                  </li>
-                </ul>
-                <div className="tab-content" id="pills-tabContent">
-                  <div
-                    className="tab-pane fade show active"
-                    id="pills-home"
-                    role="tabpanel"
-                    aria-labelledby="pills-home-tab"
-                  >
-                    <p>
-                      We offer a meticulously curated collection of the most
-                      sought-after luxury vehicles on the market. Whether you
-                      prefer the sporty allure of a high-performance sports car,
-                      the sophistication of a sleek and luxurious sedan, or the
-                      versatility of a premium SUV, we have the perfect car to
-                      match your discerning taste.
-                    </p>
-                  </div>
-                  <div
-                    className="tab-pane fade"
-                    id="pills-profile"
-                    role="tabpanel"
-                    aria-labelledby="pills-profile-tab"
-                  >
-                    <p>
-                      We prioritize your comfort and convenience throughout your
-                      journey. We understand that a comfortable ride can make a
-                      world of difference, whether you're embarking on a
-                      business trip or enjoying a leisurely vacation. That's why
-                      we offer a wide range of well-maintained, comfortable cars
-                      that cater to your specific needs.
-                    </p>
-                  </div>
-                  <div
-                    className="tab-pane fade"
-                    id="pills-contact"
-                    role="tabpanel"
-                    aria-labelledby="pills-contact-tab"
-                  >
-                    <p>
-                      We understand that prestige goes beyond luxury. It's about
-                      making a statement, embracing sophistication, and
-                      indulging in the finer things in life. That's why we offer
-                      an exclusive selection of prestigious cars that exude
-                      elegance, style, and status.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            className="image-container col-md-6 pull-right"
-            data-bgimage="url(images/misc/e2.jpg) center"
-          />
-        </section> */}
+        
         <section id="section-news">
           <div className="container">
             <div className="row align-items-center">

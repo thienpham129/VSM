@@ -43,13 +43,16 @@ public class DriverService {
 
 		if (driverUpdate.getImages() != null) {
 			deleteIMGDriverLisence(id);
-			MultipartFile imageFile1 = driverUpdate.getImages().get(0);
-			String fileCode1 = fileService.saveFile(imageFile1.getOriginalFilename(), imageFile1);
-
-			MultipartFile imageFile2 = driverUpdate.getImages().get(0);
-			String fileCode2 = fileService.saveFile(imageFile2.getOriginalFilename(), imageFile2);
-			optionalDriver.get().setImgDriverLisence1(fileCode1);
-			optionalDriver.get().setImgDriverLisence2(fileCode2);
+			if (driverUpdate.getImages().get(0) != null) {
+				MultipartFile imageFile1 = driverUpdate.getImages().get(0);
+				String fileCode1 = fileService.saveFile(imageFile1.getOriginalFilename(), imageFile1);
+				optionalDriver.get().setImgDriverLisence1(fileCode1);
+			}
+			if (driverUpdate.getImages().get(1) != null) {
+				MultipartFile imageFile2 = driverUpdate.getImages().get(1);
+				String fileCode2 = fileService.saveFile(imageFile2.getOriginalFilename(), imageFile2);
+				optionalDriver.get().setImgDriverLisence2(fileCode2);
+			}
 		}
 		return accountRepository.save(optionalDriver.get());
 	}

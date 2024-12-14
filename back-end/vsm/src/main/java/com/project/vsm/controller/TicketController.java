@@ -36,7 +36,7 @@ public class TicketController {
 	}
 
 	@DeleteMapping("/admin/ticket/{ticketId}")
-	public String deleteTicketById(@PathVariable int ticketId) {
+	public String deleteTicketById(@PathVariable String ticketId) {
 		ticketService.deleteTicket(ticketId);
 		return "Delete ticket has successfully";
 	}
@@ -81,7 +81,7 @@ public class TicketController {
 	}
 
 	@GetMapping("driver/ticket/{id}")
-	public ResponseEntity<TicketResponseAdminDTO> getTicketByIdAdmin(@PathVariable long id) {
+	public ResponseEntity<TicketResponseAdminDTO> getTicketByIdAdmin(@PathVariable String id) {
 		TicketResponseAdminDTO ticket = ticketService.getTicketByIDAdmin(id);
 		return new ResponseEntity<>(ticket, HttpStatus.OK);
 	}
