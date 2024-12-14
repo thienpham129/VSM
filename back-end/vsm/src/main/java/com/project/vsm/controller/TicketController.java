@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.vsm.dto.AdminUpdateTicketDTO;
 import com.project.vsm.dto.TicketResponseAdminDTO;
 import com.project.vsm.dto.request.TicketRequest;
 import com.project.vsm.dto.response.TicketResponse;
+import com.project.vsm.model.TicketEntity;
 import com.project.vsm.service.TicketService;
 
 import lombok.AccessLevel;
@@ -90,5 +92,10 @@ public class TicketController {
 	@GetMapping("public/ticket/check/{id}")
 	public ResponseEntity<Boolean> checkTicketPaid(@PathVariable String id) {
 		return new ResponseEntity<>(ticketService.checkTicketPaid(id), HttpStatus.OK);
+	}
+
+	@PutMapping("/admin/update-ticket")
+	public ResponseEntity<Boolean> updateStatusTicketById(@RequestBody AdminUpdateTicketDTO input) {
+		return new ResponseEntity<>(ticketService.adminUpdateTicket(input), HttpStatus.OK);
 	}
 }

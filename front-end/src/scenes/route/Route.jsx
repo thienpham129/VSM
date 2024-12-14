@@ -70,24 +70,39 @@ const RouteAdmin = () => {
 
   // Validate fields
   const validateFields = (route) => {
+    const vietnameseRegex =
+      /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểễệịỉọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ\s]+$/;
     const newErrors = {};
+
     if (!route.startLocation.trim())
       newErrors.startLocation = "Điểm bắt đầu không được để trống.";
+    else if (!vietnameseRegex.test(route.startLocation))
+      newErrors.startLocation = "Điểm bắt đầu chỉ được chứa chữ tiếng Việt.";
+
     if (!route.stopLocation.trim())
       newErrors.stopLocation = "Điểm kết thúc không được để trống.";
+    else if (!vietnameseRegex.test(route.stopLocation))
+      newErrors.stopLocation = "Điểm kết thúc chỉ được chứa chữ tiếng Việt.";
+
     return newErrors;
   };
 
   // Handle adding a new route
   const handleAddRoute = async () => {
-    const validationErrors = validateFields(newRoute);
+    // Trim inputs
+    const trimmedRoute = {
+      startLocation: newRoute.startLocation.trim(),
+      stopLocation: newRoute.stopLocation.trim(),
+    };
+
+    const validationErrors = validateFields(trimmedRoute);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
 
     try {
-      await request("post", "/admin/routes", newRoute);
+      await request("post", "/admin/routes", trimmedRoute);
       fetchRoutes();
       setSnackbarMessage("Thêm mới tuyến đường thành công!");
       setSnackbarColor("success");
@@ -103,8 +118,21 @@ const RouteAdmin = () => {
 
   // Submit updates
   const handleUpdateRoute = async () => {
+    // Trim inputs
+    const trimmedRoute = {
+      ...selectedRoute,
+      startLocation: selectedRoute.startLocation.trim(),
+      stopLocation: selectedRoute.stopLocation.trim(),
+    };
+
+    const validationErrors = validateFields(trimmedRoute);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
     try {
-      await request("put", `/admin/routes/${selectedRoute.id}`, selectedRoute);
+      await request("put", `/admin/routes/${trimmedRoute.id}`, trimmedRoute);
       fetchRoutes();
       setSnackbarMessage("Cập nhật tuyến đường thành công!");
       setSnackbarColor("success");
@@ -128,7 +156,10 @@ const RouteAdmin = () => {
       setSnackbarOpen(true);
     } catch (error) {
       console.error("Lỗi khi xóa tuyến đường:", error);
-      setSnackbarMessage(error.response?.data || "Đã xảy ra lỗi.");
+      // setSnackbarMessage(error.response?.data || "Đã xảy ra lỗi.");
+      setSnackbarMessage(
+        "Không thể xóa tuyến đường đã được sử dụng ở lịch trình"
+      );
       setSnackbarColor("error");
       setSnackbarOpen(true);
     }

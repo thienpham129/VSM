@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.project.vsm.dto.AdminUpdateTicketDTO;
 import com.project.vsm.dto.TicketResponseAdminDTO;
 import com.project.vsm.dto.request.TicketRequest;
 import com.project.vsm.dto.response.ScheduleResponse;
@@ -254,5 +255,22 @@ public class TicketService {
 			scheduler.shutdown();
 		}
 		return ticket.isPaid();
+	}
+
+	public Boolean adminUpdateTicket(AdminUpdateTicketDTO input) {
+		Optional<TicketEntity> optionalTicket = ticketRepository.findById(input.getTicketId());
+		if (!optionalTicket.isPresent()) {
+			throw new NotFoundException("Không tìm thấy vé xe với id " + input.getTicketId());
+		}
+		optionalTicket.get().setFullName(input.getFullName());
+		optionalTicket.get().setEmail(input.getEmail());
+		optionalTicket.get().setPhoneNumber(input.getPhoneNumber());
+		optionalTicket.get().setDetailAddressDropOff(input.getDetailAddressDropOff());
+		optionalTicket.get().setDetailAddressPickUp(input.getDetailAddressPickUp());
+		optionalTicket.get().setNote(input.getNote());
+		optionalTicket.get().setPaid(input.isPaid());
+		optionalTicket.get().setStatus(input.getStatus());
+		ticketRepository.save(optionalTicket.get());
+		return true;
 	}
 }
