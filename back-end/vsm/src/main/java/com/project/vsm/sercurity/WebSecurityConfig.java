@@ -86,6 +86,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -98,6 +99,7 @@ public class WebSecurityConfig {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Autowired
     private CustomUserDetailService customUserDetailService;
 
@@ -107,16 +109,19 @@ public class WebSecurityConfig {
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         http
-            .csrf(AbstractHttpConfigurer::disable)  // Disable CSRF if it’s not needed
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .formLogin(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(registry -> registry
-                    .requestMatchers("/", "/public/**", "/auth/**").permitAll()
-                    .requestMatchers("/user").hasRole("USER")
-                    .requestMatchers("/admin/**").hasRole("ADMIN")
-                    .anyRequest().authenticated()
-            )
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()));  // Apply custom CORS configuration
+                .csrf(AbstractHttpConfigurer::disable)  // Disable CSRF if it’s not needed
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .formLogin(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(registry -> registry
+                        .requestMatchers("/", "/public/**", "/auth/**").permitAll()
+                        .requestMatchers("/user").hasRole("USER")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/", "/public/**", "/auth/**", "/assets/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/driver/**").hasAnyRole("DRIVER", "ADMIN")
+                        .requestMatchers("/api/v1/**").permitAll()
+                        .anyRequest().authenticated())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()));  // Apply custom CORS configuration
 
         return http.build();
     }
@@ -130,15 +135,15 @@ public class WebSecurityConfig {
     AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         var builder = http.getSharedObject(AuthenticationManagerBuilder.class);
         builder
-            .userDetailsService(customUserDetailService)
-            .passwordEncoder(passwordEncoder());
+                .userDetailsService(customUserDetailService)
+                .passwordEncoder(passwordEncoder());
         return builder.build();
     }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));  // Set your frontend origin
+        configuration.setAllowedOrigins(List.of("http://localhost:3000" , "http://127.0.0.1:5500"));  // Set your frontend origin
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("*"));  // Adjust headers as needed
         configuration.setAllowCredentials(true);

@@ -9,23 +9,18 @@ export const axiosClient = axios.create({
     // 'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
   },
 });
-
 export const root = axios.create({
   baseURL: "http://localhost:8080", // Base URL for user endpoints
   headers: {
     "Content-Type": "application/json",
   },
 });
-
 root.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem(DEFAULT.TOKEN);
-    console.log(token + "  Fucking Token");
-
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
     return config;
   },
   (error) => {

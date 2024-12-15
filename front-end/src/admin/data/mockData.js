@@ -1,4 +1,123 @@
 import { tokens } from "../../theme";
+
+export const mockDataSchedules = [
+  {
+    id: 1,
+    startTime: "2024-12-01T11:00:00",
+    endTime: "2024-12-01T12:00:00",
+    status: "Đã lên lịch",
+    account: {
+      id: 2,
+      urlImage: null,
+      email: "driver@gmail.com",
+      role: "ROLE_DRIVER",
+      firstName: "Nguyễn ",
+      lastName: "Nhật",
+      dob: "2002-09-09",
+      address: "77 Đào Trí, Hòa Cường Nam, Hải Châu, Đà Nẵng",
+      phoneNumber: "0936152782",
+      verificationCode: null,
+      verificationCodeExpiresAt: "2024-11-09T22:02:27.80448",
+      createDate: "2024-11-09T21:47:27.80448",
+      enabled: true,
+      gender: null,
+      imgDriverLisence1:
+        "http://localhost:8080/assets/imagesUploads/fNHFGas8-driverLisence1.jpg",
+      imgDriverLisence2:
+        "http://localhost:8080/assets/imagesUploads/jcHi1lq5-driverLisence1.jpg",
+      tickets: [],
+      available: true,
+    },
+    car: {
+      carId: 2,
+      name: "Xe 20",
+      plateNumber: "123123",
+      color: "vàng",
+      manufactory: "đức",
+      yearOfManufacture: 2002,
+      dayMaintenance: "2024-11-10",
+      startLocation: null,
+      stopLocation: null,
+      startDate: null,
+      type: {
+        typeId: 1,
+        numSeat: 10,
+        price: 150002,
+      },
+      parking: null,
+      images: [
+        {
+          imageId: 3,
+          imageUrl:
+            "http://localhost:8080/assets/imagesUploads/0yvdGbNS-IMG_4479.JPG",
+        },
+        {
+          imageId: 4,
+          imageUrl:
+            "http://localhost:8080/assets/imagesUploads/akIbXxhr-IMG_4479.JPG",
+        },
+      ],
+    },
+  },
+  {
+    id: 2,
+    startTime: "2024-12-01T10:00:00",
+    endTime: "2024-12-01T12:00:00",
+    status: "Đã lên lịch",
+    account: {
+      id: 2,
+      urlImage: null,
+      email: "driver@gmail.com",
+      role: "ROLE_DRIVER",
+      firstName: "Nguyễn ",
+      lastName: "Nhật",
+      dob: "2002-09-09",
+      address: "77 Đào Trí, Hòa Cường Nam, Hải Châu, Đà Nẵng",
+      phoneNumber: "0936152782",
+      verificationCode: null,
+      verificationCodeExpiresAt: "2024-11-09T22:02:27.80448",
+      createDate: "2024-11-09T21:47:27.80448",
+      enabled: true,
+      gender: null,
+      imgDriverLisence1:
+        "http://localhost:8080/assets/imagesUploads/fNHFGas8-driverLisence1.jpg",
+      imgDriverLisence2:
+        "http://localhost:8080/assets/imagesUploads/jcHi1lq5-driverLisence1.jpg",
+      tickets: [],
+      available: true,
+    },
+    car: {
+      carId: 2,
+      name: "Xe 20",
+      plateNumber: "123123",
+      color: "vàng",
+      manufactory: "đức",
+      yearOfManufacture: 2002,
+      dayMaintenance: "2024-11-10",
+      startLocation: null,
+      stopLocation: null,
+      startDate: null,
+      type: {
+        typeId: 1,
+        numSeat: 10,
+        price: 150002,
+      },
+      parking: null,
+      images: [
+        {
+          imageId: 3,
+          imageUrl:
+            "http://localhost:8080/assets/imagesUploads/0yvdGbNS-IMG_4479.JPG",
+        },
+        {
+          imageId: 4,
+          imageUrl:
+            "http://localhost:8080/assets/imagesUploads/akIbXxhr-IMG_4479.JPG",
+        },
+      ],
+    },
+  },
+];
 export const mockDataDetailDriver = [
   {
     id: 1,
@@ -197,6 +316,7 @@ export const mockDataUser = [
     ticketEntities: [],
   },
 ];
+
 export const mockDataTeam = [
   {
     id: 1,

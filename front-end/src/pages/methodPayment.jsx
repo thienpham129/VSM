@@ -1,7 +1,118 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "pages/bookingTicket.module.css";
+import MethodPaymentMobile from "components/MethodPaymentMobile/MethodPaymentMobile";
+import { useLocation, useNavigate } from "react-router-dom";
+import { root } from "helper/axiosClient";
 
 const MethodPayment = () => {
+  const location = useLocation();
+  const { state } = location;
+  const {
+    fullName,
+    phoneNumber,
+    email,
+    note,
+    detailAddressToPickUp,
+    selectedSeat,
+    detailAddressDropOff,
+    totalPrice,
+    startTime,
+    startLocation,
+    stopLocation,
+    ticketId,
+  } = state || {};
+  const [paymentUrl, setPaymentUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [schedules, setSchedules] = useState([]);
+
+  const navigate = useNavigate();
+
+  const handleSearch = async () => {
+    if (!startLocation || !stopLocation || !startTime) {
+      alert("Vui lòng chọn đầy đủ thông tin!");
+      return;
+    }
+
+    try {
+      const response = await root.get(`/public/route/search`, {
+        params: {
+          startLocation,
+          stopLocation,
+          startTime,
+        },
+      });
+      setSchedules(response.data);
+    } catch (error) {
+      console.error("Lỗi khi gọi API:", error);
+      alert("Không tìm thấy lịch trình phù hợp.");
+    }
+  };
+
+  const handlePayment = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await root.get(`/api/v1/payment/pay/${ticketId}`);
+
+      if (response.status === 200) {
+        setPaymentUrl(response.data.data.paymentUrl);
+      } else {
+        setError("Failed to fetch payment URL");
+      }
+    } catch (err) {
+      setError("An error occurred during payment.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Check payment ticket
+
+  const checkPayment = async () => {
+    if (!ticketId) {
+      alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra thanh toán.");
+      return;
+    }
+
+    try {
+      const response = await root.get(
+        `/api/v1/google-sheet/check-ticket/${ticketId}`
+      );
+
+      if (response.status === 200) {
+        console.log("««««« response.data »»»»»", response.data);
+        if (response.data.paid === true) {
+          // alert(`Vé đã được thanh toán`);
+          console.log("««««« Vé đã được thanh toán »»»»»");
+          navigate("/paymentSuccess");
+          return true;
+        } else {
+          // alert(`Vé chưa được thanh toán`);
+          console.log("««««« Vé chưa được thanh toán` »»»»»");
+          return false;
+        }
+      } else {
+        setError("Không thể kiểm tra trạng thái thanh toán.");
+      }
+    } catch (err) {
+      console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
+      setError("Đã xảy ra lỗi trong quá trình kiểm tra thanh toán.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!ticketId) return;
+
+    const interval = setInterval(() => {
+      checkPayment();
+    }, 10000); // Gọi hàm mỗi 5 giây
+
+    return () => clearInterval(interval); // Xóa interval khi component bị unmount
+  }, [ticketId, navigate]);
+
   return (
     <div className="no-bottom no-top zebra" id="content">
       <div id="top" />
@@ -20,6 +131,7 @@ const MethodPayment = () => {
             <div
               className={styles.bookingPage__search__wrap}
               id="js-SearchTicket"
+              // style={{backgroundColor : '#333'}}
             >
               <div className={styles.searchTicket}>
                 <div className={styles.searchTicket__item}>
@@ -43,47 +155,36 @@ const MethodPayment = () => {
                     <span className={styles.searchTicket__item__title}>
                       Điểm đi
                     </span>
-                    <h3 data-point-target="pointUp" />
-                    <select className={styles.pointUp} id="searchPointUp">
+                    <select
+                      className={styles.pointUp}
+                      value={startLocation}
+                      id="searchPointUp"
+                      // onChange={(e) => setStartLocation(e.target.value)}
+                    >
                       <option value="">Chọn điểm lên</option>
-                      <optgroup label="Bình Định">
+                      <optgroup label="Quảng Nam">
                         <option
-                          value="P0DA1s69pNKi9jG"
+                          value="Quảng Nam"
                           data-route-id="R0U11yleLOCho9m,R0Tu1yipwtweLFh,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0Tu1yiptmYVave,R0DA1s6Bu8rN9mg,R0NY1wD4MMlyUEQ,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0NY1wD4LJD2IxB,R0DA1s6C94QCePS,R0DA1s6Bk8LFiei,R0DB1s6UOpGDcXh"
                         >
-                          QN: 1 Quy Nhơn
+                          QN: 1 Quảng Nam
                         </option>
                       </optgroup>
                       <optgroup label="Đà Nẵng">
                         <option
-                          value="P0DA1s6Auxag0uB"
+                          value="Đà Nẵng"
                           data-route-id="R0U11yleLOCho9m,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0DA1s6Bu8rN9mg,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0DB1s6UOpGDcXh"
                         >
                           ĐN: 21 Đà Nẵng
                         </option>
                       </optgroup>
-                      <optgroup label="Hồ Chí Minh">
-                        <option
-                          value="P0Tc1ybg01lyUen"
-                          data-route-id="R0Tu1yipwtweLFh,R0Tu1yiptmYVave,R0NY1wD4MMlyUEQ,R0NY1wD4LJD2IxB"
-                        >
-                          SG: 35 Sài Gòn
-                        </option>
-                      </optgroup>
+
                       <optgroup label="Thừa Thiên Huế">
                         <option
-                          value="P0Qo1xUqqNc4L8S"
+                          value="Huế"
                           data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
                         >
                           H: 28 Huế
-                        </option>
-                      </optgroup>
-                      <optgroup label="Khánh Hòa">
-                        <option
-                          value="P0DA1s6AOKJthPd"
-                          data-route-id="R0DA1s6C94QCePS,R0DA1s6Bk8LFiei"
-                        >
-                          NT: 33 Nha Trang
                         </option>
                       </optgroup>
                     </select>
@@ -110,52 +211,42 @@ const MethodPayment = () => {
                     <span className={styles.searchTicket__item__title}>
                       Điểm đến
                     </span>
-                    <h3 data-point-target="pointDown" />
-                    <select className={styles.pointDown} id="searchPointDown">
-                      <option value="">Chọn điểm đến</option>
-                      <optgroup label="Khánh Hòa">
+                    <select
+                      className={styles.pointUp}
+                      id="searchPointUp"
+                      value={stopLocation}
+                      // onChange={(e) => setStopLocation(e.target.value)}
+                    >
+                      <option value="">Chọn điểm lên</option>
+                      <optgroup label="Quảng Nam">
                         <option
-                          value="P0DA1s6AOKJthPd"
-                          data-route-id="R0DA1s6C94QCePS,R0DA1s6Bk8LFiei"
+                          value="Quảng Nam"
+                          data-route-id="R0U11yleLOCho9m,R0Tu1yipwtweLFh,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0Tu1yiptmYVave,R0DA1s6Bu8rN9mg,R0NY1wD4MMlyUEQ,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0NY1wD4LJD2IxB,R0DA1s6C94QCePS,R0DA1s6Bk8LFiei,R0DB1s6UOpGDcXh"
                         >
-                          NT: 33 Nha Trang
-                        </option>
-                      </optgroup>
-                      <optgroup label="Thừa Thiên Huế">
-                        <option
-                          value="P0Qo1xUqqNc4L8S"
-                          data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
-                        >
-                          H: 28 Huế
-                        </option>
-                      </optgroup>
-                      <optgroup label="Hồ Chí Minh">
-                        <option
-                          value="P0Tc1ybg01lyUen"
-                          data-route-id="R0Tu1yipwtweLFh,R0Tu1yiptmYVave,R0NY1wD4MMlyUEQ,R0NY1wD4LJD2IxB"
-                        >
-                          SG: 35 Sài Gòn
+                          QN: 1 Quảng Nam
                         </option>
                       </optgroup>
                       <optgroup label="Đà Nẵng">
                         <option
-                          value="P0DA1s6Auxag0uB"
+                          value="Đà Nẵng"
                           data-route-id="R0U11yleLOCho9m,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0DA1s6Bu8rN9mg,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0DB1s6UOpGDcXh"
                         >
                           ĐN: 21 Đà Nẵng
                         </option>
                       </optgroup>
-                      <optgroup label="Bình Định">
+
+                      <optgroup label="Thừa Thiên Huế">
                         <option
-                          value="P0DA1s69pNKi9jG"
-                          data-route-id="R0U11yleLOCho9m,R0Tu1yipwtweLFh,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0Tu1yiptmYVave,R0DA1s6Bu8rN9mg,R0NY1wD4MMlyUEQ,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0NY1wD4LJD2IxB,R0DA1s6C94QCePS,R0DA1s6Bk8LFiei,R0DB1s6UOpGDcXh"
+                          value="Huế"
+                          data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
                         >
-                          QN: 1 Quy Nhơn
+                          H: 28 Huế
                         </option>
                       </optgroup>
                     </select>
                   </div>
                 </div>
+
                 <div className={styles.searchTicket__item}>
                   <div className={styles.searchTicket__item__left}>
                     <span className={`${styles.avicon} ${styles.iconsvg}`}>
@@ -178,12 +269,22 @@ const MethodPayment = () => {
                     <span className={styles.searchTicket__item__title}>
                       Ngày khởi hành
                     </span>
-                    <input className={styles.ticket_date} readOnly="readOnly" />
+                    <input
+                      className={styles.ticket_date}
+                      type="date"
+                      value={startTime}
+                      // onChange={(e) => setStartTime(e.target.value)}
+                      min={new Date().toISOString().split("T")[0]}
+                    />
                   </div>
                 </div>
               </div>
               <div className={styles.bookingPage__search__triggle}>
-                <a href="javascript:;" data-action="searchTrip">
+                <a
+                  href="javascript:;"
+                  data-action="searchTrip"
+                  onClick={handleSearch}
+                >
                   <i className="fa fa-search" aria-hidden="true" /> Tìm chuyến
                 </a>
               </div>
@@ -220,27 +321,16 @@ const MethodPayment = () => {
                 <div className="row">
                   <div className="col-xs-12 col-sm-12 col-md-7 col-lg-7">
                     <div className={styles.bookingPayment__method}>
-                      {/* <label
-                      className="js--toggle__active-item bookingPayment__method__item active"
-                      htmlFor="payment_method_ck"
-                    >
-                      <input
-                        type="radio"
-                        className="d-none"
-                        name="payment_method"
-                        data-target="ck"
-                        id="payment_method_ck"
-                        defaultValue="ck"
-                        defaultChecked=""
-                      />
-                      <span className={styles.bookingPayment__method__item__check} />
-                      <p>
-                        <span className="avicon icon-payment-card" />
-                        <b>
-                          Thanh toán bằng thẻ ATM đã đăng ký Internet Banking
-                        </b>
-                      </p>
-                    </label> */}
+                      {paymentUrl && (
+                        <div>
+                          <h3>Scan để thanh toán:</h3>
+                          <img
+                            src={paymentUrl}
+                            alt="Payment QR Code"
+                            style={{ width: "500px", height: "500px" }}
+                          />
+                        </div>
+                      )}
                     </div>
                     <div>
                       <p>
@@ -274,15 +364,15 @@ const MethodPayment = () => {
                       </div>
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Họ tên</label>
-                        <p>Nguyễn Xuân Quang</p>
+                        <p>{fullName}</p>
                       </div>
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Số điện thoại</label>
-                        <p>0777907831</p>
+                        <p>{phoneNumber}</p>
                       </div>
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Email</label>
-                        <p>123@gmail.com</p>
+                        <p>{email}</p>
                       </div>
                       <div className={styles.bookingPayment__info__title__line}>
                         <h4 className={styles.bookingPayment__info__title} />
@@ -293,55 +383,75 @@ const MethodPayment = () => {
                         </span>
                       </div>
                       <div className={styles.bookingPayment__info__item}>
+                        <label htmlFor="">Mã Vé</label>
+                        <p >
+                          {ticketId}
+                        </p>
+                      </div>
+                      <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Tuyến</label>
-                        <p>Quy Nhơn - Đà Nẵng (Giường)</p>
+                        <p>
+                          {startLocation} - {stopLocation}
+                        </p>
                       </div>
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Giờ xuất bến</label>
-                        <p>11:00</p>
+                        <p>
+                          {new Date(startTime).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </p>
                       </div>
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Điểm đi</label>
-                        <p>QN</p>
+                        <p>{detailAddressToPickUp}</p>
                       </div>
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Điểm đến</label>
-                        <p>ĐN</p>
+                        <p>{detailAddressDropOff}</p>
+                      </div>
+                      <div className={styles.bookingPayment__info__item}>
+                        <label htmlFor="">Ghi chú</label>
+                        <p>{note}</p>
                       </div>
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Ghế</label>
                         <p className="list-seat">
-                          <span>A14</span>
+                          <span>
+                            {selectedSeat.length > 0
+                              ? selectedSeat.join(", ")
+                              : "Chưa chọn ghế"}
+                          </span>
                         </p>
                       </div>
-                      <div className={styles.bookingPayment__info__item}>
+                      {/* <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Mã khuyến mãi</label>
-                        <p />
-                      </div>
-                      <div className={styles.bookingPayment__info__item}>
-                        <label htmlFor="">Ghi chú</label>
-                        <p />
-                      </div>
+                        <p>{voucher}</p>
+                      </div> */}
+
                       <div className={styles.bookingPayment__submit}>
-                        <button
-                          type="submit"
-                          className={styles.bookingPayment__submit__continue}
-                        >
-                          Thanh toán{" "}
+                        <button onClick={handlePayment} disabled={isLoading}>
+                          {isLoading ? "Processing..." : "Thanh toán"}
                         </button>
-                        <a
-                          href="/index.php?mod=datve&page=datve&sub=cancleBooking"
-                          className={styles.bookingPayment__submit__cancle}
-                        >
-                          Huỷ đặt xe{" "}
-                        </a>
                       </div>
                       <div
                         className={styles.bookingPayment__info__item__line}
                       />
                       <div className={styles.bookingPayment__info__item}>
-                        <label htmlFor="">Tổng tiền</label>
-                        <p>240,000 đ</p>
+                        <label
+                          htmlFor=""
+                          style={{
+                            fontSize: "24px",
+                            fontWeight: "bold",
+                            color: "#333",
+                          }}
+                        >
+                          Tổng tiền :
+                        </label>
+                        <p style={{ fontSize: "26px", paddingTop: "7px" }}>
+                          {totalPrice.toLocaleString()} đ
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -351,6 +461,19 @@ const MethodPayment = () => {
           </div>
         </form>
       </section>
+      <MethodPaymentMobile
+        fullName={fullName}
+        phoneNumber={phoneNumber}
+        email={email}
+        note={note}
+        detailAddressToPickUp={detailAddressToPickUp}
+        selectedSeat={selectedSeat}
+        detailAddressDropOff={detailAddressDropOff}
+        totalPrice={totalPrice}
+        startTime={startTime}
+        startLocation={startLocation}
+        stopLocation={stopLocation}
+      />
     </div>
   );
 };

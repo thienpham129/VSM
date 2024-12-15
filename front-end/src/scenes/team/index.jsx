@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import Header from "../../components/Header";
-import axios from "axios";
+import { request } from "admin/helpers/axios_helper";
 
 const Team = () => {
   const [data, setData] = useState(null);
@@ -9,12 +9,8 @@ const Team = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/admin/types", {
-          headers: {
-            Authorization:
-              "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiYSI6WyJST0xFX0FETUlOIl0sImUiOiJ0ZXN0QGdtYWlsLmNvbSIsImV4cCI6MTczMDU1NTU3Nn0.c7_V9KRERHKZ-7PRyyVGUhLEzeE6_0S8hwNzbYfr80I",
-          },
-        });
+        // Sử dụng request thay vì axios.get
+        const response = await request("get", "/admin/types");
         setData(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);

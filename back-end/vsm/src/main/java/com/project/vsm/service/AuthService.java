@@ -29,18 +29,17 @@ public class AuthService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	@Autowired
-	private AccountRepository userRepository;
+	private AccountRepository accountRepository;
 	@Autowired
 	private EmailService emailService;
 	@Autowired
 	private JwtIssuer jwtIssuer;
 	@Autowired
 	private AuthenticationManager authenticationManager;
-	@Autowired
-	private UserService userService;
+
 
 	public LoginResponse login(String email, String password) {
-		AccountEntity user = userRepository.findByEmail(email)
+		AccountEntity user = accountRepository.findByEmail(email)
 				.orElseThrow(() -> new RuntimeException("User not found"));
 
 		if (!user.isEnabled()) {
@@ -68,7 +67,7 @@ public class AuthService {
 	}
 
 	public AccountEntity signup(RegisterUserDto input) {
-		if (userRepository.existsByEmail(input.getEmail())) {
+		if (accountRepository.existsByEmail(input.getEmail())) {
 			throw new RuntimeException("Email already exists");
 		}
 
@@ -80,15 +79,11 @@ public class AuthService {
 		account.setCreateDate(LocalDateTime.now());
 		sendVerificationEmail(account);
 
-		AccountEntity savedAccount = userRepository.save(account);
-
-		userService.createUser(savedAccount);
-
-		return savedAccount;
+		return accountRepository.save(account);
 	}
 
 	public void verifyUser(VerifyUserDto input) {
-		Optional<AccountEntity> optionalUser = userRepository.findByEmail(input.getEmail());
+		Optional<AccountEntity> optionalUser = accountRepository.findByEmail(input.getEmail());
 		if (optionalUser.isPresent()) {
 			AccountEntity user = optionalUser.get();
 			System.out.println(user);
@@ -99,7 +94,7 @@ public class AuthService {
 				user.setEnabled(true);
 				user.setVerificationCode(null);
 				user.setVerificationCodeExpiresAt(null);
-				userRepository.save(user);
+				accountRepository.save(user);
 			} else {
 				throw new RuntimeException("Invalid verification code");
 			}
@@ -134,7 +129,7 @@ public class AuthService {
 	}
 
 	public void resendVerificationCode(String email) {
-		Optional<AccountEntity> optionalUser = userRepository.findByEmail(email);
+		Optional<AccountEntity> optionalUser = accountRepository.findByEmail(email);
 		if (optionalUser.isPresent()) {
 			AccountEntity user = optionalUser.get();
 			if (user.isEnabled()) {
@@ -143,7 +138,7 @@ public class AuthService {
 			user.setVerificationCode(generateVerificationCode());
 			user.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));
 			sendVerificationEmail(user);
-			userRepository.save(user);
+			accountRepository.save(user);
 		} else {
 			throw new RuntimeException("User not found");
 		}

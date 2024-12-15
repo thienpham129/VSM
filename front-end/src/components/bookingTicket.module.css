@@ -294,6 +294,11 @@
     color: #646d84
 }
 
+.bookingPage__tickets__item__thumb__time .times {
+    letter-spacing: 2px;
+    padding-left: 10px;
+}
+
 .bookingPage__tickets__item__thumb__route {
     display: flex;
     flex-wrap: wrap;
@@ -562,7 +567,7 @@
 .bookingPage__tickets__item__collapse__booking__title h3 {
     font-style: normal;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 25px;
     line-height: 22px;
     color: #000;
     margin-bottom: 8px
@@ -575,14 +580,14 @@
 .bookingPage__tickets__item__collapse__booking__title p {
     font-style: normal;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 19px;
     line-height: 19px;
     color: #646d84;
     margin-bottom: 8px
 }
 
 .bookingPage__tickets__item__collapse__booking__seat_map {
-    width: 68%;
+    width: 100%;
     margin-right: 24px
 }
 
@@ -660,7 +665,8 @@
 }
 
 .bookingPage__tickets__item__collapse__booking__user {
-    width: calc(100% - 68% - 24px)
+    /* width: calc(100% - 68% - 24px) */
+    width: 100%
 }
 
 .bookingPage__tickets__item__collapse__booking__user .form_group {
@@ -694,6 +700,7 @@
 
 .bookingPage__tickets__item__collapse__booking__user .form_group input[type=number],
 .bookingPage__tickets__item__collapse__booking__user .form_group input[type=text],
+.bookingPage__tickets__item__collapse__booking__user .form_group input[type=email],
 .bookingPage__tickets__item__collapse__booking__user .form_group textarea {
     width: calc(100% - 8px - 30%);
     height: 40px;
@@ -717,21 +724,21 @@
     border: none
 }
 
-.bookingPage--mobile__content {
+.bookingPage__mobile__content {
     position: relative;
     background: #fff
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__user {
+.bookingPage__mobile__tickets__item__collapse__booking__user {
     display: none;
     padding: 8px
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__user>h4 span {
+.bookingPage__mobile__tickets__item__collapse__booking__user>h4 span {
     margin-right: 15%
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__user>h4 {
+.bookingPage__mobile__tickets__item__collapse__booking__user>h4 {
     font-style: normal;
     font-weight: 600;
     font-size: 18px;
@@ -740,7 +747,7 @@
     margin-bottom: 16px
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__user.active {
+.bookingPage__mobile__tickets__item__collapse__booking__user.active {
     position: absolute;
     top: 0;
     display: block;
@@ -749,7 +756,7 @@
     width: calc(100% - 8px)
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__user .order-summary {
+.bookingPage__mobile__tickets__item__collapse__booking__user .order_summary {
     background: #fff;
     margin-top: 40px;
     padding: 8px;
@@ -760,7 +767,7 @@
     align-items: center
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__user .order-summary p {
+.bookingPage__mobile__tickets__item__collapse__booking__user .order_summary p {
     font-style: normal;
     font-weight: 500;
     font-size: 14px;
@@ -769,7 +776,7 @@
     margin-bottom: 8px
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__user .order-summary h4 {
+.bookingPage__mobile__tickets__item__collapse__booking__user .order_summary h4 {
     font-style: normal;
     font-weight: 500;
     font-size: 18px;
@@ -777,7 +784,7 @@
     color: #232731
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__user .order-summary button {
+.bookingPage__mobile__tickets__item__collapse__booking__user .order_summary button {
     background: #1ECB15;
     border-radius: 8px;
     font-style: normal;
@@ -790,17 +797,18 @@
     border: none
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__user .order-summary button i {
+.bookingPage__mobile__tickets__item__collapse__booking__user .order_summary button i {
     margin-left: 16px
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__user .form_group {
+.bookingPage__mobile__tickets__item__collapse__booking__user .form_group {
     display: flex;
     flex-wrap: wrap;
-    align-items: center
+    /* align-items: center */
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__user .form_group label {
+.bookingPage__mobile__tickets__item__collapse__booking__user .form_group label {
+    padding: 10px;
     width: 30%;
     font-style: normal;
     font-weight: 400;
@@ -811,9 +819,10 @@
     margin-right: 8px
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__user .form_group input[type=number],
-.bookingPage--mobile__tickets__item__collapse__booking__user .form_group input[type=text],
-.bookingPage--mobile__tickets__item__collapse__booking__user .form_group select {
+.bookingPage__mobile__tickets__item__collapse__booking__user .form_group input[type=number],
+.bookingPage__mobile__tickets__item__collapse__booking__user .form_group input[type=text],
+.bookingPage__mobile__tickets__item__collapse__booking__user .form_group input[type=email],
+.bookingPage__mobile__tickets__item__collapse__booking__user .form_group select {
     width: calc(100% - 8px - 30%);
     border: 1px solid #cfd3db;
     box-sizing: border-box;
@@ -823,7 +832,7 @@
     padding: 0 10px
 }
 
-.bookingPage--mobile__item label.error {
+.bookingPage__mobile__item label.error {
     font-weight: 700;
     margin-bottom: 5px;
     color: #dc3333;
@@ -833,11 +842,11 @@
     margin-left: calc(30% + 8px)
 }
 
-.bookingPage--mobile__item label.error:empty {
+.bookingPage__mobile__item label.error:empty {
     display: none
 }
 
-.bookingPage--mobile__sort {
+.bookingPage__mobile__sort {
     padding: 0 16px;
     display: flex;
     height: 40px;
@@ -845,7 +854,7 @@
     background-color: #fff
 }
 
-.bookingPage--mobile__sort h4 {
+.bookingPage__mobile__sort h4 {
     font-style: normal;
     font-weight: 600;
     font-size: 14px;
@@ -855,11 +864,11 @@
     white-space: nowrap
 }
 
-.bookingPage--mobile__sort span {
+.bookingPage__mobile__sort span {
     margin-left: 8px
 }
 
-.bookingPage--mobile__sort p {
+.bookingPage__mobile__sort p {
     font-style: normal;
     font-weight: 500;
     font-size: 14px;
@@ -871,7 +880,7 @@
     margin-right: 24px
 }
 
-.bookingPage--mobile__step {
+.bookingPage__mobile__step {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -879,7 +888,7 @@
     height: 33px
 }
 
-.bookingPage--mobile__step span {
+.bookingPage__mobile__step span {
     font-style: normal;
     font-weight: 500;
     font-size: 14px;
@@ -892,7 +901,7 @@
     padding: 0 16px
 }
 
-.bookingPage--mobile__head {
+.bookingPage__mobile__head {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -902,16 +911,16 @@
     padding: 16px
 }
 
-.bookingPage--mobile__head__thumb {
+.bookingPage__mobile__head__thumb {
     display: flex;
     align-items: center
 }
 
-.bookingPage--mobile__head__thumb>a {
+.bookingPage__mobile__head__thumb>a {
     margin-right: 20px
 }
 
-.bookingPage--mobile__head__thumb h3 {
+.bookingPage__mobile__head__thumb h3 {
     font-style: normal;
     font-weight: 600;
     font-size: 16px;
@@ -922,11 +931,11 @@
     margin-bottom: 8px
 }
 
-.bookingPage--mobile__head__thumb h3 span {
+.bookingPage__mobile__head__thumb h3 span {
     margin: 0 8px
 }
 
-.bookingPage--mobile__head__thumb p {
+.bookingPage__mobile__head__thumb p {
     font-style: normal;
     font-weight: 600;
     font-size: 14px;
@@ -934,17 +943,32 @@
     color: #646d84
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__seat-map__total {
+.bookingPage__mobile__tickets__item__collapse__booking__seat_map__total {
     display: flex;
     align-items: center;
     justify-content: space-between
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__seat-map__total a i {
+.bookingPage__mobile__tickets__item__collapse__booking__seat_map__total a i {
     margin-left: 8px
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__seat-map__total a {
+.text_right {
+    /* float: right!important; */
+    background: #1ECB15;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 19px;
+    color: #fff;
+    display: flex;
+    height: 48px;
+    align-items: center;
+    padding: 0 16px
+    /* text-align: right!important; */
+}
+
+.bookingPage__mobile__tickets__item__collapse__booking__seat_map__total a {
     background: #1ECB15;
     border-radius: 8px;
     font-weight: 500;
@@ -957,7 +981,7 @@
     padding: 0 16px
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__seat-map__total>p {
+.bookingPage__mobile__tickets__item__collapse__booking__seat_map__total>p {
     display: flex;
     flex-direction: column;
     font-style: normal;
@@ -967,34 +991,34 @@
     color: #464d5d
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__seat-map__total p b {
+.bookingPage__mobile__tickets__item__collapse__booking__seat_map__total p b {
     font-size: 18px;
     color: #232731
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__seat-map__total p span {
+.bookingPage__mobile__tickets__item__collapse__booking__seat_map__total p span {
     margin-top: 8px
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__seat-map__total {
+.bookingPage__mobile__tickets__item__collapse__booking__seat_map__total {
     background: #fff;
     box-shadow: 0 -1px 7px rgba(0, 0, 0, .05);
     border-radius: 16px 16px 0 0;
     padding: 16px
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__seat-map__note {
+.bookingPage__mobile__tickets__item__collapse__booking__seat_map__note {
     display: flex;
     padding: 16px;
     flex-wrap: wrap
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__seat-map__note p span {
+.bookingPage__mobile__tickets__item__collapse__booking__seat_map__note p span {
     margin-right: 8px;
     width: 25px
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__seat-map__note p b {
+.bookingPage__mobile__tickets__item__collapse__booking__seat_map__note p b {
     width: calc(100% - 25px - 8px);
     font-style: normal;
     font-weight: 500;
@@ -1003,7 +1027,7 @@
     color: #232731
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__seat-map__note p {
+.bookingPage__mobile__tickets__item__collapse__booking__seat_map__note p {
     display: flex;
     align-items: center;
     width: 30%;
@@ -1012,11 +1036,11 @@
     flex-wrap: wrap
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__seat-map__floor {
+.bookingPage__mobile__tickets__item__collapse__booking__seat_map__floor {
     overflow-x: auto
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__seat-map__floor h4 {
+.bookingPage__mobile__tickets__item__collapse__booking__seat_map__floor h4 {
     background: #cfd3db;
     height: 35px;
     font-style: normal;
@@ -1029,21 +1053,21 @@
     align-items: center
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__seat-map__floor table td {
+.bookingPage__mobile__tickets__item__collapse__booking__seat_map__floor table td {
     padding: 8px
 }
 
-.bookingPage--mobile {
+.bookingPage__mobile {
     display: none
 }
 
-.bookingPage--mobile__item {
+.bookingPage__mobile__item {
     background-color: #fff;
     padding: 8px 16px;
     border-bottom: 1px solid #cfd3db
 }
 
-.bookingPage--mobile__item__thumb__line {
+.bookingPage__mobile__item__thumb__line {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -1051,17 +1075,17 @@
     margin-bottom: 8px
 }
 
-.bookingPage--mobile__item__thumb__line>p {
+.bookingPage__mobile__item__thumb__line>p {
     text-align: right
 }
 
-.bookingPage--mobile__item__thumb__line h3 {
+.bookingPage__mobile__item__thumb__line h3 {
     display: flex;
     flex-wrap: wrap;
     width: 65%
 }
 
-.bookingPage--mobile__item__thumb__line h3 span {
+.bookingPage__mobile__item__thumb__line h3 span {
     width: 30%;
     margin-right: 8px;
     font-style: normal;
@@ -1071,7 +1095,7 @@
     color: #232731
 }
 
-.bookingPage--mobile__item__thumb__line h3 p {
+.bookingPage__mobile__item__thumb__line h3 p {
     font-style: normal;
     font-weight: 500;
     font-size: 16px;
@@ -1080,7 +1104,7 @@
     width: calc(100% - 30% - 8px)
 }
 
-.bookingPage--mobile__item__thumb__line h3 p b {
+.bookingPage__mobile__item__thumb__line h3 p b {
     font-style: normal;
     font-weight: 400;
     font-size: 13px;
@@ -1090,7 +1114,7 @@
     display: inline-block
 }
 
-.bookingPage--mobile__item__thumb__line h4 {
+.bookingPage__mobile__item__thumb__line h4 {
     font-weight: 600;
     font-size: 18px;
     line-height: 22px;
@@ -1098,7 +1122,7 @@
     color: #00c48c
 }
 
-.bookingPage--mobile__item__toggle-detail {
+.bookingPage__mobile__item__toggle-detail {
     display: flex;
     align-items: center;
     font-weight: 500;
@@ -1109,12 +1133,12 @@
     margin-top: 8px
 }
 
-.bookingPage--mobile__item__toggle-detail span {
+.bookingPage__mobile__item__toggle-detail span {
     margin-left: 5px
 }
 
 @media only screen and (max-width:1024px) {
-    .bookingPage--mobile {
+    .bookingPage__mobile {
         display: block
     }
     .bookingPage {
@@ -1122,22 +1146,22 @@
     }
 }
 
-.bookingPayment--mobile {
-    display: none
+.bookingPayment__mobile {
+    /* display: none */
 }
 
-.bookingPayment--mobile .bookingPayment__method {
+.bookingPayment__mobile .bookingPayment__method {
     flex-direction: column;
     padding: 16px;
     background-color: #fff
 }
 
-.bookingPayment--mobile .bookingPayment__method__item {
+.bookingPayment__mobile .bookingPayment__method__item {
     width: 100%;
     margin-bottom: 6px
 }
 
-.bookingPayment--mobile .bookingPayment__info__wrap {
+.bookingPayment__mobile .bookingPayment__info__wrap {
     background-color: #fff;
     padding: 16px
 }
@@ -1149,7 +1173,7 @@
     justify-content: space-between
 }
 
-.bookingPayment--mobile__submit {
+.bookingPayment__mobile__submit {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -1166,7 +1190,7 @@
     z-index: 9999;
 }
 
-.bookingPayment--mobile__submit a {
+.bookingPayment__mobile__submit a {
     display: flex;
     background: #ecedf1;
     border-radius: 8px;
@@ -1182,7 +1206,7 @@
     margin-right: 8px
 }
 
-.bookingPayment--mobile__submit button {
+.bookingPayment__mobile__submit button {
     background: #1ECB15;
     border-radius: 8px;
     height: 48px;
@@ -1196,7 +1220,7 @@
 }
 
 @media only screen and (max-width:1000px) {
-    .bookingPayment--mobile {
+    .bookingPayment__mobile {
         display: block
     }
     .bookingPayment {
@@ -1307,7 +1331,7 @@
     background: #f1f3f5;
     font-style: normal;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 19px;
     line-height: 19px;
     color: #232731;
     margin-bottom: 16px;
@@ -1326,7 +1350,7 @@
     width: 30%;
     font-style: normal;
     font-weight: 400;
-    font-size: 16px;
+    font-size: 18px;
     line-height: 19px;
     color: #646d84
 }
@@ -1334,7 +1358,7 @@
 .bookingPayment__info__item p {
     font-style: normal;
     font-weight: 500;
-    font-size: 16px;
+    font-size: 18px;
     line-height: 19px;
     color: #232731;
     width: calc(100% - 30% - 8px);
@@ -1605,7 +1629,7 @@
     padding: 5px;
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__user .form_group textarea {
+.bookingPage__mobile__tickets__item__collapse__booking__user .form_group textarea {
     width: calc(100% - 8px - 30%);
     border: 1px solid #cfd3db;
     box-sizing: border-box;
@@ -1614,20 +1638,20 @@
     padding: 0 10px;
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__user .form_group .point_wrap {
+.bookingPage__mobile__tickets__item__collapse__booking__user .form_group .point_wrap {
     width: calc(100% - 8px - 30%);
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__user .point_wrap select {
+.bookingPage__mobile__tickets__item__collapse__booking__user .point_wrap select {
     margin-bottom: 8px;
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__user .point_wrap select,
-.bookingPage--mobile__tickets__item__collapse__booking__user .point_wrap textarea {
+.bookingPage__mobile__tickets__item__collapse__booking__user .point_wrap select,
+.bookingPage__mobile__tickets__item__collapse__booking__user .point_wrap textarea {
     width: 100%;
 }
 
-.bookingPage--mobile__tickets__item__collapse__booking__user .point_wrap textarea {
+.bookingPage__mobile__tickets__item__collapse__booking__user .point_wrap textarea {
     display: none;
 }
 
@@ -1669,6 +1693,7 @@ figure.image.ck-widget.ck-widget_with-resizer {
 
 .showSeatId {
     display: none!important
+    /* display: inline-block */
 }
 
 .avseatmap .avseat:hover {
@@ -1681,6 +1706,40 @@ figure.image.ck-widget.ck-widget_with-resizer {
 
 .avicon {
     display: inline-block
+}
+
+.bookingPage__search__wrap.mobile_wrap {
+    flex-wrap: wrap;
+}
+
+.bookingPage__search__wrap.mobile_wrap .searchTicket {
+    display: block;
+    width: 100%;
+}
+
+.bookingPage__search__wrap.mobile_wrap .searchTicket .searchTicket__item {
+    display: flex;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.bookingPage__search__triggle.mobile {
+    background-color: #1ECB15;
+    padding: 10px 20px;
+    text-align: center;
+    border-radius: 24px;
+    height: 42px;
+    width: 100%;
+}
+
+.bookingPage__search__triggle.mobile a {
+    color: #fff;
+}
+
+.error {
+    color: red;
 }
 
 

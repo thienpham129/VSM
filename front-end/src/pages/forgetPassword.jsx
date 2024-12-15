@@ -2,7 +2,6 @@ import { axiosClient } from "helper/axiosClient";
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 function ForgetPassword() {
   const [email, setEmail] = useState("");
   const notifyErrorSendEmail = () =>
@@ -76,5 +75,4 @@ function ForgetPassword() {
     </div>
   );
 }
-
 export default ForgetPassword;

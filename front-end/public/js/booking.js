@@ -202,7 +202,7 @@ var booking = new Booking({
 });
 
 var bookingMobile = new Booking({
-    mainWrap: '.js__booking--mobile',
+    mainWrap: '.js__bookingPage__mobile',
     toggleProcessBookingClass: '.js__toggleProcessBooking-mobile',
     // useContract: "0"
     lang: "vi",
@@ -214,7 +214,7 @@ let seatMapBuider = new SeatMapBuider({
 });
 
 let seatMapBuiderMoBile = new SeatMapBuider({
-    mainWrapSelector: '.js__booking--mobile',
+    mainWrapSelector: '.js__bookingPage__mobile',
     toggleCreateMapClass: ".js--toggleCreateMapMobile",
 });
 let userLogin = new UserLogin({});

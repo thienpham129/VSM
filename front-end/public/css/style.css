@@ -4078,6 +4078,7 @@ hr {
 }
 
 .form-border input[type=text],
+.form-border input[type=number],
 .form-border textarea,
 .form-underline input[type=email],
 .form-border input[type=password],
@@ -5928,7 +5929,8 @@ i.font60 {
 
 /* ======================================== */
 
-.pagination {
+
+/* .pagination {
     margin: 0 auto;
     font-weight: 500;
     border-radius: 3px;
@@ -5965,6 +5967,38 @@ i.font60 {
 
 .pagination>.active>a {
     color: #ffffff;
+} */
+
+.pagination {
+    display: flex;
+    list-style: none;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.pagination li {
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.pagination .active a {
+    font-weight: bold;
+    color: white;
+    background-color: #007bff;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+.pagination a {
+    text-decoration: none;
+    color: #007bff;
+    padding: 5px 10px;
+    transition: all 0.3s ease;
+}
+
+.pagination a:hover {
+    background-color: #e9ecef;
+    border-radius: 5px;
 }
 
 
@@ -12035,7 +12069,8 @@ i.bg-color-secondary {
 
 /* ================================================== */
 .fs-12 {
-    font-size: 12px;
+    font-size: 15px;
+    font-weight: bold;
 }
 .fs-40 {
     font-size: 40px;
@@ -12780,8 +12815,9 @@ body.dark-scheme::-webkit-scrollbar-track,#de_modal::-webkit-scrollbar-track {
     display: none;
 }
 .v-center {
-    min-height: 100%;
-    min-height: 100vh;
+    /* min-height: 100%; */
+    /* min-height: 200vh; */
+    min-height: 150vh;
     display: flex;
     align-items: center;
 }
@@ -15590,6 +15626,7 @@ a.read_more i {
 .de-table td {
     font-weight: 400;
     padding: 10px 0;
+    text-align: left;
 }
 .de-table.table-rank thead th,
 .de-table.table-rank thead td {
@@ -18355,3 +18392,36 @@ img.logo-2 {
     width: 170px;
     height: 100px;
 }
+.info_lobby th,
+td {
+    text-align: center;
+}
+select#select-address {
+    width: 100%;
+}
+.info_lobby th {
+    font-weight: bold;
+    color: #ffffff;
+}
+.detail_ticket {
+    font-size: 12px;
+    padding: 10px;
+    background-color: #1ECB15;
+}
+.detail_ticket:hover {
+    cursor: pointer;
+    color: #333;
+}
+p.no_schedule {
+    font-size: 24px;
+    text-align: center;
+    padding: 25px 0px;
+}
+select#searchPointUp {
+    padding: 7px 2px;
+}
+
+/* .table .de_table th,
+td {
+    text-align: left;
+} */

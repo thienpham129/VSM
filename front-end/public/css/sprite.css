@@ -18,280 +18,292 @@ To change `display` (e.g. `display: inline-block;`), we suggest using a common C
 */
 
 .icon-appstore {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -142px 0px;
     width: 143px;
     height: 48px;
 }
 
 .icon-arrow-left {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -341px -86px;
     width: 16px;
     height: 16px;
 }
 
 .icon-arrow-right-bg {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -360px -64px;
     width: 40px;
     height: 40px;
 }
 
 .icon-arrow-right {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -341px -144px;
     width: 14px;
     height: 14px;
 }
 
 .icon-arrow-top {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -341px -48px;
     width: 18px;
     height: 20px;
 }
 
 .icon-bct {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -142px -96px;
     width: 127px;
     height: 48px;
 }
 
 .icon-booking-success {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    /* background-image: url(../images_02/busSuccess.jpg); */
+    background-image: url(../images_02/sprite.png);
     background-position: 0px 0px;
     width: 142px;
     height: 120px;
+    /* width: 50px;
+    height: 50px; */
 }
 
 .icon-btn-pushy {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -384px -168px;
     width: 24px;
     height: 24px;
 }
 
 .icon-bus-bg {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -142px -192px;
     width: 60px;
     height: 60px;
 }
 
 .icon-bus {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -329px -216px;
     width: 20px;
     height: 20px;
+    margin-top: 4px;
+    padding-right: 10px;
 }
 
 .icon-calendar-y {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -360px -200px;
     width: 24px;
     height: 24px;
 }
 
 .icon-calendar {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -384px -200px;
     width: 24px;
     height: 24px;
 }
 
 .icon-caret-down-bg {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -285px -260px;
     width: 24px;
     height: 16px;
 }
 
 .icon-caret-top {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -360px -344px;
     width: 22px;
     height: 9px;
 }
 
 .icon-chair {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -309px -216px;
     width: 20px;
     height: 24px;
 }
 
 .icon-clock-y {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -285px -240px;
     width: 20px;
     height: 20px;
 }
 
 .icon-clock {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
+    background-position: -360px -224px;
+    width: 24px;
+    height: 24px;
+}
+
+.icon-clock-mobile {
+    background-image: url(../images_02/sprite.png);
     background-position: -360px -224px;
     width: 24px;
     height: 24px;
 }
 
 .icon-cod {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -142px -144px;
     width: 123px;
     height: 48px;
 }
 
 .icon-comment {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -384px -224px;
     width: 24px;
     height: 24px;
 }
 
 .icon-facebook {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -360px -248px;
     width: 24px;
     height: 24px;
 }
 
 .icon-ggplay {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -142px -48px;
     width: 143px;
     height: 48px;
 }
 
 .icon-home {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -384px -248px;
     width: 24px;
     height: 24px;
 }
 
 .icon-home2 {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -360px -272px;
     width: 24px;
     height: 24px;
 }
 
 .icon-mail-y {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -309px -260px;
     width: 20px;
     height: 16px;
 }
 
 .icon-mark-bg-y {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -384px -272px;
     width: 24px;
     height: 24px;
 }
 
 .icon-mark-bg {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -202px -192px;
     width: 60px;
     height: 60px;
 }
 
 .icon-mark-y {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -341px -104px;
     width: 14px;
     height: 20px;
 }
 
 .icon-mark {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -341px -124px;
     width: 14px;
     height: 20px;
 }
 
 .icon-news {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -360px -296px;
     width: 24px;
     height: 24px;
 }
 
 .icon-package {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -305px -240px;
     width: 20px;
     height: 20px;
 }
 
 .icon-payment-bg {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -80px -120px;
     width: 60px;
     height: 60px;
 }
 
 .icon-payment-card {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -285px -48px;
     width: 56px;
     height: 56px;
 }
 
 .icon-payment-cod {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -285px -104px;
     width: 56px;
     height: 56px;
 }
 
 .icon-payment-qr {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -285px -160px;
     width: 56px;
     height: 56px;
 }
 
 .icon-phone-big {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: 0px -120px;
     width: 80px;
     height: 156px;
 }
 
 .icon-phone1 {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -384px -296px;
     width: 24px;
     height: 24px;
 }
 
 .icon-promo {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -360px -320px;
     width: 24px;
     height: 24px;
 }
 
 .icon-recruit {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -384px -320px;
     width: 24px;
     height: 24px;
 }
 
 .icon-search {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -341px -68px;
     width: 18px;
     height: 18px;
 }
 
 .icon-seat-booked {
-    /* background-image: url(../imgs/sprites_generated/sprite.png); */
+    /* background-image: url(../images_02/sprite.png); */
     background-color: #F5C170;
     background-position: 0px -276px;
     width: 77px;
@@ -299,14 +311,14 @@ To change `display` (e.g. `display: inline-block;`), we suggest using a common C
 }
 
 .icon-seat-driver {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -360px 0px;
     width: 48px;
     height: 64px;
 }
 
 .icon-seat-empty {
-    /* background-image: url(../imgs/sprites_generated/sprite.png); */
+    /* background-image: url(../images_02/sprite.png); */
     /* background-color: #FFFFFF; */
     background-color: #3333;
     background-position: -77px -276px;
@@ -315,7 +327,7 @@ To change `display` (e.g. `display: inline-block;`), we suggest using a common C
 }
 
 .icon-seat-not-sell {
-    /* background-image: url(../imgs/sprites_generated/sprite.png); */
+    /* background-image: url(../images_02/sprite.png); */
     background-color: #9198A9;
     background-position: -154px -276px;
     width: 77px;
@@ -323,7 +335,7 @@ To change `display` (e.g. `display: inline-block;`), we suggest using a common C
 }
 
 .icon-seat-selected {
-    /* background-image: url(../imgs/sprites_generated/sprite.png); */
+    /* background-image: url(../images_02/sprite.png); */
     background-color: #9DC3FE;
     background-position: -231px -276px;
     width: 77px;
@@ -331,7 +343,7 @@ To change `display` (e.g. `display: inline-block;`), we suggest using a common C
 }
 
 .icon-seat-sm-booked {
-    /* background-image: url(../imgs/sprites_generated/sprite.png); */
+    /* background-image: url(../images_02/sprite.png); */
     background-color: #F5C170;
     background-position: -360px -104px;
     width: 24px;
@@ -339,15 +351,15 @@ To change `display` (e.g. `display: inline-block;`), we suggest using a common C
 }
 
 .icon-seat-sm-empty {
-    /* background-image: url(../imgs/sprites_generated/sprite.png); */
-    background-color: #FFFFFF;
+    /* background-image: url(../images_02/sprite.png); */
+    background-color: #D6D6D6;
     background-position: -384px -104px;
     width: 24px;
     height: 32px;
 }
 
 .icon-seat-sm-not-sell {
-    /* background-image: url(../imgs/sprites_generated/sprite.png); */
+    /* background-image: url(../images_02/sprite.png); */
     background-color: #9198A9;
     background-position: -360px -136px;
     width: 24px;
@@ -355,7 +367,7 @@ To change `display` (e.g. `display: inline-block;`), we suggest using a common C
 }
 
 .icon-seat-sm-selected {
-    /* background-image: url(../imgs/sprites_generated/sprite.png); */
+    /* background-image: url(../images_02/sprite.png); */
     background-color: #9DC3FE;
     background-position: -384px -136px;
     width: 24px;
@@ -363,7 +375,7 @@ To change `display` (e.g. `display: inline-block;`), we suggest using a common C
 }
 
 .icon-seat-sm-sold {
-    /* background-image: url(../imgs/sprites_generated/sprite.png); */
+    /* background-image: url(../images_02/sprite.png); */
     background-color: #E86966;
     background-position: -360px -168px;
     width: 24px;
@@ -371,7 +383,7 @@ To change `display` (e.g. `display: inline-block;`), we suggest using a common C
 }
 
 .icon-seat-sold {
-    /* background-image: url(../imgs/sprites_generated/sprite.png); */
+    /* background-image: url(../images_02/sprite.png); */
     background-color: #E86966;
     background-position: 0px -316px;
     width: 77px;
@@ -379,28 +391,28 @@ To change `display` (e.g. `display: inline-block;`), we suggest using a common C
 }
 
 .icon-ticket-bg {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -80px -180px;
     width: 60px;
     height: 60px;
 }
 
 .icon-user {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -325px -240px;
     width: 20px;
     height: 20px;
 }
 
 .icon-visa {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -285px 0px;
     width: 75px;
     height: 48px;
 }
 
 .icon-web-y {
-    background-image: url(../imgs/sprites_generated/sprite.png);
+    background-image: url(../images_02/sprite.png);
     background-position: -285px -216px;
     width: 24px;
     height: 24px;

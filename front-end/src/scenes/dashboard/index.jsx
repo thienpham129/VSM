@@ -1,27 +1,107 @@
-import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, Button, Grid, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
-import { mockTransactions } from "../../admin/data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
-import EmailIcon from "@mui/icons-material/Email";
-import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import TrafficIcon from "@mui/icons-material/Traffic";
+import PaymentsIcon from "@mui/icons-material/Payments";
 import Header from "../../components/Header";
-import LineChart from "../../components/LineChart";
-import GeographyChart from "../../components/GeographyChart";
-import BarChart from "../../components/BarChart";
 import StatBox from "../../components/StatBox";
-import ProgressCircle from "../../components/ProgressCircle";
+import RevenueWidget from "./RevenueWidget";
+import DriverPerformanceWidget from "./DriverPerformanceWidget";
+import RouteFrequencyPieWidget from "./RouteFrequencyPieWidget";
+import TicketBookingLineWidget from "./TicketBookingLineWidget";
+import { useEffect, useState } from "react";
+import { request } from "admin/helpers/axios_helper";
 
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [revenue, setRevenue] = useState(null);
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [statRevenue, setStatRevenue] = useState(0);
+  const [statTicket, setStatTicket] = useState(0);
+  const [statSchedule, setStatSchedule] = useState(0);
+  const [statAccount, setStatAccount] = useState(0);
+
+  const fetchRevenues = async () => {
+    try {
+      const response = await request("get", "/admin/dashboard/revenues");
+      setRevenue(response.data);
+      const total = response.data.reduce((acc, curr) => acc + curr, 0);
+      setTotalRevenue(total);
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu doanh thu 12 tháng:", error);
+    }
+  };
+  useEffect(() => {
+    fetchRevenues();
+  }, []);
+  const fetchStatsAccount = async () => {
+    try {
+      const response = await request("get", "/admin/dashboard/stat-account");
+      setStatAccount(response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu stats account:", error);
+    }
+  };
+  useEffect(() => {
+    fetchStatsAccount();
+  }, []);
+  const fetchStatsSchedule = async () => {
+    try {
+      const response = await request("get", "/admin/dashboard/stat-schedule");
+      setStatSchedule(response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu stats schedule:", error);
+    }
+  };
+  useEffect(() => {
+    fetchStatsSchedule();
+  }, []);
+
+  const fetchStatsTicket = async () => {
+    try {
+      const response = await request("get", "/admin/dashboard/stat-ticket");
+      setStatTicket(response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu stats ticket:", error);
+    }
+  };
+  useEffect(() => {
+    fetchStatsTicket();
+  }, []);
+
+  const fetchStatRevenue = async () => {
+    try {
+      const response = await request("get", "/admin/dashboard/stat-revenue");
+
+      // Định dạng title thành VND
+      const formattedTitle = new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+        // minimumFractionDigits: 2, // Đảm bảo có 2 chữ số thập phân
+        // maximumFractionDigits: 2, // Đảm bảo có 2 chữ số thập phân
+      }).format(response.data.title);
+
+      // Cập nhật state với title đã được định dạng
+      setStatRevenue({
+        title: formattedTitle,
+        increase: response.data.increase,
+      });
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu doanh thu 12 tháng:", error);
+    }
+  };
+  useEffect(() => {
+    fetchStatRevenue();
+  }, []);
 
   return (
     <Box m="20px">
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
+        <Header title="Quản Lý" subtitle="Quản Lý Thông Tin Ứng Dụng" />
 
         <Box>
           <Button
@@ -46,6 +126,25 @@ const Dashboard = () => {
         gridAutoRows="140px"
         gap="20px"
       >
+        <Box
+          gridColumn="span 3"
+          backgroundColor={colors.primary[400]}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <StatBox
+            title={statRevenue.title}
+            subtitle="Doanh Thu"
+            progress="0.80"
+            increase={statRevenue.increase}
+            icon={
+              <PaymentsIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              />
+            }
+          />
+        </Box>
         {/* ROW 1 */}
         <Box
           gridColumn="span 3"
@@ -55,12 +154,12 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="12,361"
-            subtitle="Emails Sent"
+            title={statTicket.title}
+            subtitle="Vé Xe"
             progress="0.75"
-            increase="+14%"
+            increase={statTicket.increase}
             icon={
-              <EmailIcon
+              <ConfirmationNumberIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -74,12 +173,12 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="431,225"
-            subtitle="Sales Obtained"
+            title={statSchedule.title}
+            subtitle="Lịch Trình"
             progress="0.50"
-            increase="+21%"
+            increase={statSchedule.increase}
             icon={
-              <PointOfSaleIcon
+              <CalendarMonthIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -93,10 +192,10 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="32,441"
-            subtitle="New Clients"
+            title={statAccount.title}
+            subtitle="Người Dùng"
             progress="0.30"
-            increase="+5%"
+            increase={statAccount.increase}
             icon={
               <PersonAddIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -104,179 +203,34 @@ const Dashboard = () => {
             }
           />
         </Box>
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="1,325,134"
-            subtitle="Traffic Received"
-            progress="0.80"
-            increase="+43%"
-            icon={
-              <TrafficIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-        </Box>
+      </Box>
+
+      <Grid container spacing={2} style={{ marginTop: "25px" }}>
+        {/* ROW 1 */}
+        <Grid item xs={12} md={8}>
+          <RevenueWidget totalRevenue={totalRevenue} revenue={revenue} />
+        </Grid>
+
+        <Grid item xs={12} md={4}>
+          <RouteFrequencyPieWidget />
+        </Grid>
 
         {/* ROW 2 */}
-        <Box
-          gridColumn="span 8"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-        >
-          <Box
-            mt="25px"
-            p="0 30px"
-            display="flex "
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Box>
-              <Typography
-                variant="h5"
-                fontWeight="600"
-                color={colors.grey[100]}
-              >
-                Revenue Generated
-              </Typography>
-              <Typography
-                variant="h3"
-                fontWeight="bold"
-                color={colors.greenAccent[500]}
-              >
-                $59,342.32
-              </Typography>
-            </Box>
-            <Box>
-              <IconButton>
-                <DownloadOutlinedIcon
-                  sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
-                />
-              </IconButton>
-            </Box>
-          </Box>
-          <Box height="250px" m="-20px 0 0 0">
-            <LineChart isDashboard={true} />
-          </Box>
-        </Box>
-        <Box
-          gridColumn="span 4"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          overflow="auto"
-        >
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            borderBottom={`4px solid ${colors.primary[500]}`}
-            colors={colors.grey[100]}
-            p="15px"
-          >
-            <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-              Recent Transactions
-            </Typography>
-          </Box>
-          {mockTransactions.map((transaction, i) => (
-            <Box
-              key={`${transaction.txId}-${i}`}
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              borderBottom={`4px solid ${colors.primary[500]}`}
-              p="15px"
-            >
-              <Box>
-                <Typography
-                  color={colors.greenAccent[500]}
-                  variant="h5"
-                  fontWeight="600"
-                >
-                  {transaction.txId}
-                </Typography>
-                <Typography color={colors.grey[100]}>
-                  {transaction.user}
-                </Typography>
-              </Box>
-              <Box color={colors.grey[100]}>{transaction.date}</Box>
-              <Box
-                backgroundColor={colors.greenAccent[500]}
-                p="5px 10px"
-                borderRadius="4px"
-              >
-                ${transaction.cost}
-              </Box>
-            </Box>
-          ))}
-        </Box>
-
+        <Grid item xs={12} md={8}>
+          <DriverPerformanceWidget />
+        </Grid>
         {/* ROW 3 */}
-        <Box
-          gridColumn="span 4"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          p="30px"
-        >
-          <Typography variant="h5" fontWeight="600">
-            Campaign
-          </Typography>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            mt="25px"
-          >
-            <ProgressCircle size="125" />
-            <Typography
-              variant="h5"
-              color={colors.greenAccent[500]}
-              sx={{ mt: "15px" }}
-            >
-              $48,352 revenue generated
-            </Typography>
-            <Typography>Includes extra misc expenditures and costs</Typography>
-          </Box>
-        </Box>
-        <Box
-          gridColumn="span 4"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-        >
-          <Typography
-            variant="h5"
-            fontWeight="600"
-            sx={{ padding: "30px 30px 0 30px" }}
-          >
-            Sales Quantity
-          </Typography>
-          <Box height="250px" mt="-20px">
-            <BarChart isDashboard={true} />
-          </Box>
-        </Box>
-        <Box
-          gridColumn="span 4"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          padding="30px"
-        >
-          <Typography
-            variant="h5"
-            fontWeight="600"
-            sx={{ marginBottom: "15px" }}
-          >
-            Geography Based Traffic
-          </Typography>
-          <Box height="200px">
-            <GeographyChart isDashboard={true} />
-          </Box>
-        </Box>
-      </Box>
+        <Grid item xs={12} md={8}>
+          <TicketBookingLineWidget />
+        </Grid>
+        {/* ROW 2 */}
+        {/* <Grid item xs={12} md={6}>
+            <TicketsSoldChart />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <RouteMap />
+          </Grid> */}
+      </Grid>
     </Box>
   );
 };
