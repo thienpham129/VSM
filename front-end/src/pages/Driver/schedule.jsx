@@ -133,6 +133,7 @@ function Schedule() {
 
   useEffect(() => {
     if (dataSchedule.length > 0) {
+      console.log(dataSchedule);
       changeDataSchedule();
     }
   }, [dataSchedule]);
@@ -192,6 +193,7 @@ function Schedule() {
       if (response) {
         setDataSchedule(response.data);
       }
+      console.log(response.data);
     } catch (error) {
       console.log(error);
     }

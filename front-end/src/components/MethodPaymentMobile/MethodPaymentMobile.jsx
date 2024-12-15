@@ -1,104 +1,128 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "components/bookingTicket.module.css";
+import { useLocation, useNavigate } from "react-router-dom";
 import { root } from "helper/axiosClient";
 
-const MethodPaymentMobile = ({
-  fullName,
-  phoneNumber,
-  email,
-  note,
-  detailAddressToPickUp,
-  selectedSeat,
-  detailAddressDropOff,
-  totalPrice,
-  startTime,
-  startLocation,
-  stopLocation,
-  ticketId,
-}) => {
-  // useEffect(() => {
-  //   console.log(fullName);
-  //   console.log(ticketId);
-  // if ((ticketId, pickUpAddress, dropAddress)) {
-  //   let pickUpLat = "";
-  //   let pickUpLon = "";
-  //   let dropLat = "";
-  //   let dropLon = "";
-  //   if (pickUpAddress) {
-  //     fetchGeocode(pickUpAddress).then((data) => {
-  //       if (data && data.features && data.features.length > 0) {
-  //         const { center } = data.features[0];
-  //         pickUpLat = center[1];
-  //         pickUpLon = center[0];
-  //         // setPickUpLat(center[1]);
-  //         // setPickUpLon(center[0]);
-  //       }
-  //     });
-  //   }
+const MethodPaymentMobile = () => {
+  const location = useLocation();
+  const { state } = location;
+  const {
+    fullName,
+    phoneNumber,
+    email,
+    note,
+    detailAddressToPickUp,
+    selectedSeat,
+    detailAddressDropOff,
+    totalPrice,
+    startTime,
+    startLocation,
+    stopLocation,
+    ticketId,
+  } = state || {};
+  const [paymentUrl, setPaymentUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [schedules, setSchedules] = useState([]);
 
-  //   if (dropAddress) {
-  //     fetchGeocode(dropAddress).then((data) => {
-  //       if (data && data.features && data.features.length > 0) {
-  //         const { center } = data.features[0];
-  //         dropLat = center[1];
-  //         dropLon = center[0];
-  //         // setDropLat(center[1]);
-  //         // setDropLon(center[0]);
-  //       }
-  //     });
-  //   }
-  //   const mapPickUp = `${pickUpLat},${pickUpLon}`;
-  //   const mapDrop = `${dropLat},${dropLon}`;
-  //   const mapStatus = "0";
+  const navigate = useNavigate();
 
-  //   console.log(mapPickUp + "   " + mapDrop + "   " + mapStatus);
+  const handlePayment = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await root.get(`/api/v1/payment/pay/${ticketId}`);
 
-  //   console.log(
-  //     typeof mapPickUp + "   " + typeof mapDrop + "   " + typeof mapStatus
-  //   );
+      if (response.status === 200) {
+        setPaymentUrl(response.data.data.paymentUrl);
+      } else {
+        setError("Failed to fetch payment URL");
+      }
+    } catch (err) {
+      setError("An error occurred during payment.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  //   try {
-  //     const updateTicKetMap = async () => {
-  //       const url = "/driver/update-status-map/ticket";
-  //       const response = await root.put(`${url}/${ticketId}`, {
-  //         mapPickUp,
-  //         mapDrop,
-  //         mapStatus,
-  //       });
-  //       if (response.data) {
-  //         console.log(response.data);
-  //       }
-  //       if (!response.data) {
-  //         console.log(
-  //           "Something went wrong with call api of updateTicKetMap"
-  //         );
-  //       }
-  //     };
+  // Check payment ticket
 
-  //     updateTicKetMap();
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-  // }, []);
+  const checkPayment = async () => {
+    if (!ticketId) {
+      alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra thanh toán.");
+      return;
+    }
 
-  // const fetchGeocode = async (address) => {
-  //   const apiKey = "4D4kbtoB1PV8gjRJMqgB";
-  //   const url = `https://api.maptiler.com/geocoding/${encodeURIComponent(
-  //     address
-  //   )}.json?key=${apiKey}`;
+    try {
+      const response = await root.get(
+        `/api/v1/google-sheet/check-ticket/${ticketId}`
+      );
 
-  //   try {
-  //     const response = await fetch(url);
-  //     if (!response.ok) {
-  //       throw new Error("Failed to fetch geocoding data");
-  //     }
-  //     const data = await response.json();
-  //     return data;
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   }
-  // };
+      if (response.status === 200) {
+        console.log("««««« response.data »»»»»", response.data);
+        if (response.data.paid === true) {
+          // alert(`Vé đã được thanh toán`);
+          console.log("««««« Vé đã được thanh toán »»»»»");
+          navigate("/paymentSuccess");
+          return true;
+        } else {
+          // alert(`Vé chưa được thanh toán`);
+          console.log("««««« Vé chưa được thanh toán` »»»»»");
+          return false;
+        }
+      } else {
+        setError("Không thể kiểm tra trạng thái thanh toán.");
+      }
+    } catch (err) {
+      console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
+      setError("Đã xảy ra lỗi trong quá trình kiểm tra thanh toán.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!ticketId) return;
+
+    const interval = setInterval(() => {
+      checkPayment();
+    }, 10000); // Gọi hàm mỗi 5 giây
+
+    return () => clearInterval(interval); // Xóa interval khi component bị unmount
+  }, [ticketId, navigate]);
+
+  // Check cancle ticket
+  const checkCancelTicket = async () => {
+    if (!ticketId) {
+      alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra.");
+      return;
+    }
+
+    try {
+      const response = await root.get(` public/ticket/check/${ticketId}`);
+
+      if (response.status === 200) {
+        console.log("««««« response.data123 »»»»»", response.data);
+        if (response.data === true) {
+          console.log("««««« Vé đã được thanh toán »»»»»");
+          return true;
+        } else {
+          console.log("««««« Vé chưa được xử lý »»»»»");
+          return false;
+        }
+      } else {
+        setError("Không thể kiểm tra trạng thái thanh toán.");
+      }
+    } catch (err) {
+      console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkCancelTicket();
+  }, []);
 
   return (
     <section
@@ -118,11 +142,11 @@ const MethodPaymentMobile = ({
             </a>
             <div>
               <h3>
-                QN: 1 Quy Nhơn <span className="avicon icon-arrow-right" /> ĐN:
-                21 Đà Nẵng
+                {startLocation} <span className="avicon icon-arrow-right" />{" "}
+                {stopLocation}
               </h3>
               <p>
-                <span>16/10/2024 - Từ09:11</span>
+                <span>{startTime}</span>
               </p>
             </div>
           </div>
@@ -148,29 +172,7 @@ const MethodPaymentMobile = ({
           </div>
         </div>
 
-        <form
-          action="/index.php?mod=datve&page=datve&sub=doBooking"
-          method="POST"
-        >
-          <div className={styles.bookingPayment__method}>
-            {/* <label
-              className="js--toggle__active-item bookingPayment__method__item "
-              htmlFor="mbpayment_method_ck"
-            >
-              <input
-                type="radio"
-                className="d-none"
-                name="payment_method"
-                id="mbpayment_method_ck"
-                defaultValue="ck"
-              />
-              <span className="bookingPayment__method__item__check" />
-              <p>
-                <span className="avicon icon-payment-card" />
-                <b>Thanh toán bằng thẻ ATM đã đăng ký Internet Banking</b>
-              </p>
-            </label> */}
-          </div>
+        <form target="_self">
           <div className={styles.bookingPayment__info__wrap}>
             <div className={styles.bookingPayment__info}>
               <div className={styles.bookingPayment__info__title__line}>
@@ -197,6 +199,10 @@ const MethodPaymentMobile = ({
                 <span className={styles.bookingPayment__info__title__text}>
                   Thông tin chuyến đi
                 </span>
+              </div>
+              <div className={styles.bookingPayment__info__item}>
+                <label htmlFor="">Mã Vé</label>
+                <p>{ticketId}</p>
               </div>
               <div className={styles.bookingPayment__info__item}>
                 <label htmlFor="">Tuyến</label>
@@ -231,10 +237,10 @@ const MethodPaymentMobile = ({
                   </span>
                 </p>
               </div>
-              <div className={styles.bookingPayment__info__item}>
+              {/* <div className={styles.bookingPayment__info__item}>
                 <label htmlFor="">Mã khuyến mãi</label>
                 <p />
-              </div>
+              </div> */}
               <div className={styles.bookingPayment__info__item}>
                 <label htmlFor="">Ghi chú</label>
                 <p>{note}</p>
@@ -247,41 +253,39 @@ const MethodPaymentMobile = ({
               </div>
             </div>
           </div>
-          {/* className={`${styles.bookingPayment__mobile__submit} ${styles.bookingPayment__mobile}`} */}
-
-          <div className={styles.bookingPayment__note}>
-            {/* <h4>Lưu ý</h4> */}
-            {/* <div data-content="paymentCKInfo">
-              <h4>Thông tin thanh toán,</h4>
-              <p>
-                STK ngân hàng Ngân hàng Thương mại cổ phần Đầu tư và Phát triển
-                Việt Nam (BiDV): 58010000842574{" "}
-              </p>
-              <p>Công ty TNHH KD Vận tải Sơn Tùng</p>
-              <p>
-                <span>Nội dung chuyển khoản để lại: Sdt đặt.</span>
-              </p>
-            </div> */}
+          <div className={styles.bookingPayment__method}>
+            {paymentUrl && (
+              <div>
+                <img
+                  src={paymentUrl}
+                  alt="Payment QR Code"
+                  style={{
+                    width: "500px",
+                    height: "500px",
+                    marginLeft: "40px",
+                  }}
+                />
+              </div>
+            )}
           </div>
           <div>
             <p style={{ padding: "10px" }}>
               <span className="text-big" style={{ fontSize: "1.4em" }}>
-                QUÝ KHÁCH VUI LÒNG THANH TOÁN TRONG VÒNG{" "}
-                <strong>60 PHÚT</strong>, QUÁ THỜI HẠN MÃ VÉ SẼ BỊ HUỶ. CẦN HỖ
-                TRỢ XIN LIÊN HỆ TỔNG ĐÀI: <strong>1900969671</strong>.
+                QUÝ KHÁCH VUI LÒNG THANH TOÁN TRONG VÒNG <strong>3 PHÚT</strong>
+                , QUÁ THỜI HẠN MÃ VÉ SẼ BỊ HUỶ. CẦN HỖ TRỢ XIN LIÊN HỆ TỔNG ĐÀI:{" "}
+                <strong>1900969671</strong>.
               </span>
             </p>
           </div>
           <div className="container">
             <div className={styles.bookingPayment__mobile__submit}>
-              <a href="/index.php?mod=datve&page=datve&sub=cancleBooking">
-                Huỷ đặt xe
-              </a>
               <button
-                type="submit"
-                className="bookingPayment__mobile__submit-btn"
+                onClick={handlePayment}
+                disabled={isLoading}
+                className={styles.bookingPayment__mobile__submit_btn}
+                style={{ width: "100%" }}
               >
-                Thanh toán
+                {isLoading ? "Processing..." : "Thanh toán"}
               </button>
             </div>
           </div>

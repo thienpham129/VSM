@@ -373,6 +373,8 @@ const Schedule10SeatMobile = ({
             startTime,
             startLocation,
             stopLocation,
+            ticketId: response.data.ticketId,
+
           },
         });
       } else {
@@ -808,7 +810,7 @@ const Schedule10SeatMobile = ({
                     defaultValue=""
                   />
                 </div>
-                <div className="" style={{ textAlign: "right" }}>
+                {/* <div className="" style={{ textAlign: "right" }}>
                   <button
                     type="button"
                     className="btn btn-info"
@@ -818,7 +820,7 @@ const Schedule10SeatMobile = ({
                     <i className="fa fa-search mr-2" aria-hidden="true" />
                     Kiểm tra mã
                   </button>
-                </div>
+                </div> */}
                 <div
                   className="form-group mb-2"
                   data-discount-trip="PLT0Tc1ybgN295oCg20241015"

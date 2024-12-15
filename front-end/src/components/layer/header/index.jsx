@@ -1,7 +1,10 @@
 import { DEFAULT } from "constants";
 import React, { useEffect, useState } from "react";
 import { axiosClient, root } from "helper/axiosClient";
-import { getTokenFromLocalStorage, removeTokenFromLocalStorage } from "utils/tokenUtils";
+import {
+  getTokenFromLocalStorage,
+  removeTokenFromLocalStorage,
+} from "utils/tokenUtils";
 import { jwtDecode } from "jwt-decode";
 
 const Header = () => {
@@ -15,14 +18,6 @@ const Header = () => {
   const [fullName, setFullName] = useState("");
   const [urlImage, setUrlImage] = useState();
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem(DEFAULT.TOKEN);
-  //   setUserId(localStorage.getItem("userId"));
-  //   if (token) {
-  //     setIsLoggedIn(true);
-  //     setUserName("Xuan Quang");
-  //   }
-  // }, []);
 
   useEffect(() => {
     const token = getTokenFromLocalStorage();
@@ -30,11 +25,11 @@ const Header = () => {
       try {
         // Decode the token to extract user information
         const decodedToken = jwtDecode(token);
-        console.log('««««« decodedToken »»»»»', decodedToken.sub);
-        
+        console.log("««««« decodedToken »»»»»", decodedToken.sub);
+
         const userId = decodedToken.sub;
         if (userId) {
-          setUserId(userId); 
+          setUserId(userId);
           setIsLoggedIn(true);
           getUserById(userId);
         } else {
@@ -61,7 +56,11 @@ const Header = () => {
       if (response && response.data) {
         setEmail(response.data.email);
         setUrlImage(response.data.urlImage);
-        setFullName(`${response.data.firstName || ""} ${response.data.lastName || ""}`.trim());
+        setFullName(
+          `${response.data.firstName || ""} ${
+            response.data.lastName || ""
+          }`.trim()
+        );
       } else {
         console.log("Failed to retrieve user data");
       }
@@ -69,32 +68,11 @@ const Header = () => {
       console.log("Failed to retrieve user data:", error);
     }
   };
-  // useEffect(() => {
-  //   getUserById();
-  // }, []);
-
-   // useEffect(() => {
-  //   const getUserById = async () => {
-  //     try {
-  //       const url = `/user/${localStorage.getItem("userId")}`;
-  //       const response = await root.get(url);
-  //       if (response) {
-  //         setEmail(response.data.account.email);
-  //         console.log(response.data.account.email);
-  //         console.log("OK");
-  //       } else {
-  //         console.log("Get User By Id Fail");
-  //       }
-  //     } catch (error) {
-  //       console.log(error + "  Fail Get user By id");
-  //     }
-  //   };
-  //   getUserById();
-  // }, []);
 
   const handleLogout = () => {
     removeTokenFromLocalStorage();
-    window.location.href = "/home";
+    localStorage.removeItem("role");
+    window.location.href = "/login";
   };
 
   return (
@@ -176,20 +154,7 @@ const Header = () => {
                     <a className="menu-item" href="/bookingTicket">
                       Đặt vé
                     </a>
-                    <ul>
-                      <li>
-                        <a className="menu-item new" href="/quickBooking">
-                          Đặt vé nhanh
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="/bookingTicket">
-                          Đặt vé
-                        </a>
-                      </li>
-                    </ul>
                   </li>
-
                   <li>
                     <a className="menu-item" href="/aboutUs">
                       Giới Thiệu
@@ -200,12 +165,6 @@ const Header = () => {
                       Liên Hệ
                     </a>
                   </li>
-                  <li>
-                    <a className="menu-item" href="/new">
-                      Tin Tức
-                    </a>
-                  </li>
-                  <li></li>
                 </ul>
               </div>
 
@@ -223,16 +182,19 @@ const Header = () => {
                             className="de-menu-profile"
                             onClick={test}
                           >
-                            {urlImage ? (<img
-                              src={urlImage}
-                              className="img-fluid"
-                              alt=""
-                            />) : (<img
-                              src="images/avatar_user.png"
-                              className="img-fluid"
-                              alt=""
-                            />)}
-                            
+                            {urlImage ? (
+                              <img
+                                src={urlImage}
+                                className="img-fluid"
+                                alt=""
+                              />
+                            ) : (
+                              <img
+                                src="images/avatar_user.png"
+                                className="img-fluid"
+                                alt=""
+                              />
+                            )}
                           </span>
                           {showSubMenu ? (
                             <div id="de-submenu-profile" className="de-submenu">
@@ -260,12 +222,9 @@ const Header = () => {
                                     Thay đổi mật khẩu
                                   </a>
                                 </li>
-                                
+
                                 <li>
-                                  <a
-                                    href=""
-                                    onClick={handleLogout}
-                                  >
+                                  <a href="" onClick={handleLogout}>
                                     <i className="fa fa-sign-out" />
                                     Đăng xuất
                                   </a>
@@ -275,7 +234,6 @@ const Header = () => {
                           ) : (
                             ""
                           )}
-                          <span id="menu-btn" />
                         </div>
                       </div>
                     </div>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { request } from "admin/helpers/axios_helper";
 
 // Đăng ký các thành phần của Chart.js
 ChartJS.register(
@@ -23,7 +24,34 @@ ChartJS.register(
 );
 
 const TicketBookingLineChart = () => {
-  // Mock dữ liệu: số lần đặt vé theo tháng cho mỗi tuyến đường
+  const [tickets, setTickets] = useState([]);
+
+  const fetchTickets = async () => {
+    try {
+      const response = await request("get", "/admin/dashboard/routes-tickets");
+      setTickets(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu tuyến đường:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTickets();
+  }, []);
+
+  // Chuẩn bị dữ liệu từ tickets
+  const datasets = tickets.map((ticket) => ({
+    label: ticket.label,
+    data: ticket.data,
+    fill: false,
+    borderColor: getRandomColor(), // Hàm để tạo màu ngẫu nhiên
+    tension: 0.1,
+    pointRadius: 5,
+    pointBackgroundColor: getRandomColor(),
+  }));
+
+  // Dữ liệu biểu đồ
   const data = {
     labels: [
       "Tháng 1",
@@ -39,46 +67,10 @@ const TicketBookingLineChart = () => {
       "Tháng 11",
       "Tháng 12",
     ],
-    datasets: [
-      {
-        label: "Huế → Đà Nẵng",
-        data: [50, 60, 70, 80, 90, 110, 120, 130, 140, 150, 160, 170],
-        fill: false,
-        borderColor: "rgba(75, 192, 192, 1)", // Màu cho đường của tuyến này
-        tension: 0.1,
-        pointRadius: 5, // Kích thước điểm trên đường
-        pointBackgroundColor: "rgba(75, 192, 192, 1)", // Màu điểm
-      },
-      {
-        label: "Đà Nẵng → Huế",
-        data: [30, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150],
-        fill: false,
-        borderColor: "rgba(255, 159, 64, 1)", // Màu cho đường của tuyến này
-        tension: 0.1,
-        pointRadius: 5,
-        pointBackgroundColor: "rgba(255, 159, 64, 1)",
-      },
-      {
-        label: "Huế → Hội An",
-        data: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120],
-        fill: false,
-        borderColor: "rgba(153, 102, 255, 1)", // Màu cho đường của tuyến này
-        tension: 0.1,
-        pointRadius: 5,
-        pointBackgroundColor: "rgba(153, 102, 255, 1)",
-      },
-      {
-        label: "Đà Nẵng → Hội An",
-        data: [40, 50, 60, 70, 80, 100, 120, 130, 140, 150, 160, 170],
-        fill: false,
-        borderColor: "rgba(255, 99, 132, 1)", // Màu cho đường của tuyến này
-        tension: 0.1,
-        pointRadius: 5,
-        pointBackgroundColor: "rgba(255, 99, 132, 1)",
-      },
-    ],
+    datasets: datasets,
   };
 
+  // Tùy chọn biểu đồ
   const options = {
     responsive: true,
     plugins: {
@@ -112,6 +104,16 @@ const TicketBookingLineChart = () => {
       },
     },
   };
+
+  // Hàm tạo màu ngẫu nhiên
+  function getRandomColor() {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
 
   return (
     <div style={{ width: "100%", maxWidth: "700px", margin: "auto" }}>

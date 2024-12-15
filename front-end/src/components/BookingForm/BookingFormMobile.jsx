@@ -8,7 +8,12 @@ import {
   apiGetPublicWard,
 } from "services/app";
 
-const BookingFormMobile7Seat = () => {
+const BookingFormMobile = () => {
+  // Infor user
+  const [userId, setUserId] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  //
   const [specificAddress, setSpecificAddress] = useState("");
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -45,7 +50,7 @@ const BookingFormMobile7Seat = () => {
   useEffect(() => {
     const fetchPublicProvince = async () => {
       const response = await apiGetPublicProvinces();
-      console.log('««««« responseProvince »»»»»', response);
+      console.log("««««« responseProvince »»»»»", response);
       if (response.status === 200) {
         setProvinces(response?.data.results);
       }
@@ -76,6 +81,50 @@ const BookingFormMobile7Seat = () => {
     !district ? setReset(true) : setReset(false);
     !district && setWards([]);
   }, [district]);
+
+  //
+  const fetchUser = async (userId) => {
+    const token = getTokenFromLocalStorage();
+    try {
+      const response = await root.get(`/user/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = response.data;
+      if (data) {
+        setEmail(data.email || "");
+        setPhoneNumber(data.phoneNumber || "");
+        setFullName(
+          `${response.data.firstName || ""} ${
+            response.data.lastName || ""
+          }`.trim()
+        );
+      }
+    } catch (error) {
+      console.error("Failed to retrieve user data:", error);
+    }
+  };
+
+  useEffect(() => {
+    const token = getTokenFromLocalStorage();
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.sub;
+        if (userId) {
+          setUserId(userId);
+          fetchUser(userId);
+        } else {
+          console.error("userId not found in token");
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    }
+  }, []);
+  //
+
   return (
     <div
       className={
@@ -112,12 +161,23 @@ const BookingFormMobile7Seat = () => {
         </div>
         <div className={styles.form_group}>
           <label htmlFor="">Họ tên</label>
-          <input type="text" name="full_name" />
+          <input
+            type="text"
+            name="full_name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+          />
           <label htmlFor="full_name" className="error" />
         </div>
         <div className={styles.form_group}>
           <label htmlFor="">Số điện thoại</label>
-          <input type="text" name="phone" defaultValue="" />
+          <input
+            type="text"
+            name="phone"
+            defaultValue=""
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+          />
           <label htmlFor="phone" className="error" />
         </div>
         <div className={`${styles.form_group} ${styles.useEmail}`}>
@@ -142,7 +202,13 @@ const BookingFormMobile7Seat = () => {
           <label htmlFor="">
             Email: <span className={styles.text_danger}>*</span>
           </label>
-          <input type="text" name="email" defaultValue="" />
+          <input
+            type="text"
+            name="email"
+            defaultValue=""
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
           <label htmlFor="email" className="error" />
         </div>
         <div className={styles.form_group}>
@@ -199,7 +265,6 @@ const BookingFormMobile7Seat = () => {
             Điểm đến: <span className={styles.text_danger}>*</span>
           </label>
           <div className={styles.point_wrap}>
-           
             <input
               className="form-control"
               placeholder="Nhập địa chỉ trả"
@@ -284,4 +349,4 @@ const BookingFormMobile7Seat = () => {
     </div>
   );
 };
-export default BookingFormMobile7Seat;
+export default BookingFormMobile;

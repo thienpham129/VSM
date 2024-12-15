@@ -215,7 +215,7 @@ function Parking() {
   const handleSearchParking = (e) => {
     if (searchName) {
       if (viewOption) {
-        if (viewOption.toLocaleUpperCase() === "ĐÀ NẴNG") {
+        if (viewOption.toLocaleUpperCase() === "THÀNH PHỐ ĐÀ NẴNG") {
           setDataInput(e.target.value);
           const tempArray = [];
           daNangParkings.forEach((item, index) => {
@@ -230,7 +230,7 @@ function Parking() {
           setDataFilter(tempArray);
         }
 
-        if (viewOption.toLocaleUpperCase() === "HUẾ") {
+        if (viewOption.toLocaleUpperCase() === "THỪA THIÊN HUẾ") {
           setDataInput(e.target.value);
           const tempArray = [];
           hueParkings.forEach((item, index) => {
@@ -245,7 +245,7 @@ function Parking() {
           setDataFilter(tempArray);
         }
 
-        if (viewOption.toLocaleUpperCase() === "QUẢNG NAM") {
+        if (viewOption.toLocaleUpperCase() === "TỈNH QUẢNG NAM") {
           setDataInput(e.target.value);
           const tempArray = [];
           qnParkings.forEach((item, index) => {
@@ -290,7 +290,7 @@ function Parking() {
       }
     } else {
       if (viewOption) {
-        if (viewOption.toLocaleUpperCase() === "ĐÀ NẴNG") {
+        if (viewOption.toLocaleUpperCase() === "THÀNH PHỐ ĐÀ NẴNG") {
           setDataInput(e.target.value);
           const tempArray = [];
           daNangParkings.forEach((item, index) => {
@@ -305,7 +305,7 @@ function Parking() {
           setDataFilter(tempArray);
         }
 
-        if (viewOption.toLocaleUpperCase() === "HUẾ") {
+        if (viewOption.toLocaleUpperCase() === "THỪA THIÊN HUẾ") {
           setDataInput(e.target.value);
           const tempArray = [];
           hueParkings.forEach((item, index) => {
@@ -320,7 +320,7 @@ function Parking() {
           setDataFilter(tempArray);
         }
 
-        if (viewOption.toLocaleUpperCase() === "QUẢNG NAM") {
+        if (viewOption.toLocaleUpperCase() === "TỈNH QUẢNG NAM") {
           setDataInput(e.target.value);
           const tempArray = [];
           qnParkings.forEach((item, index) => {
@@ -398,15 +398,15 @@ function Parking() {
       hueParkings &&
       qnParkings
     ) {
-      if (currentDestination.toLocaleUpperCase() === "ĐÀ NẴNG") {
+      if (currentDestination.toLocaleUpperCase() === "THÀNH PHỐ ĐÀ NẴNG") {
         setCurrentDataParking(daNangParkings);
       }
 
-      if (currentDestination.toLocaleUpperCase() === "HUẾ") {
+      if (currentDestination.toLocaleUpperCase() === "THỪA THIÊN HUẾ") {
         setCurrentDataParking(hueParkings);
       }
 
-      if (currentDestination.toLocaleUpperCase() === "QUẢNG NAM") {
+      if (currentDestination.toLocaleUpperCase() === "TỈNH QUẢNG NAM") {
         setCurrentDataParking(qnParkings);
       }
     }
@@ -446,16 +446,16 @@ function Parking() {
   };
 
   const generateDataTable = (addressOption) => {
-    if (addressOption.toLocaleUpperCase() === "ĐÀ NẴNG") {
+    if (addressOption.toLocaleUpperCase() === "THÀNH PHỐ ĐÀ NẴNG") {
       return <DataTable columns={columns} data={daNangParkings} />;
     }
 
-    if (addressOption.toLocaleUpperCase() === "HUẾ") {
+    if (addressOption.toLocaleUpperCase() === "THỪA THIÊN HUẾ") {
       console.log(addressOption.toLocaleUpperCase());
       return <DataTable columns={columns} data={hueParkings} />;
     }
 
-    if (addressOption.toLocaleUpperCase() === "QUẢNG NAM") {
+    if (addressOption.toLocaleUpperCase() === "TỈNH QUẢNG NAM") {
       return <DataTable columns={columns} data={qnParkings} />;
     } else {
       return <DataTable columns={columns} data={allDataParkings} />;
@@ -504,9 +504,9 @@ function Parking() {
             <MenuItem value={currentDestination}>
               Mặc Định (Xem Bãi Đỗ Theo Lịch Trình){" "}
             </MenuItem>
-            <MenuItem value="ĐÀ NẴNG">Xem Bãi Đỗ Đà Nẵng</MenuItem>
-            <MenuItem value="HUẾ">Xem Bãi Đỗ Huế</MenuItem>
-            <MenuItem value="QUẢNG NAM">Xem Bãi Đỗ Quảng Nam</MenuItem>
+            <MenuItem value="THÀNH PHỐ ĐÀ NẴNG">Xem Bãi Đỗ Đà Nẵng</MenuItem>
+            <MenuItem value="THỪA THIÊN HUẾ">Xem Bãi Đỗ Huế</MenuItem>
+            <MenuItem value="TỈNH QUẢNG NAM">Xem Bãi Đỗ Quảng Nam</MenuItem>
             <MenuItem value="ALL">Xem Tất Cả Bãi Đỗ</MenuItem>
           </Select>
         </FormControl>

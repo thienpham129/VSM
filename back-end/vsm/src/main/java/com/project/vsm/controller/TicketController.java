@@ -63,15 +63,22 @@ public class TicketController {
         return new ResponseEntity<>(ticketService.updateStatusTicketById(ticketId , request) , HttpStatus.OK);
     }
 
+	//  @PutMapping("/admin/update/ticket/{ticketId}")
+	//     public ResponseEntity<TicketResponse> updateTicketById (@PathVariable String ticketId ,@RequestBody TicketRequest request){
+	//         return new ResponseEntity<>(ticketService.updateTicketById(ticketId , request),HttpStatus.OK);
+	//     }
+
 	@GetMapping("/admin/ticket-with-schedule/{scheduleId}")
 	public ResponseEntity<List<TicketResponse>> getTicketByScheduleId(@PathVariable long scheduleId) {
 		return new ResponseEntity<>(ticketService.getTicketByScheduleId(scheduleId), HttpStatus.OK);
 	}
 
 	// @PutMapping("/admin/update-status/ticket/{ticketId}")
-	// public ResponseEntity<TicketResponse> updateStatusTicketById(@PathVariable long ticketId,
-	// 		@RequestBody TicketRequest request) {
-	// 	return new ResponseEntity<>(ticketService.updateStatusTicketById(ticketId, request), HttpStatus.OK);
+	// public ResponseEntity<TicketResponse> updateStatusTicketById(@PathVariable
+	// long ticketId,
+	// @RequestBody TicketRequest request) {
+	// return new ResponseEntity<>(ticketService.updateStatusTicketById(ticketId,
+	// request), HttpStatus.OK);
 	// }
 
 	@GetMapping("/admin/tickets")
@@ -89,4 +96,9 @@ public class TicketController {
         return new ResponseEntity<>(ticketService.updateMapByTicketId(ticketId , request) ,HttpStatus.OK);
     }
 
+
+	@GetMapping("public/ticket/check/{id}")
+	public ResponseEntity<Boolean> checkTicketPaid(@PathVariable String id) {
+		return new ResponseEntity<>(ticketService.checkTicketPaid(id), HttpStatus.OK);
+	}
 }

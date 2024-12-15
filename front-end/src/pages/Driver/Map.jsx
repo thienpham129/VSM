@@ -310,8 +310,10 @@ const Map = () => {
           }
 
           if (countInitial === arrayTicket.length) {
+            alert("OK");
             let oldPositionOfShortestDistance = 0;
             let destination = "";
+            console.log(arrayTicket);
             arrayTicket.forEach((item, index) => {
               if (index === arrayTicket.length - 1) {
                 destination += item.mapPickUp;

@@ -26,9 +26,6 @@ public class CarResponse {
     private String color;
     private String manufactory;
     private int yearOfManufacture;
-    private String startLocation;
-    private String stopLocation;
-    private LocalDate startDate;
     private int numSeat;
     private long price;
     private TypeResponse type;
@@ -41,9 +38,6 @@ public class CarResponse {
         response.setColor(car.getColor());
         response.setManufactory(car.getManufactory());
         response.setYearOfManufacture(car.getYearOfManufacture());
-        response.setStartLocation(car.getStartLocation());
-        response.setStopLocation(car.getStopLocation());
-        response.setStartDate(car.getStartDate());
         response.setNumSeat(car.getType().getNumSeat());
         response.setPrice(car.getType().getPrice());
 

@@ -15,6 +15,7 @@ import { root } from "helper/axiosClient";
 import { getTokenFromLocalStorage } from "utils/tokenUtils";
 import { useNavigate } from "react-router-dom";
 import MethodPayment from "pages/methodPayment";
+import { jwtDecode } from "jwt-decode";
 
 function BookingForm({
   selectedSeats,
@@ -28,6 +29,7 @@ function BookingForm({
 }) {
   const navigate = useNavigate();
 
+  const [userId, setUserId] = useState("");
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
@@ -38,6 +40,7 @@ function BookingForm({
   const [selectedSeat, setSelectedSeat] = useState([]);
   const [errors, setErrors] = useState({});
   const [ticketId, setTicketId] = useState(null);
+  const [voucher, setVoucher] = useState(null);
 
   // Pick-up location state
   const [pickupSpecificAddress, setPickupSpecificAddress] = useState("");
@@ -265,6 +268,7 @@ function BookingForm({
       paymentMethod,
       scheduleId,
       typeId,
+      ...(voucher && { voucher }),
     };
 
     try {
@@ -277,9 +281,7 @@ function BookingForm({
       });
 
       if (response.status === 200) {
-        console.log("Booking successful:", response.data.ticketId);
-        // setTicketId(response.data.ticketId);
-        // console.log('««««« ticketId456 »»»»»', response.data.ticketId);
+        console.log("Booking successful:", response.data);
         navigate("/methodPayment", {
           state: {
             fullName,
@@ -289,11 +291,12 @@ function BookingForm({
             detailAddressToPickUp,
             selectedSeat,
             detailAddressDropOff,
-            totalPrice,
+            totalPrice: response.data.totalPrice,
             startTime,
             startLocation,
             stopLocation,
             ticketId: response.data.ticketId,
+            // voucher : response.data.voucher
           },
         });
       } else {
@@ -353,6 +356,49 @@ function BookingForm({
       setIsShowSuggestDrop(false);
     }
   }, [dropAddress]);
+  //
+  const fetchUser = async (userId) => {
+    const token = getTokenFromLocalStorage();
+    try {
+      const response = await root.get(`/user/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = response.data;
+      console.log("««««« data »»»»»", data);
+      if (data) {
+        setEmail(data.email || "");
+        setPhoneNumber(data.phoneNumber || "");
+        setFullName(
+          `${response.data.firstName || ""} ${
+            response.data.lastName || ""
+          }`.trim()
+        );
+      }
+    } catch (error) {
+      console.error("Failed to retrieve user data:", error);
+    }
+  };
+
+  useEffect(() => {
+    const token = getTokenFromLocalStorage();
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.sub;
+        if (userId) {
+          setUserId(userId);
+          fetchUser(userId);
+        } else {
+          console.error("userId not found in token");
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    }
+  }, []);
+  //
 
   return (
     <div className={styles.bookingPage__tickets__item__collapse__booking__user}>
@@ -511,13 +557,13 @@ function BookingForm({
 
             {/* <div className="row">
               <div className="col-md-12 form-group">
-              <SellectAddress
-                type="province"
-                value={pickupProvince}
-                setValue={setPickupProvince}
-                options={pickupProvinces}
-                label="Province/City(Tỉnh)"
-              />
+                <SellectAddress
+                  type="province"
+                  value={pickupProvince}
+                  setValue={setPickupProvince}
+                  options={pickupProvinces}
+                  label="Province/City(Tỉnh)"
+                />
               </div>
               <div className="col-md-12 form-group">
                 <SellectAddress
@@ -630,8 +676,16 @@ function BookingForm({
         </div>
         <div className={styles.form_group}>
           <label htmlFor="">Mã khuyến mãi:</label>
-          <input type="text" name="promotionCode" defaultValue="" />
+          <input
+            type="text"
+            name="promotionCode"
+            defaultValue=""
+            className="form-control"
+            value={voucher}
+            onChange={(e) => setVoucher(e.target.value)}
+          />
         </div>
+
         <div
           className={`styles.form_group`}
           data-discount-trip="PLT0Tc1ybgN295oCg20241015"

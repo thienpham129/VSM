@@ -1354,7 +1354,7 @@
   background: #f1f3f5;
   font-style: normal;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 19px;
   line-height: 19px;
   color: #232731;
   margin-bottom: 16px;
@@ -1373,7 +1373,7 @@
   width: 30%;
   font-style: normal;
   font-weight: 400;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 19px;
   color: #646d84;
 }
@@ -1381,7 +1381,7 @@
 .bookingPayment__info__item p {
   font-style: normal;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 19px;
   color: #232731;
   width: calc(100% - 30% - 8px);

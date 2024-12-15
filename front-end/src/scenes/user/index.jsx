@@ -34,6 +34,7 @@ const UserAdmin = () => {
     try {
       const response = await request("get", "/admin/users");
       setListUser(response.data); // Cập nhật danh sách người dùng
+      console.log('««««« response.data »»»»»', response.data);
     } catch (error) {
       console.error("Lỗi khi lấy danh sách người dùng:", error);
     }
@@ -182,7 +183,7 @@ const UserAdmin = () => {
             },
           }}
         >
-          {params.row.enabled ? "Enabled" : "Disabled"}
+          {params.row.enabled ? "Hoạt động" : "Đã chặn"}
         </Button>
       ),
     },
@@ -205,7 +206,10 @@ const UserAdmin = () => {
 
   return (
     <Box m="20px">
-      <Header title="USER" subtitle="MANAGE USER" />
+      <Header
+        title="Danh Sách Người dùng"
+        subtitle="Quản Lý Danh Sách Thông Tin Người Dùng"
+      />
       <Box display="flex" justifyContent="flex-end" mb={-5}>
         <Button variant="contained" color="secondary" onClick={handleClickOpen}>
           Thêm Mới Người Dùng

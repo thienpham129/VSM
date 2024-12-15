@@ -3,7 +3,7 @@ import { request } from "admin/helpers/axios_helper";
 // Lấy danh sách bãi đỗ xe
 export const getParkings = async () => {
   try {
-    const response = await request("GET", "/admin/parkings");
+    const response = await request("GET", "/driver/parkings");
     // Định dạng lại dữ liệu nếu cần
     return response.data.map((parking) => ({
       id: parking.id,

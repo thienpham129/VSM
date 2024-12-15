@@ -1,35 +1,13 @@
-import React, { useState } from "react";
-import { Box, Typography, MenuItem, Select, FormControl } from "@mui/material";
+import React from "react";
+import { Box } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import { tokens } from "../../theme";
-import RouteFrequencyPieChart from "./chart/RouteFrequencyPieChart";
 import TicketBookingLineChart from "./chart/TicketBookingLineChart";
 
 // Mock dữ liệu theo tháng
-const mockData = {
-  1: [30, 40, 20, 10], // Tháng 1
-  2: [25, 35, 30, 10], // Tháng 2
-  3: [20, 30, 40, 10], // Tháng 3
-  12: [40, 30, 20, 10], // Tháng 12
-};
-
 const TicketBookingLineWidget = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-
-  // Lấy tháng hiện tại làm giá trị mặc định
-  const currentMonth = new Date().getMonth() + 1;
-
-  // State để lưu tháng được chọn
-  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
-
-  // Xử lý khi chọn tháng
-  const handleMonthChange = (event) => {
-    setSelectedMonth(event.target.value);
-  };
-
-  // Lấy dữ liệu phù hợp với tháng được chọn
-  const dataForSelectedMonth = mockData[selectedMonth] || [0, 0, 0, 0];
 
   return (
     <Box
@@ -51,7 +29,7 @@ const TicketBookingLineWidget = () => {
         height="100%"
         position="relative"
       >
-        <TicketBookingLineChart data={dataForSelectedMonth} />
+        <TicketBookingLineChart />
       </Box>
     </Box>
   );

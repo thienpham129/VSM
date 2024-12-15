@@ -681,6 +681,10 @@ header .header-col.mid .social-icons {
     font-weight: 500;
 }
 
+#mainmenu li>a:hover {
+    color: #1ECB15;
+}
+
 #mainmenu li.has-child>a {
     padding-right: 0px;
 }
@@ -12817,7 +12821,8 @@ body.dark-scheme::-webkit-scrollbar-track,#de_modal::-webkit-scrollbar-track {
 .v-center {
     /* min-height: 100%; */
     /* min-height: 200vh; */
-    min-height: 150vh;
+    /* min-height: 150vh; */
+    min-height: 100vh;
     display: flex;
     align-items: center;
 }
@@ -17461,10 +17466,12 @@ img {
     #menu-btn {
         display: block;
         float: right;
+        margin-left: 550px;
         z-index: 1000;
         top: 0;
         right: 0;
         background: #333;
+        margin-top: 30px;
     }
     .inner-padding {
         padding: 40px;
@@ -17759,6 +17766,7 @@ img {
         width: 100%;
     }
     header.header-mobile #mainmenu li {
+        padding-top: 30px;
         border-bottom: solid 1px #eee;
         margin: 0;
         width: 100%;
@@ -18411,6 +18419,14 @@ select#select-address {
 .detail_ticket:hover {
     cursor: pointer;
     color: #333;
+}
+p.no_schedule {
+    font-size: 24px;
+    text-align: center;
+    padding: 25px 0px;
+}
+select#searchPointUp {
+    padding: 7px 2px;
 }
 
 /* .table .de_table th,

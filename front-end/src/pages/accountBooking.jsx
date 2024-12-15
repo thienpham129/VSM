@@ -7,12 +7,11 @@ import { Modal, Button } from "react-bootstrap";
 
 const AccountBooking = () => {
   const [tickets, setTickets] = useState([]);
-  // const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
+  const [currentPage, setCurrentPage] = useState(0);
   const ticketsPerPage = 5; // Số vé tối đa mỗi trang
 
-  const [selectedTicket, setSelectedTicket] = useState(null); // Lưu trữ thông tin vé được chọn
-  const [showModal, setShowModal] = useState(false); // Quản lý trạng thái modal
+  const [selectedTicket, setSelectedTicket] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     getAllTicketOfUser();
@@ -27,7 +26,6 @@ const AccountBooking = () => {
         },
       });
       console.log("««««« response »»»»»", response.data);
-      console.log("««««« response »»»»»", response.data.length);
       setTickets(response.data);
     } catch (error) {
       console.error("Error fetching tickets:", error);
@@ -136,9 +134,8 @@ const AccountBooking = () => {
                                 TÊN XE
                               </span>
                               <span className="bold">
-                                {ticket.schedules?.car?.name  ||
-                                  "Không có dữ liệu"} 
-                                  
+                                {ticket.schedules?.car?.name ||
+                                  "Không có dữ liệu"}
                               </span>
                             </td>
                             <td>
@@ -146,7 +143,8 @@ const AccountBooking = () => {
                                 Loại xe
                               </span>
                               {ticket.schedules?.car?.type?.numSeat ||
-                                  "Không có dữ liệu"} chỗ
+                                "Không có dữ liệu"}{" "}
+                              chỗ
                             </td>
                             <td>
                               <span className="d-lg-none d-sm-block">
@@ -172,18 +170,30 @@ const AccountBooking = () => {
                             </td>
 
                             <td>
-                              <div className="badge rounded-pill bg-warning">
-                                {ticket.status}
-                              </div>
+                              <span className="d-lg-none d-sm-block">
+                                TRẠNG THÁI
+                              </span>
+                              {ticket.paid ? (
+                                <div
+                                  className="badge rounded-pill bg-success"
+                                  style={{ padding: "9px", fontSize: "13px" }}
+                                >
+                                  Đã thanh toán
+                                </div>
+                              ) : (
+                                <div
+                                  className="badge rounded-pill bg-danger"
+                                  style={{ padding: "8px", fontSize: "11px" }}
+                                >
+                                  Chưa thanh toán
+                                </div>
+                              )}
                             </td>
                             <td>
-                              {/* <div className="badge bg-gray-100 detail_ticket">
-                                Xem chi tiết vé
-                              </div> */}
                               <button
                                 className="badge bg-gray-100 detail_ticket"
                                 onClick={() => handleViewDetails(ticket)}
-                                style={{ border: "none" }}
+                                style={{ border: "none"}}
                               >
                                 Xem chi tiết vé
                               </button>
@@ -241,11 +251,15 @@ const AccountBooking = () => {
               <p className="col-md-4 form-group">
                 <strong>Email:</strong>
               </p>
-              <div className="col-md-8 form-group ">{selectedTicket.email || "Không có dữ liệu"}</div>
+              <div className="col-md-8 form-group ">
+                {selectedTicket.email || "Không có dữ liệu"}
+              </div>
               <p className="col-md-4 form-group">
                 <strong>Ghi chú:</strong>{" "}
               </p>
-              <div className="col-md-8 form-group ">{selectedTicket.note || "Không có dữ liệu"}</div>
+              <div className="col-md-8 form-group ">
+                {selectedTicket.note || "Không có dữ liệu"}
+              </div>
               <p className="col-md-4 form-group">
                 <strong>Địa chỉ điểm đi:</strong>{" "}
               </p>
@@ -261,11 +275,15 @@ const AccountBooking = () => {
               <p className="col-md-4 form-group">
                 <strong>Ghế đã chọn:</strong>{" "}
               </p>
-              <div className="col-md-8 form-group ">{selectedTicket.selectedSeat.join(", ")}</div>
+              <div className="col-md-8 form-group ">
+                {selectedTicket.selectedSeat.join(", ")}
+              </div>
               <p className="col-md-4 form-group">
                 <strong>Tổng tiền:</strong>{" "}
               </p>
-              <div className="col-md-8 form-group ">{selectedTicket.totalPrice.toLocaleString("vi-VN")} VNĐ</div>
+              <div className="col-md-8 form-group ">
+                {selectedTicket.totalPrice.toLocaleString("vi-VN")} VNĐ
+              </div>
             </div>
           )}
         </Modal.Body>

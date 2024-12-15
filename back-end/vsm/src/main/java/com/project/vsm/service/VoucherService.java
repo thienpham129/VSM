@@ -9,15 +9,24 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.project.vsm.dto.SendVoucherDTO;
 import com.project.vsm.dto.VoucherDTO;
 import com.project.vsm.exception.NotFoundException;
+import com.project.vsm.model.AccountEntity;
 import com.project.vsm.model.VoucherEntity;
+import com.project.vsm.repository.AccountRepository;
 import com.project.vsm.repository.VoucherRepository;
+
+import jakarta.mail.MessagingException;
 
 @Service
 public class VoucherService {
 	@Autowired
 	private VoucherRepository voucherRepository;
+	@Autowired
+	private AccountRepository accountRepository;
+	@Autowired
+	private EmailService emailService;
 
 	public Optional<VoucherEntity> getVoucherById(long id) {
 		Optional<VoucherEntity> optionalVoucher = voucherRepository.findById(id);
@@ -85,4 +94,32 @@ public class VoucherService {
 		return sb.toString();
 	}
 
+	public void sendDiscountEmail(String content, String discount, AccountEntity user) {
+		String subject = "Mã giảm giá";
+		String discountMessage = "Mã giảm giá của bạn là: " + discount + "%";
+
+		String htmlMessage = "<html>" + "<body style=\"font-family: Arial, sans-serif;\">"
+				+ "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
+				+ "<h2 style=\"color: #333;\">Chào bạn!</h2>" + "<p style=\"font-size: 16px;\">" + content + "</p>"
+				+ "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
+				+ "<h3 style=\"color: #333;\">Mã Giảm Giá:</h3>"
+				+ "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + discountMessage + "</p>"
+				+ "</div>" + "</div>" + "</body>" + "</html>";
+
+		try {
+			emailService.sendVerificationEmail(user.getEmail(), subject, htmlMessage);
+		} catch (MessagingException e) {
+			e.printStackTrace();
+			throw new NotFoundException("Lỗi khi gửi mã giảm giá!");
+		}
+	}
+
+	public String sendVoucher(SendVoucherDTO input) {
+		List<AccountEntity> listUser = accountRepository.findByRole("ROLE_USER");
+		for (AccountEntity user : listUser) {
+			VoucherEntity voucher = createNewVoucher(new VoucherDTO(input.getDiscount(), 1)).get(0);
+			sendDiscountEmail(input.getContent(), voucher.getCode(), user);
+		}
+		return "Gửi mã thành công";
+	}
 }

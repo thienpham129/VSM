@@ -5,9 +5,10 @@ import RevenueChart from "./chart/RevenueChart";
 import { tokens } from "../../theme";
 import { useTheme } from "@emotion/react";
 
-const RevenueWidget = () => {
+const RevenueWidget = (props) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
   return (
     <Box
       gridColumn="span 8"
@@ -24,14 +25,17 @@ const RevenueWidget = () => {
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Box>
           <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>
-            Doanh Thu
+            Tổng Doanh Thu Năm {new Date().getFullYear()}
           </Typography>
           <Typography
             variant="h3"
             fontWeight="bold"
             color={colors.greenAccent[500]}
           >
-            $59,342.32
+            {props.totalRevenue.toLocaleString("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            })}
           </Typography>
         </Box>
         <Box>
@@ -51,7 +55,7 @@ const RevenueWidget = () => {
         height="100%"
         position="relative"
       >
-        <RevenueChart />
+        <RevenueChart revenue={props.revenue} />
       </Box>
     </Box>
   );
