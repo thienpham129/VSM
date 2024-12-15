@@ -98,14 +98,14 @@ const Schedule = () => {
           >
             Chi Tiết
           </Button>
-          <Button
+          {/* <Button
             variant="contained"
             color="secondary"
             size="small"
             onClick={() => handleDelete(params.row.id)}
           >
             Xóa
-          </Button>
+          </Button> */}
         </Box>
       ),
     },

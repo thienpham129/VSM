@@ -14,7 +14,6 @@ import { root } from "helper/axiosClient";
 import { jwtDecode } from "jwt-decode";
 import location_icon from "../BookingForm/location_icon.png";
 
-
 const Seat = ({ seatId, seatStatus, onSelect, bookedSeats }) => {
   const isSold = bookedSeats.soldSeats.includes(seatId);
   const isBooked = bookedSeats.bookedSeats.includes(seatId);
@@ -174,7 +173,6 @@ const Schedule7SeatMobile = ({
     }`;
     // setDetailAddressDropOff(newAddressDropOff.trim());
     setDetailAddressDropOff(dropAddress);
-
   };
 
   // Fetch provinces once and use them for both pick-up and drop-off
@@ -356,7 +354,6 @@ const Schedule7SeatMobile = ({
     if (!dropAddress.trim())
       newErrors.dropoffSpecificAddress = "Vui lòng nhập địa chỉ điểm đến.";
 
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -511,8 +508,6 @@ const Schedule7SeatMobile = ({
     }
   }, [dropAddress]);
 
-  
-
   return (
     <div
       className={styles.bookingPage__mobile__item}
@@ -652,16 +647,18 @@ const Schedule7SeatMobile = ({
                         bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
                       />
+                      <td />
+
                       <Seat
                         seatId="A6"
                         bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
                       />
-                      <Seat
+                      {/* <Seat
                         seatId="A7"
                         bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
-                      />
+                      /> */}
                     </tr>
                   </tbody>
                 </table>

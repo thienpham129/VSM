@@ -72,11 +72,11 @@ const Ticket = () => {
   return (
     <Box m="20px">
       <Header title="Vé Xe" subtitle="Danh Sách Thông Tin Vé Xe" />
-      <Box display="flex" justifyContent="flex-end" mb={-5}>
+      {/* <Box display="flex" justifyContent="flex-end" mb={-5}>
         <Button variant="contained" color="secondary">
           Thêm Mới Vé Xe
         </Button>
-      </Box>
+      </Box> */}
       <Box
         m="40px 0 0 0"
         height="75vh"

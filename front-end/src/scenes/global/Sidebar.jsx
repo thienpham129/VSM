@@ -107,9 +107,7 @@ const Sidebar = () => {
                   color={colors.grey[100]}
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
-                >
-                  
-                </Typography>
+                ></Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
                   Quản Trị Viên
                 </Typography>
@@ -180,13 +178,13 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-            <Item
+            {/* <Item
               title="Nhân Viên"
               to="/admin/user"
               icon={<AccountBoxIcon />}
               selected={selected}
               setSelected={setSelected}
-            />
+            /> */}
             <Typography
               variant="h6"
               color={colors.grey[300]}
