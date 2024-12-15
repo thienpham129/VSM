@@ -563,7 +563,7 @@ const MethodPayment = () => {
                           Tổng tiền :
                         </label>
                         <p style={{ fontSize: "26px", paddingTop: "7px" }}>
-                          {totalPrice.toLocaleString()} đ
+                          {totalPrice.toLocaleString().replace(",", ".")} VNĐ
                         </p>
                       </div>
                     </div>

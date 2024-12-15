@@ -201,8 +201,9 @@ function Schedule() {
 
   const fetchDataScheduleDetail = async (scheduleId) => {
     const url = "/public/ticket-with-schedule";
+    console.log(idSchedule);
     try {
-      const response = await root.get(`${url}/${scheduleId}`);
+      const response = await root.get(`${url}/${idSchedule}`);
       if (response.data) {
         let tempArrayScheduleDetail = [];
         response.data.forEach((item, index) => {
@@ -290,11 +291,13 @@ function Schedule() {
         notifyErrorUpdateTicket();
       } else {
         const url = "/driver/update-status/ticket";
+        console.log(idSchedule + " idSchedule");
         try {
           const fetchUpdateStatusUser = async () => {
             const response = await root.put(`${url}/${ticketId}`, {
               status: statusUser,
             });
+            console.log(response.data);
             if (response.data) {
               notifyScucessUpadte();
               setIsSuccessUpdateUser(true);

@@ -199,11 +199,6 @@ const Map = () => {
     }
   };
 
-  // useEffect(() => {
-  //   alert(currentLat);
-  //   alert(currentLong);
-  // }, [currentLat, currentLong]);
-
   const fetchTicketsInCurrentShedule = async (scheduleId) => {
     const url = "/public/ticket-with-schedule";
     try {
@@ -310,7 +305,6 @@ const Map = () => {
           }
 
           if (countInitial === arrayTicket.length) {
-            alert("OK");
             let oldPositionOfShortestDistance = 0;
             let destination = "";
             console.log(arrayTicket);

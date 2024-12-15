@@ -432,7 +432,7 @@ function BookingForm({
           <label htmlFor="">Tổng tiền</label>
           <span className="total-monney">
             <span data-content="totalPrice">
-              {totalPrice.toLocaleString()} đ
+              {totalPrice.toLocaleString().replace(",", ".")} VNĐ
             </span>{" "}
           </span>
         </div>
@@ -691,7 +691,7 @@ function BookingForm({
           data-discount-trip="PLT0Tc1ybgN295oCg20241015"
         ></div>
         <div className="d-flex justify-content-end">
-          <button
+          {/* <button
             type="button"
             className="mr-2 px-3"
             data-action="checkPromotion"
@@ -704,7 +704,7 @@ function BookingForm({
               style={{ paddingRight: "5px" }}
             />
             Kiểm tra mã
-          </button>
+          </button> */}
           <button
             type="submit"
             data-trip-id="PLT0Tc1ybgN295oCg20241015"

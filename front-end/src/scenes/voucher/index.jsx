@@ -26,6 +26,7 @@ const VoucherAdmin = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [vouchers, setVouchers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
@@ -71,7 +72,7 @@ const VoucherAdmin = () => {
 
   useEffect(() => {
     fetchVouchers(); // Gọi hàm fetchVouchers khi component được mount
-  }, []);
+  }, [vouchers, isLoading]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -263,11 +264,13 @@ const VoucherAdmin = () => {
             initialValues={{ content: "", discount: "" }}
             validationSchema={validationSendSchema}
             onSubmit={async (values) => {
+              setIsLoading(true); // Bắt đầu xử lý
               try {
                 const response = await request("POST", "/admin/send-voucher", {
                   content: values.content,
                   discount: values.discount,
                 });
+
                 console.log("Gửi mã giảm giá thành công:", response.data);
                 setSnackbarMessage("Gửi mã giảm giá thành công!");
                 setSnackbarOpen(true);
@@ -276,6 +279,8 @@ const VoucherAdmin = () => {
                 console.error("Lỗi khi gửi mã giảm giá:", error);
                 setSnackbarMessage("Có lỗi xảy ra khi gửi mã giảm giá.");
                 setSnackbarOpen(true);
+              } finally {
+                setIsLoading(false); // Kết thúc xử lý
               }
             }}
           >
@@ -313,6 +318,7 @@ const VoucherAdmin = () => {
                 <DialogActions>
                   <Button
                     onClick={handleCloseSend}
+                    disabled={isLoading} // Disable khi đang xử lý
                     sx={{
                       backgroundColor: "gray",
                       color: "white",
@@ -323,13 +329,17 @@ const VoucherAdmin = () => {
                   </Button>
                   <Button
                     type="submit"
+                    disabled={isLoading} // Disable khi đang xử lý
                     sx={{
-                      backgroundColor: "green",
+                      backgroundColor: isLoading ? "gray" : "green",
                       color: "white",
-                      "&:hover": { backgroundColor: "darkgreen" },
+                      "&:hover": {
+                        backgroundColor: isLoading ? "gray" : "darkgreen",
+                      },
                     }}
                   >
-                    Gửi Mã Giảm Giá
+                    {isLoading ? "Đang gửi..." : "Gửi Mã Giảm Giá"}{" "}
+                    {/* Trạng thái nút */}
                   </Button>
                 </DialogActions>
               </Form>
@@ -347,7 +357,9 @@ const VoucherAdmin = () => {
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         ContentProps={{
           style: {
-            backgroundColor: "green",
+            backgroundColor: snackbarMessage.includes("thành công")
+              ? "green"
+              : "red", // Màu sắc theo trạng thái
             color: "white",
           },
         }}

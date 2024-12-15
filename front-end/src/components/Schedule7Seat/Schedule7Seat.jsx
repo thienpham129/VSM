@@ -168,7 +168,7 @@ const Schedule7Seat = ({
           </div>
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__price}>
-          <span>{price.toLocaleString()} VND</span>
+          <span>{price.toLocaleString().replace(",", ".")} VND</span>
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__view_button}>
           <a

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.project.vsm.dto.AdminUpdateTicketDTO;
 import com.project.vsm.dto.TicketResponseAdminDTO;
 import com.project.vsm.dto.request.TicketRequest;
 import com.project.vsm.dto.response.ScheduleResponse;
@@ -152,17 +153,17 @@ public class TicketService {
         TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
 				.orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
 
-        ticket.setEmail(request.getEmail());
-        ticket.setFullName(request.getFullName());
-        ticket.setNote(request.getNote());
-        ticket.setPhoneNumber(request.getPhoneNumber());
-        ticket.setSelectedSeat(request.getSelectedSeat().toString());
+		ticket.setEmail(request.getEmail());
+		ticket.setFullName(request.getFullName());
+		ticket.setNote(request.getNote());
+		ticket.setPhoneNumber(request.getPhoneNumber());
+		ticket.setSelectedSeat(request.getSelectedSeat().toString());
 
-        ticketRepository.save(ticket);
+		ticketRepository.save(ticket);
 
-        return TicketResponse.fromEntity(ticket);
-    }      
-    
+		return TicketResponse.fromEntity(ticket);
+	}
+
 	public List<TicketResponse> getAllTicketAdmin() {
 		List<TicketEntity> ticketEntities = ticketRepository.findAll();
 		List<TicketResponse> ticketResponses = new ArrayList<>();
@@ -190,25 +191,31 @@ public class TicketService {
 		return ticketResponses;
 	}
 
+	private boolean checkPaymentStatus(String ticketId) {
+		return true;
+	}
 
+	public List<TicketResponse> getTicketByScheduleId(long scheduleId) {
+		ScheduleEntity schedule = scheduleRepository.findById(scheduleId)
+				.orElseThrow(() -> new RuntimeException("Not found schedule with id : " + scheduleId));
 
-    private boolean checkPaymentStatus(String ticketId) {
-        return true;
-    }
+		List<TicketEntity> tickets = ticketRepository.getTicketByScheduleId(scheduleId);
+		if (tickets.isEmpty()) {
+			throw new RuntimeException("Not found ticket with schedule id : " + scheduleId);
+		}
 
-    public List<TicketResponse> getTicketByScheduleId(long scheduleId) {
-        ScheduleEntity schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new RuntimeException("Not found schedule with id : " + scheduleId));
+		return tickets.stream().map(TicketResponse::fromEntity).collect(Collectors.toList());
+	}
 
-        List<TicketEntity> tickets = ticketRepository.getTicketByScheduleId(scheduleId);
-        if (tickets.isEmpty()) {
-            throw new RuntimeException("Not found ticket with schedule id : " + scheduleId);
-        }
+	// public TicketResponse updateStatusTicketById(String ticketId, TicketRequest request) {
+	// 	TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
+	// 			.orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
 
-        return tickets.stream()
-                .map(TicketResponse::fromEntity)
-                .collect(Collectors.toList());
-    }
+	// 	ticket.setStatus(request.getStatus());
+	// 	ticket.setPaid(true);
+	// 	ticketRepository.save(ticket);
+	// 	return TicketResponse.fromEntity(ticket);
+	// }
 
     public TicketResponse updateStatusTicketById(String ticketId, TicketRequest request) {
         TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
@@ -243,23 +250,48 @@ public class TicketService {
 		return ticketDetail;
 	}
 
+//	public Boolean checkTicketPaid(String id) {
+//		Optional<TicketEntity> optionalTicket = ticketRepository.findByTicketId(id);
+//		if (!optionalTicket.isPresent()) {
+//			throw new NotFoundException("Not found Ticket with id " + id);
+//		}
+//		TicketEntity ticket = optionalTicket.get();
+//		if (!ticket.isPaid()) {
+//			ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+//			scheduler.schedule(() -> {
+//				if (!ticket.isPaid()) {
+//					ticket.setStatus("Hủy đặt vé");
+//					ticketRepository.save(ticket);
+//				}
+//			}, 3, TimeUnit.MINUTES);
+//			scheduler.shutdown();
+//		}
+//		return ticket.isPaid();
+//	}
+	
 	public Boolean checkTicketPaid(String id) {
-		Optional<TicketEntity> optionalTicket = ticketRepository.findByTicketId(id);
-		if (!optionalTicket.isPresent()) {
-			throw new NotFoundException("Not found Ticket with id " + id);
-		}
-		TicketEntity ticket = optionalTicket.get();
-		if (!ticket.isPaid()) {
-			ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-			scheduler.schedule(() -> {
-				if (!ticket.isPaid()) {
-					ticket.setStatus("Hủy đặt vé");
-					ticketRepository.save(ticket);
-				}
-			}, 3, TimeUnit.MINUTES);
-			scheduler.shutdown();
-		}
-		return ticket.isPaid();
+	    Optional<TicketEntity> optionalTicket = ticketRepository.findByTicketId(id);
+	    if (!optionalTicket.isPresent()) {
+	        throw new NotFoundException("Không tìm thấy vé với id " + id);
+	    }
+
+	    TicketEntity ticket = optionalTicket.get();
+
+	    if (!ticket.isPaid()) {
+	        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+	        scheduler.schedule(() -> {
+	            // Kiểm tra trạng thái sau 3 phút
+	            Optional<TicketEntity> currentTicket = ticketRepository.findByTicketId(id);
+	            if (currentTicket.isPresent() && !currentTicket.get().isPaid()) {
+	                TicketEntity updatedTicket = currentTicket.get();
+	                updatedTicket.setStatus("Hủy đặt vé");
+	                ticketRepository.save(updatedTicket);
+	            }
+	        }, 3, TimeUnit.MINUTES);
+	        scheduler.shutdown();
+	    }
+
+	    return ticket.isPaid();
 	}
 
 	public TicketResponse updateMapByTicketId (String ticketId , TicketRequest request) {
@@ -285,4 +317,20 @@ public class TicketService {
 
         return TicketResponse.fromEntity(ticket);
     }
+	public Boolean adminUpdateTicket(AdminUpdateTicketDTO input) {
+		Optional<TicketEntity> optionalTicket = ticketRepository.findById(input.getTicketId());
+		if (!optionalTicket.isPresent()) {
+			throw new NotFoundException("Không tìm thấy vé xe với id " + input.getTicketId());
+		}
+		optionalTicket.get().setFullName(input.getFullName());
+		optionalTicket.get().setEmail(input.getEmail());
+		optionalTicket.get().setPhoneNumber(input.getPhoneNumber());
+		optionalTicket.get().setDetailAddressDropOff(input.getDetailAddressDropOff());
+		optionalTicket.get().setDetailAddressPickUp(input.getDetailAddressPickUp());
+		optionalTicket.get().setNote(input.getNote());
+		optionalTicket.get().setPaid(input.isPaid());
+		optionalTicket.get().setStatus(input.getStatus());
+		ticketRepository.save(optionalTicket.get());
+		return true;
+	}
 }
