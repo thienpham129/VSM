@@ -12,6 +12,7 @@ import {
 import { getTokenFromLocalStorage } from "utils/tokenUtils";
 import { root } from "helper/axiosClient";
 import { jwtDecode } from "jwt-decode";
+import location_icon from "../BookingForm/location_icon.png";
 
 
 const Seat = ({ seatId, seatStatus, onSelect, bookedSeats }) => {
@@ -69,7 +70,10 @@ const Schedule7SeatMobile = ({
   const [bookedSeats, setBookedSeats] = useState({
     soldSeats: [],
     bookedSeats: [],
+    canceledSeats: [], // Thêm trạng thái "Đã hủy vé"
   });
+
+  const [availableSeats, setAvailableSeats] = useState(6); // Số ghế còn trống
 
   //
   const [userId, setUserId] = useState("");
@@ -100,6 +104,18 @@ const Schedule7SeatMobile = ({
   const [dropoffProvince, setDropoffProvince] = useState("");
   const [dropoffDistrict, setDropoffDistrict] = useState("");
   const [dropoffWard, setDropoffWard] = useState("");
+  //
+
+  const [pickUpAddress, setPickUpAddress] = useState("");
+  const [dropAddress, setDropAddress] = useState("");
+  const [suggesstPickUpAddress, setSuggestPickUpAddress] = useState([]);
+  const [suggesstDropAddress, setSuggestDropAddress] = useState([]);
+  const [isShowSuggestPickUp, setIsShowSuggestPickup] = useState(false);
+  const [isShowSuggestDrop, setIsShowSuggestDrop] = useState(false);
+  const [pickUpLat, setPickUpLat] = useState("");
+  const [pickUpLon, setPickUpLon] = useState("");
+  const [dropLat, setDropLat] = useState("");
+  const [dropLon, setDropLon] = useState("");
 
   // Start Api
   // Handle change for specific addresses
@@ -131,7 +147,8 @@ const Schedule7SeatMobile = ({
             ?.province_name
         : ""
     }`;
-    setDetailAddressToPickUp(newAddressPickUp.trim());
+    // setDetailAddressToPickUp(newAddressPickUp.trim());
+    setDetailAddressToPickUp(pickUpAddress);
   };
   const createAddressValueDropOff = () => {
     const newAddressDropOff = `${dropoffSpecificAddress} ${
@@ -155,7 +172,9 @@ const Schedule7SeatMobile = ({
             ?.province_name
         : ""
     }`;
-    setDetailAddressDropOff(newAddressDropOff.trim());
+    // setDetailAddressDropOff(newAddressDropOff.trim());
+    setDetailAddressDropOff(dropAddress);
+
   };
 
   // Fetch provinces once and use them for both pick-up and drop-off
@@ -226,12 +245,14 @@ const Schedule7SeatMobile = ({
     createAddressValuePickUp();
     createAddressValueDropOff();
   }, [
-    pickupWard,
-    pickupDistrict,
-    pickupProvince,
-    dropoffWard,
-    dropoffDistrict,
-    dropoffProvince,
+    // pickupWard,
+    // pickupDistrict,
+    // pickupProvince,
+    // dropoffWard,
+    // dropoffDistrict,
+    // dropoffProvince,
+    pickUpAddress,
+    dropAddress,
   ]);
   // End Api
 
@@ -242,26 +263,34 @@ const Schedule7SeatMobile = ({
         const response = await root.get(
           `/public/ticket-with-schedule/${scheduleId}`
         );
-        // Lấy ghế paid: true và paid: false
-        const seatsPaidTrue = response.data
-          .filter((ticket) => ticket.paid)
+        // Lấy ghế có status "Đang chờ xử lý", "Đã thanh toán", và "Đã hủy vé"
+        const seatsPending = response.data
+          .filter((ticket) => ticket.status === "Đang chờ xử lý")
           .map((ticket) => ticket.selectedSeat)
           .flat();
 
-        const seatsPaidFalse = response.data
-          .filter((ticket) => !ticket.paid)
+        const seatsPaid = response.data
+          .filter((ticket) => ticket.status === "Đã thanh toán")
+          .map((ticket) => ticket.selectedSeat)
+          .flat();
+
+        const seatsCanceled = response.data
+          .filter((ticket) => ticket.status === "Đã hủy vé")
           .map((ticket) => ticket.selectedSeat)
           .flat();
 
         // Lưu danh sách ghế theo trạng thái
         setBookedSeats({
-          soldSeats: seatsPaidTrue, // paid: true
-          bookedSeats: seatsPaidFalse, // paid: false
+          soldSeats: seatsPaid, // Đã thanh toán
+          bookedSeats: seatsPending, // Đang chờ xử lý
+          canceledSeats: seatsCanceled, // Đã hủy vé
         });
 
-        // const seats = response.data.map((ticket) => ticket.selectedSeat).flat();
-        // setBookedSeats(seats); // Lưu danh sách ghế đã đặt
-        console.log("««««« response.data »»»»»", response.data);
+        // Đếm số ghế còn trống
+        const totalSeats = 6; // Xe có 6 ghế
+        const soldAndBookedSeats = new Set([...seatsPaid, ...seatsPending]); // Ghế đã bán hoặc đang chờ xử lý
+        const availableSeats = totalSeats - soldAndBookedSeats.size;
+        setAvailableSeats(availableSeats);
       } catch (err) {
         console.log("««««« err »»»»»", err);
       } finally {
@@ -322,10 +351,11 @@ const Schedule7SeatMobile = ({
     if (!email.trim()) {
       newErrors.email = "Email là bắt buộc.";
     }
-    if (!pickupSpecificAddress.trim())
+    if (!pickUpAddress.trim())
       newErrors.pickupSpecificAddress = "Vui lòng nhập địa chỉ điểm đi.";
-    if (!dropoffSpecificAddress.trim())
+    if (!dropAddress.trim())
       newErrors.dropoffSpecificAddress = "Vui lòng nhập địa chỉ điểm đến.";
+
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -431,6 +461,58 @@ const Schedule7SeatMobile = ({
   }, []);
   //
 
+  useEffect(() => {
+    if (pickUpAddress) {
+      const delayDebounceFn = setTimeout(() => {
+        const query = pickUpAddress.trim();
+        if (query) {
+          const fetchAddressData = async () => {
+            try {
+              const response = await fetch(
+                `https://rsapi.goong.io/Place/AutoComplete?api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo&input=${query}`
+              );
+              const data = await response.json();
+              setSuggestPickUpAddress(data.predictions);
+            } catch (error) {
+              console.log(error);
+            }
+          };
+          fetchAddressData();
+        }
+      }, 1000);
+      return () => clearTimeout(delayDebounceFn);
+    } else {
+      setIsShowSuggestPickup(false);
+    }
+  }, [pickUpAddress]);
+
+  useEffect(() => {
+    if (dropAddress) {
+      const delayDebounceFn = setTimeout(() => {
+        const query = dropAddress.trim();
+        if (query) {
+          const fetchAddressData = async () => {
+            try {
+              const response = await fetch(
+                `https://rsapi.goong.io/Place/AutoComplete?api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo&input=${query}`
+              );
+              const data = await response.json();
+              setSuggestDropAddress(data.predictions);
+            } catch (error) {
+              console.log(error);
+            }
+          };
+          fetchAddressData();
+        }
+      }, 1000);
+      return () => clearTimeout(delayDebounceFn);
+    } else {
+      setIsShowSuggestDrop(false);
+    }
+  }, [dropAddress]);
+
+  
+
   return (
     <div
       className={styles.bookingPage__mobile__item}
@@ -467,9 +549,10 @@ const Schedule7SeatMobile = ({
             </p>
           </h3>
           <p>
-            {numSeat} chỗ ngồi <br />{" "}
+            còn {availableSeats} chỗ ngồi trống <br />{" "}
             <b className={styles.bookingPage__mobile__item__toggle_detail}>
-              Xe {car.name} <span className="avicon icon-caret-down-bg" />{" "}
+              {car.name} - {numSeat} chỗ ngồi{" "}
+              <span className="avicon icon-caret-down-bg" />{" "}
             </b>
           </p>
         </div>
@@ -743,46 +826,47 @@ const Schedule7SeatMobile = ({
                   <div className={styles.point_wrap}>
                     <input
                       type="text"
-                      onChange={handlePickupSpecificAddressChange}
-                      value={pickupSpecificAddress}
                       placeholder="Nhập địa chỉ cụ thể"
+                      className={styles.input_box}
+                      id="input-box"
+                      value={pickUpAddress}
                       style={{ width: "100%" }}
+                      onChange={(e) => {
+                        setIsShowSuggestPickup(true);
+                        setPickUpAddress(e.target.value);
+                      }}
+                      autoComplete="off"
                     />
+                    {suggesstPickUpAddress.length > 0 && isShowSuggestPickUp ? (
+                      <div className={styles.result_box}>
+                        <ul>
+                          {suggesstPickUpAddress.map((item) => (
+                            <li
+                              onClick={() => {
+                                setPickUpAddress(item.description);
+                                setIsShowSuggestPickup(false);
+                              }}
+                            >
+                              {" "}
+                              <img
+                                src={location_icon}
+                                alt="location_icon"
+                                style={{ width: "24px", height: "24px" }}
+                              />{" "}
+                              {item.description}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : (
+                      ""
+                    )}
+
                     {errors.pickupSpecificAddress && (
                       <span className={styles.error}>
                         {errors.pickupSpecificAddress}
                       </span>
                     )}
-
-                    <div className="row">
-                      <div className="col-md-12 form-group">
-                        <SellectAddress
-                          type="province"
-                          value={pickupProvince}
-                          setValue={setPickupProvince}
-                          options={pickupProvinces}
-                          label="Province/City(Tỉnh)"
-                        />
-                      </div>
-                      <div className="col-md-12 form-group">
-                        <SellectAddress
-                          type="district"
-                          value={pickupDistrict}
-                          setValue={setPickupDistrict}
-                          options={pickupDistricts}
-                          label="District(Quận)"
-                        />
-                      </div>
-                      <div className="col-md-12 form-group">
-                        <SellectAddress
-                          type="ward"
-                          value={pickupWard}
-                          setValue={setPickupWard}
-                          options={pickupWards}
-                          label="Wards(phường)"
-                        />
-                      </div>
-                    </div>
                   </div>
                   <label htmlFor="pointUp" className={styles.error} />
                 </div>
@@ -793,45 +877,46 @@ const Schedule7SeatMobile = ({
                   <div className={styles.point_wrap}>
                     <input
                       type="text"
-                      onChange={handleDropoffSpecificAddressChange}
-                      value={dropoffSpecificAddress}
                       placeholder="Nhập địa chỉ cụ thể"
+                      className={styles.input_box}
+                      id="input-box"
+                      value={dropAddress}
                       style={{ width: "100%" }}
+                      onChange={(e) => {
+                        setIsShowSuggestDrop(true);
+                        setDropAddress(e.target.value);
+                      }}
+                      autoComplete="off"
                     />
+                    {suggesstDropAddress.length > 0 && isShowSuggestDrop ? (
+                      <div className={styles.result_box}>
+                        <ul>
+                          {suggesstDropAddress.map((item) => (
+                            <li
+                              onClick={() => {
+                                setDropAddress(item.description);
+                                setIsShowSuggestDrop(false);
+                              }}
+                            >
+                              {" "}
+                              <img
+                                src={location_icon}
+                                alt="location_icon"
+                                style={{ width: "24px", height: "24px" }}
+                              />{" "}
+                              {item.description}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : (
+                      ""
+                    )}
                     {errors.dropoffSpecificAddress && (
                       <span className={styles.error}>
                         {errors.dropoffSpecificAddress}
                       </span>
                     )}
-                    <div className="row">
-                      <div className="col-md-12 form-group">
-                        <SellectAddress
-                          type="province"
-                          value={dropoffProvince}
-                          setValue={setDropoffProvince}
-                          options={dropoffProvinces}
-                          label="Province/City(Tỉnh)"
-                        />
-                      </div>
-                      <div className="col-md-12 form-group">
-                        <SellectAddress
-                          type="district"
-                          value={dropoffDistrict}
-                          setValue={setDropoffDistrict}
-                          options={dropoffDistricts}
-                          label="District(Quận)"
-                        />
-                      </div>
-                      <div className="col-md-12 form-group">
-                        <SellectAddress
-                          type="ward"
-                          value={dropoffWard}
-                          setValue={setDropoffWard}
-                          options={dropoffWards}
-                          label="Wards(phường)"
-                        />
-                      </div>
-                    </div>
                   </div>
                   <label htmlFor="pointDown" className={styles.error} />
                 </div>

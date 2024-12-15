@@ -147,10 +147,8 @@ function BookingForm({
       const province = pickupProvinces.find(
         (item) => item.province_name === startLocation
       );
-      console.log("««««« province »»»»»", province);
       if (province) {
         setPickupProvince(province.province_id);
-        console.log("««««« province.province_id »»»»»", province.province_id); // Set province vào state
       }
     }
   }, [startLocation, pickupProvinces]);
