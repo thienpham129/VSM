@@ -31,7 +31,7 @@ import Parking from "pages/Driver/Parking";
 import Map from "pages/Driver/Map";
 import ImageUploadFile from "components/ImageUploadFile";
 import { getTokenFromLocalStorage } from "utils/tokenUtils";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // import RequireAuth from "RequireAuth";
 import AdminRoute from "admin/AdminRoute";
@@ -44,14 +44,15 @@ function App() {
   const navigate = useNavigate();
   const role = localStorage.getItem("role");
   const location = useLocation();
+  const [checkNavigated, setCheckNavigated] = useState(false);
 
-  useEffect(() => {
-    if (token) {
-      if (role === "ROLE_ADMIN") {
-        navigate("/admin/dashboard");
-      }
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (token) {
+  //     if (role === "ROLE_ADMIN") {
+  //       navigate("/admin/dashboard");
+  //     }
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (

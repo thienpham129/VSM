@@ -70,7 +70,13 @@ const Login = () => {
 
         // }
 
-        window.location.href = "/home";
+        if (role[0] === "ROLE_DRIVER") {
+          window.location.href = "/driver/schedule";
+        } else if (role[0] === "ROLE_ADMIN") {
+          window.location.href = "/admin/dashboard";
+        } else {
+          window.location.href = "/home";
+        }
       } else {
         setErrorMessage("Login failed. Invalid credentials.");
       }
