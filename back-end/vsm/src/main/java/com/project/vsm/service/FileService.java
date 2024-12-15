@@ -7,12 +7,15 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class FileService {
+	@Autowired
+	private FileUploadImpl upload;
 
 	@Value("${spring.fileUpload.rootPath}")
 	private String rootPath;
@@ -22,17 +25,17 @@ public class FileService {
 	private Path root;
 
 	public String saveFile(String fileName, MultipartFile multipartFile) throws IOException {
-		Path uploadPath = Paths.get(uploadDir);
-
-		if (!Files.exists(uploadPath)) {
-			Files.createDirectories(uploadPath);
-		}
-
-		String fileCode = RandomStringUtils.randomAlphanumeric(8);
-		Path filePath = uploadPath.resolve(fileCode + "-" + fileName);
-		Files.copy(multipartFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-		return "http://localhost:8080/uploads/" + fileCode + "-" + fileName;
+//		Path uploadPath = Paths.get(uploadDir);
+//
+//		if (!Files.exists(uploadPath)) {
+//			Files.createDirectories(uploadPath);
+//		}
+//
+//		String fileCode = RandomStringUtils.randomAlphanumeric(8);
+//		Path filePath = uploadPath.resolve(fileCode + "-" + fileName);
+//		Files.copy(multipartFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+//		System.out.println(upload.uploadFile(multipartFile));
+		return upload.uploadFile(multipartFile);
 	}
 
 	public void init() {
