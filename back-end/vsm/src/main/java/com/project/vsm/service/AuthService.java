@@ -61,7 +61,7 @@ public class AuthService {
 	}
 	
 	public AccountEntity identifyUser(String email) {
-		AccountEntity user = userRepository.findByEmail(email)
+		AccountEntity user = accountRepository.findByEmail(email)
 				.orElseThrow(() -> new RuntimeException("User not found"));
 		return user;
 	}

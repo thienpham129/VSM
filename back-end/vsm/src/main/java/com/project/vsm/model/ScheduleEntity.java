@@ -60,11 +60,5 @@ public class ScheduleEntity {
 	@OneToMany(mappedBy = "scheduleEntity", fetch = FetchType.LAZY)
 	private List<TicketEntity> tickets = new ArrayList<>();
 
-	@Override
-	public String toString() {
-		return "ScheduleEntity [id=" + id + ", startTime=" + startTime + ", endTime=" + endTime + ", status=" + status
-				+ ", startLocation=" + startLocation + ", stopLocation=" + stopLocation + ", route=" + route
-				+ ", account=" + account + ", car=" + car + ", tickets=" + tickets + "]";
-	}
 
 }

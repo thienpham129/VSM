@@ -16,25 +16,23 @@ public class FileService {
 
 	@Value("${spring.fileUpload.rootPath}")
 	private String rootPath;
+	@Value("${file.upload-dir}")
+	private String uploadDir;
 
 	private Path root;
 
 	public String saveFile(String fileName, MultipartFile multipartFile) throws IOException {
-		Path uploadPath = Paths.get("src/main/resources/static/assets/imagesUploads");
+		Path uploadPath = Paths.get(uploadDir);
 
 		if (!Files.exists(uploadPath)) {
 			Files.createDirectories(uploadPath);
 		}
+
 		String fileCode = RandomStringUtils.randomAlphanumeric(8);
-		try {
-			Path filePath = uploadPath.resolve(fileCode + "-" + fileName);
-			Files.copy(multipartFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-		} catch (IOException ioe) {
-			throw new IOException("Could not save file: " + fileName, ioe);
-		}
-		String result = "http://localhost:8080/assets/imagesUploads/" + fileCode + "-" + fileName;
-//		System.out.println(result);
-		return result;
+		Path filePath = uploadPath.resolve(fileCode + "-" + fileName);
+		Files.copy(multipartFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+		return "http://localhost:8080/uploads/" + fileCode + "-" + fileName;
 	}
 
 	public void init() {
