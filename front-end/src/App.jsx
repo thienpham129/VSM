@@ -31,14 +31,15 @@ import Parking from "pages/Driver/Parking";
 import Map from "pages/Driver/Map";
 import ImageUploadFile from "components/ImageUploadFile";
 import { getTokenFromLocalStorage } from "utils/tokenUtils";
-import AdminRoute from "admin/AdminRoute";
 import { useEffect } from "react";
+
+// import RequireAuth from "RequireAuth";
+import AdminRoute from "admin/AdminRoute";
 import ProfileDriver from "pages/Driver/ProfileDriver";
 import PaymentSuccess from "pages/PaymentSuccess";
 // import Page403 from "Page403";
 
 function App() {
-
   const token = getTokenFromLocalStorage();
   const navigate = useNavigate();
   const role = localStorage.getItem("role");

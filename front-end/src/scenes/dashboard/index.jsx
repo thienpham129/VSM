@@ -97,12 +97,11 @@ const Dashboard = () => {
     fetchStatRevenue();
   }, []);
 
-
   return (
     <Box m="20px">
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
-      <Header title="Quản Lý" subtitle="Quản Lý Thông Tin Ứng Dụng" />
+        <Header title="Quản Lý" subtitle="Quản Lý Thông Tin Ứng Dụng" />
 
         <Box>
           <Button

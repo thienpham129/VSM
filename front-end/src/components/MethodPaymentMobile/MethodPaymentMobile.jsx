@@ -90,6 +90,40 @@ const MethodPaymentMobile = () => {
 
     return () => clearInterval(interval); // Xóa interval khi component bị unmount
   }, [ticketId, navigate]);
+
+  // Check cancle ticket
+  const checkCancelTicket = async () => {
+    if (!ticketId) {
+      alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra.");
+      return;
+    }
+
+    try {
+      const response = await root.get(` public/ticket/check/${ticketId}`);
+
+      if (response.status === 200) {
+        console.log("««««« response.data123 »»»»»", response.data);
+        if (response.data === true) {
+          console.log("««««« Vé đã được thanh toán »»»»»");
+          return true;
+        } else {
+          console.log("««««« Vé chưa được xử lý »»»»»");
+          return false;
+        }
+      } else {
+        setError("Không thể kiểm tra trạng thái thanh toán.");
+      }
+    } catch (err) {
+      console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkCancelTicket();
+  }, []);
+
   return (
     <section
       className={`${styles.bookingPage__mobile} ${styles.bookingPayment__mobile}`}

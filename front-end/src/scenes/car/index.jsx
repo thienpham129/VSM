@@ -20,6 +20,7 @@ const CarAdmin = () => {
   const fetchCars = async () => {
     try {
       const response = await request("get", "/public/cars");
+      console.log(response.data);
       const formattedData = response.data.map((car) => ({
         id: car.carId,
         name: car.name,
@@ -56,10 +57,14 @@ const CarAdmin = () => {
       type: "number",
       headerAlign: "left",
       align: "left",
-      valueFormatter: (params) =>
-        params.value !== undefined
-          ? `${params.value.toLocaleString()} VNĐ`
-          : "0 VNĐ",
+      valueFormatter: (params) => {
+        const value = params.value || 0; // Nếu không có giá trị, gán mặc định là 0
+        return new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+          minimumFractionDigits: 0, // Không hiển thị số thập phân
+        }).format(value);
+      },
     },
     {
       field: "yearOfManufacture",
@@ -68,6 +73,11 @@ const CarAdmin = () => {
       headerAlign: "left",
       align: "left",
       flex: 0.5,
+      valueFormatter: (params) => {
+        // Kiểm tra nếu giá trị hợp lệ
+        const year = params.value;
+        return year ? year.toString() : "Không xác định";
+      },
     },
     {
       field: "details",

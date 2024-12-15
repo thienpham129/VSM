@@ -42,7 +42,6 @@ const ProfileDriver = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
-
   useEffect(() => {
     const token = getTokenFromLocalStorage();
     if (token) {
@@ -145,16 +144,16 @@ const ProfileDriver = () => {
     <Box m="20px">
       <Header
         title="Thông Tin Cá Nhân Tài Xế"
-        subtitle={
-          <>
-            <span
-              onClick={() => navigate("/admin/driver")}
-              style={{ cursor: "pointer", color: "white" }}
-            >
-              Quản lý tài xế
-            </span>
-          </>
-        }
+        // subtitle={
+        //   <>
+        //     {/* <span
+        //       onClick={() => navigate("/admin/driver")}
+        //       style={{ cursor: "pointer", color: "white" }}
+        //     >
+        //       Quản lý tài xế
+        //     </span> */}
+        //   </>
+        // }
       />
 
       <Formik

@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "components/bookingTicket.module.css";
 import { useNavigate } from "react-router-dom";
-
 import SellectAddress from "components/SellectAddress";
-
 import {
   apiGetPublicDistrict,
   apiGetPublicProvinces,
@@ -12,6 +10,7 @@ import {
 import { getTokenFromLocalStorage } from "utils/tokenUtils";
 import { root } from "helper/axiosClient";
 import { jwtDecode } from "jwt-decode";
+import location_icon from "../BookingForm/location_icon.png";
 
 
 const Seat = ({ seatId, seatStatus, onSelect, bookedSeats }) => {
@@ -86,157 +85,20 @@ const Schedule10SeatMobile = ({
   const [selectedSeat, setSelectedSeat] = useState(0);
   const [errors, setErrors] = useState({});
 
-  // Pick-up location state
+  //
   const [pickupSpecificAddress, setPickupSpecificAddress] = useState("");
-  const [pickupProvinces, setPickupProvinces] = useState([]);
-  const [pickupDistricts, setPickupDistricts] = useState([]);
-  const [pickupWards, setPickupWards] = useState([]);
-  const [pickupProvince, setPickupProvince] = useState("");
-  const [pickupDistrict, setPickupDistrict] = useState("");
-  const [pickupWard, setPickupWard] = useState("");
-
-  // Drop-off location state
   const [dropoffSpecificAddress, setDropoffSpecificAddress] = useState("");
-  const [dropoffProvinces, setDropoffProvinces] = useState([]);
-  const [dropoffDistricts, setDropoffDistricts] = useState([]);
-  const [dropoffWards, setDropoffWards] = useState([]);
-  const [dropoffProvince, setDropoffProvince] = useState("");
-  const [dropoffDistrict, setDropoffDistrict] = useState("");
-  const [dropoffWard, setDropoffWard] = useState("");
-
-  // Start Api
-  // Handle change for specific addresses
-  const handlePickupSpecificAddressChange = (event) => {
-    setPickupSpecificAddress(event.target.value);
-  };
-
-  const handleDropoffSpecificAddressChange = (event) => {
-    setDropoffSpecificAddress(event.target.value);
-  };
-
-  const createAddressValuePickUp = () => {
-    const newAddressPickUp = `${pickupSpecificAddress} ${
-      pickupWard
-        ? `${
-            pickupWards?.find((item) => item.ward_id === pickupWard)?.ward_name
-          },`
-        : ""
-    } ${
-      pickupDistrict
-        ? `${
-            pickupDistricts?.find((item) => item.district_id === pickupDistrict)
-              ?.district_name
-          },`
-        : ""
-    } ${
-      pickupProvince
-        ? pickupProvinces?.find((item) => item.province_id === pickupProvince)
-            ?.province_name
-        : ""
-    }`;
-    setDetailAddressToPickUp(newAddressPickUp.trim());
-  };
-  const createAddressValueDropOff = () => {
-    const newAddressDropOff = `${dropoffSpecificAddress} ${
-      dropoffWard
-        ? `${
-            dropoffWards?.find((item) => item.ward_id === dropoffWard)
-              ?.ward_name
-          },`
-        : ""
-    } ${
-      dropoffDistrict
-        ? `${
-            dropoffDistricts?.find(
-              (item) => item.district_id === dropoffDistrict
-            )?.district_name
-          },`
-        : ""
-    } ${
-      dropoffProvince
-        ? dropoffProvinces?.find((item) => item.province_id === dropoffProvince)
-            ?.province_name
-        : ""
-    }`;
-    setDetailAddressDropOff(newAddressDropOff.trim());
-  };
-
-  // Fetch provinces once and use them for both pick-up and drop-off
-  useEffect(() => {
-    const fetchProvinces = async () => {
-      const response = await apiGetPublicProvinces();
-      if (response.status === 200) {
-        setPickupProvinces(response.data.results);
-        setDropoffProvinces(response.data.results);
-      }
-    };
-    fetchProvinces();
-  }, []);
-
-  // Fetch districts and wards for pick-up location based on province and district selection
-  useEffect(() => {
-    const fetchPickupDistricts = async () => {
-      const response = await apiGetPublicDistrict(pickupProvince);
-      if (response.status === 200) {
-        setPickupDistricts(response.data.results);
-      }
-    };
-    pickupProvince && fetchPickupDistricts();
-
-    setPickupDistrict("");
-    setPickupWards([]);
-  }, [pickupProvince]);
-
-  useEffect(() => {
-    const fetchPickupWards = async () => {
-      const response = await apiGetPublicWard(pickupDistrict);
-      if (response.status === 200) {
-        setPickupWards(response.data.results);
-      }
-    };
-    pickupDistrict && fetchPickupWards();
-
-    setPickupWard("");
-  }, [pickupDistrict]);
-
-  // Fetch districts and wards for drop-off location based on province and district selection
-  useEffect(() => {
-    const fetchDropoffDistricts = async () => {
-      const response = await apiGetPublicDistrict(dropoffProvince);
-      if (response.status === 200) {
-        setDropoffDistricts(response.data.results);
-      }
-    };
-    dropoffProvince && fetchDropoffDistricts();
-
-    setDropoffDistrict("");
-    setDropoffWards([]);
-  }, [dropoffProvince]);
-
-  useEffect(() => {
-    const fetchDropoffWards = async () => {
-      const response = await apiGetPublicWard(dropoffDistrict);
-      if (response.status === 200) {
-        setDropoffWards(response.data.results);
-      }
-    };
-    dropoffDistrict && fetchDropoffWards();
-
-    setDropoffWard("");
-  }, [dropoffDistrict]);
-
-  useEffect(() => {
-    createAddressValuePickUp();
-    createAddressValueDropOff();
-  }, [
-    pickupWard,
-    pickupDistrict,
-    pickupProvince,
-    dropoffWard,
-    dropoffDistrict,
-    dropoffProvince,
-  ]);
-  // End Api
+  
+  const [pickUpAddress, setPickUpAddress] = useState("");
+  const [dropAddress, setDropAddress] = useState("");
+  const [suggesstPickUpAddress, setSuggestPickUpAddress] = useState([]);
+  const [suggesstDropAddress, setSuggestDropAddress] = useState([]);
+  const [isShowSuggestPickUp, setIsShowSuggestPickup] = useState(false);
+  const [isShowSuggestDrop, setIsShowSuggestDrop] = useState(false);
+  const [pickUpLat, setPickUpLat] = useState("");
+  const [pickUpLon, setPickUpLon] = useState("");
+  const [dropLat, setDropLat] = useState("");
+  const [dropLon, setDropLon] = useState("");
 
   //
   useEffect(() => {
@@ -388,7 +250,6 @@ const Schedule10SeatMobile = ({
             startLocation,
             stopLocation,
             ticketId: response.data.ticketId,
-
           },
         });
       } else {
@@ -399,8 +260,8 @@ const Schedule10SeatMobile = ({
     }
   };
 
-   //
-   const fetchUser = async (userId) => {
+  //
+  const fetchUser = async (userId) => {
     const token = getTokenFromLocalStorage();
     try {
       const response = await root.get(`/user/${userId}`, {
@@ -443,6 +304,56 @@ const Schedule10SeatMobile = ({
   }, []);
   //
 
+  useEffect(() => {
+    if (pickUpAddress) {
+      const delayDebounceFn = setTimeout(() => {
+        const query = pickUpAddress.trim();
+        if (query) {
+          const fetchAddressData = async () => {
+            try {
+              const response = await fetch(
+                `https://rsapi.goong.io/Place/AutoComplete?api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo&input=${query}`
+              );
+              const data = await response.json();
+              setSuggestPickUpAddress(data.predictions);
+            } catch (error) {
+              console.log(error);
+            }
+          };
+          fetchAddressData();
+        }
+      }, 1000);
+      return () => clearTimeout(delayDebounceFn);
+    } else {
+      setIsShowSuggestPickup(false);
+    }
+  }, [pickUpAddress]);
+
+  useEffect(() => {
+    if (dropAddress) {
+      const delayDebounceFn = setTimeout(() => {
+        const query = dropAddress.trim();
+        if (query) {
+          const fetchAddressData = async () => {
+            try {
+              const response = await fetch(
+                `https://rsapi.goong.io/Place/AutoComplete?api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo&input=${query}`
+              );
+              const data = await response.json();
+              setSuggestDropAddress(data.predictions);
+            } catch (error) {
+              console.log(error);
+            }
+          };
+          fetchAddressData();
+        }
+      }, 1000);
+      return () => clearTimeout(delayDebounceFn);
+    } else {
+      setIsShowSuggestDrop(false);
+    }
+  }, [dropAddress]);
+
   return (
     <div
       className={styles.bookingPage__mobile__item}
@@ -479,7 +390,7 @@ const Schedule10SeatMobile = ({
             </p>
           </h3>
           <p>
-          {availableSeats} chỗ ngồi còn trống <br />{" "}
+            {availableSeats} chỗ ngồi còn trống <br />{" "}
             <b className={styles.bookingPage__mobile__item__toggle_detail}>
               Xe {car.name} <span className="avicon icon-caret-down-bg" />{" "}
             </b>
@@ -593,12 +504,12 @@ const Schedule10SeatMobile = ({
                       />
                     </tr>
                     <tr>
-                    <Seat
+                      <Seat
                         seatId="A8"
                         bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
                       />
-                      <td/>
+                      <td />
                       <Seat
                         seatId="A9"
                         bookedSeats={bookedSeats}
@@ -768,46 +679,47 @@ const Schedule10SeatMobile = ({
                   <div className={styles.point_wrap}>
                     <input
                       type="text"
-                      onChange={handlePickupSpecificAddressChange}
-                      value={pickupSpecificAddress}
                       placeholder="Nhập địa chỉ cụ thể"
+                      className={styles.input_box}
+                      id="input-box"
+                      value={pickUpAddress}
                       style={{ width: "100%" }}
+                      onChange={(e) => {
+                        setIsShowSuggestPickup(true);
+                        setPickUpAddress(e.target.value);
+                      }}
+                      autoComplete="off"
                     />
+                    {suggesstPickUpAddress.length > 0 && isShowSuggestPickUp ? (
+                      <div className={styles.result_box}>
+                        <ul>
+                          {suggesstPickUpAddress.map((item) => (
+                            <li
+                              onClick={() => {
+                                setPickUpAddress(item.description);
+                                setIsShowSuggestPickup(false);
+                              }}
+                            >
+                              {" "}
+                              <img
+                                src={location_icon}
+                                alt="location_icon"
+                                style={{ width: "24px", height: "24px" }}
+                              />{" "}
+                              {item.description}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : (
+                      ""
+                    )}
+
                     {errors.pickupSpecificAddress && (
                       <span className={styles.error}>
                         {errors.pickupSpecificAddress}
                       </span>
                     )}
-
-                    <div className="row">
-                      <div className="col-md-12 form-group">
-                        <SellectAddress
-                          type="province"
-                          value={pickupProvince}
-                          setValue={setPickupProvince}
-                          options={pickupProvinces}
-                          label="Province/City(Tỉnh)"
-                        />
-                      </div>
-                      <div className="col-md-12 form-group">
-                        <SellectAddress
-                          type="district"
-                          value={pickupDistrict}
-                          setValue={setPickupDistrict}
-                          options={pickupDistricts}
-                          label="District(Quận)"
-                        />
-                      </div>
-                      <div className="col-md-12 form-group">
-                        <SellectAddress
-                          type="ward"
-                          value={pickupWard}
-                          setValue={setPickupWard}
-                          options={pickupWards}
-                          label="Wards(phường)"
-                        />
-                      </div>
-                    </div>
                   </div>
                   <label htmlFor="pointUp" className={styles.error} />
                 </div>
@@ -818,45 +730,46 @@ const Schedule10SeatMobile = ({
                   <div className={styles.point_wrap}>
                     <input
                       type="text"
-                      onChange={handleDropoffSpecificAddressChange}
-                      value={dropoffSpecificAddress}
                       placeholder="Nhập địa chỉ cụ thể"
+                      className={styles.input_box}
+                      id="input-box"
+                      value={dropAddress}
                       style={{ width: "100%" }}
+                      onChange={(e) => {
+                        setIsShowSuggestDrop(true);
+                        setDropAddress(e.target.value);
+                      }}
+                      autoComplete="off"
                     />
+                    {suggesstDropAddress.length > 0 && isShowSuggestDrop ? (
+                      <div className={styles.result_box}>
+                        <ul>
+                          {suggesstDropAddress.map((item) => (
+                            <li
+                              onClick={() => {
+                                setDropAddress(item.description);
+                                setIsShowSuggestDrop(false);
+                              }}
+                            >
+                              {" "}
+                              <img
+                                src={location_icon}
+                                alt="location_icon"
+                                style={{ width: "24px", height: "24px" }}
+                              />{" "}
+                              {item.description}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : (
+                      ""
+                    )}
                     {errors.dropoffSpecificAddress && (
                       <span className={styles.error}>
                         {errors.dropoffSpecificAddress}
                       </span>
                     )}
-                    <div className="row">
-                      <div className="col-md-12 form-group">
-                        <SellectAddress
-                          type="province"
-                          value={dropoffProvince}
-                          setValue={setDropoffProvince}
-                          options={dropoffProvinces}
-                          label="Province/City(Tỉnh)"
-                        />
-                      </div>
-                      <div className="col-md-12 form-group">
-                        <SellectAddress
-                          type="district"
-                          value={dropoffDistrict}
-                          setValue={setDropoffDistrict}
-                          options={dropoffDistricts}
-                          label="District(Quận)"
-                        />
-                      </div>
-                      <div className="col-md-12 form-group">
-                        <SellectAddress
-                          type="ward"
-                          value={dropoffWard}
-                          setValue={setDropoffWard}
-                          options={dropoffWards}
-                          label="Wards(phường)"
-                        />
-                      </div>
-                    </div>
                   </div>
                   <label htmlFor="pointDown" className={styles.error} />
                 </div>

@@ -76,7 +76,9 @@ const Login = () => {
       }
     } catch (error) {
       console.error("Login failed:", error);
-      setErrorMessage("Có lỗi khi đăng nhập! Vui lòng kiểm tra lại thông tin đăng nhập");
+      setErrorMessage(
+        "Có lỗi khi đăng nhập! Vui lòng kiểm tra lại thông tin đăng nhập"
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -230,14 +232,14 @@ const Login = () => {
                           >
                             {isSubmitting ? "Creating account..." : "Submit"}
                           </button>
-                          <p
+                          {/* <p
                             className="title-forgot-account"
                             onClick={() => {
                               window.location.href = "/identify";
                             }}
                           >
                             Forgotten account?
-                          </p>
+                          </p> */}
                         </form>
                       ) : (
                         <form
@@ -278,14 +280,14 @@ const Login = () => {
                           >
                             {isSubmitting ? "Logging in..." : "Submit"}
                           </button>
-                          <p
+                          {/* <p
                             className="title-forgot-account"
                             onClick={() => {
                               window.location.href = "/identify";
                             }}
                           >
                             Forgotten account?
-                          </p>
+                          </p> */}
                         </form>
                       )}
 

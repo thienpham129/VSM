@@ -104,13 +104,13 @@ const Schedule10Seat = ({
           .flat();
 
         setBookedSeats({
-          soldSeats: seatsPaid, 
-          bookedSeats: seatsPending, 
-          canceledSeats: seatsCanceled, 
+          soldSeats: seatsPaid,
+          bookedSeats: seatsPending,
+          canceledSeats: seatsCanceled,
         });
 
-        const totalSeats = 9; 
-        const soldAndBookedSeats = new Set([...seatsPaid, ...seatsPending]); 
+        const totalSeats = 9;
+        const soldAndBookedSeats = new Set([...seatsPaid, ...seatsPending]);
         const availableSeats = totalSeats - soldAndBookedSeats.size;
         setAvailableSeats(availableSeats);
       } catch (err) {
@@ -157,12 +157,13 @@ const Schedule10Seat = ({
                 data-trip-id="PLT0Tc1ybgN295oCg20241015"
                 data-seatmap-id="SM0Tc1ybgBNa7yys"
               >
-               {availableSeats}
+                {availableSeats}
               </b>{" "}
               chỗ ngồi còn trống
             </h3>
-            <span>{car.name} - {numSeat} chỗ</span>
-
+            <span>
+              {car.name} - {numSeat} chỗ
+            </span>
           </div>
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__price}>

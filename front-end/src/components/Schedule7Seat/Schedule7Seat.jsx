@@ -9,7 +9,6 @@ const Seat = ({ seatId, seatStatus, onSelect, bookedSeats }) => {
   const isCanceled = bookedSeats.canceledSeats.includes(seatId); // Đã hủy vé
   const [isSelected, setIsSelected] = useState(false);
 
-
   const handleSeatClick = () => {
     if (isSold || isBooked) return; // Không cho chọn nếu ghế đã đặt hoặc bán
     setIsSelected((prev) => !prev);
@@ -64,7 +63,6 @@ const Schedule7Seat = ({
   });
 
   const [availableSeats, setAvailableSeats] = useState(6); // Số ghế còn trống
-
 
   const handleSeatSelection = (seatId, isSelected) => {
     setSelectedSeats((prev) => {
@@ -164,11 +162,13 @@ const Schedule7Seat = ({
               </b>{" "}
               chỗ ngồi còn trống
             </h3>
-            <span>{car.name} - {numSeat} chỗ</span>
+            <span>
+              {car.name} - {numSeat} chỗ
+            </span>
           </div>
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__price}>
-          <span>{price.toLocaleString()} VND</span>
+          <span>{price.toLocaleString().replace(",", ".")} VND</span>
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__view_button}>
           <a
@@ -271,7 +271,6 @@ const Schedule7Seat = ({
                         bookedSeats={bookedSeats}
                         onSelect={handleSeatSelection}
                       />
-                      
                     </tr>
                   </tbody>
                 </table>

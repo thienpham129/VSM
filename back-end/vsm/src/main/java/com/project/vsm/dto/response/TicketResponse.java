@@ -40,6 +40,9 @@ public class TicketResponse {
     LocalDateTime endTime;
     String detailAddressToPickUp;
     String detailAddressDropOff;
+    String mapPickUp;
+    String mapDrop;
+    String mapStatus;
 
     public static TicketResponse fromEntity(TicketEntity ticket) {
         return TicketResponse.builder()
@@ -59,6 +62,9 @@ public class TicketResponse {
                 .startTime(ticket.getScheduleEntity().getStartTime())
                 .endTime(ticket.getScheduleEntity().getEndTime())
                 .status(ticket.getStatus())
+                .mapPickUp(ticket.getMapPickUp())
+                .mapDrop(ticket.getMapDrop())
+                .mapStatus(ticket.getMapStatus())
                 .isPaid(ticket.isPaid())
                 .build();
     }

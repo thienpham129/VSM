@@ -15,6 +15,7 @@ import { Link, useParams } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { request } from "admin/helpers/axios_helper";
 import Header from "components/Header";
+import { Snackbar, Alert } from "@mui/material";
 
 // Schema xác thực Formik
 const scheduleSchema = yup.object().shape({
@@ -39,6 +40,9 @@ const DetailSchedule = () => {
   const [drivers, setDrivers] = useState([]);
   const [cars, setCars] = useState([]);
   const [routes, setRoutes] = useState([]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const [initialValues, setInitialValues] = useState({
     driver: "",
@@ -145,10 +149,18 @@ const DetailSchedule = () => {
         endTime: endtimeInput,
       };
       await request("put", `/admin/schedule`, payload);
-      alert("thành công!");
+      setSnackbarMessage("Cập nhật lịch trình thành công!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
     } catch (error) {
       console.error("Lỗi khi cập nhật lịch trình:", error);
-      // alert("Có lỗi xảy ra, vui lòng thử lại!");
+      // setSnackbarMessage("Có lỗi xảy ra, vui lòng thử lại!");
+      const errorMessage = error.response?.data?.startTime
+        ? "Thời gian bắt đầu phải lớn hơn thời điểm hiện tại!"
+        : error.response?.data;
+      setSnackbarMessage(errorMessage);
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     }
   };
 
@@ -340,6 +352,20 @@ const DetailSchedule = () => {
           </form>
         )}
       </Formik>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
