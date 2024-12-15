@@ -61,7 +61,7 @@ const Schedule10Seat = ({
     canceledSeats: [],
   });
 
-  const [availableSeats, setAvailableSeats] = useState(0); 
+  const [availableSeats, setAvailableSeats] = useState(9); 
 
 
   const handleSeatSelection = (seatId, isSelected) => {

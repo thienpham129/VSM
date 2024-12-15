@@ -63,7 +63,7 @@ const Schedule7Seat = ({
     canceledSeats: [], // Thêm trạng thái "Đã hủy vé"
   });
 
-  const [availableSeats, setAvailableSeats] = useState(0); // Số ghế còn trống
+  const [availableSeats, setAvailableSeats] = useState(6); // Số ghế còn trống
 
 
   const handleSeatSelection = (seatId, isSelected) => {

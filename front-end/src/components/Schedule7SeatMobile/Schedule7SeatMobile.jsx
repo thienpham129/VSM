@@ -69,7 +69,10 @@ const Schedule7SeatMobile = ({
   const [bookedSeats, setBookedSeats] = useState({
     soldSeats: [],
     bookedSeats: [],
+    canceledSeats: [], // Thêm trạng thái "Đã hủy vé"
   });
+
+  const [availableSeats, setAvailableSeats] = useState(6); // Số ghế còn trống
 
   //
   const [userId, setUserId] = useState("");
@@ -242,26 +245,34 @@ const Schedule7SeatMobile = ({
         const response = await root.get(
           `/public/ticket-with-schedule/${scheduleId}`
         );
-        // Lấy ghế paid: true và paid: false
-        const seatsPaidTrue = response.data
-          .filter((ticket) => ticket.paid)
+        // Lấy ghế có status "Đang chờ xử lý", "Đã thanh toán", và "Đã hủy vé"
+        const seatsPending = response.data
+          .filter((ticket) => ticket.status === "Đang chờ xử lý")
           .map((ticket) => ticket.selectedSeat)
           .flat();
 
-        const seatsPaidFalse = response.data
-          .filter((ticket) => !ticket.paid)
+        const seatsPaid = response.data
+          .filter((ticket) => ticket.status === "Đã thanh toán")
+          .map((ticket) => ticket.selectedSeat)
+          .flat();
+
+        const seatsCanceled = response.data
+          .filter((ticket) => ticket.status === "Đã hủy vé")
           .map((ticket) => ticket.selectedSeat)
           .flat();
 
         // Lưu danh sách ghế theo trạng thái
         setBookedSeats({
-          soldSeats: seatsPaidTrue, // paid: true
-          bookedSeats: seatsPaidFalse, // paid: false
+          soldSeats: seatsPaid, // Đã thanh toán
+          bookedSeats: seatsPending, // Đang chờ xử lý
+          canceledSeats: seatsCanceled, // Đã hủy vé
         });
 
-        // const seats = response.data.map((ticket) => ticket.selectedSeat).flat();
-        // setBookedSeats(seats); // Lưu danh sách ghế đã đặt
-        console.log("««««« response.data »»»»»", response.data);
+        // Đếm số ghế còn trống
+        const totalSeats = 6; // Xe có 6 ghế
+        const soldAndBookedSeats = new Set([...seatsPaid, ...seatsPending]); // Ghế đã bán hoặc đang chờ xử lý
+        const availableSeats = totalSeats - soldAndBookedSeats.size;
+        setAvailableSeats(availableSeats);
       } catch (err) {
         console.log("««««« err »»»»»", err);
       } finally {
@@ -467,7 +478,7 @@ const Schedule7SeatMobile = ({
             </p>
           </h3>
           <p>
-            {numSeat} chỗ ngồi <br />{" "}
+          {availableSeats} chỗ ngồi còn trống <br />{" "}
             <b className={styles.bookingPage__mobile__item__toggle_detail}>
               Xe {car.name} <span className="avicon icon-caret-down-bg" />{" "}
             </b>
