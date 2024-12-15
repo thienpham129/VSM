@@ -51,7 +51,7 @@ public class RouteController {
 			@RequestParam(required = true) String stopLocation,
 			@RequestParam(required = true) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startTime) {
 
-		List<RouteResponse> responses = routeService.getRouteWithSchedule(startLocation, stopLocation, startTime);
+		List<RouteResponse> responses = routeService.getRouteWithSchedule( startLocation, stopLocation, startTime);
 		return new ResponseEntity<>(responses, HttpStatus.OK);
 	}
 }

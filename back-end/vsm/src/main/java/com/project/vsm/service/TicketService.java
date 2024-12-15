@@ -84,7 +84,7 @@ public class TicketService {
 	}
 
 	public void deleteTicket(String tichketId) {
-		TicketEntity ticket = ticketRepository.findById(tichketId)
+		TicketEntity ticket = ticketRepository.findByTicketId(tichketId)
 				.orElseThrow(() -> new RuntimeException("Cannot found ticket with id : " + tichketId));
 		ticketRepository.delete(ticket);
 	}
@@ -148,7 +148,9 @@ public class TicketService {
 	}
 
 	public TicketResponse updateTicketById(String ticketId, TicketRequest request) {
-		TicketEntity ticket = ticketRepository.findById(ticketId)
+//        TicketEntity ticket = ticketRepository.findById(Long.valueOf(ticketId))
+//                .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
+        TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
 				.orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
 
 		ticket.setEmail(request.getEmail());
@@ -205,18 +207,28 @@ public class TicketService {
 		return tickets.stream().map(TicketResponse::fromEntity).collect(Collectors.toList());
 	}
 
-	public TicketResponse updateStatusTicketById(String ticketId, TicketRequest request) {
-		TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
-				.orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
+	// public TicketResponse updateStatusTicketById(String ticketId, TicketRequest request) {
+	// 	TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
+	// 			.orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
 
-		ticket.setStatus(request.getStatus());
-		ticket.setPaid(true);
-		ticketRepository.save(ticket);
-		return TicketResponse.fromEntity(ticket);
-	}
+	// 	ticket.setStatus(request.getStatus());
+	// 	ticket.setPaid(true);
+	// 	ticketRepository.save(ticket);
+	// 	return TicketResponse.fromEntity(ticket);
+	// }
+
+    public TicketResponse updateStatusTicketById(String ticketId, TicketRequest request) {
+        TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
+                .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
+
+        ticket.setStatus(request.getStatus());
+        ticket.setPaid(true);
+        ticketRepository.save(ticket);
+        return TicketResponse.fromEntity(ticket);
+    }
 
 	public TicketResponseAdminDTO getTicketByIDAdmin(String id) {
-		Optional<TicketEntity> optionalTicket = ticketRepository.findById(id);
+		Optional<TicketEntity> optionalTicket = ticketRepository.findByTicketId(id);
 		if (!optionalTicket.isPresent()) {
 			throw new NotFoundException("Not found Ticket with id " + id);
 		}
@@ -238,25 +250,73 @@ public class TicketService {
 		return ticketDetail;
 	}
 
+//	public Boolean checkTicketPaid(String id) {
+//		Optional<TicketEntity> optionalTicket = ticketRepository.findByTicketId(id);
+//		if (!optionalTicket.isPresent()) {
+//			throw new NotFoundException("Not found Ticket with id " + id);
+//		}
+//		TicketEntity ticket = optionalTicket.get();
+//		if (!ticket.isPaid()) {
+//			ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+//			scheduler.schedule(() -> {
+//				if (!ticket.isPaid()) {
+//					ticket.setStatus("Hủy đặt vé");
+//					ticketRepository.save(ticket);
+//				}
+//			}, 3, TimeUnit.MINUTES);
+//			scheduler.shutdown();
+//		}
+//		return ticket.isPaid();
+//	}
+	
 	public Boolean checkTicketPaid(String id) {
-		Optional<TicketEntity> optionalTicket = ticketRepository.findByTicketId(id);
-		if (!optionalTicket.isPresent()) {
-			throw new NotFoundException("Not found Ticket with id " + id);
-		}
-		TicketEntity ticket = optionalTicket.get();
-		if (!ticket.isPaid()) {
-			ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-			scheduler.schedule(() -> {
-				if (!ticket.isPaid()) {
-					ticket.setStatus("Hủy đặt vé");
-					ticketRepository.save(ticket);
-				}
-			}, 3, TimeUnit.MINUTES);
-			scheduler.shutdown();
-		}
-		return ticket.isPaid();
+	    Optional<TicketEntity> optionalTicket = ticketRepository.findByTicketId(id);
+	    if (!optionalTicket.isPresent()) {
+	        throw new NotFoundException("Không tìm thấy vé với id " + id);
+	    }
+
+	    TicketEntity ticket = optionalTicket.get();
+
+	    if (!ticket.isPaid()) {
+	        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+	        scheduler.schedule(() -> {
+	            // Kiểm tra trạng thái sau 3 phút
+	            Optional<TicketEntity> currentTicket = ticketRepository.findByTicketId(id);
+	            if (currentTicket.isPresent() && !currentTicket.get().isPaid()) {
+	                TicketEntity updatedTicket = currentTicket.get();
+	                updatedTicket.setStatus("Hủy đặt vé");
+	                ticketRepository.save(updatedTicket);
+	            }
+	        }, 3, TimeUnit.MINUTES);
+	        scheduler.shutdown();
+	    }
+
+	    return ticket.isPaid();
 	}
 
+	public TicketResponse updateMapByTicketId (String ticketId , TicketRequest request) {
+        TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
+                .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
+
+//        ticket.setMapPickUp(request.getMapPickUp());
+//        ticket.setMapDrop(request.getMapDrop());
+//        ticket.setMapStatus(request.getMapStatus());
+        if(request.getMapPickUp() != null) {
+        	ticket.setMapPickUp(request.getMapPickUp());
+        }
+        
+        if(request.getMapDrop() != null) {
+        	ticket.setMapDrop(request.getMapDrop());
+        }
+        
+        if(request.getMapStatus() != null) {
+        	ticket.setMapStatus(request.getMapStatus());
+        }
+
+        ticketRepository.save(ticket);
+
+        return TicketResponse.fromEntity(ticket);
+    }
 	public Boolean adminUpdateTicket(AdminUpdateTicketDTO input) {
 		Optional<TicketEntity> optionalTicket = ticketRepository.findById(input.getTicketId());
 		if (!optionalTicket.isPresent()) {

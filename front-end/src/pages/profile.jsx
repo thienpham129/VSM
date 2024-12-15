@@ -175,16 +175,6 @@ const Profile = () => {
       validationErrors.phoneNumber = "Số điện thoại phải bắt đầu bằng 0 và có độ dài từ 10 đến 11 số.";
     }
 
-    // // Validate firstName
-    // if (!namePattern.test(firstName)) {
-    //   validationErrors.firstName = "Họ chỉ được chứa chữ cái, không có số hoặc ký tự đặc biệt.";
-    // }
-
-    // // Validate lastName
-    // if (!namePattern.test(lastName)) {
-    //   validationErrors.lastName = "Tên chỉ được chứa chữ cái, không có số hoặc ký tự đặc biệt.";
-    // }
-
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
   };

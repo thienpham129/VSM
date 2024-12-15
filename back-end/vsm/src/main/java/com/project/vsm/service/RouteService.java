@@ -6,6 +6,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.project.vsm.dto.response.CarResponse;
+import com.project.vsm.dto.response.RouteResponse;
+import com.project.vsm.dto.response.ScheduleResponse;
+import com.project.vsm.model.CarEntity;
+import com.project.vsm.model.ScheduleEntity;
+import com.project.vsm.repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

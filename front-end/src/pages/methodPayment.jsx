@@ -25,8 +25,92 @@ const MethodPayment = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [schedules, setSchedules] = useState([]);
-
   const navigate = useNavigate();
+
+  const [pickUpLat, setPickUpLat] = useState("");
+  const [pickUpLon, setPickUpLon] = useState("");
+  const [dropLat, setDropLat] = useState("");
+  const [dropLon, setDropLon] = useState("");
+
+  useEffect(() => {
+    console.log(ticketId);
+    if (ticketId && detailAddressToPickUp && detailAddressDropOff) {
+      const updateCoordinates = async () => {
+        if (detailAddressToPickUp) {
+          const data = await fetchGeocode(detailAddressToPickUp);
+          if (data && data.features && data.features.length > 0) {
+            const { center } = data.features[0];
+            setPickUpLat(center[1].toString());
+            setPickUpLon(center[0].toString());
+          }
+        }
+
+        if (detailAddressDropOff) {
+          const data = await fetchGeocode(detailAddressDropOff);
+          if (data && data.features && data.features.length > 0) {
+            const { center } = data.features[0];
+            setDropLat(center[1].toString());
+            setDropLon(center[0].toString());
+          }
+        }
+      };
+
+      updateCoordinates();
+    }
+  }, [ticketId, detailAddressToPickUp, detailAddressDropOff]);
+
+  useEffect(() => {
+    if (pickUpLat && pickUpLon && dropLat && dropLon) {
+      const mapPickUp = `${pickUpLat},${pickUpLon}`;
+      const mapDrop = `${dropLat},${dropLon}`;
+      const mapStatus = "0";
+
+      console.log(mapPickUp + "   " + mapDrop + "   " + mapStatus);
+      console.log(
+        typeof mapPickUp + "   " + typeof mapDrop + "   " + typeof mapStatus
+      );
+
+      try {
+        const updateTicKetMap = async () => {
+          const url = "/public/update-status-map/ticket";
+          const response = await root.put(`${url}/${ticketId}`, {
+            mapPickUp,
+            mapDrop,
+            mapStatus,
+          });
+          if (response.data) {
+            console.log(response.data);
+          } else {
+            console.log(
+              "Something went wrong with call api of updateTicKetMap"
+            );
+          }
+        };
+
+        updateTicKetMap();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [pickUpLat, pickUpLon, dropLat, dropLon]);
+
+  const fetchGeocode = async (address) => {
+    const apiKey = "4D4kbtoB1PV8gjRJMqgB";
+    const url = `https://api.maptiler.com/geocoding/${encodeURIComponent(
+      address
+    )}.json?key=${apiKey}`;
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Failed to fetch geocoding data");
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   const handleSearch = async () => {
     if (!startLocation || !stopLocation || !startTime) {
@@ -83,12 +167,10 @@ const MethodPayment = () => {
       if (response.status === 200) {
         console.log("««««« response.data »»»»»", response.data);
         if (response.data.paid === true) {
-          // alert(`Vé đã được thanh toán`);
           console.log("««««« Vé đã được thanh toán »»»»»");
           navigate("/paymentSuccess");
           return true;
         } else {
-          // alert(`Vé chưa được thanh toán`);
           console.log("««««« Vé chưa được thanh toán` »»»»»");
           return false;
         }
@@ -112,6 +194,39 @@ const MethodPayment = () => {
 
     return () => clearInterval(interval); // Xóa interval khi component bị unmount
   }, [ticketId, navigate]);
+
+  // Check cancle ticket
+  const checkCancelTicket = async () => {
+    if (!ticketId) {
+      alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra.");
+      return;
+    }
+
+    try {
+      const response = await root.get(`public/ticket/check/${ticketId}`);
+
+      if (response.status === 200) {
+        console.log("««««« response.data123 »»»»»", response.data);
+        if (response.data === true) {
+          console.log("««««« Vé đã được thanh toán »»»»»");
+          return true;
+        } else {
+          console.log("««««« Vé chưa được xử lý »»»»»");
+          return false;
+        }
+      } else {
+        setError("Không thể kiểm tra trạng thái thanh toán.");
+      }
+    } catch (err) {
+      console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkCancelTicket();
+  }, []);
 
   return (
     <div className="no-bottom no-top zebra" id="content">
@@ -310,11 +425,7 @@ const MethodPayment = () => {
             </div>
           </div>
         </div>
-        <form
-          target="_self"
-          action="/index.php?mod=datve&page=datve&sub=doBooking"
-          method="POST"
-        >
+        <form target="_self">
           <div className={styles.bookingPayment}>
             <div className={styles.container}>
               <div className={styles.bookingPayment__wrap}>
@@ -327,7 +438,11 @@ const MethodPayment = () => {
                           <img
                             src={paymentUrl}
                             alt="Payment QR Code"
-                            style={{ width: "500px", height: "500px" }}
+                            style={{
+                              width: "500px",
+                              height: "500px",
+                              marginLeft: "80px",
+                            }}
                           />
                         </div>
                       )}
@@ -339,8 +454,8 @@ const MethodPayment = () => {
                           style={{ fontSize: "1.4em" }}
                         >
                           QUÝ KHÁCH VUI LÒNG THANH TOÁN TRONG VÒNG{" "}
-                          <strong>60 PHÚT</strong>, QUÁ THỜI HẠN MÃ VÉ SẼ BỊ
-                          HUỶ. CẦN HỖ TRỢ XIN LIÊN HỆ TỔNG ĐÀI:{" "}
+                          <strong>3 PHÚT</strong>, QUÁ THỜI HẠN MÃ VÉ SẼ BỊ HUỶ.
+                          CẦN HỖ TRỢ XIN LIÊN HỆ TỔNG ĐÀI:{" "}
                           <strong>1900969671</strong>.
                         </span>
                       </p>
@@ -384,9 +499,7 @@ const MethodPayment = () => {
                       </div>
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Mã Vé</label>
-                        <p >
-                          {ticketId}
-                        </p>
+                        <p>{ticketId}</p>
                       </div>
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Tuyến</label>
@@ -450,7 +563,7 @@ const MethodPayment = () => {
                           Tổng tiền :
                         </label>
                         <p style={{ fontSize: "26px", paddingTop: "7px" }}>
-                          {totalPrice.toLocaleString()} đ
+                          {totalPrice.toLocaleString().replace(",", ".")} VNĐ
                         </p>
                       </div>
                     </div>
@@ -473,6 +586,7 @@ const MethodPayment = () => {
         startTime={startTime}
         startLocation={startLocation}
         stopLocation={stopLocation}
+        ticketId={ticketId}
       />
     </div>
   );

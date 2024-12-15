@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styles from "pages/bookingTicket.module.css";
 import BookingForm from "components/BookingForm";
-import BookingSeatSevenMobile from "components/Booking7SeatMobile/BookingSeatSevenMobile";
+// import BookingSeatSevenMobile from "components/Booking7SeatMobile/BookingSeatSevenMobile";
 import Schedule7Seat from "components/Schedule7Seat/Schedule7Seat";
 import Schedule10Seat from "components/Schedule10Seat/Schedule10Seat";
 import { useNavigate } from "react-router-dom";
@@ -308,7 +308,7 @@ const BookingTicket = () => {
           </div>
         </div>
       </section>
-      {/* Start BookingSeatSevenMobile*/}
+      {/* Start BookingSeatMobile*/}
       <div
         className={`${styles.bookingPage__mobile} ${styles.js__bookingPage__mobile}`}
       >
@@ -469,7 +469,7 @@ const BookingTicket = () => {
           </div>
 
           <div className={styles.bookingPage__mobile__step}>
-            <span>Chọn chỗ</span>
+            <span className={styles.active}>Chọn chỗ</span>
             <span>Thanh toán</span>
             <span>Hoàn thành</span>
           </div>
@@ -514,7 +514,7 @@ const BookingTicket = () => {
                 </div>
               ))
             ) : (
-              <p>Không tìm thấy lịch trình nào!</p>
+              <p className="no_schedule">Không tìm thấy lịch trình nào! Vui lòng chọn địa điểm khác</p>
             )}
           </div>
         </div>

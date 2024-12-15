@@ -1,7 +1,10 @@
 import { root } from "helper/axiosClient";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { getTokenFromLocalStorage, removeTokenFromLocalStorage } from "utils/tokenUtils";
+import {
+  getTokenFromLocalStorage,
+  removeTokenFromLocalStorage,
+} from "utils/tokenUtils";
 import { jwtDecode } from "jwt-decode";
 
 const NavBarProfile = () => {
@@ -44,7 +47,6 @@ const NavBarProfile = () => {
       if (response.status === 200) {
         alert("Cập nhật ảnh đại diện thành công!");
         setUrlImage(filePreview);
-        console.log("««««« response »»»»»", response.data);
       }
     } catch (error) {
       console.log("Lỗi khi cập nhật ảnh đại diện:", error);
@@ -93,7 +95,11 @@ const NavBarProfile = () => {
         setFirstName(response.data.firstName);
         setLastName(response.data.lastName);
 
-        setFullName(`${response.data.firstName || ""} ${response.data.lastName || ""}`.trim());
+        setFullName(
+          `${response.data.firstName || ""} ${
+            response.data.lastName || ""
+          }`.trim()
+        );
       } else {
         console.log("Failed to retrieve user data");
       }
@@ -109,10 +115,7 @@ const NavBarProfile = () => {
         <div className="profile_img">
           <input type="file" onChange={getFile} />
           {filePreview ? (
-            <img
-              src={filePreview}
-              alt="Preview"
-            />
+            <img src={filePreview} alt="Preview" />
           ) : urlImage ? (
             <img src={urlImage} alt="Profile" />
           ) : null}
@@ -123,9 +126,7 @@ const NavBarProfile = () => {
         <div className="profile_name">
           <h4>
             {fullName}
-            <span className="profile_username text-gray">
-              {email}
-            </span>
+            <span className="profile_username text-gray">{email}</span>
           </h4>
         </div>
       </div>

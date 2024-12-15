@@ -7,11 +7,11 @@ import { Modal, Button } from "react-bootstrap";
 
 const AccountBooking = () => {
   const [tickets, setTickets] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
+  const [currentPage, setCurrentPage] = useState(0);
   const ticketsPerPage = 5; // Số vé tối đa mỗi trang
 
-  const [selectedTicket, setSelectedTicket] = useState(null); // Lưu trữ thông tin vé được chọn
-  const [showModal, setShowModal] = useState(false); // Quản lý trạng thái modal
+  const [selectedTicket, setSelectedTicket] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     getAllTicketOfUser();
@@ -53,7 +53,6 @@ const AccountBooking = () => {
     const selectedPage = data.selected;
     setCurrentPage(selectedPage);
   };
-
 
   return (
     <div className="no-bottom no-top zebra" id="content">
@@ -171,24 +170,30 @@ const AccountBooking = () => {
                             </td>
 
                             <td>
+                              <span className="d-lg-none d-sm-block">
+                                TRẠNG THÁI
+                              </span>
                               {ticket.paid ? (
-                                <div className="badge rounded-pill bg-success" style={{padding: '9px', fontSize : '13px'}}>
+                                <div
+                                  className="badge rounded-pill bg-success"
+                                  style={{ padding: "9px", fontSize: "13px" }}
+                                >
                                   Đã thanh toán
                                 </div>
                               ) : (
-                                <div className="badge rounded-pill bg-danger" style={{padding: '8px', fontSize : '11px'}}>
+                                <div
+                                  className="badge rounded-pill bg-danger"
+                                  style={{ padding: "8px", fontSize: "11px" }}
+                                >
                                   Chưa thanh toán
                                 </div>
                               )}
                             </td>
                             <td>
-                              {/* <div className="badge bg-gray-100 detail_ticket">
-                                Xem chi tiết vé
-                              </div> */}
                               <button
                                 className="badge bg-gray-100 detail_ticket"
                                 onClick={() => handleViewDetails(ticket)}
-                                style={{ border: "none" }}
+                                style={{ border: "none"}}
                               >
                                 Xem chi tiết vé
                               </button>
