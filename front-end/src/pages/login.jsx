@@ -90,7 +90,7 @@ const Login = () => {
     setErrorMessage("");
 
     if (password !== confirmPassword) {
-      setErrorMessage("Please make sure your passwords match.");
+      setErrorMessage("Vui lòng đảm bảo mật khẩu khớp với nhau!.");
       setIsSubmitting(false);
     } else {
       const url = "/signup";
