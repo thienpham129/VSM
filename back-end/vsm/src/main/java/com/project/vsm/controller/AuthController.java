@@ -1,9 +1,11 @@
 package com.project.vsm.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.vsm.dto.RegisterUserDto;
 import com.project.vsm.dto.VerifyUserDto;
 import com.project.vsm.model.AccountEntity;
+import com.project.vsm.dto.request.ChangePasswordRequest;
 import com.project.vsm.dto.request.LoginRequest;
 import com.project.vsm.dto.response.LoginResponse;
 import com.project.vsm.service.AuthService;
@@ -54,6 +57,15 @@ public class AuthController {
 		} catch (RuntimeException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
+	}
+	
+	@GetMapping("/forgot-password")
+	public ResponseEntity<?> forgotPassword (@RequestParam String email){
+		return new ResponseEntity<>(authService.forgotPassword(email) , HttpStatus.OK);
+	}
+	@GetMapping("/reset-password")
+	public ResponseEntity<?> resetPassword (@RequestParam String email , @RequestBody ChangePasswordRequest request) {
+		return new ResponseEntity<>(authService.resetPassword(email , request) , HttpStatus.OK);
 	}
 
 }
