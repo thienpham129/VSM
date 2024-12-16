@@ -359,7 +359,10 @@ function Schedule() {
         let arrayNotIncarUser = [];
         let arrayIncarUser = [];
         dataScheduleDetail.forEach((item, index) => {
-          if (item.status.toLocaleUpperCase().trim() === "CHƯA LÊN XE") {
+          if (
+            item.status.toLocaleUpperCase().trim() === "CHƯA LÊN XE" ||
+            item.status.toLocaleUpperCase().trim() === "ĐÃ THANH TOÁN"
+          ) {
             countNotInCar += 1;
             arrayNotIncarUser.push(item);
           }

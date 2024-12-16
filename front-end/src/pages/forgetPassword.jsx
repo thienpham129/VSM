@@ -54,8 +54,11 @@ function ForgetPassword() {
     <div className="identify-email">
       <div className="box">
         <div className="box-content">
-          <h3>Find your account</h3>
-          <p>Please enter your email address to search for your account.</p>
+          <h3>Tìm kiếm tài khoản của bạn</h3>
+          <p>
+            Hãy nhập email của bạn để chúng tôi có thể tìm kiếm tài khoản của
+            bạn
+          </p>
           <form onSubmit={handleClickVerify}>
             <input
               className="identify-email-input"
@@ -63,7 +66,7 @@ function ForgetPassword() {
               autoFocus
               type="email"
               value={email}
-              placeholder="Enter your email"
+              placeholder="Nhập địa chỉ email của bạn"
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
@@ -75,16 +78,18 @@ function ForgetPassword() {
                 window.location.href = "/login";
               }}
             >
-              Cancel
+              Hủy
             </button>
             <button
               className="verify-account"
+              type="submit"
               onClick={(e) => {
                 handleClickVerify(e);
                 setIsClickSubmit(true);
               }}
+              disabled={isClickSubmit}
             >
-              Verify
+              Xác nhận
             </button>
           </form>
         </div>
