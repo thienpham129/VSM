@@ -178,6 +178,10 @@ const Map = () => {
   const [currentCity, setCurrentCity] = useState("");
 
   const fetchCurrentSchedule = async () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      setCurrentLat(position.coords.latitude);
+      setCurrentLong(position.coords.longitude);
+    });
     const url = "/driver/find-schedule";
 
     try {
@@ -319,6 +323,9 @@ const Map = () => {
             console.log(destination + "   des");
             let elementsArray = [];
             if (currentLat && currentLong) {
+              alert("Ok");
+              console.log(currentLat + "    " + currentLong);
+              alert(currentLat + "      " + currentLong);
               const responseMap = await fetch(
                 `https://rsapi.goong.io/DistanceMatrix?origins=${currentLat},${currentLong}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
               );
@@ -439,6 +446,10 @@ const Map = () => {
   }, []);
 
   const fetchAllDataScheduleCurrentDay = async () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      setCurrentLat(position.coords.latitude);
+      setCurrentLong(position.coords.longitude);
+    });
     const date = new Date();
     let day = date.getFullYear() + "-" + (+date.getMonth() + 1) + "-";
     let dateTime = "";
@@ -633,10 +644,11 @@ const Map = () => {
     //     setCorsSearchCurrentLon(center[0]);
     //   }
     // });
-    navigator.geolocation.getCurrentPosition((position) => {
-      setCurrentLat(position.coords.latitude);
-      setCurrentLong(position.coords.longitude);
-    });
+    // navigator.geolocation.getCurrentPosition((position) => {
+    //   setCurrentLat(position.coords.latitude);
+    //   setCurrentLong(position.coords.longitude);
+    // });
+    alert(currentLat + "   " + currentLong);
     fetchGeocode(inputCurrent.trim()).then((data) => {
       if (data) {
         console.log("Coordinates:", data.results[0].geometry.location.lat);
@@ -644,10 +656,7 @@ const Map = () => {
         setCorsSearchCurrentLon(data.results[0].geometry.location.lng);
       }
     });
-    navigator.geolocation.getCurrentPosition((position) => {
-      setCurrentLat(position.coords.latitude);
-      setCurrentLong(position.coords.longitude);
-    });
+
     setUserLat("");
     setUserLon("");
     setVoiceSearchAddress1Lat("");
@@ -713,10 +722,6 @@ const Map = () => {
   }, [inputPhase2]);
 
   const handleSearchTwoPlaces = () => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      setCurrentLat(position.coords.latitude);
-      setCurrentLong(position.coords.longitude);
-    });
     if (inputPhase1) {
       fetchGeocode(inputPhase1.trim()).then((data) => {
         if (data) {

@@ -54,9 +54,33 @@ function ForgetPassword() {
     <div className="identify-email">
       <div className="box">
         <div className="box-content">
-          <h3>Find your account</h3>
-          <p>Please enter your email address to search for your account.</p>
+          <h3>Thay đổi mật khẩu</h3>
+          <p>Hãy nhập mật khẩu mới cho tài khoản của bạn</p>
           <form onSubmit={handleClickVerify}>
+            <input
+              className="identify-email-input"
+              required
+              autoFocus
+              type="email"
+              value={email}
+              placeholder="Nhập mật khẩu mới"
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
+              style={{ marginBottom: "10px" }}
+            />
+            <input
+              className="identify-email-input"
+              required
+              autoFocus
+              type="email"
+              value={email}
+              placeholder="Xác nhận mật khẩu mới"
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
+              style={{ marginBottom: "10px" }}
+            />
             <input
               className="identify-email-input"
               required
@@ -67,7 +91,8 @@ function ForgetPassword() {
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
-            />{" "}
+              style={{ marginBottom: "10px" }}
+            />
             <br />
             <button
               className="cancel-verify-account"
@@ -75,7 +100,7 @@ function ForgetPassword() {
                 window.location.href = "/login";
               }}
             >
-              Cancel
+              Hủy
             </button>
             <button
               className="verify-account"
@@ -84,7 +109,7 @@ function ForgetPassword() {
                 setIsClickSubmit(true);
               }}
             >
-              Verify
+              Xác Nhận
             </button>
           </form>
         </div>
