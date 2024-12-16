@@ -286,14 +286,15 @@ const Login = () => {
                           >
                             {isSubmitting ? "Logging in..." : "Submit"}
                           </button>
-                          {/* <p
+                          <p
                             className="title-forgot-account"
+                            style={{ cursor: "pointer" }}
                             onClick={() => {
                               window.location.href = "/identify";
                             }}
                           >
                             Forgotten account?
-                          </p> */}
+                          </p>
                         </form>
                       )}
 

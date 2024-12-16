@@ -305,6 +305,8 @@ const Map = () => {
           }
 
           if (countInitial === arrayTicket.length) {
+            alert(currentLat);
+            alert(currentLong);
             let oldPositionOfShortestDistance = 0;
             let destination = "";
             console.log(arrayTicket);
@@ -503,6 +505,11 @@ const Map = () => {
       setCurrentLong(position.coords.longitude);
     });
   }, []);
+
+  // useEffect(() => {
+  //   alert(currentLat);
+  //   alert(currentLong);
+  // }, [currentLat, currentLong]);
 
   const getDistance = async (startLat, startLon, endLat, endLon) => {
     const url = `https://api.maptiler.com/routes/directions/v2/${startLon},${startLat};${endLon},${endLat}?key=4D4kbtoB1PV8gjRJMqgB&steps=false&geometries=geojson`;
@@ -1489,7 +1496,7 @@ const Map = () => {
         ""
       )}
 
-      {userLat && userLon && currentLat && currentLong ? (
+      {userLat && userLon ? (
         <GoongMapWithDirections
           origin={`${currentLat},${currentLong}`}
           destination={`${userLat},${userLon}`}
