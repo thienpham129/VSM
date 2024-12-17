@@ -591,6 +591,7 @@ function Schedule() {
           style={{ width: "75px", fontSize: "9px" }}
           variant="contained"
           onClick={(e) => {
+            setDataScheduleDetail([]);
             setIdSchedule(item.id);
             fetchDataScheduleDetail(item.id);
             CheckIsScheduleComplete(item.id);
@@ -740,7 +741,8 @@ function Schedule() {
             style={{ cursor: "pointer" }}
             color="primary"
             onClick={() => {
-              setDataScheduleDetail([]);
+              setIdSchedule("");
+              // setDataScheduleDetail([]);
               setIsComplete(false);
               setIsClickDetail(false);
               setStartHourSchedule("");

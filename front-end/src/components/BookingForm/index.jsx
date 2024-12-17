@@ -4,6 +4,7 @@ import styles from "components/bookingTicket.module.css";
 import Button from "@mui/material/Button";
 import SellectAddress from "components/SellectAddress";
 import { ToastContainer, toast, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import location_icon from "./location_icon.png";
 
 import {
@@ -69,6 +70,32 @@ function BookingForm({
   const [pickUpLon, setPickUpLon] = useState("");
   const [dropLat, setDropLat] = useState("");
   const [dropLon, setDropLon] = useState("");
+
+  const notifyErrorEmptyVoucher = () =>
+    toast.error("Hãy nhập mã giảm giá của bạn !", {
+      position: "bottom-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+
+  const notifyErrorVoucher = () =>
+    toast.error("Mã khuyến mãi đã hết hạn hoặc không đúng", {
+      position: "bottom-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
 
   // Handle change for specific addresses
   const handlePickupSpecificAddressChange = (event) => {
@@ -403,6 +430,41 @@ function BookingForm({
       }
     }
   }, []);
+
+  const handleCheckVoucher = async () => {
+    if (!voucher) {
+      notifyErrorEmptyVoucher();
+    } else {
+      try {
+        const response = await root.get(
+          `/public/check-voucher?voucher=${voucher}`
+        );
+        if (response.data.data.message === "Mã hợp lệ có thể sử dụng") {
+          const notifySuccessCheckVoucher = () =>
+            toast.success(
+              `Mã khuyến mại hợp lệ, bạn được giảm giá ${response.data.data.discount}%`,
+              {
+                position: "bottom-right",
+                autoClose: 2500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                transition: Bounce,
+              }
+            );
+          notifySuccessCheckVoucher();
+        } else {
+          notifyErrorVoucher();
+        }
+      } catch (error) {
+        console.log(error);
+        notifyErrorVoucher();
+      }
+    }
+  };
   //
 
   return (
@@ -711,6 +773,14 @@ function BookingForm({
             Kiểm tra mã
           </button> */}
           <button
+            // data-trip-id="PLT0Tc1ybgN295oCg20241015"
+            className="js__toggleProcessBooking"
+            style={{ marginRight: "10px" }}
+            onClick={handleCheckVoucher}
+          >
+            <a style={{ color: "#fff" }}>Kiểm tra mã giảm giá</a>
+          </button>
+          <button
             type="submit"
             data-trip-id="PLT0Tc1ybgN295oCg20241015"
             className="js__toggleProcessBooking"
@@ -719,6 +789,19 @@ function BookingForm({
           </button>
         </div>
       </form>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={1500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
     </div>
   );
 }

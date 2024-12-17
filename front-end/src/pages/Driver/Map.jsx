@@ -178,10 +178,10 @@ const Map = () => {
   const [currentCity, setCurrentCity] = useState("");
 
   const fetchCurrentSchedule = async () => {
-    // navigator.geolocation.getCurrentPosition((position) => {
-    //   setCurrentLat(position.coords.latitude);
-    //   setCurrentLong(position.coords.longitude);
-    // });
+    navigator.geolocation.getCurrentPosition((position) => {
+      setCurrentLat(position.coords.latitude);
+      setCurrentLong(position.coords.longitude);
+    });
     const url = "/driver/find-schedule";
 
     try {
@@ -288,10 +288,10 @@ const Map = () => {
             console.log(oldPositionOfShortestDistance + "   old");
             arrayDuplicateMapStatus_5.forEach((item, index) => {
               if (index === oldPositionOfShortestDistance) {
-                // navigator.geolocation.getCurrentPosition((position) => {
-                //   setCurrentLat(position.coords.latitude);
-                //   setCurrentLong(position.coords.longitude);
-                // });
+                navigator.geolocation.getCurrentPosition((position) => {
+                  setCurrentLat(position.coords.latitude);
+                  setCurrentLong(position.coords.longitude);
+                });
                 setUserName(item.fullName);
                 setUserAddress(item.detailAddressToPickUp);
                 setUserPhone(item.phoneNumber);
@@ -356,10 +356,10 @@ const Map = () => {
             console.log(oldPositionOfShortestDistance + "   old");
             arrayTicket.forEach((item, index) => {
               if (index === oldPositionOfShortestDistance) {
-                // navigator.geolocation.getCurrentPosition((position) => {
-                //   setCurrentLat(position.coords.latitude);
-                //   setCurrentLong(position.coords.longitude);
-                // });
+                navigator.geolocation.getCurrentPosition((position) => {
+                  setCurrentLat(position.coords.latitude);
+                  setCurrentLong(position.coords.longitude);
+                });
                 setUserName(item.fullName);
                 setUserAddress(item.detailAddressToPickUp);
                 setUserPhone(item.phoneNumber);
@@ -408,10 +408,10 @@ const Map = () => {
             console.log(oldPositionOfShortestDistance + "   old");
             arrayDuplicateMapStatus_5.forEach((item, index) => {
               if (index === oldPositionOfShortestDistance) {
-                // navigator.geolocation.getCurrentPosition((position) => {
-                //   setCurrentLat(position.coords.latitude);
-                //   setCurrentLong(position.coords.longitude);
-                // });
+                navigator.geolocation.getCurrentPosition((position) => {
+                  setCurrentLat(position.coords.latitude);
+                  setCurrentLong(position.coords.longitude);
+                });
                 setUserName(item.fullName);
                 setUserAddress(item.detailAddressDropOff);
                 setUserPhone(item.phoneNumber);
@@ -451,10 +451,10 @@ const Map = () => {
   }, [currScheduleId, currentLat, currentLong]);
 
   const fetchAllDataScheduleCurrentDay = async () => {
-    // navigator.geolocation.getCurrentPosition((position) => {
-    //   setCurrentLat(position.coords.latitude);
-    //   setCurrentLong(position.coords.longitude);
-    // });
+    navigator.geolocation.getCurrentPosition((position) => {
+      setCurrentLat(position.coords.latitude);
+      setCurrentLong(position.coords.longitude);
+    });
     const date = new Date();
     let day = date.getFullYear() + "-" + (+date.getMonth() + 1) + "-";
     let dateTime = "";
@@ -502,8 +502,10 @@ const Map = () => {
           }
         }
       }
-      setPreparedScheduleId(tempArrayCurrentDay[0].id);
-      setSchduleId(tempArrayCurrentDay[0].id);
+      if (tempArrayCurrentDay.length > 0) {
+        setPreparedScheduleId(tempArrayCurrentDay[0].id);
+        setSchduleId(tempArrayCurrentDay[0].id);
+      }
     }
   }, [allDataCurrentDay]);
 
@@ -623,10 +625,10 @@ const Map = () => {
     fetchGeocode(inputCurrent.trim()).then((data) => {
       if (data) {
         console.log("Coordinates:", data.results[0].geometry.location.lat);
-        // setCorsSearchCurrentLat(data.results[0].geometry.location.lat);
-        // setCorsSearchCurrentLon(data.results[0].geometry.location.lng);
-        setCurrentLat(data.results[0].geometry.location.lat);
-        setCurrentLong(data.results[0].geometry.location.lng);
+        setCorsSearchCurrentLat(data.results[0].geometry.location.lat);
+        setCorsSearchCurrentLon(data.results[0].geometry.location.lng);
+        // setCurrentLat(data.results[0].geometry.location.lat);
+        // setCurrentLong(data.results[0].geometry.location.lng);
       }
     });
 
@@ -754,10 +756,10 @@ const Map = () => {
     setAddressOnceVoice("");
     setCurrentCity("");
     setInforVoice("");
-    // navigator.geolocation.getCurrentPosition((position) => {
-    //   setCurrentLat(position.coords.latitude);
-    //   setCurrentLong(position.coords.longitude);
-    // });
+    navigator.geolocation.getCurrentPosition((position) => {
+      setCurrentLat(position.coords.latitude);
+      setCurrentLong(position.coords.longitude);
+    });
     setIsRecording(true);
     recognition.start();
   };
@@ -776,16 +778,16 @@ const Map = () => {
     setInforVoice(text);
     setIsRecording(false);
     console.log(text);
-    // if (currentLat && currentLong) {
-    const response = await fetch(
-      `https://rsapi.goong.io/Geocode?latlng=${currentLat},${currentLong}&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
-    );
-    const data = await response.json();
-    if (data.results[0].compound.province) {
-      setCurrentCity(data.results[0].compound.province);
-      console.log(data.results[0].compound.province);
+    if (currentLat && currentLong) {
+      const response = await fetch(
+        `https://rsapi.goong.io/Geocode?latlng=${currentLat},${currentLong}&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+      );
+      const data = await response.json();
+      if (data.results[0].compound.province) {
+        setCurrentCity(data.results[0].compound.province);
+        console.log(data.results[0].compound.province);
+      }
     }
-    // }
   };
 
   useEffect(() => {
@@ -866,27 +868,27 @@ const Map = () => {
     }
   }, [addressEndVoice]);
 
-  // useEffect(() => {
-  //   if (addressOneVoice) {
-  //     console.log("end:  " + addressOneVoice);
-  //     try {
-  //       const getCoorsStartVoice = async () => {
-  //         const response = await fetch(
-  //           `https://rsapi.goong.io/geocode?address=${addressOneVoice}&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
-  //         );
-  //         const data = await response.json();
-  //         if (data) {
-  //           setVoiceSearchOnceLat(data.results[0].geometry.location.lat);
-  //           setVoiceSearchOnceLon(data.results[0].geometry.location.lng);
-  //         }
-  //       };
+  useEffect(() => {
+    if (addressOneVoice) {
+      console.log("end:  " + addressOneVoice);
+      try {
+        const getCoorsStartVoice = async () => {
+          const response = await fetch(
+            `https://rsapi.goong.io/geocode?address=${addressOneVoice}&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+          );
+          const data = await response.json();
+          if (data) {
+            setVoiceSearchOnceLat(data.results[0].geometry.location.lat);
+            setVoiceSearchOnceLon(data.results[0].geometry.location.lng);
+          }
+        };
 
-  //       getCoorsStartVoice();
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   }
-  // }, [addressOneVoice]);
+        getCoorsStartVoice();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [addressOneVoice]);
 
   useEffect(() => {
     console.log(voiceSearchAddress1Lat);
@@ -913,7 +915,7 @@ const Map = () => {
       </button> */}
 
       <div style={{ display: "flex" }}>
-        {/* {isRecording ? (
+        {isRecording ? (
           <FontAwesomeIcon
             icon={faMicrophone}
             beatFade
@@ -937,7 +939,7 @@ const Map = () => {
             }}
             onClick={searchByVoice}
           />
-        )} */}
+        )}
         <FormControl
           style={{
             width: "230px",
@@ -974,7 +976,7 @@ const Map = () => {
               <div className={styles.row}>
                 <input
                   type="text"
-                  placeholder="Nhập Địa Chỉ Hiện Tại"
+                  placeholder="Nhập Địa Chỉ Đến"
                   className={styles.input_box}
                   id="input-box"
                   style={{
@@ -1003,7 +1005,7 @@ const Map = () => {
                 >
                   Tìm Kiếm
                 </Button>
-                {/* <Button
+                <Button
                   style={{
                     width: "90px",
                     height: "40px",
@@ -1036,7 +1038,7 @@ const Map = () => {
                   }}
                 >
                   Xem Theo Lịch Trình
-                </Button> */}
+                </Button>
               </div>
               {suggesstAddress.length > 0 && isShowSuggest ? (
                 <div className={styles.result_box}>
@@ -1147,7 +1149,7 @@ const Map = () => {
                 >
                   Tìm Kiếm
                 </Button>
-                {/* <Button
+                <Button
                   style={{
                     width: "90px",
                     height: "40px",
@@ -1179,7 +1181,7 @@ const Map = () => {
                   }}
                 >
                   Xem Theo Lịch Trình
-                </Button> */}
+                </Button>
               </div>
               {suggestAddressPhase2.length > 0 && isShowSuggestPhase2 ? (
                 <div className={styles.result_box}>
