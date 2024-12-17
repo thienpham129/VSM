@@ -32,7 +32,10 @@ const Schedule = () => {
     const fetchData = async () => {
       try {
         const response = await request("get", "/public/schedules");
-        setSchedules(response.data); // Lưu data từ API vào state
+        const sortedData = response.data.sort(
+          (a, b) => new Date(b.startTime) - new Date(a.startTime)
+        );
+        setSchedules(sortedData); // Lưu data từ API vào state
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu lịch trình:", error);
       }
