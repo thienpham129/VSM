@@ -232,7 +232,7 @@ const DetailSchedule = () => {
                 <Select name="car" value={values.car} onChange={handleChange}>
                   {cars.map((car) => (
                     <MenuItem key={car.carId} value={car.carId}>
-                      {car.name} - {car.type.numSeat} chỗ
+                      Xe {car.plateNumber} - {car.type.numSeat} chỗ
                     </MenuItem>
                   ))}
                 </Select>

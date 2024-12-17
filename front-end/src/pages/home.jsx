@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function HomePage(props) {
+function HomePage({ departureTime }) {
   const navigate = useNavigate();
   const [selectedPrice, setSelectedPrice] = useState("150.000 VNĐ");
 
@@ -10,13 +10,42 @@ function HomePage(props) {
   };
 
   const handleContinueQuickBooking = (e) => {
-    e.preventDefault(); 
-    navigate("/quickBooking")
+    e.preventDefault();
+    navigate("/quickBooking");
+  };
 
-  }
+  const [timeLeft, setTimeLeft] = useState("");
 
- 
+  // handle time left
+  useEffect(() => {
+    const targetTime = new Date();
+    const defaultTime = "00:00:00"; // Thời gian mặc định
+    const [hours, minutes, seconds] = (departureTime || defaultTime)
+      .split(":")
+      .map(Number);
+    targetTime.setHours(hours, minutes, seconds);
 
+    const interval = setInterval(() => {
+      const now = new Date();
+      const difference = targetTime - now;
+
+      if (difference <= 0) {
+        clearInterval(interval);
+        setTimeLeft("Đã khởi hành");
+      } else {
+        const hoursLeft = Math.floor(difference / (1000 * 60 * 60));
+        const minutesLeft = Math.floor(
+          (difference % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const secondsLeft = Math.floor((difference % (1000 * 60)) / 1000);
+        setTimeLeft(`${hoursLeft}h ${minutesLeft}m ${secondsLeft}s`);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [departureTime]);
+
+  //
   return (
     <>
       <div className="no-bottom no-top" id="content">
@@ -39,7 +68,10 @@ function HomePage(props) {
                     <div className="spacer-single sm-hide" />
                     <div
                       className="p-4 rounded-3 shadow-soft text-light"
-                      style={{ backgroundColor: "rgba(0, 0, 0, .6)", width : '85%', marginLeft : '80px' }}
+                      style={{
+                        backgroundColor: "rgba(0, 0, 0, .6)",
+                        marginLeft: "80px",
+                      }}
                     >
                       <div name="contactForm" id="contact_form" method="post">
                         <div className="de_form de_radio row g-3">
@@ -82,7 +114,10 @@ function HomePage(props) {
                               <th>Số ghế còn trống</th>
                             </tr>
                             <tr>
-                              <td>7 :00</td>
+                              <td>
+                                {" "}
+                                <p>{timeLeft}</p>
+                              </td>
                               <td>Đà Nẵng đến Huế</td>
                               <td>{selectedPrice}</td>
                               <td>10/50</td>
@@ -104,7 +139,10 @@ function HomePage(props) {
                     <div className="spacer-single sm-hide" />
                     <div
                       className="p-4 rounded-3 shadow-soft text-light"
-                      style={{ backgroundColor: "rgba(0, 0, 0, .6)", width : '85%', marginLeft : '80px' }}
+                      style={{
+                        backgroundColor: "rgba(0, 0, 0, .6)",
+                        marginLeft: "80px",
+                      }}
                     >
                       <div name="contactForm" id="contact_form" method="post">
                         <div className="de_form de_radio row g-3">
@@ -156,7 +194,7 @@ function HomePage(props) {
                         </div>
                         <div className="spacer-20" />
 
-                         <input
+                        <input
                           type="submit"
                           className="btn-main pull-right"
                           value={"Chọn chuyến đi này"}
@@ -172,7 +210,10 @@ function HomePage(props) {
                     <div className="spacer-single sm-hide" />
                     <div
                       className="p-4 rounded-3 shadow-soft text-light"
-                      style={{ backgroundColor: "rgba(0, 0, 0, .6)", width : '85%', marginLeft : '80px' }}
+                      style={{
+                        backgroundColor: "rgba(0, 0, 0, .6)",
+                        marginLeft: "80px",
+                      }}
                     >
                       <div name="contactForm" id="contact_form" method="post">
                         <div className="de_form de_radio row g-3">
@@ -224,7 +265,7 @@ function HomePage(props) {
                         </div>
                         <div className="spacer-20" />
 
-                         <input
+                        <input
                           type="submit"
                           className="btn-main pull-right"
                           value={"Chọn chuyến đi này"}
@@ -237,7 +278,10 @@ function HomePage(props) {
                     <div className="spacer-single sm-hide" />
                     <div
                       className="p-4 rounded-3 shadow-soft text-light"
-                      style={{ backgroundColor: "rgba(0, 0, 0, .6)", width : '85%', marginLeft : '80px' }}
+                      style={{
+                        backgroundColor: "rgba(0, 0, 0, .6)",
+                        marginLeft: "80px",
+                      }}
                     >
                       <div name="contactForm" id="contact_form" method="post">
                         <div className="de_form de_radio row g-3">
@@ -289,7 +333,7 @@ function HomePage(props) {
                         </div>
                         <div className="spacer-20" />
 
-                         <input
+                        <input
                           type="submit"
                           className="btn-main pull-right"
                           value={"Chọn chuyến đi này"}

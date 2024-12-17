@@ -22,7 +22,7 @@ const BookingTicket = () => {
     }
 
     try {
-      const response = await root.get(`/public/schedule/search`, {
+      const response = await root.get(`/public/route/search`, {
         params: {
           startLocation,
           stopLocation,
@@ -37,6 +37,30 @@ const BookingTicket = () => {
     }
   };
   console.log("««««« schedules »»»»»", schedules);
+
+  const locations = {
+    "Tỉnh Quảng Nam": [
+      { value: "Tỉnh Quảng Nam", label: "QN: 92 Quảng Nam" },
+      { value: "Thành Phố Đà Nẵng", label: "ĐN: 43 Đà Nẵng" },
+      { value: "Thừa Thiên Huế", label: "H: 57 Huế" },
+    ],
+    "Thành Phố Đà Nẵng": [
+      { value: "Tỉnh Quảng Nam", label: "QN: 92 Quảng Nam" },
+      { value: "Thừa Thiên Huế", label: "H: 57 Huế" },
+    ],
+    "Thừa Thiên Huế": [
+      { value: "Tỉnh Quảng Nam", label: "QN: 92 Quảng Nam" },
+      { value: "Thành Phố Đà Nẵng", label: "ĐN: 43 Đà Nẵng" },
+    ],
+  };
+
+  // Tạo các options cho điểm đến dựa trên điểm đi
+  const getStopLocations = () => {
+    if (!startLocation) return [];
+    return locations[startLocation].filter(
+      (location) => location.value !== startLocation
+    );
+  };
 
   return (
     <div className="no-bottom no-top zebra" id="content">
@@ -83,30 +107,30 @@ const BookingTicket = () => {
                       id="searchPointUp"
                       onChange={(e) => setStartLocation(e.target.value)}
                     >
-                      <option value="">Chọn điểm lên</option>
-                      <optgroup label="Quảng Nam">
+                      <option value="">Chọn điểm đi</option>
+                      <optgroup label="Tỉnh Quảng Nam">
                         <option
-                          value="Quảng Nam"
+                          value="Tỉnh Quảng Nam"
                           data-route-id="R0U11yleLOCho9m,R0Tu1yipwtweLFh,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0Tu1yiptmYVave,R0DA1s6Bu8rN9mg,R0NY1wD4MMlyUEQ,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0NY1wD4LJD2IxB,R0DA1s6C94QCePS,R0DA1s6Bk8LFiei,R0DB1s6UOpGDcXh"
                         >
-                          QN: 1 Quảng Nam
+                          QN: 92 Quảng Nam
                         </option>
                       </optgroup>
-                      <optgroup label="Đà Nẵng">
+                      <optgroup label="Thành Phố Đà Nẵng">
                         <option
-                          value="Đà Nẵng"
+                          value="Thành Phố Đà Nẵng"
                           data-route-id="R0U11yleLOCho9m,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0DA1s6Bu8rN9mg,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0DB1s6UOpGDcXh"
                         >
-                          ĐN: 21 Đà Nẵng
+                          ĐN: 43 Đà Nẵng
                         </option>
                       </optgroup>
 
                       <optgroup label="Thừa Thiên Huế">
                         <option
-                          value="Huế"
+                          value="Thừa Thiên Huế"
                           data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
                         >
-                          H: 28 Huế
+                          H: 57 Huế
                         </option>
                       </optgroup>
                     </select>
@@ -139,32 +163,18 @@ const BookingTicket = () => {
                       value={stopLocation}
                       onChange={(e) => setStopLocation(e.target.value)}
                     >
-                      <option value="">Chọn điểm lên</option>
-                      <optgroup label="Quảng Nam">
-                        <option
-                          value="Quảng Nam"
-                          data-route-id="R0U11yleLOCho9m,R0Tu1yipwtweLFh,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0Tu1yiptmYVave,R0DA1s6Bu8rN9mg,R0NY1wD4MMlyUEQ,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0NY1wD4LJD2IxB,R0DA1s6C94QCePS,R0DA1s6Bk8LFiei,R0DB1s6UOpGDcXh"
-                        >
-                          QN: 1 Quảng Nam
-                        </option>
-                      </optgroup>
-                      <optgroup label="Đà Nẵng">
-                        <option
-                          value="Đà Nẵng"
-                          data-route-id="R0U11yleLOCho9m,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0DA1s6Bu8rN9mg,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0DB1s6UOpGDcXh"
-                        >
-                          ĐN: 21 Đà Nẵng
-                        </option>
-                      </optgroup>
-
-                      <optgroup label="Thừa Thiên Huế">
-                        <option
-                          value="Huế"
-                          data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
-                        >
-                          H: 28 Huế
-                        </option>
-                      </optgroup>
+                      <option value="">Chọn điểm tới</option>
+                      {getStopLocations().map((location) => (
+                        <optgroup label={location.value}>
+                          <option
+                            key={location.value}
+                            value={location.value}
+                            data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
+                          >
+                            {location.label}
+                          </option>
+                        </optgroup>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -196,6 +206,7 @@ const BookingTicket = () => {
                       type="date"
                       value={startTime}
                       onChange={(e) => setStartTime(e.target.value)}
+                      min={new Date().toISOString().split("T")[0]}
                     />
                   </div>
                 </div>
@@ -233,51 +244,65 @@ const BookingTicket = () => {
         <div
           className={`${styles.bookingPage__tickets} ${styles.js__booking__destop}`}
         >
+          
           <div className={styles.container}>
             <div className={styles.bookingPage__tickets__wrap}>
               {schedules.length > 0 ? (
                 schedules.map((schedule) => (
                   <div
-                    key={schedule.scheduleId}
                     className={styles.bookingPage__ticket}
+                    key={schedule.routeId}
                   >
-                    <p style={{ display: "none" }}>
-                      Số ghế: {schedule.car.numSeat}
-                    </p>
-                    {/* <p >
-                      Số ghế: {schedule.car.type.typeId}
-                    </p> */}
-                    {/* Điều kiện hiển thị Schedule7Seat hoặc Schedule10Seat */}
-                    {schedule.car.numSeat === 7 && (
-                      <Schedule7Seat
-                        key={schedule.scheduleId}
-                        scheduleId={schedule.scheduleId}
-                        startTime={schedule.startTime}
-                        startLocation={schedule.startLocation}
-                        stopLocation={schedule.stopLocation}
-                        car={schedule.car}
-                        numSeat={schedule.car.numSeat}
-                        typeId={schedule.car.type.typeId}
-                        price={schedule.car.price}
-                      />
-                    )}
-                    {schedule.car.numSeat === 10 && (
-                      <Schedule10Seat
-                        key={schedule.scheduleId}
-                        startTime={schedule.startTime}
-                        scheduleId={schedule.scheduleId}
-                        startLocation={schedule.startLocation}
-                        stopLocation={schedule.stopLocation}
-                        car={schedule.car}
-                        numSeat={schedule.car.numSeat}
-                        price={schedule.car.price}
-                        typeId={schedule.car.type.typeId}
-                      />
-                    )}
+                    {schedule.schedules
+                      .filter((item) => {
+                        const scheduleTime = new Date(item.startTime);
+
+                        scheduleTime.setMinutes(scheduleTime.getMinutes() - 15);
+
+                        const currentTime = new Date();
+
+                        return scheduleTime > currentTime;
+                      })
+                      .map((item, index) => {
+                        const startTime = item.startTime;
+
+                        return (
+                          <div key={index}>
+                            {item.car.type?.numSeat === 7 && (
+                              <Schedule7Seat
+                                key={item.scheduleId}
+                                startTime={startTime}
+                                scheduleId={item.scheduleId}
+                                startLocation={schedule.startLocation}
+                                stopLocation={schedule.stopLocation}
+                                car={item.car}
+                                numSeat={item.car.type?.numSeat}
+                                price={item.car.type?.price}
+                                typeId={item.car.type?.typeId}
+                              />
+                            )}
+                            {item.car.type?.numSeat === 10 && (
+                              <Schedule10Seat
+                                key={item.scheduleId}
+                                startTime={startTime}
+                                scheduleId={item.scheduleId}
+                                startLocation={schedule.startLocation}
+                                stopLocation={schedule.stopLocation}
+                                car={item.car}
+                                numSeat={item.car.type?.numSeat}
+                                price={item.car.type?.price}
+                                typeId={item.car.type?.typeId}
+                              />
+                            )}
+                          </div>
+                        );
+                      })}
                   </div>
                 ))
               ) : (
-                <p>Không tìm thấy lịch trình nào!</p>
+                <p className="no_schedule">
+                  Không tìm thấy lịch trình nào! Vui lòng chọn địa điểm khác
+                </p>
               )}
             </div>
           </div>
@@ -324,29 +349,29 @@ const BookingTicket = () => {
                       onChange={(e) => setStartLocation(e.target.value)}
                     >
                       <option value="">Chọn điểm lên</option>
-                      <optgroup label="Quảng Nam">
+                      <optgroup label="Tỉnh Quảng Nam">
                         <option
-                          value="Quảng Nam"
+                          value="Tỉnh Quảng Nam"
                           data-route-id="R0U11yleLOCho9m,R0Tu1yipwtweLFh,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0Tu1yiptmYVave,R0DA1s6Bu8rN9mg,R0NY1wD4MMlyUEQ,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0NY1wD4LJD2IxB,R0DA1s6C94QCePS,R0DA1s6Bk8LFiei,R0DB1s6UOpGDcXh"
                         >
-                          QN: 1 Quảng Nam
+                          QN: 92 Quảng Nam
                         </option>
                       </optgroup>
-                      <optgroup label="Đà Nẵng">
+                      <optgroup label="Thành Phố Đà Nẵng">
                         <option
-                          value="Đà Nẵng"
+                          value="Thành Phố Đà Nẵng"
                           data-route-id="R0U11yleLOCho9m,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0DA1s6Bu8rN9mg,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0DB1s6UOpGDcXh"
                         >
-                          ĐN: 21 Đà Nẵng
+                          ĐN: 43 Đà Nẵng
                         </option>
                       </optgroup>
 
                       <optgroup label="Thừa Thiên Huế">
                         <option
-                          value="Huế"
+                          value="Thừa Thiên Huế"
                           data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
                         >
-                          H: 28 Huế
+                          H: Huế
                         </option>
                       </optgroup>
                     </select>
@@ -381,32 +406,18 @@ const BookingTicket = () => {
                       value={stopLocation}
                       onChange={(e) => setStopLocation(e.target.value)}
                     >
-                      <option value="">Chọn điểm lên</option>
-                      <optgroup label="Quảng Nam">
-                        <option
-                          value="Quảng Nam"
-                          data-route-id="R0U11yleLOCho9m,R0Tu1yipwtweLFh,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0Tu1yiptmYVave,R0DA1s6Bu8rN9mg,R0NY1wD4MMlyUEQ,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0NY1wD4LJD2IxB,R0DA1s6C94QCePS,R0DA1s6Bk8LFiei,R0DB1s6UOpGDcXh"
-                        >
-                          QN: 1 Quảng Nam
-                        </option>
-                      </optgroup>
-                      <optgroup label="Đà Nẵng">
-                        <option
-                          value="Đà Nẵng"
-                          data-route-id="R0U11yleLOCho9m,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0DA1s6Bu8rN9mg,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0DB1s6UOpGDcXh"
-                        >
-                          ĐN: 21 Đà Nẵng
-                        </option>
-                      </optgroup>
-
-                      <optgroup label="Thừa Thiên Huế">
-                        <option
-                          value="Huế"
-                          data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
-                        >
-                          H: 28 Huế
-                        </option>
-                      </optgroup>
+                      <option value="">Chọn điểm tới</option>
+                      {getStopLocations().map((location) => (
+                        <optgroup label={location.value}>
+                          <option
+                            key={location.value}
+                            value={location.value}
+                            data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
+                          >
+                            {location.label}
+                          </option>
+                        </optgroup>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -437,6 +448,7 @@ const BookingTicket = () => {
                       type="date"
                       value={startTime}
                       onChange={(e) => setStartTime(e.target.value)}
+                      min={new Date().toISOString().split("T")[0]}
                     />
                   </div>
                 </div>
@@ -465,42 +477,40 @@ const BookingTicket = () => {
             {schedules.length > 0 ? (
               schedules.map((schedule) => (
                 <div
-                  key={schedule.scheduleId}
                   className={styles.bookingPage__ticket}
+                  key={schedule.routeId}
                 >
-                  <p style={{ display: "none" }}>
-                    Số ghế: {schedule.car.numSeat}
-                  </p>
-                  {/* <p >
-                      Số ghế: {schedule.car.type.typeId}
-                    </p> */}
-                  {/* Điều kiện hiển thị Schedule7Seat hoặc Schedule10Seat */}
-                  {schedule.car.numSeat === 7 && (
-                    <Schedule7SeatMobile
-                      key={schedule.scheduleId}
-                      scheduleId={schedule.scheduleId}
-                      startTime={schedule.startTime}
-                      startLocation={schedule.startLocation}
-                      stopLocation={schedule.stopLocation}
-                      car={schedule.car}
-                      numSeat={schedule.car.numSeat}
-                      typeId={schedule.car.type.typeId}
-                      price={schedule.car.price}
-                    />
-                  )}
-                  {schedule.car.numSeat === 10 && (
-                    <Schedule10SeatMobile
-                      key={schedule.scheduleId}
-                      startTime={schedule.startTime}
-                      scheduleId={schedule.scheduleId}
-                      startLocation={schedule.startLocation}
-                      stopLocation={schedule.stopLocation}
-                      car={schedule.car}
-                      numSeat={schedule.car.numSeat}
-                      price={schedule.car.price}
-                      typeId={schedule.car.type.typeId}
-                    />
-                  )}
+                  {/* Lặp qua tất cả các lịch trình trong schedules */}
+                  {schedule.schedules.map((item, index) => (
+                    <div key={index}>
+                      {item.car.type?.numSeat === 7 && (
+                        <Schedule7SeatMobile
+                          key={item.scheduleId}
+                          startTime={item.startTime}
+                          scheduleId={item.scheduleId}
+                          startLocation={schedule.startLocation}
+                          stopLocation={schedule.stopLocation}
+                          car={item.car}
+                          numSeat={item.car.type?.numSeat}
+                          price={item.car.type?.price}
+                          typeId={item.car.type?.typeId}
+                        />
+                      )}
+                      {item.car.type?.numSeat === 10 && (
+                        <Schedule10SeatMobile
+                          key={item.scheduleId}
+                          startTime={item.startTime}
+                          scheduleId={item.scheduleId}
+                          startLocation={schedule.startLocation}
+                          stopLocation={schedule.stopLocation}
+                          car={item.car}
+                          numSeat={item.car.type?.numSeat}
+                          price={item.car.type?.price}
+                          typeId={item.car.type?.typeId}
+                        />
+                      )}
+                    </div>
+                  ))}
                 </div>
               ))
             ) : (

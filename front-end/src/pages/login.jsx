@@ -3,11 +3,14 @@ import { axiosClient } from "helper/axiosClient";
 import { DEFAULT } from "constants";
 import OTP from "./OTP.jsx";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const getUserIdFromToken = (token) => {
   try {
     const decodedToken = jwtDecode(token);
     const userId = decodedToken.sub;
+    console.log("««««« decodedToken.sub »»»»»", decodedToken.a);
+
     return userId;
   } catch (error) {
     console.error("Invalid token");
@@ -15,7 +18,20 @@ const getUserIdFromToken = (token) => {
   }
 };
 
+const getRoleFromToken = (token) => {
+  try {
+    const decodedToken = jwtDecode(token);
+    const role = decodedToken.a;
+    return role;
+  } catch (error) {
+    console.error("Invalid token");
+    return null;
+  }
+};
+
 const Login = () => {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassWord] = useState("");
@@ -39,18 +55,28 @@ const Login = () => {
 
       if (response && response.data.accessToken) {
         localStorage.setItem(DEFAULT.TOKEN, response.data.accessToken);
-        // console.log(response.data.accessToken);
-        // console.log(response.data + "response neeeeeeeeeeee!!!!");
         const accessToken = response.data.accessToken;
         const userId = getUserIdFromToken(accessToken);
         localStorage.setItem("userId", userId);
+
+        const role = getRoleFromToken(accessToken);
+        localStorage.setItem("role", role);
+
+        // Chuyển hướng dựa trên role
+        // if (role === "ROLE_ADMIN") {
+        //   navigate("/admin/dashboard");
+        // } else {
+        //   navigate("/home");
+
+        // }
+
         window.location.href = "/home";
       } else {
         setErrorMessage("Login failed. Invalid credentials.");
       }
     } catch (error) {
       console.error("Login failed:", error);
-      setErrorMessage("Error logging in. Please check your credentials.");
+      setErrorMessage("Có lỗi khi đăng nhập! Vui lòng kiểm tra lại thông tin đăng nhập");
     } finally {
       setIsSubmitting(false);
     }

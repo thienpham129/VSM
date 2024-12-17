@@ -75,7 +75,7 @@ const CreateCar = () => {
 
       // Gọi API để tạo xe mới
       const response = await axios.post(
-        "http://localhost:8080/admin/car",
+        "http://localhost:9000/admin/car",
         formData,
         {
           headers: {
@@ -109,7 +109,13 @@ const CreateCar = () => {
   // Định nghĩa quy tắc kiểm tra dữ liệu đầu vào
   const checkoutSchema = yup.object().shape({
     carName: yup.string().required("Vui lòng nhập Tên xe"),
-    plateNumber: yup.string().required("Vui lòng nhập Biển số xe"),
+    plateNumber: yup
+      .string()
+      .required("Vui lòng nhập Biển số xe")
+      .matches(
+        /^[0-9]{2}[A-Z]{1}-[0-9]{3}\.[0-9]{2}$/,
+        "Biển số xe không hợp lệ. Ví dụ: 29A-123.45"
+      ),
     color: yup.string().required("Vui lòng nhập Màu xe"),
     yearOfManufacture: yup
       .number()

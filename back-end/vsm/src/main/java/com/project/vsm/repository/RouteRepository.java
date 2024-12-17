@@ -25,6 +25,8 @@ public interface RouteRepository extends JpaRepository<RouteEntity, Long> {
 			@Param("startTime") LocalDate startTime);
 
 	@Query("SELECT s FROM ScheduleEntity s WHERE s.route.id = :routeId AND DATE(s.startTime) = :startTime")
-	List<ScheduleEntity> findByRouteIdAndStartTime(@Param("routeId") long routeId, @Param("startTime") LocalDate startTime);
+	List<ScheduleEntity> findByRouteIdAndStartTime(@Param("routeId") long routeId,
+			@Param("startTime") LocalDate startTime);
 
+	List<RouteEntity> findByStartLocationAndStopLocation(String startLocation, String stopLocation);
 }

@@ -1,6 +1,6 @@
 import { root } from "helper/axiosClient";
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom"; 
+import { useLocation } from "react-router-dom";
 import { getTokenFromLocalStorage, removeTokenFromLocalStorage } from "utils/tokenUtils";
 import { jwtDecode } from "jwt-decode";
 
@@ -12,7 +12,6 @@ const NavBarProfile = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [fullName, setFullName] = useState("");
-
 
   // Image
   const [file, setFile] = useState(null);
@@ -44,7 +43,7 @@ const NavBarProfile = () => {
 
       if (response.status === 200) {
         alert("Cập nhật ảnh đại diện thành công!");
-        setUrlImage(filePreview); 
+        setUrlImage(filePreview);
         console.log("««««« response »»»»»", response.data);
       }
     } catch (error) {
@@ -80,7 +79,6 @@ const NavBarProfile = () => {
     }
   }, []);
 
-
   const getUserById = async (userId) => {
     const token = getTokenFromLocalStorage();
     try {
@@ -95,7 +93,7 @@ const NavBarProfile = () => {
         setFirstName(response.data.firstName);
         setLastName(response.data.lastName);
 
-        setFullName(`${response.data.firstName} ${response.data.lastName}`);
+        setFullName(`${response.data.firstName || ""} ${response.data.lastName || ""}`.trim());
       } else {
         console.log("Failed to retrieve user data");
       }

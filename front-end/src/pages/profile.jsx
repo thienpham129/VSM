@@ -35,6 +35,10 @@ const Profile = () => {
 
   const [showFullAddress, setShowFullAddress] = useState(true);
 
+  const [tickets, setTickets] = useState("");
+
+  const [errors, setErrors] = useState({});
+
   // Call API
   const handleSpecificAddressChange = (event) => {
     setSpecificAddress(event.target.value);
@@ -153,7 +157,40 @@ const Profile = () => {
     }
   }, []);
 
+  // Regex patterns
+  const emailPattern = /^[^\d][\w.-]+@[\w.-]+\.[a-zA-Z]{2,}$/;
+  const phonePattern = /^0\d{9,10}$/; // Matches numbers starting with 0 and has 10 or 11 digits
+  const namePattern = /^[a-zA-Z]+$/; // Matches only letters and spaces
+
+  const validate = () => {
+    const validationErrors = {};
+
+    // Validate email
+    if (!emailPattern.test(email)) {
+      validationErrors.email = "Email không hợp lệ. Không được bắt đầu bằng số.";
+    }
+
+    // Validate phone
+    if (!phonePattern.test(phoneNumber)) {
+      validationErrors.phoneNumber = "Số điện thoại phải bắt đầu bằng 0 và có độ dài từ 10 đến 11 số.";
+    }
+
+    // // Validate firstName
+    // if (!namePattern.test(firstName)) {
+    //   validationErrors.firstName = "Họ chỉ được chứa chữ cái, không có số hoặc ký tự đặc biệt.";
+    // }
+
+    // // Validate lastName
+    // if (!namePattern.test(lastName)) {
+    //   validationErrors.lastName = "Tên chỉ được chứa chữ cái, không có số hoặc ký tự đặc biệt.";
+    // }
+
+    setErrors(validationErrors);
+    return Object.keys(validationErrors).length === 0;
+  };
+
   const handleFormSubmit = async () => {
+    
     const formData = new FormData();
     let dobFormatted = "";
     if (dob) {
@@ -180,8 +217,8 @@ const Profile = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      if (response.status === 200) {
+      console.log('««««« response »»»»»', response.data);
+      if (response.status === 200 && validate()) {
         // alert("Lưu thông tin cá nhân thành công!");
         notifySuccessUpdate();
         setShowFullAddress(false);
@@ -192,6 +229,27 @@ const Profile = () => {
       notifyErrorUpdate();
     }
   };
+
+  // Number of tickets
+  
+  const getAllTicketOfUser = async () => {
+    const token = getTokenFromLocalStorage();
+    try {
+      const response = await root.get(`/user/view-my-ticket`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setTickets(response.data.length);
+    } catch (error) {
+      console.error("Error fetching tickets:", error);
+    }
+  };
+  useEffect(() => {
+    getAllTicketOfUser();
+  }, []);
+
+  // 
 
   // Notifications
   const notifySuccessUpdate = () =>
@@ -224,6 +282,7 @@ const Profile = () => {
   //
 
   return (
+    
     <div className="no-bottom no-top zebra" id="content">
       <div id="top" />
       <section id="subheader" className="jarallax text-light">
@@ -270,6 +329,7 @@ const Profile = () => {
                               value={firstName}
                               onChange={(e) => setFirstName(e.target.value)}
                             />
+                            {errors.firstName && <p style={{ color: "red" }}>{errors.firstName}</p>}
                           </div>
                           <div className="col-lg-6 mb20">
                             <h5>Tên</h5>
@@ -280,6 +340,7 @@ const Profile = () => {
                               value={lastName}
                               onChange={(e) => setLastName(e.target.value)}
                             />
+                             {errors.lastName && <p style={{ color: "red" }}>{errors.lastName}</p>}
                           </div>
 
                           <div className="col-lg-6 mb20">
@@ -291,6 +352,7 @@ const Profile = () => {
                               value={phoneNumber}
                               onChange={(e) => setPhoneNumber(e.target.value)}
                             />
+                            {errors.phoneNumber && <p style={{ color: "red" }}>{errors.phoneNumber}</p>}
                           </div>
                           <div className="col-lg-6 mb20">
                             <h5>Email</h5>
@@ -327,7 +389,7 @@ const Profile = () => {
                           </div>
                           <div className="col-lg-6 mb20">
                             <h5>Số lần mua đặt vé xe</h5>
-                            <input type="number" className="form-control" />
+                            <input type="number" className="form-control" value={tickets} disabled/>
                           </div>
                           <div className="col-lg-6 mb20">
                             <h5>Địa chỉ cụ thể</h5>

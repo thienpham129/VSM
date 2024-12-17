@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import Topbar from "../scenes/global/Topbar";
 import Sidebar from "../scenes/global/Sidebar";
@@ -28,6 +28,9 @@ import Schedule from "scenes/schedule";
 import AddSchedule from "scenes/schedule/addSchedule/AddSchedule";
 import DetailSchedule from "scenes/schedule/detailSchedule/DetailSchedule";
 import RouteAdmin from "scenes/route/Route";
+import Ticket from "scenes/ticket/Ticket";
+import DetailTicket from "scenes/ticket/detail/DetailTicket";
+import { useRef } from "react";
 
 function AdminApp() {
   const [theme, colorMode] = useMode();
@@ -42,7 +45,9 @@ function AdminApp() {
           <main className="content">
             <Topbar setIsSidebar={setIsSidebar} />
             <Routes>
-              <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/ticket" element={<Ticket />} />
+              <Route path="/ticket/:id" element={<DetailTicket />} />
               <Route path="/voucher" element={<VoucherAdmin />} />
               <Route path="/user" element={<UserAdmin />} />
               <Route path="/driver" element={<DriverAdmin />} />
