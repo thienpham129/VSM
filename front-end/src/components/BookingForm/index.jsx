@@ -271,6 +271,9 @@ function BookingForm({
 
     try {
       const token = getTokenFromLocalStorage();
+      if (!token) {
+        window.location.href = "/login";
+      }
       const response = await root.post("/public/tickets/create", ticketData, {
         headers: {
           "Content-Type": "application/json",
@@ -316,7 +319,9 @@ function BookingForm({
                 `https://rsapi.goong.io/Place/AutoComplete?api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo&input=${query}`
               );
               const data = await response.json();
-              setSuggestPickUpAddress(data.predictions);
+              if (data.predictions) {
+                setSuggestPickUpAddress(data.predictions);
+              }
             } catch (error) {
               console.log(error);
             }
@@ -341,7 +346,9 @@ function BookingForm({
                 `https://rsapi.goong.io/Place/AutoComplete?api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo&input=${query}`
               );
               const data = await response.json();
-              setSuggestDropAddress(data.predictions);
+              if (data.predictions) {
+                setSuggestDropAddress(data.predictions);
+              }
             } catch (error) {
               console.log(error);
             }

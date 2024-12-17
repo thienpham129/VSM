@@ -291,6 +291,7 @@ const Login = () => {
                             onClick={() => {
                               window.location.href = "/identify";
                             }}
+                            style={{ cursor: "pointer" }}
                           >
                             Forgotten account?
                           </p>
@@ -300,7 +301,7 @@ const Login = () => {
                       <div className="title-line">
                         Or&nbsp;sign&nbsp;up&nbsp;with
                       </div>
-                      <div className="row g-2">
+                      {/* <div className="row g-2">
                         <div className="col-lg-6">
                           <a className="btn-sc btn-fullwidth mb10 " href="#">
                             <img src="images/svg/google_icon.svg" alt="" />
@@ -313,7 +314,7 @@ const Login = () => {
                             Facebook
                           </a>
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>

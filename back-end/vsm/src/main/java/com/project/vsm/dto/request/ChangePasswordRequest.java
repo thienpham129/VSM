@@ -17,4 +17,5 @@ import lombok.experimental.FieldDefaults;
 public class ChangePasswordRequest {
     String oldPassword;
     String newPassword;
+    String newPasswordRepeat;
 }

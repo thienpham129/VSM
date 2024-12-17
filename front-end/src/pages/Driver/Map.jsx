@@ -913,7 +913,7 @@ const Map = () => {
       </button> */}
 
       <div style={{ display: "flex" }}>
-        {isRecording ? (
+        {/* {isRecording ? (
           <FontAwesomeIcon
             icon={faMicrophone}
             beatFade
@@ -937,7 +937,7 @@ const Map = () => {
             }}
             onClick={searchByVoice}
           />
-        )}
+        )} */}
         <FormControl
           style={{
             width: "230px",
@@ -1003,7 +1003,7 @@ const Map = () => {
                 >
                   Tìm Kiếm
                 </Button>
-                <Button
+                {/* <Button
                   style={{
                     width: "90px",
                     height: "40px",
@@ -1036,7 +1036,7 @@ const Map = () => {
                   }}
                 >
                   Xem Theo Lịch Trình
-                </Button>
+                </Button> */}
               </div>
               {suggesstAddress.length > 0 && isShowSuggest ? (
                 <div className={styles.result_box}>
@@ -1147,7 +1147,7 @@ const Map = () => {
                 >
                   Tìm Kiếm
                 </Button>
-                <Button
+                {/* <Button
                   style={{
                     width: "90px",
                     height: "40px",
@@ -1179,7 +1179,7 @@ const Map = () => {
                   }}
                 >
                   Xem Theo Lịch Trình
-                </Button>
+                </Button> */}
               </div>
               {suggestAddressPhase2.length > 0 && isShowSuggestPhase2 ? (
                 <div className={styles.result_box}>

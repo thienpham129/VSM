@@ -71,7 +71,7 @@ const Schedule = () => {
     },
     {
       field: "route", // Cập nhật cột chuyến đường
-      headerName: "Chuyến Đường",
+      headerName: "Tuyến Đường",
       flex: 1,
       valueGetter: (params) => {
         const startLocation = params.row.route?.startLocation || "";
