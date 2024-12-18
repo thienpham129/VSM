@@ -120,7 +120,11 @@ const CreateCar = () => {
     yearOfManufacture: yup
       .number()
       .required("Vui lòng nhập Năm sản xuất")
-      .min(1886, "Năm sản xuất không hợp lệ"),
+      .min(1886, "Năm sản xuất không hợp lệ")
+      .max(
+        new Date().getFullYear(),
+        "Năm sản xuất không được lớn hơn năm hiện tại"
+      ),
     typeID: yup.number().required("Vui lòng chọn loại xe"),
     manufactory: yup.string().required("Vui lòng nhập Nhà sản xuất"),
   });

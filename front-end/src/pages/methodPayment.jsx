@@ -31,6 +31,7 @@ const MethodPayment = () => {
   const [pickUpLon, setPickUpLon] = useState("");
   const [dropLat, setDropLat] = useState("");
   const [dropLon, setDropLon] = useState("");
+  const [messagePayment, setMessagePayment] = useState(false);
 
   useEffect(() => {
     console.log(ticketId);
@@ -134,6 +135,7 @@ const MethodPayment = () => {
   };
 
   const handlePayment = async () => {
+    setMessagePayment(true);
     setIsLoading(true);
     setError(null);
     try {
@@ -447,6 +449,21 @@ const MethodPayment = () => {
                         </div>
                       )}
                     </div>
+                    {messagePayment && (
+                      <div>
+                        <p>
+                          <span
+                            className="text-big"
+                            style={{ fontSize: "1.4em" }}
+                          >
+                            <strong>
+                              NẾU BẠN ĐÃ THANH TOÁN VUI LÒNG KHÔNG CHUYỂN TRANG.
+                              XIN CHỜ TRONG GIÂY LÁT
+                            </strong>
+                          </span>
+                        </p>
+                      </div>
+                    )}
                     <div>
                       <p>
                         <span

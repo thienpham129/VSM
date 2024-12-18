@@ -64,11 +64,11 @@ const Schedule = () => {
       headerName: "Giờ Xuất Phát",
       flex: 1,
     },
-    {
-      field: "endTime",
-      headerName: "Giờ Kết Thúc",
-      flex: 1,
-    },
+    // {
+    //   field: "endTime",
+    //   headerName: "Giờ Kết Thúc",
+    //   flex: 1,
+    // },
     {
       field: "route", // Cập nhật cột chuyến đường
       headerName: "Tuyến Đường",

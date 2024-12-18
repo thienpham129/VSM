@@ -42,6 +42,7 @@ function Schedule() {
   const [isSuccessUpdateUser, setIsSuccessUpdateUser] = useState(false);
   const [isPickingUp, setIsPickingUp] = useState(true);
   const [isDoneUpdateMapStatus, setIsDoneUpdateMapStatus] = useState(false);
+  const [arrayTicketDoneFee, setArrayTicketDoneFee] = useState([]);
   const [currentLat, setCurrentLat] = useState("");
   const [currentLong, setCurrentLong] = useState("");
 
@@ -143,28 +144,44 @@ function Schedule() {
       changeDataScheduleDetail();
       let tempArrayInCar = [];
       let tempArrayNotInCar = [];
+      let tempArrayDoneFee = [];
       let countNotInCar = 0;
       let tempArraydataScheduleDetail = [];
+      let countWarningUpdate = 0;
       dataScheduleDetail.forEach((item, index) => {
         if (item.status.toLocaleUpperCase() === "ĐÃ LÊN XE") {
+          countWarningUpdate += 1;
+          // if (countWarningUpdate === 0) {
           setWarningUpdateSchedule(true);
+          // }
           tempArrayInCar.push(item.fullName);
-        }
-
-        if (item.status.toLocaleUpperCase() === "CHƯA LÊN XE") {
+        } else if (item.status.toLocaleUpperCase() === "CHƯA LÊN XE") {
+          countWarningUpdate += 1;
+          // if (countWarningUpdate === 0) {
           setWarningUpdateSchedule(true);
+          // }
           tempArrayNotInCar.push(item.fullName);
+        } else if (item.status.toLocaleUpperCase() === "ĐÃ THANH TOÁN") {
+          countWarningUpdate += 1;
+          // if (countWarningUpdate === 0) {
+          setWarningUpdateSchedule(true);
+          // }
+          tempArrayDoneFee.push(item.fullName);
         }
 
-        if (item.status.toLocaleUpperCase() === "") {
-        }
         if (item.mapStatus === "0") {
           countNotInCar += 1;
         }
       });
+      // alert(countWarningUpdate);
+
+      if (countWarningUpdate === 0) {
+        setWarningUpdateSchedule(false);
+      }
 
       setArrayTicketInCar(tempArrayInCar);
       setArrayTicketNotInCar(tempArrayNotInCar);
+      setArrayTicketDoneFee(tempArrayDoneFee);
     }
   }, [dataScheduleDetail]);
 
@@ -1037,6 +1054,18 @@ function Schedule() {
                         Hành Khách <span style={{ color: "red" }}>{item}</span>{" "}
                         vẫn đang ở trạng thái{" "}
                         <span style={{ color: "red" }}>Chưa Lên Xe</span>{" "}
+                      </h4>
+                    </li>
+                  </ul>
+                ))}
+
+                {arrayTicketDoneFee.map((item, index) => (
+                  <ul>
+                    <li>
+                      <h4>
+                        Hành Khách <span style={{ color: "red" }}>{item}</span>{" "}
+                        vẫn đang ở trạng thái{" "}
+                        <span style={{ color: "red" }}>Đã Thanh Toán</span>{" "}
                       </h4>
                     </li>
                   </ul>

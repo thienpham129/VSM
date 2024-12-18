@@ -97,7 +97,7 @@ public class VoucherService {
 
 	public void sendDiscountEmail(String content, String discount, AccountEntity user) {
 		String subject = "Mã giảm giá";
-		String discountMessage = "Mã giảm giá của bạn là: " + discount + "%";
+		String discountMessage = "Mã giảm giá của bạn là: " + discount;
 
 		String htmlMessage = "<html>" + "<body style=\"font-family: Arial, sans-serif;\">"
 				+ "<div style=\"background-color: #f5f5f5; padding: 20px;\">"

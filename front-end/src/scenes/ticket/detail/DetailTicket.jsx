@@ -104,7 +104,7 @@ const DetailTicket = () => {
     "Đang chờ xử lý",
     "Đã xác nhận",
     "Đang di chuyển",
-    "Hoàn thành",
+    "Đã thanh toán",
     "Hủy đặt vé",
     "Đã Lên Xe",
     "Chưa Lên Xe",
