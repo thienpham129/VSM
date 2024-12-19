@@ -336,7 +336,7 @@ const Map = () => {
               );
               const data = await responseMap.json();
               console.log(data);
-              // elementsArray = data.rows[0].elements;
+              elementsArray = data.rows[0].elements;
             }
             console.log(elementsArray);
             let testArray = [];

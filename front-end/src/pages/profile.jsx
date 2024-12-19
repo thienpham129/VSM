@@ -167,12 +167,14 @@ const Profile = () => {
 
     // Validate email
     if (!emailPattern.test(email)) {
-      validationErrors.email = "Email không hợp lệ. Không được bắt đầu bằng số.";
+      validationErrors.email =
+        "Email không hợp lệ. Không được bắt đầu bằng số.";
     }
 
     // Validate phone
     if (!phonePattern.test(phoneNumber)) {
-      validationErrors.phoneNumber = "Số điện thoại phải bắt đầu bằng 0 và có độ dài từ 10 đến 11 số.";
+      validationErrors.phoneNumber =
+        "Số điện thoại phải bắt đầu bằng 0 và có độ dài từ 10 đến 11 số.";
     }
 
     setErrors(validationErrors);
@@ -180,7 +182,6 @@ const Profile = () => {
   };
 
   const handleFormSubmit = async () => {
-    
     const formData = new FormData();
     let dobFormatted = "";
     if (dob) {
@@ -207,7 +208,7 @@ const Profile = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log('««««« response »»»»»', response.data);
+      console.log("««««« response »»»»»", response.data);
       if (response.status === 200 && validate()) {
         // alert("Lưu thông tin cá nhân thành công!");
         notifySuccessUpdate();
@@ -221,7 +222,7 @@ const Profile = () => {
   };
 
   // Number of tickets
-  
+
   const getAllTicketOfUser = async () => {
     const token = getTokenFromLocalStorage();
     try {
@@ -239,7 +240,7 @@ const Profile = () => {
     getAllTicketOfUser();
   }, []);
 
-  // 
+  //
 
   // Notifications
   const notifySuccessUpdate = () =>
@@ -268,11 +269,9 @@ const Profile = () => {
       transition: Bounce,
     });
 
-
   //
 
   return (
-    
     <div className="no-bottom no-top zebra" id="content">
       <div id="top" />
       <section id="subheader" className="jarallax text-light">
@@ -319,7 +318,9 @@ const Profile = () => {
                               value={firstName}
                               onChange={(e) => setFirstName(e.target.value)}
                             />
-                            {errors.firstName && <p style={{ color: "red" }}>{errors.firstName}</p>}
+                            {errors.firstName && (
+                              <p style={{ color: "red" }}>{errors.firstName}</p>
+                            )}
                           </div>
                           <div className="col-lg-6 mb20">
                             <h5>Tên</h5>
@@ -330,7 +331,9 @@ const Profile = () => {
                               value={lastName}
                               onChange={(e) => setLastName(e.target.value)}
                             />
-                             {errors.lastName && <p style={{ color: "red" }}>{errors.lastName}</p>}
+                            {errors.lastName && (
+                              <p style={{ color: "red" }}>{errors.lastName}</p>
+                            )}
                           </div>
 
                           <div className="col-lg-6 mb20">
@@ -342,7 +345,11 @@ const Profile = () => {
                               value={phoneNumber}
                               onChange={(e) => setPhoneNumber(e.target.value)}
                             />
-                            {errors.phoneNumber && <p style={{ color: "red" }}>{errors.phoneNumber}</p>}
+                            {errors.phoneNumber && (
+                              <p style={{ color: "red" }}>
+                                {errors.phoneNumber}
+                              </p>
+                            )}
                           </div>
                           <div className="col-lg-6 mb20">
                             <h5>Email</h5>
@@ -377,11 +384,8 @@ const Profile = () => {
                               <option value="Khác">Khác</option>
                             </select>
                           </div>
-                          <div className="col-lg-6 mb20">
-                            <h5>Số lần mua đặt vé xe</h5>
-                            <input type="number" className="form-control" value={tickets} disabled/>
-                          </div>
-                          <div className="col-lg-6 mb20">
+
+                          <div className="col-lg-12 mb20">
                             <h5>Địa chỉ cụ thể</h5>
                             <input
                               type="text"
@@ -392,50 +396,7 @@ const Profile = () => {
                             />
                           </div>
                         </div>
-                        <div className="col-md-12 mb20">
-                          <div className="row">
-                            <div className="col-md-4 form-group ">
-                              <SellectAddress
-                                type="province"
-                                value={province}
-                                setValue={setProvince}
-                                options={provinces}
-                                label="Province/City(Tỉnh)"
-                              />
-                            </div>
-                            <div className="col-md-4 form-group">
-                              <SellectAddress
-                                reset={reset}
-                                type="district"
-                                value={district}
-                                setValue={setDistrict}
-                                options={districts}
-                                label="District(Quận)"
-                              />
-                            </div>
-                            <div className="col-md-4 form-group">
-                              <SellectAddress
-                                reset={reset}
-                                type="ward"
-                                value={ward}
-                                setValue={setWard}
-                                options={wards}
-                                label="Wards(phường)"
-                              />
-                            </div>
-                            {/* {showFullAddress && (
-                              <div className="col-md-12 form-group">
-                                <h5>Địa chỉ nhà đầy đủ</h5>
-                                <input
-                                  type="text"
-                                  readOnly
-                                  className="form-control"
-                                  value={address}
-                                />
-                              </div>
-                             )} */}
-                          </div>
-                        </div>
+
                         <button
                           type="button"
                           className="btn-main mt-3"

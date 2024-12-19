@@ -128,7 +128,7 @@ public class VoucherService {
         VoucherEntity voucher = voucherRepository.findByCode(code)
                 .orElseThrow(() -> new RuntimeException("Mã khuyến mãi hết hạn hoặc không đúng"));
 
-        if (!voucher.isValid()) {
+        if (!voucher.isValid() || !voucher.getCode().equals(code)) {
             return new VoucherResponse("Mã khuyến mãi hết hạn hoặc không đúng");
         } else {
             return new VoucherResponse(voucher.getDiscount(), "Mã hợp lệ có thể sử dụng");

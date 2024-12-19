@@ -115,7 +115,8 @@ const Schedule7SeatMobile = ({
   const [pickUpLon, setPickUpLon] = useState("");
   const [dropLat, setDropLat] = useState("");
   const [dropLon, setDropLon] = useState("");
-
+  const [messageVoucher, setMessageVoucher] = useState("");
+  const [voucher, setVoucher] = useState("");
   // Start Api
   // Handle change for specific addresses
   // const handlePickupSpecificAddressChange = (event) => {
@@ -507,6 +508,25 @@ const Schedule7SeatMobile = ({
       setIsShowSuggestDrop(false);
     }
   }, [dropAddress]);
+
+  useEffect(() => {
+    const checkVoucher = async () => {
+      try {
+        const response = await root.get(
+          `/public/check-voucher?voucher=${voucher}`
+        );
+        if (response.data.data.message !== "Mã hợp lệ có thể sử dụng") {
+          setMessageVoucher("Mã Đã Hết Hạn Hoặc Không Đúng !");
+        } else {
+          setMessageVoucher("");
+        }
+      } catch (error) {
+        setMessageVoucher("Mã Đã Hết Hạn Hoặc Không Đúng !");
+        console.log(error);
+      }
+    };
+    checkVoucher();
+  }, [voucher]);
 
   return (
     <div
@@ -922,9 +942,23 @@ const Schedule7SeatMobile = ({
                   <input
                     type="text"
                     name="promotionCode"
-                    placeholder=""
                     defaultValue=""
+                    value={voucher}
+                    onChange={(e) => setVoucher(e.target.value)}
                   />
+                  {voucher ? (
+                    <p
+                      style={{
+                        color: "red",
+                        marginTop: "10px",
+                        marginLeft: "31%",
+                      }}
+                    >
+                      {messageVoucher}
+                    </p>
+                  ) : (
+                    ""
+                  )}
                 </div>
                 {/* <div className="" style={{ textAlign: "right" }}>
                   <button
