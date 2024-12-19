@@ -63,53 +63,53 @@ const Profile = () => {
     setAddress(newAddress.trim());
   };
 
-  useEffect(() => {
-    const fetchProvinces = async () => {
-      try {
-        const response = await apiGetPublicProvinces();
-        if (response.status === 200) setProvinces(response.data.results);
-      } catch (error) {
-        console.error("Failed to fetch provinces:", error);
-      }
-    };
-    fetchProvinces();
-  }, []);
+  // useEffect(() => {
+  //   const fetchProvinces = async () => {
+  //     try {
+  //       const response = await apiGetPublicProvinces();
+  //       if (response.status === 200) setProvinces(response.data.results);
+  //     } catch (error) {
+  //       console.error("Failed to fetch provinces:", error);
+  //     }
+  //   };
+  //   fetchProvinces();
+  // }, []);
 
-  useEffect(() => {
-    if (province) {
-      setDistrict("");
-      setWard("");
-      const fetchDistricts = async () => {
-        try {
-          const response = await apiGetPublicDistrict(province);
-          if (response.status === 200) setDistricts(response.data.results);
-        } catch (error) {
-          console.error("Failed to fetch districts:", error);
-        }
-      };
-      fetchDistricts();
-    } else {
-      setDistricts([]);
-      setWards([]);
-    }
-  }, [province]);
+  // useEffect(() => {
+  //   if (province) {
+  //     setDistrict("");
+  //     setWard("");
+  //     const fetchDistricts = async () => {
+  //       try {
+  //         const response = await apiGetPublicDistrict(province);
+  //         if (response.status === 200) setDistricts(response.data.results);
+  //       } catch (error) {
+  //         console.error("Failed to fetch districts:", error);
+  //       }
+  //     };
+  //     fetchDistricts();
+  //   } else {
+  //     setDistricts([]);
+  //     setWards([]);
+  //   }
+  // }, [province]);
 
-  useEffect(() => {
-    if (district) {
-      setWard("");
-      const fetchWards = async () => {
-        try {
-          const response = await apiGetPublicWard(district);
-          if (response.status === 200) setWards(response.data.results);
-        } catch (error) {
-          console.error("Failed to fetch wards:", error);
-        }
-      };
-      fetchWards();
-    } else {
-      setWards([]);
-    }
-  }, [district]);
+  // useEffect(() => {
+  //   if (district) {
+  //     setWard("");
+  //     const fetchWards = async () => {
+  //       try {
+  //         const response = await apiGetPublicWard(district);
+  //         if (response.status === 200) setWards(response.data.results);
+  //       } catch (error) {
+  //         console.error("Failed to fetch wards:", error);
+  //       }
+  //     };
+  //     fetchWards();
+  //   } else {
+  //     setWards([]);
+  //   }
+  // }, [district]);
 
   useEffect(() => {
     updateAddressValue();
