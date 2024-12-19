@@ -10,14 +10,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TypeDTO {
-	
-	@NotNull(message = "Name Car is required")
-	@NotEmpty(message = "Name Car is required")
-	private String name;
+public class CreateDetailSeatDTO {
+	@NotNull(message = "position is required")
+	@NotEmpty(message = "position is required")
+	private String position;
 
-	@NotNull(message = "Number of seats is required")
-	@Min(value = 1, message = "Number of seats must be greater than 0")
-	private int numSeat;
-
+	@NotNull(message = "surcharge is required")
+	@Min(value = 0, message = "surcharge must be greater than 0")
+	private int surcharge;
 }

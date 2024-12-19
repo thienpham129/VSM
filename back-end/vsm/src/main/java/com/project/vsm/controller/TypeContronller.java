@@ -29,10 +29,24 @@ public class TypeContronller {
 	@Autowired
 	private TypeService typeService;
 
-	@PostMapping("/type")
-	public ResponseEntity<TypeEntity> createNewCategory(@Valid @RequestBody TypeDTO typeInput) {
+	@PostMapping("admin/type")
+	public ResponseEntity<TypeEntity> createNewType(@Valid @RequestBody TypeDTO typeInput) {
 		return new ResponseEntity<>(typeService.createNewType(typeInput), HttpStatus.OK);
 	}
+
+	@DeleteMapping("/type/{id}")
+	public ResponseEntity<String> deleteTypeById(@PathVariable long id) {
+		// Gọi service để xóa TypeEntity và các DetailSeat liên quan
+		typeService.deleteTypeById(id);
+		return new ResponseEntity<>("Type with ID " + id + " and its related DetailSeats have been deleted.",
+				HttpStatus.OK);
+	}
+
+	@PutMapping("/type/{id}")
+	public ResponseEntity<TypeEntity> updateTypeById(@PathVariable long id, @Valid @RequestBody TypeDTO typeInput) {
+		return new ResponseEntity<>(typeService.updateTypeById(id, typeInput), HttpStatus.OK);
+	}
+// old
 
 	@GetMapping("/type/{id}")
 	public ResponseEntity<TypeEntity> getTypeById(@PathVariable long id) {
@@ -45,13 +59,4 @@ public class TypeContronller {
 		return new ResponseEntity<>(typeService.getAllTypes(), HttpStatus.OK);
 	}
 
-	@PutMapping("/type/{id}")
-	public ResponseEntity<TypeEntity> updateTypeById(@PathVariable long id, @Valid @RequestBody TypeDTO typeInput) {
-		return new ResponseEntity<>(typeService.updateTypeById(id, typeInput), HttpStatus.OK);
-	}
-
-	@DeleteMapping("/type/{id}")
-	public ResponseEntity<TypeEntity> deleteTypeById(@PathVariable long id) {
-		return new ResponseEntity<>(typeService.deleteTypeById(id), HttpStatus.OK);
-	}
 }

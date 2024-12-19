@@ -89,80 +89,76 @@ public class TicketService {
 		ticketRepository.delete(ticket);
 	}
 
-	public TicketResponse createTicket(TicketRequest request) {
-		String email = SecurityContextHolder.getContext().getAuthentication().getName();
-
-		AccountEntity account = accountRepository.findByEmail(email)
-				.orElseThrow(() -> new RuntimeException("Account not found"));
-
-		TypeEntity type = typeRepository.findById(request.getTypeId())
-				.orElseThrow(() -> new RuntimeException("Type not found"));
-
-		double priceOfSingleSeat = type.getPrice();
-		double totalPrice = priceOfSingleSeat * request.getSelectedSeat().size();
-
-		VoucherEntity voucher = null;
-		if (request.getVoucher() != null) {
-			voucher = voucherRepository.findByCode(request.getVoucher())
-					.orElseThrow(() -> new RuntimeException("Voucher not found"));
-
-			LocalDate currentDate = LocalDate.now();
-			LocalDate expiredDate = voucher.getCreatedDate().plusDays(5);
-			if (voucher.isValid() && expiredDate.isAfter(currentDate)) {
-				double discount = voucher.getDiscount();
-				totalPrice -= totalPrice * (discount / 100);
-				voucher.setValid(false);
-			} else {
-				throw new RuntimeException("Voucher is expired or invalid");
-			}
-		}
-
-		PaymentEntity payment = paymentRepository.findByPaymentName(request.getPaymentMethod())
-				.orElseThrow(() -> new RuntimeException("Payment method not found"));
-
-		ScheduleEntity schedule = scheduleRepository.findById(request.getScheduleId())
-				.orElseThrow(() -> new RuntimeException("Schedule not found"));
-
-		TicketEntity ticket = request.toEntity(account, payment, voucher, totalPrice);
-		ticket.setStartLocation(schedule.getRoute().getStartLocation());
-		ticket.setStopLocation(schedule.getRoute().getStopLocation());
-		ticket.setScheduleEntity(schedule);
-
-		ticket = ticketRepository.save(ticket);
-
-		if (payment.getPaymentName().equalsIgnoreCase("vietQR")) {
-			String qrCodeUrl = paymentService.generateQrCode(totalPrice, ticket.getTicketId(), account.getEmail());
-			ticket.setQRPayment(qrCodeUrl);
-			ticketRepository.save(ticket);
-		}
-		boolean paymentSuccess = checkPaymentStatus(ticket.getTicketId());
-
-		if (paymentSuccess) {
-			googleSheetsService.sendDataToGoogleSheet(ticket, totalPrice, payment.getPaymentName());
-		}
-		return TicketResponse.fromEntity(ticket);
-	}
+	/*
+	 * public TicketResponse createTicket(TicketRequest request) { String email =
+	 * SecurityContextHolder.getContext().getAuthentication().getName();
+	 * 
+	 * AccountEntity account = accountRepository.findByEmail(email) .orElseThrow(()
+	 * -> new RuntimeException("Account not found"));
+	 * 
+	 * TypeEntity type = typeRepository.findById(request.getTypeId())
+	 * .orElseThrow(() -> new RuntimeException("Type not found"));
+	 * 
+	 * double priceOfSingleSeat = type.getPrice(); double totalPrice =
+	 * priceOfSingleSeat * request.getSelectedSeat().size();
+	 * 
+	 * VoucherEntity voucher = null; if (request.getVoucher() != null) { voucher =
+	 * voucherRepository.findByCode(request.getVoucher()) .orElseThrow(() -> new
+	 * RuntimeException("Voucher not found"));
+	 * 
+	 * LocalDate currentDate = LocalDate.now(); LocalDate expiredDate =
+	 * voucher.getCreatedDate().plusDays(5); if (voucher.isValid() &&
+	 * expiredDate.isAfter(currentDate)) { double discount = voucher.getDiscount();
+	 * totalPrice -= totalPrice * (discount / 100); voucher.setValid(false); } else
+	 * { throw new RuntimeException("Voucher is expired or invalid"); } }
+	 * 
+	 * PaymentEntity payment =
+	 * paymentRepository.findByPaymentName(request.getPaymentMethod())
+	 * .orElseThrow(() -> new RuntimeException("Payment method not found"));
+	 * 
+	 * ScheduleEntity schedule =
+	 * scheduleRepository.findById(request.getScheduleId()) .orElseThrow(() -> new
+	 * RuntimeException("Schedule not found"));
+	 * 
+	 * TicketEntity ticket = request.toEntity(account, payment, voucher,
+	 * totalPrice); ticket.setStartLocation(schedule.getRoute().getStartLocation());
+	 * ticket.setStopLocation(schedule.getRoute().getStopLocation());
+	 * ticket.setScheduleEntity(schedule);
+	 * 
+	 * ticket = ticketRepository.save(ticket);
+	 * 
+	 * if (payment.getPaymentName().equalsIgnoreCase("vietQR")) { String qrCodeUrl =
+	 * paymentService.generateQrCode(totalPrice, ticket.getTicketId(),
+	 * account.getEmail()); ticket.setQRPayment(qrCodeUrl);
+	 * ticketRepository.save(ticket); } boolean paymentSuccess =
+	 * checkPaymentStatus(ticket.getTicketId());
+	 * 
+	 * if (paymentSuccess) { googleSheetsService.sendDataToGoogleSheet(ticket,
+	 * totalPrice, payment.getPaymentName()); } return
+	 * TicketResponse.fromEntity(ticket); }
+	 */
 
 	private boolean checkPaymentStatus(long ticketId) {
 		return true;
 	}
 
-	public TicketResponse updateTicketById(String ticketId, TicketRequest request) {
-//        TicketEntity ticket = ticketRepository.findById(Long.valueOf(ticketId))
-//                .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
-        TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
-				.orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
-
-		ticket.setEmail(request.getEmail());
-		ticket.setFullName(request.getFullName());
-		ticket.setNote(request.getNote());
-		ticket.setPhoneNumber(request.getPhoneNumber());
-		ticket.setSelectedSeat(request.getSelectedSeat().toString());
-
-		ticketRepository.save(ticket);
-
-		return TicketResponse.fromEntity(ticket);
-	}
+	/*
+	 * public TicketResponse updateTicketById(String ticketId, TicketRequest
+	 * request) { // TicketEntity ticket =
+	 * ticketRepository.findById(Long.valueOf(ticketId)) // .orElseThrow(() -> new
+	 * RuntimeException("Not found ticket with id : " + ticketId)); TicketEntity
+	 * ticket = ticketRepository.findByTicketId(ticketId) .orElseThrow(() -> new
+	 * RuntimeException("Not found ticket with id : " + ticketId));
+	 * 
+	 * ticket.setEmail(request.getEmail());
+	 * ticket.setFullName(request.getFullName()); ticket.setNote(request.getNote());
+	 * ticket.setPhoneNumber(request.getPhoneNumber());
+	 * ticket.setSelectedSeat(request.getSelectedSeat().toString());
+	 * 
+	 * ticketRepository.save(ticket);
+	 * 
+	 * return TicketResponse.fromEntity(ticket); }
+	 */
 
 	public List<TicketResponse> getAllTicketAdmin() {
 		List<TicketEntity> ticketEntities = ticketRepository.findAll();
@@ -195,17 +191,21 @@ public class TicketService {
 		return true;
 	}
 
-	public List<TicketResponse> getTicketByScheduleId(long scheduleId) {
-		ScheduleEntity schedule = scheduleRepository.findById(scheduleId)
-				.orElseThrow(() -> new RuntimeException("Not found schedule with id : " + scheduleId));
-
-		List<TicketEntity> tickets = ticketRepository.getTicketByScheduleId(scheduleId);
-		if (tickets.isEmpty()) {
-			throw new RuntimeException("Not found ticket with schedule id : " + scheduleId);
-		}
-
-		return tickets.stream().map(TicketResponse::fromEntity).collect(Collectors.toList());
-	}
+	/*
+	 * public List<TicketResponse> getTicketByScheduleId(long scheduleId) {
+	 * ScheduleEntity schedule = scheduleRepository.findById(scheduleId)
+	 * .orElseThrow(() -> new RuntimeException("Not found schedule with id : " +
+	 * scheduleId));
+	 * 
+	 * List<TicketEntity> tickets =
+	 * ticketRepository.getTicketByScheduleId(scheduleId); if (tickets.isEmpty()) {
+	 * throw new RuntimeException("Not found ticket with schedule id : " +
+	 * scheduleId); }
+	 * 
+	 * return
+	 * tickets.stream().map(TicketResponse::fromEntity).collect(Collectors.toList())
+	 * ; }
+	 */
 
 	// public TicketResponse updateStatusTicketById(String ticketId, TicketRequest request) {
 	// 	TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
@@ -217,15 +217,15 @@ public class TicketService {
 	// 	return TicketResponse.fromEntity(ticket);
 	// }
 
-    public TicketResponse updateStatusTicketById(String ticketId, TicketRequest request) {
-        TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
-                .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
-
-        ticket.setStatus(request.getStatus());
-        ticket.setPaid(true);
-        ticketRepository.save(ticket);
-        return TicketResponse.fromEntity(ticket);
-    }
+	/*
+	 * public TicketResponse updateStatusTicketById(String ticketId, TicketRequest
+	 * request) { TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
+	 * .orElseThrow(() -> new RuntimeException("Not found ticket with id : " +
+	 * ticketId));
+	 * 
+	 * ticket.setStatus(request.getStatus()); ticket.setPaid(true);
+	 * ticketRepository.save(ticket); return TicketResponse.fromEntity(ticket); }
+	 */
 
 	public TicketResponseAdminDTO getTicketByIDAdmin(String id) {
 		Optional<TicketEntity> optionalTicket = ticketRepository.findByTicketId(id);
@@ -294,29 +294,26 @@ public class TicketService {
 	    return ticket.isPaid();
 	}
 
-	public TicketResponse updateMapByTicketId (String ticketId , TicketRequest request) {
-        TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
-                .orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
-
-//        ticket.setMapPickUp(request.getMapPickUp());
-//        ticket.setMapDrop(request.getMapDrop());
-//        ticket.setMapStatus(request.getMapStatus());
-        if(request.getMapPickUp() != null) {
-        	ticket.setMapPickUp(request.getMapPickUp());
-        }
-        
-        if(request.getMapDrop() != null) {
-        	ticket.setMapDrop(request.getMapDrop());
-        }
-        
-        if(request.getMapStatus() != null) {
-        	ticket.setMapStatus(request.getMapStatus());
-        }
-
-        ticketRepository.save(ticket);
-
-        return TicketResponse.fromEntity(ticket);
-    }
+	/*
+	 * public TicketResponse updateMapByTicketId (String ticketId , TicketRequest
+	 * request) { TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
+	 * .orElseThrow(() -> new RuntimeException("Not found ticket with id : " +
+	 * ticketId));
+	 * 
+	 * // ticket.setMapPickUp(request.getMapPickUp()); //
+	 * ticket.setMapDrop(request.getMapDrop()); //
+	 * ticket.setMapStatus(request.getMapStatus()); if(request.getMapPickUp() !=
+	 * null) { ticket.setMapPickUp(request.getMapPickUp()); }
+	 * 
+	 * if(request.getMapDrop() != null) { ticket.setMapDrop(request.getMapDrop()); }
+	 * 
+	 * if(request.getMapStatus() != null) {
+	 * ticket.setMapStatus(request.getMapStatus()); }
+	 * 
+	 * ticketRepository.save(ticket);
+	 * 
+	 * return TicketResponse.fromEntity(ticket); }
+	 */
 	public Boolean adminUpdateTicket(AdminUpdateTicketDTO input) {
 		Optional<TicketEntity> optionalTicket = ticketRepository.findById(input.getTicketId());
 		if (!optionalTicket.isPresent()) {

@@ -48,9 +48,9 @@ public class CarEntity {
 	@Column(name = "date_start")
 	private LocalDate startDate;
 
-	@ManyToOne(cascade = { CascadeType.PERSIST })
-	@JoinColumn(name = "type_id", referencedColumnName = "type_id")
-	private TypeEntity type;
+//	@ManyToOne(cascade = { CascadeType.PERSIST })
+//	@JoinColumn(name = "type_id", referencedColumnName = "type_id")
+//	private TypeEntity type;
 
 	@ManyToOne(cascade = { CascadeType.PERSIST })
 	@JoinColumn(name = "parking_id", referencedColumnName = "parking_id")

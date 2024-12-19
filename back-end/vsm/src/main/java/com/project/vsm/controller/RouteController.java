@@ -1,20 +1,21 @@
 package com.project.vsm.controller;
 
-import com.project.vsm.dto.response.RouteResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.project.vsm.dto.RouteCreateDTO;
 import com.project.vsm.model.RouteEntity;
 import com.project.vsm.service.RouteService;
 
 import jakarta.validation.Valid;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 public class RouteController {
@@ -45,13 +46,19 @@ public class RouteController {
 		return new ResponseEntity<>(route, HttpStatus.CREATED);
 	}
 
-	@GetMapping("/public/route/search")
-	public ResponseEntity<List<RouteResponse>> getRouteWithSchedule(
-			@RequestParam(required = true) String startLocation,
-			@RequestParam(required = true) String stopLocation,
-			@RequestParam(required = true) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startTime) {
-
-		List<RouteResponse> responses = routeService.getRouteWithSchedule( startLocation, stopLocation, startTime);
-		return new ResponseEntity<>(responses, HttpStatus.OK);
-	}
+	/*
+	 * @GetMapping("/public/route/search") public
+	 * ResponseEntity<List<RouteResponse>> getRouteWithSchedule(
+	 * 
+	 * @RequestParam(required = true) String startLocation,
+	 * 
+	 * @RequestParam(required = true) String stopLocation,
+	 * 
+	 * @RequestParam(required = true) @DateTimeFormat(pattern = "dd-MM-yyyy")
+	 * LocalDate startTime) {
+	 * 
+	 * List<RouteResponse> responses = routeService.getRouteWithSchedule(
+	 * startLocation, stopLocation, startTime); return new
+	 * ResponseEntity<>(responses, HttpStatus.OK); }
+	 */
 }

@@ -35,11 +35,11 @@ public class CarController {
         return new ResponseEntity<>(carEntity.get(), HttpStatus.OK);
     }
 
-    @PostMapping("admin/car")
-    public ResponseEntity<CarEntity> createCar(@Valid @ModelAttribute CarCreateDTO carDTO) throws IOException {
-        CarEntity newCar = carService.createNewCar(carDTO);
-        return new ResponseEntity<>(newCar, HttpStatus.CREATED);
-    }
+//    @PostMapping("admin/car")
+//    public ResponseEntity<CarEntity> createCar(@Valid @ModelAttribute CarCreateDTO carDTO) throws IOException {
+//        CarEntity newCar = carService.createNewCar(carDTO);
+//        return new ResponseEntity<>(newCar, HttpStatus.CREATED);
+//    }
 
     @GetMapping("/public/cars")
     public ResponseEntity<Iterable<CarEntity>> getAllCars() {
@@ -51,17 +51,17 @@ public class CarController {
         return new ResponseEntity<>(carService.deleteCarById(id), HttpStatus.OK);
     }
 
-    @PutMapping("/admin/car/{id}")
-    public ResponseEntity<CarEntity> updateCarById(@PathVariable long id, @Valid @ModelAttribute CarUpdateDTO carInput)
-            throws IOException {
-        return new ResponseEntity<>(carService.updateCarById(id, carInput), HttpStatus.OK);
-    }
+//    @PutMapping("/admin/car/{id}")
+//    public ResponseEntity<CarEntity> updateCarById(@PathVariable long id, @Valid @ModelAttribute CarUpdateDTO carInput)
+//            throws IOException {
+//        return new ResponseEntity<>(carService.updateCarById(id, carInput), HttpStatus.OK);
+//    }
 
-    @GetMapping("/public/cars/{typeId}")
-    public ResponseEntity<List<CarEntity>> getCarByType(@PathVariable long typeId) {
-        List<CarEntity> carEntity = carService.getCarByType(typeId);
-        return new ResponseEntity<>(carEntity, HttpStatus.OK);
-    }
+//    @GetMapping("/public/cars/{typeId}")
+//    public ResponseEntity<List<CarEntity>> getCarByType(@PathVariable long typeId) {
+//        List<CarEntity> carEntity = carService.getCarByType(typeId);
+//        return new ResponseEntity<>(carEntity, HttpStatus.OK);
+//    }
 
     @PostMapping("/public/cars/search")
     public ResponseEntity<PagingResponse<CarResponse>> getCarPagingAndSearch(@RequestBody CarSearchRequest request) {

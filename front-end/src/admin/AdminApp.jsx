@@ -31,6 +31,8 @@ import RouteAdmin from "scenes/route/Route";
 import Ticket from "scenes/ticket/Ticket";
 import DetailTicket from "scenes/ticket/detail/DetailTicket";
 import { useRef } from "react";
+import TemplateSeat from "scenes/templateSeat";
+import AddTemplateSeat from "scenes/templateSeat/create/createTemlate";
 
 function AdminApp() {
   const [theme, colorMode] = useMode();
@@ -62,6 +64,11 @@ function AdminApp() {
               <Route path="/car/create" element={<CreateCar />} />
               <Route path="/car/:id" element={<DetailCar />} />
               <Route path="/car/create" element={<CreateCar />} />
+              <Route path="/template-seat" element={<TemplateSeat />} />
+              <Route
+                path="/template-seat/addnew"
+                element={<AddTemplateSeat />}
+              />
               <Route path="/team" element={<Team />} />
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/invoices" element={<Invoices />} />
