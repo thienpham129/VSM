@@ -1,57 +1,84 @@
 import { Box, Button } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataContacts } from "../../admin/data/mockData";
 import Header from "../../components/Header";
 import { useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { request } from "admin/helpers/axios_helper";
 
 const TemplateSeat = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
+  const [types, setTypes] = useState([]);
+
+  // Fetch types data
+  const fetchTypes = async () => {
+    try {
+      const response = await request("GET", `/admin/types`);
+      setTypes(response.data);
+    } catch (error) {
+      console.error("Error fetching types:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTypes();
+  }, []);
+
+  // Delete type method
+  const deleteType = async (id) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa mẫu này không?")) {
+      try {
+        await request("DELETE", `/admin/type/${id}`);
+        setTypes((prevTypes) => prevTypes.filter((type) => type.id !== id));
+        alert("Mẫu đã được xóa thành công!");
+      } catch (error) {
+        console.error("Error deleting type:", error);
+        alert("Xóa mẫu thất bại. Vui lòng thử lại!");
+      }
+    }
+  };
+
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
-    { field: "registrarId", headerName: "Registrar ID" },
+    { field: "typeName", headerName: "Tên Mẫu", flex: 1 },
+    { field: "numSeats", headerName: "Số Lượng Ghế", flex: 1 },
     {
-      field: "name",
-      headerName: "Name",
-      flex: 1,
-      cellClassName: "name-column--cell",
+      field: "action",
+      headerName: "Chi Tiết",
+      renderCell: (params) => (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate(`/admin/template-seat/${params.row.id}`)}
+        >
+          Chi Tiết
+        </Button>
+      ),
     },
     {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
-    },
-    {
-      field: "phone",
-      headerName: "Phone Number",
-      flex: 1,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      flex: 1,
-    },
-    {
-      field: "address",
-      headerName: "Address",
-      flex: 1,
-    },
-    {
-      field: "city",
-      headerName: "City",
-      flex: 1,
-    },
-    {
-      field: "zipCode",
-      headerName: "Zip Code",
-      flex: 1,
+      field: "delete",
+      headerName: "Xóa",
+      renderCell: (params) => (
+        <Button
+          variant="contained"
+          color="error"
+          onClick={() => deleteType(params.row.id)}
+        >
+          Xóa
+        </Button>
+      ),
     },
   ];
+
+  const rows = types.map((type) => ({
+    id: type.id,
+    typeName: type.typeName,
+    numSeats: type.numSeats,
+    seatList: type.seatList,
+  }));
 
   return (
     <Box m="20px">
@@ -101,7 +128,7 @@ const TemplateSeat = () => {
         }}
       >
         <DataGrid
-          rows={mockDataContacts}
+          rows={rows}
           columns={columns}
           components={{ Toolbar: GridToolbar }}
         />

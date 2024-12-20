@@ -29,7 +29,7 @@ public class TypeContronller {
 	@Autowired
 	private TypeService typeService;
 
-	@PostMapping("admin/type")
+	@PostMapping("/type")
 	public ResponseEntity<TypeEntity> createNewType(@Valid @RequestBody TypeDTO typeInput) {
 		return new ResponseEntity<>(typeService.createNewType(typeInput), HttpStatus.OK);
 	}

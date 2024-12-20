@@ -1,6 +1,5 @@
 package com.project.vsm.dto;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -16,6 +15,5 @@ public class CreateDetailSeatDTO {
 	private String position;
 
 	@NotNull(message = "surcharge is required")
-	@Min(value = 0, message = "surcharge must be greater than 0")
 	private int surcharge;
 }

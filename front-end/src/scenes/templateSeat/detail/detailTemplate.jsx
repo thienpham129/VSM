@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Table,
@@ -11,21 +11,59 @@ import {
   TextField,
 } from "@mui/material";
 import Header from "components/Header";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { request } from "admin/helpers/axios_helper";
 
-const AddTemplateSeat = () => {
+const DetailTemplateSeat = () => {
   const [seats, setSeats] = useState([]);
   const [seatValues, setSeatValues] = useState({});
   const [busName, setBusName] = useState("");
   const [busNameError, setBusNameError] = useState(false);
   const [seatCount, setSeatCount] = useState("");
   const [seatCountError, setSeatCountError] = useState(false);
-  const [seatSelectionError, setSeatSelectionError] = useState(false); // Error state for seat selection
+  const [seatSelectionError, setSeatSelectionError] = useState(false);
   const [idType, setIdType] = useState(null);
   const rows = Array.from({ length: 10 }, (_, rowIndex) => rowIndex + 1);
   const columns = ["A", "B", "C", "D", "E"];
+  const { id } = useParams();
 
+  // Fetch seat details based on type ID
+  useEffect(() => {
+    const fetchSeats = async () => {
+      try {
+        const response = await request("GET", `/admin/type/${id}`);
+        const data = response.data;
+        console.log(data);
+
+        // Set bus name and seat count
+        setBusName(data.typeName);
+        setSeatCount(data.numSeats);
+
+        // Set seat selection and surcharge values
+        setSeats(
+          data.seatList.map((seat) => ({
+            seat: seat.position,
+            price: seat.surcharge,
+          }))
+        );
+
+        // Set seatValues to match surcharge values for each seat
+        const seatValuesObj = data.seatList.reduce((acc, seat) => {
+          acc[seat.position] = seat.surcharge;
+          return acc;
+        }, {});
+        setSeatValues(seatValuesObj);
+      } catch (error) {
+        console.error("Error fetching seat details:", error);
+      }
+    };
+
+    if (id) {
+      fetchSeats();
+    }
+  }, [id]);
+
+  // Handle seat selection
   const handleSeatClick = (seat) => {
     const isSelected = seats.some((s) => s.seat === seat);
     if (isSelected) {
@@ -36,6 +74,7 @@ const AddTemplateSeat = () => {
     }
   };
 
+  // Handle price input change for seats
   const handleInputChange = (seat, value) => {
     setSeatValues((prev) => ({
       ...prev,
@@ -47,10 +86,12 @@ const AddTemplateSeat = () => {
     );
   };
 
+  // Validate inputs before saving
   const validateInputs = () => {
     let isValid = true;
-    setSeatSelectionError(false); // Reset the seat selection error
+    setSeatSelectionError(false);
 
+    // Kiểm tra nếu busName là chuỗi rỗng
     if (!busName.trim()) {
       setBusNameError(true);
       isValid = false;
@@ -58,73 +99,61 @@ const AddTemplateSeat = () => {
       setBusNameError(false);
     }
 
-    if (!seatCount.trim() || isNaN(seatCount)) {
+    // Chuyển seatCount thành chuỗi trước khi gọi .trim()
+    const seatCountStr = String(seatCount).trim();
+
+    // Kiểm tra seatCount có phải là số hợp lệ không
+    if (!seatCountStr || isNaN(seatCountStr)) {
       setSeatCountError(true);
       isValid = false;
     } else {
       setSeatCountError(false);
     }
 
-    // Validate seat selection against seat count
-    if (seats.length !== parseInt(seatCount) - 1) {
-      setSeatSelectionError(true); // Show error if seats selected don't match the count
+    // Kiểm tra số ghế đã chọn có khớp với số ghế nhập vào
+    if (seats.length !== parseInt(seatCountStr)) {
+      setSeatSelectionError(true);
       isValid = false;
     }
 
     return isValid;
   };
 
+  // Handle save and send data to the server
   const handleSave = async () => {
     if (validateInputs()) {
-      // Sắp xếp seats theo vị trí
       const sortedSeats = [...seats].sort((a, b) => {
         const [colA, rowA] = [a.seat[0], parseInt(a.seat.slice(1))];
         const [colB, rowB] = [b.seat[0], parseInt(b.seat.slice(1))];
-        if (colA === colB) {
-          return rowA - rowB;
-        }
-        return colA.localeCompare(colB);
+        return colA === colB ? rowA - rowB : colA.localeCompare(colB);
       });
 
-      // Sau khi sắp xếp, in ra các thông tin
-      console.log("Danh sách ghế đã chọn (đã sắp xếp):", sortedSeats);
-      console.log("Giá trị từng ghế:", seatValues);
+      console.log("Sorted Seats:", sortedSeats);
+      console.log("Seat Values:", seatValues);
       const newType = { name: busName, numSeat: seatCount };
 
       try {
-        // Gọi API tạo thể loại xe
-        const response = await request("post", "/admin/type", newType);
-        setIdType(response.data.id);
+        // const response = await request("POST", "/admin/type", newType);
+        // setIdType(response.data.id);
 
-        // Tạo dữ liệu cho seatDetails
         let seatDetails = sortedSeats.map((seat) => ({
           position: seat.seat,
-          surcharge: seatValues[seat.seat] || 0, // Dùng giá trị surcharge từ seatValues
+          surcharge: seatValues[seat.seat] || 0,
         }));
 
-        // Đảm bảo có một đối tượng với "A1" và surcharge = 0
+        // Ensure that "A1" is included with surcharge = 0
         if (!seatDetails.some((seat) => seat.position === "A1")) {
-          seatDetails.unshift({
-            position: "A1",
-            surcharge: 0,
-          });
+          seatDetails.unshift({ position: "A1", surcharge: 0 });
         }
-        // Gọi API cập nhật thông tin chỗ ngồi
-        try {
-          const detailResponse = await request(
-            "post",
-            `/admin/detailSeat?idType=${response.data.id}`,
-            seatDetails
-          );
-          console.log(
-            "Cập nhật thông tin chỗ ngồi thành công:",
-            detailResponse
-          );
-        } catch (detailError) {
-          console.error("Lỗi khi cập nhật thông tin chỗ ngồi:", detailError);
-        }
+
+        const detailResponse = await request(
+          "PUT",
+          `/admin/detailSeat?idType=${id}`,
+          seatDetails
+        );
+        console.log("Seat details updated successfully:", detailResponse);
       } catch (error) {
-        console.error("Lỗi khi tạo thể loại xe:", error);
+        console.error("Error while saving seat data:", error);
       }
     }
   };
@@ -132,17 +161,17 @@ const AddTemplateSeat = () => {
   return (
     <Box m="20px">
       <Header
-        title="Thêm Mới Mẫu Vị Trí Chỗ Ngồi"
+        title="Add New Seat Template"
         subtitle={
           <span>
             <Link
               to="/admin/template-seat"
               style={{ textDecoration: "none", color: "white" }}
             >
-              Quản lý mẫu vị trí chỗ ngồi xe
+              Manage Seat Templates
             </Link>
             <span style={{ textDecoration: "none", color: "inherit" }}>
-              {" > Thêm mới"}
+              {" > Add New"}
             </span>
           </span>
         }
@@ -158,63 +187,60 @@ const AddTemplateSeat = () => {
           bgcolor="white"
           p="20px"
           borderRadius="10px"
-          boxShadow="0 4px 10px rgba(0, 0, 0, 0.1)" // Đổ bóng nhẹ
+          boxShadow="0 4px 10px rgba(0, 0, 0, 0.1)"
         >
-          <h2 style={{ color: "#141b2d" }}>Thêm Mới Mẫu Chỗ Ngồi</h2>
+          <h2 style={{ color: "#141b2d" }}>Add New Seat Template</h2>
           <Box mb="20px">
-            {/* Tên xe */}
             <TextField
-              label="Tên xe"
+              label="Bus Name"
               variant="outlined"
               fullWidth
               value={busName}
               onChange={(e) => setBusName(e.target.value)}
               error={busNameError}
-              helperText={busNameError ? "Tên xe không được để trống" : ""}
+              helperText={busNameError ? "Bus name cannot be empty" : ""}
               style={{ marginBottom: "20px" }}
               InputProps={{
                 style: {
-                  backgroundColor: "#141b2d", // Màu nền của input
-                  color: "white", // Màu chữ của input
+                  backgroundColor: "#141b2d",
+                  color: "white",
                 },
               }}
               InputLabelProps={{
                 style: {
-                  color: "white", // Màu chữ của label
+                  color: "white",
                 },
               }}
             />
-            {/* Số chỗ */}
             <TextField
-              label="Số chỗ"
+              label="Number of Seats"
               variant="outlined"
               fullWidth
               value={seatCount}
               onChange={(e) => setSeatCount(e.target.value)}
               error={seatCountError}
               helperText={
-                seatCountError ? "Số chỗ phải là số và không được để trống" : ""
+                seatCountError
+                  ? "Seat count must be a number and cannot be empty"
+                  : ""
               }
               InputProps={{
                 style: {
-                  backgroundColor: "#141b2d", // Màu nền của input
-                  color: "white", // Màu chữ của input
+                  backgroundColor: "#141b2d",
+                  color: "white",
                 },
               }}
               InputLabelProps={{
                 style: {
-                  color: "white", // Màu chữ của label
+                  color: "white",
                 },
               }}
             />
           </Box>
+
           <TableContainer
             component={Paper}
-            style={{
-              width: "100%",
-              maxWidth: "600px",
-              margin: "20px auto",
-            }}
+            style={{ width: "100%", maxWidth: "600px", margin: "20px auto" }}
           >
             <Table>
               <TableBody>
@@ -228,46 +254,42 @@ const AddTemplateSeat = () => {
                         ? seatObj.price
                         : seatValues[seat] || 0;
 
-                      // Điều kiện cho ghế A1
-                      const isDisabled = seat === "A1";
+                      const isDisabled = seat === "A1"; // A1 is disabled
 
                       return (
                         <TableCell
                           key={seat}
                           align="center"
-                          onClick={() => !isDisabled && handleSeatClick(seat)} // Không thể chọn ghế A1
+                          onClick={() => !isDisabled && handleSeatClick(seat)}
                           style={{
                             backgroundColor: isSelected
                               ? "#4caf50"
                               : isDisabled
-                              ? "#b0b0b0" // Màu xám cho ghế A1
+                              ? "#b0b0b0"
                               : "#e0e0e0",
                             color:
                               isSelected || isDisabled ? "#ffffff" : "#000000",
-                            cursor: isDisabled ? "not-allowed" : "pointer", // Đổi con trỏ khi disabled
+                            cursor: isDisabled ? "not-allowed" : "pointer",
                             border: "1px solid #d0d0d0",
-                            textAlign: "center", // Căn giữa nội dung
+                            textAlign: "center",
                           }}
                         >
-                          {/* Nếu là ghế A1 thì hiển thị 'Tài xế', còn lại là vị trí ghế */}
-                          {isDisabled ? "Tài xế" : seat}
+                          {isDisabled ? "Driver" : seat}
                           {!isDisabled && (
                             <TextField
                               size="small"
                               type="number"
                               variant="outlined"
-                              value={seatDefaultValue} // Thiết lập giá trị mặc định
+                              value={seatDefaultValue}
                               onChange={(e) =>
                                 handleInputChange(seat, e.target.value)
-                              } // Cập nhật giá trị khi thay đổi
+                              }
                               style={{
                                 marginTop: "5px",
                                 backgroundColor: "white",
                               }}
-                              InputProps={{
-                                style: { color: "black" },
-                              }}
-                              onClick={(e) => e.stopPropagation()} // Ngăn click vào input ảnh hưởng trạng thái ghế
+                              InputProps={{ style: { color: "black" } }}
+                              onClick={(e) => e.stopPropagation()}
                             />
                           )}
                         </TableCell>
@@ -278,12 +300,13 @@ const AddTemplateSeat = () => {
               </TableBody>
             </Table>
           </TableContainer>
-          {/* Hiển thị thông báo lỗi nếu số ghế đã chọn không khớp với số chỗ */}
+
           {seatSelectionError && (
             <Box color="red" textAlign="center" mb="10px">
-              Bạn cần chọn đúng số ghế với số chỗ đã nhập.
+              You need to select the correct number of seats as per the input.
             </Box>
           )}
+
           <Box
             mt="30px"
             display="flex"
@@ -291,7 +314,7 @@ const AddTemplateSeat = () => {
             alignItems="center"
           >
             <Button variant="contained" color="primary" onClick={handleSave}>
-              Lưu Mẫu
+              Save Template
             </Button>
           </Box>
         </Box>
@@ -300,4 +323,4 @@ const AddTemplateSeat = () => {
   );
 };
 
-export default AddTemplateSeat;
+export default DetailTemplateSeat;
