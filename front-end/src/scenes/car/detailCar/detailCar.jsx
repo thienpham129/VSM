@@ -47,9 +47,9 @@ const DetailCar = () => {
     try {
       const response = await request("GET", "/admin/types");
       const formattedData = response.data.map((item) => ({
-        id: item.typeId,
-        numSeat: item.numSeat,
-        price: item.price,
+        id: item.id,
+        numSeats: item.numSeats,
+        typeName: item.typeName,
       }));
       setTypeCars(formattedData);
     } catch (error) {
@@ -95,7 +95,7 @@ const DetailCar = () => {
     yearOfManufacture: carData?.yearOfManufacture || "",
     dayMaintenance: carData?.dayMaintenance || "",
     manufactory: carData?.manufactory || "",
-    typeID: carData?.type?.typeId || "",
+    typeID: carData?.type?.id || "",
     parkingID: carData?.parking?.id || "",
   };
 
@@ -183,11 +183,21 @@ const DetailCar = () => {
       .min(1886, "Năm sản xuất không hợp lệ"),
     dayMaintenance: yup
       .date()
-      .required("Vui lòng nhập Ngày Bảo Trì")
       .typeError("Ngày Bảo Trì không hợp lệ")
-      .nullable(), // Cho phép giá trị null
+      .max(new Date(), "Ngày Bảo Trì không thể lớn hơn ngày hiện tại")
+      .nullable()
+      .test(
+        "is-not-before-manufacture-year",
+        "Ngày Bảo Trì không thể nhỏ hơn năm sản xuất",
+        function (value) {
+          const { yearOfManufacture } = this.parent; // Truyền yearOfManufacture từ context của form
+          if (!value) return true; // Nếu ngày bảo trì là null hoặc undefined, không kiểm tra
+          const manufactureYear = new Date(yearOfManufacture, 0, 1); // Tạo ngày với năm sản xuất (1/1 của năm đó)
+          return value >= manufactureYear; // Kiểm tra ngày bảo trì có lớn hơn hoặc bằng năm sản xuất không
+        }
+      ),
     typeID: yup.number().required("Vui lòng chọn loại xe"),
-    parkingID: yup.number().required("Vui lòng chọn bãi đỗ"),
+    // parkingID: yup.number().required("Vui lòng chọn bãi đỗ"),
     manufactory: yup.string().required("Vui lòng nhập Nhà sản xuất"),
   });
 
@@ -303,7 +313,7 @@ const DetailCar = () => {
                 >
                   {typeCars.map((type) => (
                     <MenuItem key={type.id} value={type.id}>
-                      {`Số chỗ: ${type.numSeat}, Giá: ${type.price}`}
+                      {`Số chỗ: ${type.typeName}, Giá: ${type.numSeats}`}
                     </MenuItem>
                   ))}
                 </Select>
