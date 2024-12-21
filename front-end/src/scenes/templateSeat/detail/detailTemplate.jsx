@@ -133,7 +133,7 @@ const DetailTemplateSeat = () => {
       const newType = { name: busName, numSeat: seatCount };
 
       try {
-        // const response = await request("POST", "/admin/type", newType);
+        const response = await request("PUT", `/admin/type/${id}`, newType);
         // setIdType(response.data.id);
 
         let seatDetails = sortedSeats.map((seat) => ({
