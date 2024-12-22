@@ -19,17 +19,24 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CarRouteEntity {
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "car_id", nullable = false) // Liên kết với CarEntity
-    private CarEntity car;
+	@ManyToOne
+	@JoinColumn(name = "car_id", nullable = false) // Liên kết với CarEntity
+	private CarEntity car;
 
-    @ManyToOne
-    @JoinColumn(name = "route_id", nullable = false) // Liên kết với RouteEntity
-    private RouteEntity route;
+	@ManyToOne
+	@JoinColumn(name = "route_id", nullable = false) // Liên kết với RouteEntity
+	private RouteEntity route;
 
-    @Column(name = "price", nullable = false)
-    private int price;
+	@Column(name = "price", nullable = false)
+	private int price;
+
+	@Column(name = "time", nullable = false)
+	private int time;
+
+//	@JsonIgnore
+//	@OneToMany(mappedBy = "carRoute", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//	private List<ScheduleEntity> schedules;
 }

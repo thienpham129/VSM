@@ -50,7 +50,7 @@ public class CarRouteService {
 		carRoute.setCar(car);
 		carRoute.setRoute(route);
 		carRoute.setPrice(input.getPrice());
-
+		carRoute.setTime(input.getTime());
 		return crrepository.save(carRoute);
 	}
 
@@ -58,7 +58,7 @@ public class CarRouteService {
 
 		CarRouteEntity carRoute = crrepository.findById(idCarRoute)
 				.orElseThrow(() -> new NotFoundException("Không tìm thấy carRoute với id = " + idCarRoute));
-		if (input.getPrice() == carRoute.getPrice()) {
+		if (input.getPrice() == carRoute.getPrice() && input.getTime() == carRoute.getTime()) {
 			if (!checkExistCarRoute(input.getIdCar(), input.getIdRoute())) {
 				throw new InvalidInputException("Đã tồn tại chi tiết xe cho tuyến đường này");
 			}
@@ -72,7 +72,7 @@ public class CarRouteService {
 		carRoute.setCar(car);
 		carRoute.setRoute(route);
 		carRoute.setPrice(input.getPrice());
-
+		carRoute.setTime(input.getTime());
 		return crrepository.save(carRoute);
 	}
 

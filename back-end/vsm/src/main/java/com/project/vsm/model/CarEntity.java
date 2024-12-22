@@ -3,8 +3,6 @@ package com.project.vsm.model;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,7 +53,7 @@ public class CarEntity {
 	@OneToMany(mappedBy = "car", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<CarImageEntity> images;
 
-	@OneToMany(mappedBy = "car", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JsonIgnore
-	private List<CarRouteEntity> carRoutes;
+//	@JsonIgnore
+//	@OneToMany(mappedBy = "car", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//	private List<CarRouteEntity> carRoutes;
 }

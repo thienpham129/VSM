@@ -59,6 +59,7 @@ const CreateCarRoute = () => {
       idCar: values.carId,
       idRoute: values.routeId,
       price: formattedPrice,
+      time: values.time, // Thêm time vào payload
     };
 
     try {
@@ -113,6 +114,7 @@ const CreateCarRoute = () => {
           carId: "",
           routeId: "",
           price: "",
+          time: "", // Thêm trường time vào initialValues
         }}
         validationSchema={yup.object().shape({
           carId: yup.string().required("Vui lòng chọn xe!"),
@@ -121,6 +123,11 @@ const CreateCarRoute = () => {
             .number()
             .positive("Giá tiền phải lớn hơn 0!")
             .required("Vui lòng nhập giá tiền!"),
+          time: yup
+            .number()
+            .integer("Khoảng cách thời gian phải là số nguyên!")
+            .min(0, "Khoảng cách thời gian không được nhỏ hơn 0!")
+            .required("Vui lòng nhập khoảng cách thời gian!"),
         })}
       >
         {({
@@ -209,6 +216,21 @@ const CreateCarRoute = () => {
                 helperText={touched.price && errors.price}
                 sx={{ gridColumn: "span 4" }}
               />
+
+              {/* Time Input (Khoảng Cách Lịch) */}
+              <TextField
+                fullWidth
+                variant="filled"
+                type="number"
+                label="Khoảng Cách Thời Gian Giữa Các Lịch (Phút)"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.time}
+                name="time"
+                error={!!touched.time && !!errors.time}
+                helperText={touched.time && errors.time}
+                sx={{ gridColumn: "span 4" }}
+              />
             </Box>
 
             {/* Submit Button */}
@@ -220,6 +242,7 @@ const CreateCarRoute = () => {
           </form>
         )}
       </Formik>
+
       {/* Snackbar for error or success */}
       <Snackbar
         open={openSnackbar}

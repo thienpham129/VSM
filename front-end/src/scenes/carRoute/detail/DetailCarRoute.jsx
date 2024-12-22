@@ -75,11 +75,12 @@ const DetailCarRoute = () => {
       idCar: values.carId,
       idRoute: values.routeId,
       price: formattedPrice,
+      time: values.time, // Thêm time vào payload
     };
 
     try {
       await request("put", `/admin/car-route/${id}`, payload); // Gửi request
-      setSnackbarMessage("Cập nhập giá xe thành công");
+      setSnackbarMessage("Cập nhật giá xe thành công");
       setSnackbarSeverity("success");
       setOpenSnackbar(true); // Mở snackbar thông báo thành công
     } catch (err) {
@@ -121,7 +122,7 @@ const DetailCarRoute = () => {
               Danh sách giá xe
             </Link>
             <span style={{ textDecoration: "none", color: "inherit" }}>
-              {" > Thêm mới giá xe"}
+              {" > Cập nhật giá xe"}
             </span>
           </span>
         }
@@ -132,6 +133,7 @@ const DetailCarRoute = () => {
           carId: carRoute.car.carId || "",
           routeId: carRoute.route.id || "",
           price: carRoute.price ? formatPrice(carRoute.price) : "",
+          time: carRoute.time || "", // Thêm time vào initialValues
         }}
         validationSchema={yup.object().shape({
           carId: yup.string().required("Vui lòng chọn xe!"),
@@ -140,6 +142,11 @@ const DetailCarRoute = () => {
             .number()
             .positive("Giá tiền phải lớn hơn 0!")
             .required("Vui lòng nhập giá tiền!"),
+          time: yup
+            .number()
+            .integer("Khoảng cách phải là số nguyên!")
+            .min(0, "Khoảng cách không được nhỏ hơn 0!")
+            .required("Vui lòng nhập khoảng cách lịch!"),
         })}
       >
         {({
@@ -228,12 +235,27 @@ const DetailCarRoute = () => {
                 helperText={touched.price && errors.price}
                 sx={{ gridColumn: "span 4" }}
               />
+
+              {/* Time Input */}
+              <TextField
+                fullWidth
+                variant="filled"
+                type="number"
+                label="Khoảng Cách Lịch"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.time || ""}
+                name="time"
+                error={!!touched.time && !!errors.time}
+                helperText={touched.time && errors.time}
+                sx={{ gridColumn: "span 4" }}
+              />
             </Box>
 
             {/* Submit Button */}
             <Box display="flex" justifyContent="end" mt="20px">
               <Button type="submit" color="secondary" variant="contained">
-                Cập nhập giá xe
+                Cập nhật giá xe
               </Button>
             </Box>
           </form>
