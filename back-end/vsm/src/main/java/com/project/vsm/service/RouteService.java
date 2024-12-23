@@ -1,29 +1,14 @@
 package com.project.vsm.service;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
-import com.project.vsm.dto.response.CarResponse;
-import com.project.vsm.dto.response.RouteResponse;
-import com.project.vsm.dto.response.ScheduleResponse;
-import com.project.vsm.model.CarEntity;
-import com.project.vsm.model.ScheduleEntity;
-import com.project.vsm.repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.vsm.dto.RouteCreateDTO;
-import com.project.vsm.dto.response.CarResponse;
-import com.project.vsm.dto.response.RouteResponse;
-import com.project.vsm.dto.response.ScheduleResponse;
 import com.project.vsm.exception.InvalidInputException;
 import com.project.vsm.exception.NotFoundException;
-import com.project.vsm.model.CarEntity;
 import com.project.vsm.model.RouteEntity;
-import com.project.vsm.model.ScheduleEntity;
 import com.project.vsm.repository.RouteRepository;
 import com.project.vsm.repository.ScheduleRepository;
 

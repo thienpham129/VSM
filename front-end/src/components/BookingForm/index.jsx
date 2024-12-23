@@ -19,14 +19,14 @@ import MethodPayment from "pages/methodPayment";
 import { jwtDecode } from "jwt-decode";
 
 function BookingForm({
-  selectedSeats,
-  totalPrice,
-  startTime,
-  startLocation,
-  stopLocation,
-  price,
-  scheduleId,
-  typeId,
+  // selectedSeats,
+  // totalPrice,
+  // startTime,
+  // startLocation,
+  // stopLocation,
+  // price,
+  // scheduleId,
+  // typeId,
 }) {
   const navigate = useNavigate();
 
@@ -247,17 +247,17 @@ function BookingForm({
     dropAddress,
   ]);
 
-  useEffect(() => {
-    setSelectedSeat(selectedSeats); // Set selectedSeat to the count of selected seats
-  }, [selectedSeats]);
+  // useEffect(() => {
+  //   setSelectedSeat(selectedSeats); // Set selectedSeat to the count of selected seats
+  // }, [selectedSeats]);
 
   //
   const validateForm = () => {
     const newErrors = {};
 
     if (!fullName.trim()) newErrors.fullName = "Họ tên là bắt buộc.";
-    if (!selectedSeats.length)
-      newErrors.selectedSeats = "Vui lòng chọn ít nhất một ghế.";
+    // if (!selectedSeats.length)
+    //   newErrors.selectedSeats = "Vui lòng chọn ít nhất một ghế.";
     if (!phoneNumber.trim()) {
       newErrors.phoneNumber = "Số điện thoại là bắt buộc.";
     } else if (!/^\d{10}$/.test(phoneNumber)) {
@@ -278,63 +278,63 @@ function BookingForm({
   //
 
   // Create Ticket
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
 
-    if (!validateForm()) return;
+  //   if (!validateForm()) return;
 
-    const ticketData = {
-      fullName,
-      phoneNumber,
-      email,
-      note,
-      detailAddressToPickUp,
-      selectedSeat,
-      detailAddressDropOff,
-      paymentMethod,
-      scheduleId,
-      typeId,
-      ...(voucher && { voucher }),
-    };
+  //   const ticketData = {
+  //     fullName,
+  //     phoneNumber,
+  //     email,
+  //     note,
+  //     detailAddressToPickUp,
+  //     selectedSeat,
+  //     detailAddressDropOff,
+  //     paymentMethod,
+  //     scheduleId,
+  //     typeId,
+  //     ...(voucher && { voucher }),
+  //   };
 
-    try {
-      const token = getTokenFromLocalStorage();
-      if (!token) {
-        window.location.href = "/login";
-      }
-      const response = await root.post("/public/tickets/create", ticketData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  //   try {
+  //     const token = getTokenFromLocalStorage();
+  //     if (!token) {
+  //       window.location.href = "/login";
+  //     }
+  //     const response = await root.post("/public/tickets/create", ticketData, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
 
-      if (response.status === 200) {
-        console.log("Booking successful:", response.data);
-        navigate("/methodPayment", {
-          state: {
-            fullName,
-            phoneNumber,
-            email,
-            note,
-            detailAddressToPickUp,
-            selectedSeat,
-            detailAddressDropOff,
-            totalPrice: response.data.totalPrice,
-            startTime,
-            startLocation,
-            stopLocation,
-            ticketId: response.data.ticketId,
-            // voucher : response.data.voucher
-          },
-        });
-      } else {
-        console.error("Error submitting booking");
-      }
-    } catch (error) {
-      console.error("Error submitting booking:", error);
-    }
-  };
+  //     if (response.status === 200) {
+  //       console.log("Booking successful:", response.data);
+  //       navigate("/methodPayment", {
+  //         state: {
+  //           fullName,
+  //           phoneNumber,
+  //           email,
+  //           note,
+  //           detailAddressToPickUp,
+  //           selectedSeat,
+  //           detailAddressDropOff,
+  //           totalPrice: response.data.totalPrice,
+  //           startTime,
+  //           startLocation,
+  //           stopLocation,
+  //           ticketId: response.data.ticketId,
+  //           // voucher : response.data.voucher
+  //         },
+  //       });
+  //     } else {
+  //       console.error("Error submitting booking");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error submitting booking:", error);
+  //   }
+  // };
 
   useEffect(() => {
     if (pickUpAddress) {
@@ -493,22 +493,25 @@ function BookingForm({
         className={styles.bookingPage__tickets__item__collapse__booking__title}
       >
         <h3>
-          {startLocation} <i class="fa-solid fa-arrow-right" /> {stopLocation}
+          {/* {startLocation} <i class="fa-solid fa-arrow-right" /> {stopLocation} */}
+          123
         </h3>
-        <p>{new Date(startTime).toLocaleString()}</p>
+        {/* <p>{new Date(startTime).toLocaleString()}</p> */}
+        456
       </div>
       <form
         method="POST"
         data-trip-choosableseat={1}
         data-form-trip-id="PLT0Tc1ybgN295oCg20241015"
-        onSubmit={handleSubmit}
+        // onSubmit={handleSubmit}
       >
         <div className="d-none" data-content="additionPriceForUserType" />
 
         <div className={styles.form_group}>
           <label htmlFor="">Ghế đã chọn</label>
           <div data-content="listSeat" className={styles.list_seat}>
-            {selectedSeats.join(", ")}
+            {/* {selectedSeats.join(", ")} */}
+            789
 
             <span className={styles.error}>{errors.selectedSeats}</span>
           </div>
@@ -519,7 +522,8 @@ function BookingForm({
           <label htmlFor="">Tổng tiền</label>
           <span className="total-monney">
             <span data-content="totalPrice">
-              {totalPrice.toLocaleString().replace(",", ".")} VNĐ
+              {/* {totalPrice.toLocaleString().replace(",", ".")} VNĐ */}
+              890
             </span>{" "}
           </span>
         </div>

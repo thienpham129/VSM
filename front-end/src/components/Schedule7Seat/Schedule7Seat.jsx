@@ -43,16 +43,16 @@ const Seat = ({ seatId, seatStatus, onSelect, bookedSeats }) => {
 };
 
 const Schedule7Seat = ({
-  startTime,
-  startLocation,
-  stopLocation,
-  car,
-  numSeat,
-  price,
-  scheduleId,
-  typeId,
+  // startTime,
+  // startLocation,
+  // stopLocation,
+  // car,
+  // numSeat,
+  // price,
+  // scheduleId,
+  // typeId,
 }) => {
-  const ticketPrice = price;
+  // const ticketPrice = price;
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [toggle, setToggle] = useState(false);
@@ -64,65 +64,65 @@ const Schedule7Seat = ({
 
   const [availableSeats, setAvailableSeats] = useState(6); // Số ghế còn trống
 
-  const handleSeatSelection = (seatId, isSelected) => {
-    setSelectedSeats((prev) => {
-      if (isSelected) {
-        return [...prev, seatId];
-      } else {
-        return prev.filter((id) => id !== seatId);
-      }
-    });
+  // const handleSeatSelection = (seatId, isSelected) => {
+  //   setSelectedSeats((prev) => {
+  //     if (isSelected) {
+  //       return [...prev, seatId];
+  //     } else {
+  //       return prev.filter((id) => id !== seatId);
+  //     }
+  //   });
 
-    setTotalPrice((prev) =>
-      isSelected ? prev + ticketPrice : prev - ticketPrice
-    );
-  };
+  //   setTotalPrice((prev) =>
+  //     isSelected ? prev + ticketPrice : prev - ticketPrice
+  //   );
+  // };
 
   const handelClickDetail = () => {
     setToggle(!toggle);
   };
 
-  useEffect(() => {
-    const fetchBookedSeats = async () => {
-      try {
-        const response = await root.get(
-          `/public/ticket-with-schedule/${scheduleId}`
-        );
-        // Lấy ghế có status "Đang chờ xử lý", "Đã thanh toán", và "Đã hủy vé"
-        const seatsPending = response.data
-          .filter((ticket) => ticket.status === "Đang chờ xử lý")
-          .map((ticket) => ticket.selectedSeat)
-          .flat();
+  // useEffect(() => {
+  //   const fetchBookedSeats = async () => {
+  //     try {
+  //       const response = await root.get(
+  //         `/public/ticket-with-schedule/${scheduleId}`
+  //       );
+  //       // Lấy ghế có status "Đang chờ xử lý", "Đã thanh toán", và "Đã hủy vé"
+  //       const seatsPending = response.data
+  //         .filter((ticket) => ticket.status === "Đang chờ xử lý")
+  //         .map((ticket) => ticket.selectedSeat)
+  //         .flat();
 
-        const seatsPaid = response.data
-          .filter((ticket) => ticket.status === "Đã thanh toán")
-          .map((ticket) => ticket.selectedSeat)
-          .flat();
+  //       const seatsPaid = response.data
+  //         .filter((ticket) => ticket.status === "Đã thanh toán")
+  //         .map((ticket) => ticket.selectedSeat)
+  //         .flat();
 
-        const seatsCanceled = response.data
-          .filter((ticket) => ticket.status === "Đã hủy vé")
-          .map((ticket) => ticket.selectedSeat)
-          .flat();
+  //       const seatsCanceled = response.data
+  //         .filter((ticket) => ticket.status === "Đã hủy vé")
+  //         .map((ticket) => ticket.selectedSeat)
+  //         .flat();
 
-        // Lưu danh sách ghế theo trạng thái
-        setBookedSeats({
-          soldSeats: seatsPaid, // Đã thanh toán
-          bookedSeats: seatsPending, // Đang chờ xử lý
-          canceledSeats: seatsCanceled, // Đã hủy vé
-        });
+  //       // Lưu danh sách ghế theo trạng thái
+  //       setBookedSeats({
+  //         soldSeats: seatsPaid, // Đã thanh toán
+  //         bookedSeats: seatsPending, // Đang chờ xử lý
+  //         canceledSeats: seatsCanceled, // Đã hủy vé
+  //       });
 
-        // Đếm số ghế còn trống
-        const totalSeats = 6; // Xe có 6 ghế
-        const soldAndBookedSeats = new Set([...seatsPaid, ...seatsPending]); // Ghế đã bán hoặc đang chờ xử lý
-        const availableSeats = totalSeats - soldAndBookedSeats.size;
-        setAvailableSeats(availableSeats);
-      } catch (err) {
-        console.log("««««« err »»»»»", err);
-      }
-    };
+  //       // Đếm số ghế còn trống
+  //       const totalSeats = 6; // Xe có 6 ghế
+  //       const soldAndBookedSeats = new Set([...seatsPaid, ...seatsPending]); // Ghế đã bán hoặc đang chờ xử lý
+  //       const availableSeats = totalSeats - soldAndBookedSeats.size;
+  //       setAvailableSeats(availableSeats);
+  //     } catch (err) {
+  //       console.log("««««« err »»»»»", err);
+  //     }
+  //   };
 
-    fetchBookedSeats();
-  }, [scheduleId]);
+  //   fetchBookedSeats();
+  // }, [scheduleId]);
 
   return (
     <div
@@ -134,17 +134,19 @@ const Schedule7Seat = ({
         <div className={styles.bookingPage__tickets__item__thumb__time}>
           <span className="avicon icon-clock"></span>
           <h3 className={styles.times}>
-            {new Date(startTime).toLocaleTimeString([], {
+            {/* {new Date(startTime).toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
-            })}
+            })} */}
+            123
           </h3>
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__route}>
           <span className="avicon icon-bus" style={{ marginRight: "14px" }} />
           <div className={styles.route}>
             <h3 className={styles.showAsRoute}>
-              {startLocation} - {stopLocation}
+              {/* {startLocation} - {stopLocation} */}
+              456
             </h3>
           </div>
         </div>
@@ -163,12 +165,13 @@ const Schedule7Seat = ({
               chỗ ngồi còn trống
             </h3>
             <span>
-              {car.name} - {numSeat} chỗ
+              {/* {car.name} - {numSeat} chỗ */}
+              789
             </span>
           </div>
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__price}>
-          <span>{price.toLocaleString().replace(",", ".")} VND</span>
+          {/* <span>{price.toLocaleString().replace(",", ".")} VND</span> */}
         </div>
         <div className={styles.bookingPage__tickets__item__thumb__view_button}>
           <a
@@ -238,38 +241,38 @@ const Schedule7Seat = ({
                       <Seat
                         seatId="A1"
                         bookedSeats={bookedSeats}
-                        onSelect={handleSeatSelection}
+                        // onSelect={handleSeatSelection}
                       />
                     </tr>
                     <tr>
                       <Seat
                         seatId="A2"
                         bookedSeats={bookedSeats}
-                        onSelect={handleSeatSelection}
+                        // onSelect={handleSeatSelection}
                       />
                       <Seat
                         seatId="A3"
                         bookedSeats={bookedSeats}
-                        onSelect={handleSeatSelection}
+                        // onSelect={handleSeatSelection}
                       />
                       <Seat
                         seatId="A4"
                         bookedSeats={bookedSeats}
-                        onSelect={handleSeatSelection}
+                        // onSelect={handleSeatSelection}
                       />
                     </tr>
                     <tr>
                       <Seat
                         seatId="A5"
                         bookedSeats={bookedSeats}
-                        onSelect={handleSeatSelection}
+                        // onSelect={handleSeatSelection}
                       />
                       <td />
 
                       <Seat
                         seatId="A6"
                         bookedSeats={bookedSeats}
-                        onSelect={handleSeatSelection}
+                        // onSelect={handleSeatSelection}
                       />
                     </tr>
                   </tbody>
@@ -302,7 +305,7 @@ const Schedule7Seat = ({
                 </p>
               </div>
             </div>
-            <BookingForm
+            {/* <BookingForm
               selectedSeats={selectedSeats}
               totalPrice={totalPrice}
               startTime={startTime}
@@ -313,7 +316,8 @@ const Schedule7Seat = ({
               price={price}
               scheduleId={scheduleId}
               typeId={typeId}
-            />
+            /> */}
+            <BookingForm />
           </div>
         </div>
       ) : (

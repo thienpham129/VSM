@@ -46,7 +46,8 @@
     display: flex;
     margin-right: 10px;
     /* width: 22%; */
-    width: 23%;
+    /* width: 23%; */
+    width: 26%;
     position: relative;
     overflow: hidden
 }
@@ -619,7 +620,8 @@
 }
 
 .bookingPage__tickets__item__collapse__booking__seat_map {
-    width: 100%;
+    /* width: 100%; */
+    width: 65%;
     margin-right: 24px
 }
 

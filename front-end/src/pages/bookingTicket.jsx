@@ -15,28 +15,27 @@ const BookingTicket = () => {
   const [startTime, setStartTime] = useState("");
   const [schedules, setSchedules] = useState([]);
 
-  const handleSearch = async () => {
-    if (!startLocation || !stopLocation || !startTime) {
-      alert("Vui lòng chọn đầy đủ thông tin!");
-      return;
-    }
+  // const handleSearch = async () => {
+  //   if (!startLocation || !stopLocation || !startTime) {
+  //     alert("Vui lòng chọn đầy đủ thông tin!");
+  //     return;
+  //   }
 
-    try {
-      const response = await root.get(`/public/route/search`, {
-        params: {
-          startLocation,
-          stopLocation,
-          startTime,
-        },
-      });
-      setSchedules(response.data);
-      console.log("««««« response.data »»»»»", response.data);
-    } catch (error) {
-      console.error("Lỗi khi gọi API:", error);
-      alert("Không tìm thấy lịch trình phù hợp.");
-    }
-  };
-  console.log("««««« schedules »»»»»", schedules);
+  //   try {
+  //     const response = await root.get(`/public/route/search`, {
+  //       params: {
+  //         startLocation,
+  //         stopLocation,
+  //         startTime,
+  //       },
+  //     });
+  //     setSchedules(response.data);
+  //     console.log("««««« response.data »»»»»", response.data);
+  //   } catch (error) {
+  //     console.error("Lỗi khi gọi API:", error);
+  //     alert("Không tìm thấy lịch trình phù hợp.");
+  //   }
+  // };
 
   const locations = {
     "Tỉnh Quảng Nam": [
@@ -154,7 +153,7 @@ const BookingTicket = () => {
                     </span>
                   </div>
                   <div className={styles.searchTicket__item__right}>
-                    <span className={styles.searchTicket__item__title}>
+                    <span className={styles.searchTicket__item__title} style={{paddingRight: '20px'}}>
                       Điểm đến
                     </span>
                     <select
@@ -203,7 +202,7 @@ const BookingTicket = () => {
                     </span>
                     <input
                       className={styles.ticket_date}
-                      type="date"
+                      type="datetime-local"
                       value={startTime}
                       onChange={(e) => setStartTime(e.target.value)}
                       min={new Date().toISOString().split("T")[0]}
@@ -215,7 +214,7 @@ const BookingTicket = () => {
                 <a
                   href="javascript:;"
                   data-action="searchTrip"
-                  onClick={handleSearch}
+                  // onClick={handleSearch}
                 >
                   <i className="fa fa-search" aria-hidden="true" /> Tìm chuyến
                 </a>
@@ -247,7 +246,8 @@ const BookingTicket = () => {
           
           <div className={styles.container}>
             <div className={styles.bookingPage__tickets__wrap}>
-              {schedules.length > 0 ? (
+              <Schedule7Seat />
+              {/* {schedules.length > 0 ? (
                 schedules.map((schedule) => (
                   <div
                     className={styles.bookingPage__ticket}
@@ -303,7 +303,7 @@ const BookingTicket = () => {
                 <p className="no_schedule">
                   Không tìm thấy lịch trình nào! Vui lòng chọn địa điểm khác
                 </p>
-              )}
+              )} */}
             </div>
           </div>
         </div>
@@ -459,7 +459,7 @@ const BookingTicket = () => {
                 <a
                   href="javascript:;"
                   data-action="searchTrip"
-                  onClick={handleSearch}
+                  // onClick={handleSearch}
                 >
                   <i className="fa fa-search" aria-hidden="true" />
                   Tìm chuyến{" "}
