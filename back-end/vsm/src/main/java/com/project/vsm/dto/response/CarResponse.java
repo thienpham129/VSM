@@ -3,15 +3,13 @@ package com.project.vsm.dto.response;
 
 import com.project.vsm.model.CarEntity;
 import com.project.vsm.model.TypeEntity;
-import jakarta.persistence.Column;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
-import java.util.List;
-
-import com.project.vsm.model.CarEntity;
-import com.project.vsm.model.TypeEntity;
 
 @Getter
 @Setter
@@ -38,15 +36,13 @@ public class CarResponse {
         response.setColor(car.getColor());
         response.setManufactory(car.getManufactory());
         response.setYearOfManufacture(car.getYearOfManufacture());
-        response.setNumSeat(car.getType().getNumSeat());
-        response.setPrice(car.getType().getPrice());
+        response.setNumSeat(car.getType().getNumSeats());
 
         if (car.getType() != null) {
             TypeEntity type = car.getType();
             TypeResponse typeResponse = new TypeResponse();
-            typeResponse.setTypeId(type.getTypeId());
-            typeResponse.setNumSeat(type.getNumSeat());
-            typeResponse.setPrice(type.getPrice());
+            typeResponse.setTypeId(type.getId());
+            typeResponse.setNumSeat(type.getNumSeats());
             response.setType(typeResponse);
         } else {
             response.setType(new TypeResponse());

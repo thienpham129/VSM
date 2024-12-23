@@ -97,12 +97,11 @@ const Dashboard = () => {
     fetchStatRevenue();
   }, []);
 
-
   return (
     <Box m="20px">
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
+        <Header title="Quản Lý" subtitle="Quản Lý Thông Tin Ứng Dụng" />
 
         <Box>
           <Button
@@ -208,20 +207,20 @@ const Dashboard = () => {
 
       <Grid container spacing={2} style={{ marginTop: "25px" }}>
         {/* ROW 1 */}
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={12}>
           <RevenueWidget totalRevenue={totalRevenue} revenue={revenue} />
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        {/* <Grid item xs={12} md={4}>
           <RouteFrequencyPieWidget />
-        </Grid>
+        </Grid> */}
 
         {/* ROW 2 */}
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={12}>
           <DriverPerformanceWidget />
         </Grid>
         {/* ROW 3 */}
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={12}>
           <TicketBookingLineWidget />
         </Grid>
         {/* ROW 2 */}

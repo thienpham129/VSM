@@ -11,10 +11,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.project.vsm.model.TicketEntity;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface TicketRepository extends JpaRepository<TicketEntity, Long> {
+public interface TicketRepository extends JpaRepository<TicketEntity, String> {
 	@Query("select t from TicketEntity  t where t.scheduleEntity.id = ?1")
 	List<TicketEntity> getTicketByScheduleId(long scheduleId);
 
@@ -33,7 +32,7 @@ public interface TicketRepository extends JpaRepository<TicketEntity, Long> {
 			+ "ORDER BY r.startLocation, r.stopLocation, MONTH(s.startTime)")
 	List<Object[]> countTicketsByRouteAndMonth();
 
-	@Query("SELECT COALESCE(SUM(t.price), 0) FROM TicketEntity t WHERE YEAR(t.scheduleEntity.startTime) = :year AND MONTH(t.scheduleEntity.startTime) = :month")
+	@Query("SELECT COALESCE(SUM(t.price), 0) FROM TicketEntity t WHERE YEAR(t.scheduleEntity.startTime) = :year AND MONTH(t.scheduleEntity.startTime) = :month AND t.isPaid = true")
 	double sumRevenueByMonth(@Param("year") int year, @Param("month") int month);
 
 	@Query("SELECT COUNT(t) FROM TicketEntity t JOIN t.scheduleEntity s WHERE EXTRACT(MONTH FROM s.startTime) = :month AND EXTRACT(YEAR FROM s.startTime) = :year")

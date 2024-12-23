@@ -1,49 +1,37 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function HomePage({ departureTime }) {
-  const navigate = useNavigate();
-  const [selectedPrice, setSelectedPrice] = useState("150.000 VNĐ");
-
-  const handleSelection = (price) => {
-    setSelectedPrice(price);
-  };
-
-  const handleContinueQuickBooking = (e) => {
-    e.preventDefault();
-    navigate("/quickBooking");
-  };
-
-  const [timeLeft, setTimeLeft] = useState("");
+function HomePage() {
+  // const [timeLeft, setTimeLeft] = useState("");
 
   // handle time left
-  useEffect(() => {
-    const targetTime = new Date();
-    const defaultTime = "00:00:00"; // Thời gian mặc định
-    const [hours, minutes, seconds] = (departureTime || defaultTime)
-      .split(":")
-      .map(Number);
-    targetTime.setHours(hours, minutes, seconds);
+  // useEffect(() => {
+  //   const targetTime = new Date();
+  //   const defaultTime = "00:00:00"; // Thời gian mặc định
+  //   const [hours, minutes, seconds] = (departureTime || defaultTime)
+  //     .split(":")
+  //     .map(Number);
+  //   targetTime.setHours(hours, minutes, seconds);
 
-    const interval = setInterval(() => {
-      const now = new Date();
-      const difference = targetTime - now;
+  //   const interval = setInterval(() => {
+  //     const now = new Date();
+  //     const difference = targetTime - now;
 
-      if (difference <= 0) {
-        clearInterval(interval);
-        setTimeLeft("Đã khởi hành");
-      } else {
-        const hoursLeft = Math.floor(difference / (1000 * 60 * 60));
-        const minutesLeft = Math.floor(
-          (difference % (1000 * 60 * 60)) / (1000 * 60)
-        );
-        const secondsLeft = Math.floor((difference % (1000 * 60)) / 1000);
-        setTimeLeft(`${hoursLeft}h ${minutesLeft}m ${secondsLeft}s`);
-      }
-    }, 1000);
+  //     if (difference <= 0) {
+  //       clearInterval(interval);
+  //       setTimeLeft("Đã khởi hành");
+  //     } else {
+  //       const hoursLeft = Math.floor(difference / (1000 * 60 * 60));
+  //       const minutesLeft = Math.floor(
+  //         (difference % (1000 * 60 * 60)) / (1000 * 60)
+  //       );
+  //       const secondsLeft = Math.floor((difference % (1000 * 60)) / 1000);
+  //       setTimeLeft(`${hoursLeft}h ${minutesLeft}m ${secondsLeft}s`);
+  //     }
+  //   }, 1000);
 
-    return () => clearInterval(interval);
-  }, [departureTime]);
+  //   return () => clearInterval(interval);
+  // }, [departureTime]);
 
   //
   return (
@@ -62,288 +50,26 @@ function HomePage({ departureTime }) {
                 <div className="spacer-double d-lg-none d-sm-block" />
                 <div className="spacer-double d-lg-none d-sm-block" />
                 <div className="spacer-double d-lg-none d-sm-block" />
-                {/*  */}
                 <div className="row align-items-center">
-                  <div className="col-lg-6">
-                    <div className="spacer-single sm-hide" />
-                    <div
-                      className="p-4 rounded-3 shadow-soft text-light"
-                      style={{
-                        backgroundColor: "rgba(0, 0, 0, .6)",
-                        marginLeft: "80px",
-                      }}
-                    >
-                      <div name="contactForm" id="contact_form" method="post">
-                        <div className="de_form de_radio row g-3">
-                          <div className="radio-img col-lg-6 col-sm-3 col-6">
-                            <input
-                              id="radio-1b"
-                              name="Car_Type"
-                              type="radio"
-                              defaultValue="Office"
-                              value="150.000 VNĐ"
-                              onChange={() => handleSelection("150.000 VNĐ")}
-                            />
-                            <label htmlFor="radio-1b">
-                              <img src="images/select-form/van.png" alt="" />
-                              Xe 7 chỗ (150.000)
-                            </label>
-                          </div>
-                          <div className="radio-img col-lg-6 col-sm-3 col-6">
-                            <input
-                              id="radio-1c"
-                              name="Car_Type"
-                              type="radio"
-                              defaultValue="Commercial"
-                              value="120.000 VNĐ"
-                              onChange={() => handleSelection("120.000 VNĐ")}
-                            />
-                            <label htmlFor="radio-1c">
-                              <img
-                                src="images/select-form/minibus.png"
-                                alt=""
-                              />
-                              Xe 10 chỗ (120.000)
-                            </label>
-                          </div>
-                          <table className="info_lobby">
-                            <tr>
-                              <th>Thời gian chuẩn bị xe chạy</th>
-                              <th>Địa điểm đi và đến</th>
-                              <th>Giá vé</th>
-                              <th>Số ghế còn trống</th>
-                            </tr>
-                            <tr>
-                              <td>
-                                {" "}
-                                <p>{timeLeft}</p>
-                              </td>
-                              <td>Đà Nẵng đến Huế</td>
-                              <td>{selectedPrice}</td>
-                              <td>10/50</td>
-                            </tr>
-                          </table>
-                        </div>
-                        <div className="spacer-20" />
-                        <input
-                          type="submit"
-                          className="btn-main pull-right"
-                          value={"Chọn chuyến đi này"}
-                          onClick={handleContinueQuickBooking}
-                        />
-                        <div className="clearfix" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-lg-6">
-                    <div className="spacer-single sm-hide" />
-                    <div
-                      className="p-4 rounded-3 shadow-soft text-light"
-                      style={{
-                        backgroundColor: "rgba(0, 0, 0, .6)",
-                        marginLeft: "80px",
-                      }}
-                    >
-                      <div name="contactForm" id="contact_form" method="post">
-                        <div className="de_form de_radio row g-3">
-                          <div className="radio-img col-lg-6 col-sm-3 col-6">
-                            <input
-                              id="radio-1b"
-                              name="Car_Type"
-                              type="radio"
-                              defaultValue="Office"
-                              value="150.000 VNĐ"
-                              onChange={() => handleSelection("150.000 VNĐ")}
-                            />
-                            <label htmlFor="radio-1b">
-                              <img src="images/select-form/van.png" alt="" />
-                              Xe 7 chỗ (150.000)
-                            </label>
-                          </div>
-                          <div className="radio-img col-lg-6 col-sm-3 col-6">
-                            <input
-                              id="radio-1c"
-                              name="Car_Type"
-                              type="radio"
-                              defaultValue="Commercial"
-                              value="120.000 VNĐ"
-                              onChange={() => handleSelection("120.000 VNĐ")}
-                            />
-                            <label htmlFor="radio-1c">
-                              <img
-                                src="images/select-form/minibus.png"
-                                alt=""
-                              />
-                              Xe 10 chỗ (120.000)
-                            </label>
-                          </div>
-                          <table className="info_lobby">
-                            <tr>
-                              <th>Thời gian chuẩn bị xe chạy</th>
-                              <th>Địa điểm đi và đến</th>
-                              <th>Giá vé</th>
-                              <th>Số ghế còn trống</th>
-                            </tr>
-                            <tr>
-                              <td>7 :00</td>
-                              <td>Đà Nẵng đến Huế</td>
-                              <td>{selectedPrice}</td>
-                              <td>10/50</td>
-                            </tr>
-                          </table>
-                        </div>
-                        <div className="spacer-20" />
-
-                        <input
-                          type="submit"
-                          className="btn-main pull-right"
-                          value={"Chọn chuyến đi này"}
-                        />
-                        <div className="clearfix" />
-                      </div>
-                    </div>
+                  <div className="col-lg-6 text-light">
+                    <h4>
+                      <span className="id-color">
+                        DỄ DÀNG ĐẶT XE TRÊN WEBSITE CỦA CHÚNG TÔI
+                      </span>
+                    </h4>
+                    <div className="spacer-10" />
+                    <h1 className="mb-2">
+                      Khám phá thế giới với chiếc xe và dịch vụ thoải mái của
+                      chúng tôi
+                    </h1>
+                    <div className="spacer-10" />
+                    <p className="lead">
+                      Hãy bắt đầu những cuộc phiêu lưu khó quên và khám phá thế
+                      giới trong sự thoải mái và phong cách vô song với đội xe
+                      cực kỳ thoải mái của chúng tôi.
+                    </p>
                   </div>
                 </div>
-                {/*  */}
-                <div className="row align-items-center">
-                  <div className="col-lg-6">
-                    <div className="spacer-single sm-hide" />
-                    <div
-                      className="p-4 rounded-3 shadow-soft text-light"
-                      style={{
-                        backgroundColor: "rgba(0, 0, 0, .6)",
-                        marginLeft: "80px",
-                      }}
-                    >
-                      <div name="contactForm" id="contact_form" method="post">
-                        <div className="de_form de_radio row g-3">
-                          <div className="radio-img col-lg-6 col-sm-3 col-6">
-                            <input
-                              id="radio-1b"
-                              name="Car_Type"
-                              type="radio"
-                              defaultValue="Office"
-                              value="150.000 VNĐ"
-                              onChange={() => handleSelection("150.000 VNĐ")}
-                            />
-                            <label htmlFor="radio-1b">
-                              <img src="images/select-form/van.png" alt="" />
-                              Xe 7 chỗ (150.000)
-                            </label>
-                          </div>
-                          <div className="radio-img col-lg-6 col-sm-3 col-6">
-                            <input
-                              id="radio-1c"
-                              name="Car_Type"
-                              type="radio"
-                              defaultValue="Commercial"
-                              value="120.000 VNĐ"
-                              onChange={() => handleSelection("120.000 VNĐ")}
-                            />
-                            <label htmlFor="radio-1c">
-                              <img
-                                src="images/select-form/minibus.png"
-                                alt=""
-                              />
-                              Xe 10 chỗ (120.000)
-                            </label>
-                          </div>
-                          <table className="info_lobby">
-                            <tr>
-                              <th>Thời gian chuẩn bị xe chạy</th>
-                              <th>Địa điểm đi và đến</th>
-                              <th>Giá vé</th>
-                              <th>Số ghế còn trống</th>
-                            </tr>
-                            <tr>
-                              <td>7 :00</td>
-                              <td>Đà Nẵng đến Huế</td>
-                              <td>{selectedPrice}</td>
-                              <td>10/50</td>
-                            </tr>
-                          </table>
-                        </div>
-                        <div className="spacer-20" />
-
-                        <input
-                          type="submit"
-                          className="btn-main pull-right"
-                          value={"Chọn chuyến đi này"}
-                        />
-                        <div className="clearfix" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-lg-6">
-                    <div className="spacer-single sm-hide" />
-                    <div
-                      className="p-4 rounded-3 shadow-soft text-light"
-                      style={{
-                        backgroundColor: "rgba(0, 0, 0, .6)",
-                        marginLeft: "80px",
-                      }}
-                    >
-                      <div name="contactForm" id="contact_form" method="post">
-                        <div className="de_form de_radio row g-3">
-                          <div className="radio-img col-lg-6 col-sm-3 col-6">
-                            <input
-                              id="radio-1b"
-                              name="Car_Type"
-                              type="radio"
-                              defaultValue="Office"
-                              value="150.000 VNĐ"
-                              onChange={() => handleSelection("150.000 VNĐ")}
-                            />
-                            <label htmlFor="radio-1b">
-                              <img src="images/select-form/van.png" alt="" />
-                              Xe 7 chỗ (150.000)
-                            </label>
-                          </div>
-                          <div className="radio-img col-lg-6 col-sm-3 col-6">
-                            <input
-                              id="radio-1c"
-                              name="Car_Type"
-                              type="radio"
-                              defaultValue="Commercial"
-                              value="120.000 VNĐ"
-                              onChange={() => handleSelection("120.000 VNĐ")}
-                            />
-                            <label htmlFor="radio-1c">
-                              <img
-                                src="images/select-form/minibus.png"
-                                alt=""
-                              />
-                              Xe 10 chỗ (120.000)
-                            </label>
-                          </div>
-                          <table className="info_lobby">
-                            <tr>
-                              <th>Thời gian chuẩn bị xe chạy</th>
-                              <th>Địa điểm đi và đến</th>
-                              <th>Giá vé</th>
-                              <th>Số ghế còn trống</th>
-                            </tr>
-                            <tr>
-                              <td>7 :00</td>
-                              <td>Đà Nẵng đến Huế</td>
-                              <td>{selectedPrice}</td>
-                              <td>10/50</td>
-                            </tr>
-                          </table>
-                        </div>
-                        <div className="spacer-20" />
-
-                        <input
-                          type="submit"
-                          className="btn-main pull-right"
-                          value={"Chọn chuyến đi này"}
-                        />
-                        <div className="clearfix" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/*  */}
                 <div className="spacer-double d-lg-none d-sm-block" />
                 <div className="spacer-double d-lg-none d-sm-block" />
               </div>
@@ -589,114 +315,7 @@ function HomePage({ departureTime }) {
           </div>
         </section>
 
-        {/* <section id="section-img-with-tab" className="bg-dark text-light">
-          <div className="container">
-            <div className="row align-items-center">
-              <div className="col-lg-5 offset-lg-7">
-                <h2>Only Quality For Clients</h2>
-                <div className="spacer-20" />
-                <ul
-                  className="nav nav-pills mb-3"
-                  id="pills-tab"
-                  role="tablist"
-                >
-                  <li className="nav-item" role="presentation">
-                    <button
-                      className="nav-link active"
-                      id="pills-home-tab"
-                      data-bs-toggle="pill"
-                      data-bs-target="#pills-home"
-                      type="button"
-                      role="tab"
-                      aria-controls="pills-home"
-                      aria-selected="true"
-                    >
-                      Luxury
-                    </button>
-                  </li>
-                  <li className="nav-item" role="presentation">
-                    <button
-                      className="nav-link"
-                      id="pills-profile-tab"
-                      data-bs-toggle="pill"
-                      data-bs-target="#pills-profile"
-                      type="button"
-                      role="tab"
-                      aria-controls="pills-profile"
-                      aria-selected="false"
-                    >
-                      Comfort
-                    </button>
-                  </li>
-                  <li className="nav-item" role="presentation">
-                    <button
-                      className="nav-link"
-                      id="pills-contact-tab"
-                      data-bs-toggle="pill"
-                      data-bs-target="#pills-contact"
-                      type="button"
-                      role="tab"
-                      aria-controls="pills-contact"
-                      aria-selected="false"
-                    >
-                      Prestige
-                    </button>
-                  </li>
-                </ul>
-                <div className="tab-content" id="pills-tabContent">
-                  <div
-                    className="tab-pane fade show active"
-                    id="pills-home"
-                    role="tabpanel"
-                    aria-labelledby="pills-home-tab"
-                  >
-                    <p>
-                      We offer a meticulously curated collection of the most
-                      sought-after luxury vehicles on the market. Whether you
-                      prefer the sporty allure of a high-performance sports car,
-                      the sophistication of a sleek and luxurious sedan, or the
-                      versatility of a premium SUV, we have the perfect car to
-                      match your discerning taste.
-                    </p>
-                  </div>
-                  <div
-                    className="tab-pane fade"
-                    id="pills-profile"
-                    role="tabpanel"
-                    aria-labelledby="pills-profile-tab"
-                  >
-                    <p>
-                      We prioritize your comfort and convenience throughout your
-                      journey. We understand that a comfortable ride can make a
-                      world of difference, whether you're embarking on a
-                      business trip or enjoying a leisurely vacation. That's why
-                      we offer a wide range of well-maintained, comfortable cars
-                      that cater to your specific needs.
-                    </p>
-                  </div>
-                  <div
-                    className="tab-pane fade"
-                    id="pills-contact"
-                    role="tabpanel"
-                    aria-labelledby="pills-contact-tab"
-                  >
-                    <p>
-                      We understand that prestige goes beyond luxury. It's about
-                      making a statement, embracing sophistication, and
-                      indulging in the finer things in life. That's why we offer
-                      an exclusive selection of prestigious cars that exude
-                      elegance, style, and status.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            className="image-container col-md-6 pull-right"
-            data-bgimage="url(images/misc/e2.jpg) center"
-          />
-        </section> */}
+        
         <section id="section-news">
           <div className="container">
             <div className="row align-items-center">

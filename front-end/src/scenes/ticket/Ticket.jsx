@@ -16,16 +16,18 @@ const Ticket = () => {
   const fetchTicket = async () => {
     try {
       const response = await request("GET", "/admin/tickets");
-      const data = response.data.map((ticket) => ({
-        id: ticket.ticketId, // DataGrid requires an `id` field
-        ...ticket,
-      }));
+      const data = response.data
+        .map((ticket) => ({
+          id: ticket.ticketId, // DataGrid requires an id field
+          ...ticket,
+          startTime: ticket.schedules?.startTime, // Giờ khởi hành
+        }))
+        .sort((a, b) => new Date(b.startTime) - new Date(a.startTime)); // Sort theo ngày giờ mới nhất
       SetTickets(data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-
   useEffect(() => {
     fetchTicket();
   }, []);
@@ -43,6 +45,11 @@ const Ticket = () => {
       headerName: "Ghê đã chọn",
       flex: 0.5,
       valueGetter: (params) => params.row.selectedSeat.join(", "),
+    },
+    {
+      field: "startTime",
+      headerName: "Giờ Khởi Hành",
+      flex: 1,
     },
     { field: "totalPrice", headerName: "Giá tiền", flex: 1, type: "number" },
     { field: "status", headerName: "Trạng thái", flex: 1 },
@@ -72,11 +79,11 @@ const Ticket = () => {
   return (
     <Box m="20px">
       <Header title="Vé Xe" subtitle="Danh Sách Thông Tin Vé Xe" />
-      <Box display="flex" justifyContent="flex-end" mb={-5}>
+      {/* <Box display="flex" justifyContent="flex-end" mb={-5}>
         <Button variant="contained" color="secondary">
           Thêm Mới Vé Xe
         </Button>
-      </Box>
+      </Box> */}
       <Box
         m="40px 0 0 0"
         height="75vh"

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import com.project.vsm.dto.RegisterUserDto;
 import com.project.vsm.dto.VerifyUserDto;
 import com.project.vsm.model.AccountEntity;
+import com.project.vsm.dto.request.ChangePasswordRequest;
 import com.project.vsm.dto.request.LoginRequest;
 import com.project.vsm.dto.response.LoginResponse;
 import com.project.vsm.service.AuthService;
@@ -55,14 +56,7 @@ public class AuthController {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
-	@PostMapping("/outbound/authentication")
-	public ResponseObject<LoginResponse> authenticate(@RequestParam String code) {
-		LoginResponse response = authService.outboundAuthentication(code);
-		log.info("Access Token to return to FE: {}", response.getAccessToken());
-		return ResponseObject.<LoginResponse>builder()
-				.data(response)
-				.build();
-	}
+	
 	@GetMapping("/forgot-password")
 	public ResponseEntity<?> forgotPassword (@RequestParam String email){
 		return new ResponseEntity<>(authService.forgotPassword(email) , HttpStatus.OK);

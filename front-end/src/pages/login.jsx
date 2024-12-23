@@ -70,13 +70,21 @@ const Login = () => {
 
         // }
 
-        window.location.href = "/home";
+        if (role[0] === "ROLE_DRIVER") {
+          window.location.href = "/driver/schedule";
+        } else if (role[0] === "ROLE_ADMIN") {
+          window.location.href = "/admin/dashboard";
+        } else {
+          window.location.href = "/home";
+        }
       } else {
         setErrorMessage("Login failed. Invalid credentials.");
       }
     } catch (error) {
       console.error("Login failed:", error);
-      setErrorMessage("Có lỗi khi đăng nhập! Vui lòng kiểm tra lại thông tin đăng nhập");
+      setErrorMessage(
+        "Có lỗi khi đăng nhập! Vui lòng kiểm tra lại thông tin đăng nhập"
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -88,7 +96,7 @@ const Login = () => {
     setErrorMessage("");
 
     if (password !== confirmPassword) {
-      setErrorMessage("Please make sure your passwords match.");
+      setErrorMessage("Vui lòng đảm bảo mật khẩu khớp với nhau!.");
       setIsSubmitting(false);
     } else {
       const url = "/signup";
@@ -230,14 +238,14 @@ const Login = () => {
                           >
                             {isSubmitting ? "Creating account..." : "Submit"}
                           </button>
-                          <p
+                          {/* <p
                             className="title-forgot-account"
                             onClick={() => {
                               window.location.href = "/identify";
                             }}
                           >
                             Forgotten account?
-                          </p>
+                          </p> */}
                         </form>
                       ) : (
                         <form
@@ -283,6 +291,7 @@ const Login = () => {
                             onClick={() => {
                               window.location.href = "/identify";
                             }}
+                            style={{ cursor: "pointer" }}
                           >
                             Forgotten account?
                           </p>
@@ -292,7 +301,7 @@ const Login = () => {
                       <div className="title-line">
                         Or&nbsp;sign&nbsp;up&nbsp;with
                       </div>
-                      <div className="row g-2">
+                      {/* <div className="row g-2">
                         <div className="col-lg-6">
                           <a className="btn-sc btn-fullwidth mb10 " href="#">
                             <img src="images/svg/google_icon.svg" alt="" />
@@ -305,7 +314,7 @@ const Login = () => {
                             Facebook
                           </a>
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>

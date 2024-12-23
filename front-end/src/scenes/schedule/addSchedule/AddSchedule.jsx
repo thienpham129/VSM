@@ -15,6 +15,8 @@ import Header from "components/Header";
 import { useEffect, useState } from "react";
 import { request } from "admin/helpers/axios_helper";
 
+import { useNavigate } from "react-router-dom";
+
 // Khai báo initialValues
 const initialValues = {
   driver: "",
@@ -46,6 +48,7 @@ const AddSchedule = () => {
   const [loadingRoutes, setLoadingRoutes] = useState(true); // State loading cho tuyến đường
   const [scheduleData, setScheduleData] = useState(null); // State lưu kết quả từ API
   const [newSchedule, setNewSchedule] = useState(initialValues);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Gọi API để lấy danh sách tài xế
@@ -138,6 +141,7 @@ const AddSchedule = () => {
       // Xử lý thành công
       console.log("Lịch trình được tạo thành công:", response.data);
       alert("Lịch trình được tạo thành công!");
+      navigate(`/admin/schedule/${response.data.id}`);
     } catch (error) {
       // Xử lý lỗi nếu có
       console.error("Lỗi khi tạo lịch trình:", error);

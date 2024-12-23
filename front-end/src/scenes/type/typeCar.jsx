@@ -135,7 +135,15 @@ const TypeCar = () => {
       field: "price",
       headerName: "Giá Tiền",
       flex: 1,
-      renderCell: (params) => `${params.value} VND`, // Thêm ký hiệu "VND"
+      renderCell: (params) => {
+        // Format giá tiền theo tiền Việt Nam
+        const formattedPrice = new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+          minimumFractionDigits: 0, // Không hiển thị số thập phân
+        }).format(params.value);
+        return formattedPrice;
+      },
     },
     {
       field: "action",

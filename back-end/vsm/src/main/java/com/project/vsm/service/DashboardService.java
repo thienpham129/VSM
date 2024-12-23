@@ -216,19 +216,5 @@ public class DashboardService {
 		result.put("increase", String.format("%.2f%%", increase)); // Tính phần trăm tăng trưởng
 		return result;
 	}
-//	public List<Double> getListRevenue() {
-//		List<TicketEntity> ticketEntities = ticketRepository.findAll();
-//		List<TicketEntity> paidTickets = ticketEntities.stream().filter(TicketEntity::isPaid)
-//				.collect(Collectors.toList());
-//		Map<Month, Double> revenueByMonth = paidTickets.stream().filter(
-//				ticket -> ticket.getScheduleEntity() != null && ticket.getScheduleEntity().getStartTime() != null) 
-//				.collect(Collectors.groupingBy(ticket -> ticket.getScheduleEntity().getStartTime().getMonth(), 
-//						Collectors.summingDouble(TicketEntity::getPrice)
-//				));
-//		List<Double> revenueList = IntStream.rangeClosed(1, 12)
-//				.mapToObj(month -> revenueByMonth.getOrDefault(Month.of(month), 0.0)) 																	
-//				.collect(Collectors.toList());
-//
-//		return revenueList;
-//	}
+
 }

@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import styles from "./schedule.module.css";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { root } from "helper/axiosClient";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 function Schedule() {
   const navigate = useNavigate();
   const [isClickDetail, setIsClickDetail] = useState(false);
@@ -38,7 +39,15 @@ function Schedule() {
   const [arrayTicketNotInCar, setArrayTicketNotInCar] = useState([]);
   const [updateAnyWay, SetUpdateAnyWay] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
-
+  const [isSuccessUpdateUser, setIsSuccessUpdateUser] = useState(false);
+  const [isPickingUp, setIsPickingUp] = useState(true);
+  const [isDoneUpdateMapStatus, setIsDoneUpdateMapStatus] = useState(false);
+  const [arrayTicketDoneFee, setArrayTicketDoneFee] = useState([]);
+  const [currentLat, setCurrentLat] = useState("");
+  const [currentLong, setCurrentLong] = useState("");
+  const [checkDoubleRunningSchedule, setCheckDoubleRunningSchedule] =
+    useState(false);
+  const [idRunningSchedule, setIdRunningSchedule] = useState("");
   const columns = [
     {
       name: "Điểm Khởi Hành",
@@ -127,6 +136,7 @@ function Schedule() {
 
   useEffect(() => {
     if (dataSchedule.length > 0) {
+      console.log(dataSchedule);
       changeDataSchedule();
     }
   }, [dataSchedule]);
@@ -136,19 +146,44 @@ function Schedule() {
       changeDataScheduleDetail();
       let tempArrayInCar = [];
       let tempArrayNotInCar = [];
+      let tempArrayDoneFee = [];
+      let countNotInCar = 0;
+      let tempArraydataScheduleDetail = [];
+      let countWarningUpdate = 0;
       dataScheduleDetail.forEach((item, index) => {
         if (item.status.toLocaleUpperCase() === "ĐÃ LÊN XE") {
+          countWarningUpdate += 1;
+          // if (countWarningUpdate === 0) {
           setWarningUpdateSchedule(true);
+          // }
           tempArrayInCar.push(item.fullName);
+        } else if (item.status.toLocaleUpperCase() === "CHƯA LÊN XE") {
+          countWarningUpdate += 1;
+          // if (countWarningUpdate === 0) {
+          setWarningUpdateSchedule(true);
+          // }
+          tempArrayNotInCar.push(item.fullName);
+        } else if (item.status.toLocaleUpperCase() === "ĐÃ THANH TOÁN") {
+          countWarningUpdate += 1;
+          // if (countWarningUpdate === 0) {
+          setWarningUpdateSchedule(true);
+          // }
+          tempArrayDoneFee.push(item.fullName);
         }
 
-        if (item.status.toLocaleUpperCase() === "CHƯA LÊN XE") {
-          setWarningUpdateSchedule(true);
-          tempArrayNotInCar.push(item.fullName);
+        if (item.mapStatus === "0") {
+          countNotInCar += 1;
         }
       });
+      // alert(countWarningUpdate);
+
+      if (countWarningUpdate === 0) {
+        setWarningUpdateSchedule(false);
+      }
+
       setArrayTicketInCar(tempArrayInCar);
       setArrayTicketNotInCar(tempArrayNotInCar);
+      setArrayTicketDoneFee(tempArrayDoneFee);
     }
   }, [dataScheduleDetail]);
 
@@ -177,18 +212,85 @@ function Schedule() {
       if (response) {
         setDataSchedule(response.data);
       }
-    } catch (error) {}
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const fetchDataScheduleDetail = async (scheduleId) => {
     const url = "/public/ticket-with-schedule";
+    console.log(idSchedule);
+    try {
+      const response = await root.get(`${url}/${idSchedule}`);
+      if (response.data) {
+        let tempArrayScheduleDetail = [];
+        response.data.forEach((item, index) => {
+          if (item.status.toLocaleUpperCase() !== "HỦY ĐẶT VÉ") {
+            tempArrayScheduleDetail.push(item);
+          }
+        });
+        setDataScheduleDetail(tempArrayScheduleDetail);
+        console.log(tempArrayScheduleDetail);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const checkAllowUpdateFunc = async (scheduleId) => {
+    const url = "/public/ticket-with-schedule";
     try {
       const response = await root.get(`${url}/${scheduleId}`);
       if (response.data) {
-        setDataScheduleDetail(response.data);
-        console.log(response.data);
+        let tempArrayScheduleDetail = [];
+        response.data.forEach((item, index) => {
+          if (item.status.toLocaleUpperCase() !== "HỦY ĐẶT VÉ") {
+            tempArrayScheduleDetail.push(item);
+          }
+        });
+        setDataScheduleDetail(tempArrayScheduleDetail);
+        console.log(tempArrayScheduleDetail);
       }
-    } catch (error) {}
+    } catch (error) {
+      setWarningUpdateSchedule(false);
+      console.log(error);
+    }
+  };
+
+  const checkDoubleRunningScheduleFunc = async () => {
+    // const url = `driver/schedules/${localStorage.getItem("userId")}`;
+    const date = new Date();
+    let day = date.getFullYear() + "-" + (+date.getMonth() + 1) + "-";
+    let dateTime = "";
+    if (date.getDate() < 10) {
+      dateTime = "0" + date.getDate();
+    } else {
+      dateTime = date.getDate();
+    }
+    day = day + dateTime;
+    const url = "driver/driver-schedule";
+    try {
+      const response = await root.post(url, {
+        accountId: localStorage.getItem("userId"),
+        day: day,
+      });
+      if (response.data) {
+        console.log(response.data);
+        let countRunningSchedule = 0;
+        response.data.forEach((item, index) => {
+          if (item.status.toLocaleUpperCase() === "ĐANG CHẠY") {
+            countRunningSchedule += 1;
+          }
+        });
+        if (countRunningSchedule >= 1) {
+          // alert("OK");
+          setCheckDoubleRunningSchedule(true);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const CheckIsScheduleComplete = async (scheduleId) => {
@@ -219,10 +321,13 @@ function Schedule() {
       const response = await root.get(`${url}/${scheduleId}`);
       if (response.data) {
         setStartHourSchedule(
-          response.data.startTime.split("T")[1].split(":")[0]
+          +response.data.startTime.split("T")[1].split(":")[0] +
+            +response.data.startTime.split("T")[1].split(":")[1] / 60
         );
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -253,28 +358,223 @@ function Schedule() {
     if (!statusUser) {
       notifyWarningUpdate();
     } else {
-      const url = "/driver/update-status/ticket";
+      const date = new Date();
+      if (date.getHours() + date.getMinutes() / 60 < +startHourSchedule) {
+        console.log(date.getHours() + date.getMinutes() / 60);
+        console.log(+startHourSchedule);
+        notifyErrorUpdateTicket();
+      } else {
+        const url = "/driver/update-status/ticket";
+        console.log(idSchedule + " idSchedule");
+        try {
+          const fetchUpdateStatusUser = async () => {
+            const response = await root.put(`${url}/${ticketId}`, {
+              status: statusUser,
+            });
+            console.log(response.data);
+            if (response.data) {
+              notifyScucessUpadte();
+              setIsSuccessUpdateUser(true);
+              setToggleModal(false);
+              fetchDataScheduleDetail(idSchedule);
+            } else {
+              console.log(
+                "Something went wrong with api of fetchUpdateStatusUser"
+              );
+            }
+          };
+          fetchUpdateStatusUser();
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (isSuccessUpdateUser) {
+      console.log(statusUser);
       try {
-        const fetchUpdateStatusUser = async () => {
-          const response = await root.put(`${url}/${ticketId}`, {
-            status: statusUser,
-          });
-          if (response.data) {
-            notifyScucessUpadte();
-            setToggleModal(false);
-            fetchDataScheduleDetail(idSchedule);
-          } else {
+        const updateStatusMap = async (status) => {
+          const responseMap = await root.put(
+            `/public/update-status-map/ticket/${ticketId}`,
+            {
+              mapStatus: status,
+            }
+          );
+          if (!responseMap.data) {
             console.log(
-              "Something went wrong with api of fetchUpdateStatusUser"
+              "Something went wrong with call api of updateStatusMap"
             );
+          } else {
+            setIsDoneUpdateMapStatus(true);
+            setIsSuccessUpdateUser(false);
           }
         };
-        fetchUpdateStatusUser();
+        if (statusUser.toLocaleUpperCase() === "ĐÃ LÊN XE") {
+          updateStatusMap("1");
+        } else if (statusUser.toLocaleUpperCase() === "CHƯA LÊN XE") {
+          updateStatusMap("0");
+        } else if (statusUser.toLocaleUpperCase() === "ĐÃ XUỐNG XE") {
+          updateStatusMap("2");
+        } else {
+          updateStatusMap("3");
+        }
       } catch (error) {
         console.log(error);
       }
     }
-  };
+  }, [isSuccessUpdateUser]);
+
+  useEffect(() => {
+    if (dataScheduleDetail.length > 0 && isDoneUpdateMapStatus) {
+      const findNextDestination = async () => {
+        let countNotInCar = 0;
+        let arrayNotIncarUser = [];
+        let arrayIncarUser = [];
+        dataScheduleDetail.forEach((item, index) => {
+          if (
+            item.status.toLocaleUpperCase().trim() === "CHƯA LÊN XE" ||
+            item.status.toLocaleUpperCase().trim() === "ĐÃ THANH TOÁN"
+          ) {
+            countNotInCar += 1;
+            arrayNotIncarUser.push(item);
+          }
+
+          if (item.status.toLocaleUpperCase().trim() === "ĐÃ LÊN XE") {
+            arrayIncarUser.push(item);
+          }
+        });
+        console.log(arrayNotIncarUser);
+        console.log(arrayIncarUser);
+        if (arrayIncarUser.length > 0 || arrayNotIncarUser.length > 0) {
+          if (countNotInCar !== 0) {
+            let oldPositionOfShortestDistance = 0;
+            let destination = "";
+            arrayNotIncarUser.forEach((item, index) => {
+              if (index === arrayNotIncarUser.length - 1) {
+                destination += item.mapPickUp;
+              } else {
+                destination += item.mapPickUp + "%7C";
+              }
+            });
+            let elementsArray = [];
+            if (currentLat && currentLong) {
+              const responseMap = await fetch(
+                `https://rsapi.goong.io/DistanceMatrix?origins=${currentLat},${currentLong}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+              );
+              const data = await responseMap.json();
+              elementsArray = data.rows[0].elements;
+            }
+            console.log(elementsArray);
+            console.log(currentLat + "         " + currentLong);
+            console.log(destination);
+            let testArray = [];
+            elementsArray.forEach((item, index) => {
+              testArray.push(item.distance.value);
+            });
+            for (let i = 0; i < 1; i++) {
+              for (let j = i + 1; j < testArray.length; j++) {
+                if (testArray[i] > testArray[j]) {
+                  oldPositionOfShortestDistance = j;
+                  let temp = testArray[i];
+                  testArray[i] = testArray[j];
+                  testArray[j] = temp;
+                }
+              }
+            }
+            arrayNotIncarUser.forEach((item, index) => {
+              if (oldPositionOfShortestDistance === index) {
+                try {
+                  const updateStatusMap = async () => {
+                    const responseMap = await root.put(
+                      `/public/update-status-map/ticket/${item.ticketId}`,
+                      {
+                        mapStatus: "5",
+                      }
+                    );
+                    if (!responseMap.data) {
+                      console.log(
+                        "Something went wrong with call api of updateStatusMap"
+                      );
+                    }
+                  };
+                  updateStatusMap();
+                } catch (error) {
+                  console.log(error);
+                }
+              }
+            });
+          } else {
+            let oldPositionOfShortestDistance = 0;
+            let destination = "";
+            arrayIncarUser.forEach((item, index) => {
+              if (index === arrayIncarUser.length - 1) {
+                destination += item.mapDrop;
+              } else {
+                destination += item.mapDrop + "%7C";
+              }
+            });
+            let elementsArray = [];
+            if (currentLat && currentLong) {
+              const responseMap = await fetch(
+                `https://rsapi.goong.io/DistanceMatrix?origins=${currentLat},${currentLong}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+              );
+              const data = await responseMap.json();
+              elementsArray = data.rows[0].elements;
+            }
+            console.log(elementsArray);
+            console.log(currentLat + "         " + currentLong);
+            console.log(destination);
+            let testArray = [];
+            elementsArray.forEach((item, index) => {
+              testArray.push(item.distance.value);
+            });
+            for (let i = 0; i < 1; i++) {
+              for (let j = i + 1; j < testArray.length; j++) {
+                if (testArray[i] > testArray[j]) {
+                  oldPositionOfShortestDistance = j;
+                  let temp = testArray[i];
+                  testArray[i] = testArray[j];
+                  testArray[j] = temp;
+                }
+              }
+            }
+            arrayIncarUser.forEach((item, index) => {
+              if (oldPositionOfShortestDistance === index) {
+                try {
+                  const updateStatusMap = async () => {
+                    const responseMap = await root.put(
+                      `/public/update-status-map/ticket/${item.ticketId}`,
+                      {
+                        mapStatus: "5",
+                      }
+                    );
+                    if (!responseMap.data) {
+                      console.log(
+                        "Something went wrong with call api of updateStatusMap"
+                      );
+                    }
+                  };
+                  updateStatusMap();
+                } catch (error) {
+                  console.log(error);
+                }
+              }
+            });
+          }
+        }
+      };
+      findNextDestination();
+    }
+  }, [isDoneUpdateMapStatus, dataScheduleDetail]);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      setCurrentLat(position.coords.latitude);
+      setCurrentLong(position.coords.longitude);
+    });
+  }, []);
 
   const handleUpdateSchedule = async () => {
     if (updateAnyWay) {
@@ -290,7 +590,7 @@ function Schedule() {
           notifyScucessUpadte();
         } else {
           console.log(
-            "Something went wrong with call api of handleUpdateSchedule "
+            "Something went wrong with call api of handleUpdateSchedule"
           );
         }
       } catch (error) {
@@ -301,31 +601,40 @@ function Schedule() {
         notifyWarningUpdate();
       } else {
         const date = new Date();
-        if (date.getHours() < +startHourSchedule) {
-          console.log(date.getHours());
+        if (date.getHours() + date.getMinutes() / 60 < +startHourSchedule) {
+          console.log(date.getHours() + date.getMinutes() / 60);
           console.log(+startHourSchedule);
           notifyErrorUpdateSchedule();
         } else {
+          // alert(warningUpdateSchedule);
           if (
             !warningUpdateSchedule ||
             statusSchedule.toLocaleUpperCase() !== "ĐÃ HOÀN THÀNH"
           ) {
-            const url = "driver/update-status-schedule";
-            try {
-              const response = await root.put(url, {
-                status: statusSchedule,
-                schduleId: scheduleIdByRow,
-              });
-              if (response.data) {
-                fetchDataSchedule();
-                notifyScucessUpadte();
-              } else {
-                console.log(
-                  "Something went wrong with call api of handleUpdateSchedule "
-                );
+            if (
+              !checkDoubleRunningSchedule ||
+              statusSchedule.toLocaleUpperCase() !== "ĐANG CHẠY"
+            ) {
+              const url = "driver/update-status-schedule";
+              try {
+                const response = await root.put(url, {
+                  status: statusSchedule,
+                  schduleId: scheduleIdByRow,
+                });
+                if (response.data) {
+                  fetchDataSchedule();
+                  setCheckDoubleRunningSchedule(false);
+                  notifyScucessUpadte();
+                } else {
+                  console.log(
+                    "Something went wrong with call api of handleUpdateSchedule "
+                  );
+                }
+              } catch (error) {
+                console.log(error);
               }
-            } catch (error) {
-              console.log(error);
+            } else {
+              notifyErrorDoubleRunning();
             }
           } else {
             setToggleModalWarning(true);
@@ -365,10 +674,11 @@ function Schedule() {
           style={{ width: "75px", fontSize: "9px" }}
           variant="contained"
           onClick={(e) => {
-            console.log(item.id);
+            setDataScheduleDetail([]);
             setIdSchedule(item.id);
             fetchDataScheduleDetail(item.id);
             CheckIsScheduleComplete(item.id);
+            setCheckDoubleRunningSchedule(false);
             setIsClickDetail(true);
           }}
         >
@@ -385,6 +695,8 @@ function Schedule() {
             showPopUpDetailData(
               e.target.parentElement.parentElement.parentElement
             );
+            checkAllowUpdateFunc(item.id);
+            checkDoubleRunningScheduleFunc();
             getStartHourByScheduleRow(item.id);
             setScheduleIdByRow(item.id);
           }}
@@ -418,6 +730,7 @@ function Schedule() {
               e.target.parentElement.parentElement.parentElement
             );
             setTicketId(item.ticketId);
+            getStartHourByScheduleRow(idSchedule);
           }}
         >
           Cập Nhật
@@ -488,12 +801,41 @@ function Schedule() {
       }
     );
 
+  const notifyErrorUpdateTicket = () =>
+    toast.error("Không Thể Cập Nhật Trạng Thái Của Vé Khi Chưa Tới Giờ!", {
+      position: "bottom-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+
+  const notifyErrorDoubleRunning = () =>
+    toast.error(
+      "Không Thể Cập Nhật Trạng Thái Khi Có Hai Hoặc Nhiều Lịch Trình Đang Chạy!",
+      {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+      }
+    );
+
   const handleApply = () => {
     notifyScucessApply();
   };
 
   return (
-    <>
+    <div className={styles.schdule}>
       {isClickDetail ? (
         <div className="schedule_detail">
           <h1>Lịch Trình Cụ Thể </h1>
@@ -501,9 +843,12 @@ function Schedule() {
             style={{ cursor: "pointer" }}
             color="primary"
             onClick={() => {
-              setDataScheduleDetail([]);
+              setIdSchedule("");
+              // setDataScheduleDetail([]);
               setIsComplete(false);
               setIsClickDetail(false);
+              setCheckDoubleRunningSchedule(false);
+              setStartHourSchedule("");
             }}
           />
           <input
@@ -799,6 +1144,18 @@ function Schedule() {
                     </li>
                   </ul>
                 ))}
+
+                {arrayTicketDoneFee.map((item, index) => (
+                  <ul>
+                    <li>
+                      <h4>
+                        Hành Khách <span style={{ color: "red" }}>{item}</span>{" "}
+                        vẫn đang ở trạng thái{" "}
+                        <span style={{ color: "red" }}>Đã Thanh Toán</span>{" "}
+                      </h4>
+                    </li>
+                  </ul>
+                ))}
                 <ul style={{ listStyle: "none" }}>
                   <li>
                     <h4>Bạn Vẫn Muốn Cập Nhật Lịch Trình Này Chứ ?</h4>
@@ -865,7 +1222,7 @@ function Schedule() {
           />
         </div>
       )}
-    </>
+    </div>
   );
 }
 

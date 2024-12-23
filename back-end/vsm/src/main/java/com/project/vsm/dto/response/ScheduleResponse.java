@@ -21,7 +21,7 @@ import com.project.vsm.model.ScheduleEntity;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ScheduleResponse {
-	long scheduleId;
+    long scheduleId;
     LocalDateTime startTime;
     LocalDateTime endTime;
     String status;
@@ -31,22 +31,24 @@ public class ScheduleResponse {
     CarResponse car;
     List<TicketResponse> tickets;
 
-    public static ScheduleResponse mapScheduleResponse(ScheduleEntity schedule , CarResponse carResponse) {
+    public static ScheduleResponse mapScheduleResponse(ScheduleEntity schedule, CarResponse carResponse) {
         ScheduleResponse response = new ScheduleResponse();
         response.setScheduleId(schedule.getId());
         response.setStartTime(schedule.getStartTime());
+        response.setStartLocation(schedule.getRoute().getStartLocation());
+        response.setStopLocation(schedule.getRoute().getStopLocation());
         response.setCar(carResponse);
         return response;
     }
 
+
     public static ScheduleResponse fromEntity(ScheduleEntity schedule) {
-        return ScheduleResponse.builder()
-                .scheduleId(schedule.getId())
-                .startTime(schedule.getStartTime())
-                .endTime(schedule.getEndTime())
-                .status(schedule.getStatus())
-                .car(schedule.getCar() != null ? CarResponse.mapCarResponse(schedule.getCar()) : null)
-                .build();
+        return
+                ScheduleResponse.builder().scheduleId(schedule.getId())
+                        .startTime(schedule.getStartTime()).endTime(schedule.getEndTime())
+                        .status(schedule.getStatus()).car(schedule.getCar() != null ?
+                                CarResponse.mapCarResponse(schedule.getCar()) : null).build();
     }
+
 }
 

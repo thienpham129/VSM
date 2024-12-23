@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.vsm.dto.RegisterUserDto;
 import com.project.vsm.dto.VerifyUserDto;
+import com.project.vsm.dto.request.ChangePasswordRequest;
 import com.project.vsm.model.AccountEntity;
 import com.project.vsm.dto.response.LoginResponse;
 import com.project.vsm.repository.AccountRepository;
@@ -151,23 +152,24 @@ public class AuthService {
         return String.valueOf(code);
     }
 
-    public void resendVerificationCode(String email) {
-        Optional<AccountEntity> optionalUser = accountRepository.findByEmail(email);
-        if (optionalUser.isPresent()) {
-            AccountEntity user = optionalUser.get();
-            if (user.isEnabled()) {
-                throw new RuntimeException("Account is already verified");
-            }
-            user.setVerificationCode(generateVerificationCode());
-            user.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));
-            sendVerificationEmail(user);
-            accountRepository.save(user);
-        } else {
-            throw new RuntimeException("User not found");
-        }
-    }
-
-    public boolean forgotPassword(String email) {
+	public void resendVerificationCode(String email) {
+		Optional<AccountEntity> optionalUser = accountRepository.findByEmail(email);
+		if (optionalUser.isPresent()) {
+			AccountEntity user = optionalUser.get();
+			if (user.isEnabled()) {
+				throw new RuntimeException("Account is already verified");
+			}
+			user.setVerificationCode(generateVerificationCode());
+			user.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));
+			sendVerificationEmail(user);
+			accountRepository.save(user);
+		} else {
+			throw new RuntimeException("User not found");
+		}
+	}
+	
+	
+	public boolean forgotPassword(String email) {
         try {
             Optional<AccountEntity> account = accountRepository.findByEmail(email);
             if (account.isEmpty()) {
@@ -195,22 +197,5 @@ public class AuthService {
         } catch (Exception e) {
             throw new RuntimeException("Send mail reset password fail!" + e.getMessage());
         }
-    }
-
-    public LoginResponse outboundAuthentication(String code) {
-        log.info("Code : {}", code);
-        var response = outboundIdentityClient.exchangeToken(ExchangeTokenRequest.builder()
-                .code(code)
-                .clientId(CLIENT_ID)
-                .clientSecret(CLIENT_SECRET)
-                .redirectUri(REDIRECT_URI)
-                .grantType("authorization_code")
-                .build());
-
-        log.info("TOKEN RESPONSE {}", response);
-
-        return LoginResponse.builder()
-                .accessToken(response.getAccessToken())
-                .build();
     }
 }

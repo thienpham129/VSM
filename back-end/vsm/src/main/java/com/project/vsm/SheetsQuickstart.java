@@ -73,6 +73,11 @@ public class SheetsQuickstart {
 
                 System.out.printf("%-10s %-80s %-15s %-20s %-15s %-20s %-10s%n",
                         maGD, noiDung, soTien, ngayDienRa, soTaiKhoan, maThamChieu, soDu);
+                if (row.size() >= 7) {
+                    System.out.printf("%-10s %-80s %-15s %-20s %-15s %-20s %-10s%n",
+                            row.get(0), row.get(1), row.get(2), row.get(3),
+                            row.get(4), row.get(5), row.get(6));
+                } 
             }
         }
     }

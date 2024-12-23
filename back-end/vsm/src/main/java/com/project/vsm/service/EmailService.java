@@ -25,7 +25,6 @@ public class EmailService {
 
 		emailSender.send(message);
 	}
-
 	public void sendEmailResetPassword(String email) {
 		MimeMessage message = emailSender.createMimeMessage();
 		try {

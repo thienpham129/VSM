@@ -4,6 +4,8 @@ import {
   MenuItem,
   TextField,
   CircularProgress,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -19,6 +21,9 @@ const DetailTicket = () => {
   const [ticket, setTicket] = useState(null); // Default value is null
   const [routes, setRoutes] = useState([]);
   const [loading, setLoading] = useState(true); // To track loading state
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   // Fetch ticket data
   const fetchTicket = async () => {
@@ -52,8 +57,27 @@ const DetailTicket = () => {
   }, []);
 
   // Form submit handler
-  const handleFormSubmit = (values) => {
-    console.log(values);
+  const handleFormSubmit = async (values) => {
+    const paid = values.paid === "Chưa thanh toán" ? false : true;
+    const payload = { ...values, paid };
+    try {
+      await request("put", "/admin/update-ticket", payload);
+      setTicket(payload);
+
+      // Set success snackbar
+      setSnackbarMessage("Cập nhật vé xe thành công!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error("Lỗi khi cập nhật vé xe:", error);
+
+      // Set error snackbar
+      const errorMessage =
+        error.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại!";
+      setSnackbarMessage(errorMessage);
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
   };
 
   // Default ticket values
@@ -80,7 +104,12 @@ const DetailTicket = () => {
     "Đang chờ xử lý",
     "Đã xác nhận",
     "Đang di chuyển",
-    "Hoàn thành",
+    "Đã thanh toán",
+    "Hủy đặt vé",
+    "Đã Lên Xe",
+    "Chưa Lên Xe",
+    "Đã Xuống Xe",
+    "Hủy",
   ];
 
   // Paid options
@@ -92,24 +121,29 @@ const DetailTicket = () => {
 
   // Schema validation for form
   const checkoutSchema = yup.object().shape({
-    price: yup.number().required("required"),
-    paymentMethod: yup.string().required("required"),
-    status: yup.string().required("required"),
-    selectedSeat: yup.string().required("required"),
+    price: yup.number().required("Vui lòng nhập giá"),
+    paymentMethod: yup
+      .string()
+      .required("Vui lòng nhập phương thức thanh toán"),
+    status: yup.string().required("Vui lòng nhập trạng thái"),
+    selectedSeat: yup.string().required("Vui lòng nhập vị trí ghế"),
     note: yup.string(),
-    email: yup.string().email("invalid email").required("required"),
-    fullName: yup.string().required("required"),
+    email: yup
+      .string()
+      .email("Email không hợp lệ!")
+      .required("Vui lòng nhập email"),
+    fullName: yup.string().required("Vui lòng nhập họ tên"),
     phoneNumber: yup
       .string()
-      .matches(phoneRegExp, "Phone number is not valid")
-      .required("required"),
-    detailAddressPickUp: yup.string().required("required"),
-    detailAddressDropOff: yup.string().required("required"),
-    route: yup.string().required("required"),
+      .matches(phoneRegExp, "Số điện thoại không hợp lệ")
+      .required("Vui lòng nhập số điện thoại"),
+    detailAddressPickUp: yup.string().required("Vui lòng nhập địa chỉ đón"),
+    detailAddressDropOff: yup.string().required("Vui lòng nhập địa chỉ trả"),
+    route: yup.string().required("Vui lòng nhập tuyến đường"),
     paid: yup
       .string()
       .oneOf(paidOptions, "Trạng thái thanh toán không hợp lệ")
-      .required("required"), // Update validation for paid
+      .required("Vui lòng nhập trạng thái thanh toán"), // Update validation for paid
   });
 
   if (loading) {
@@ -197,6 +231,7 @@ const DetailTicket = () => {
                 error={touched.selectedSeat && !!errors.selectedSeat}
                 helperText={touched.selectedSeat && errors.selectedSeat}
                 sx={{ gridColumn: "span 2" }}
+                disabled
               />
               <TextField
                 fullWidth
@@ -278,6 +313,7 @@ const DetailTicket = () => {
                 error={touched.route && !!errors.route}
                 helperText={touched.route && errors.route}
                 sx={{ gridColumn: "span 2" }}
+                disabled
               >
                 {routes.map((route) => (
                   <MenuItem
@@ -345,6 +381,21 @@ const DetailTicket = () => {
           </form>
         )}
       </Formik>
+      {/* Snackbar */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
