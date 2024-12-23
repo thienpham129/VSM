@@ -9,12 +9,13 @@ import {
   MenuItem,
   InputLabel,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "components/Header";
-import { Link, useNavigate } from "react-router-dom"; // Nhập useNavigate
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { request } from "admin/helpers/axios_helper";
 import axios from "axios";
@@ -26,16 +27,20 @@ const CreateCar = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarColor, setSnackbarColor] = useState("success");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const navigate = useNavigate(); // Khởi tạo useNavigate
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     try {
       const response = await request("GET", "/admin/types");
+      console.log(response.data);
+
       const formattedData = response.data.map((item) => ({
-        id: item.typeId,
-        numSeat: item.numSeat,
-        price: item.price,
+        id: item.id,
+        numSeats: item.numSeats,
+        typeName: item.typeName,
+        seatList: item.seatList,
       }));
       setTypeCars(formattedData);
     } catch (error) {
@@ -55,9 +60,9 @@ const CreateCar = () => {
   };
 
   const handleFormSubmit = async (values, { resetForm }) => {
+    setIsSubmitting(true);
     const formData = new FormData();
 
-    // Append other fields
     formData.append("name", values.carName);
     formData.append("plateNumber", values.plateNumber);
     formData.append("color", values.color);
@@ -65,15 +70,12 @@ const CreateCar = () => {
     formData.append("manufactory", values.manufactory);
     formData.append("typeID", values.typeID);
 
-    // Append images
     images.forEach((image) => {
       formData.append("images", image);
     });
 
     try {
       const token = getAuthToken();
-
-      // Gọi API để tạo xe mới
       const response = await axios.post(
         "http://localhost:8080/admin/car",
         formData,
@@ -85,13 +87,9 @@ const CreateCar = () => {
         }
       );
 
-      // Lấy ID của chiếc xe vừa tạo từ phản hồi
-      const newCarId = response.data.carId; // Cập nhật để lấy carId từ response
-
-      // Chuyển hướng tới trang chi tiết của chiếc xe vừa tạo
-      navigate(`/admin/car/${newCarId}`); // Chuyển hướng đến trang chi tiết
-
-      resetForm(); // Đặt lại form sau khi tạo thành công
+      const newCarId = response.data.carId;
+      navigate(`/admin/car/${newCarId}`);
+      resetForm();
       setSnackbarMessage("Xe đã được thêm thành công!");
       setSnackbarColor("success");
     } catch (error) {
@@ -102,11 +100,11 @@ const CreateCar = () => {
       setSnackbarMessage("Có lỗi xảy ra khi thêm xe.");
       setSnackbarColor("error");
     } finally {
+      setIsSubmitting(false);
       setSnackbarOpen(true);
     }
   };
 
-  // Định nghĩa quy tắc kiểm tra dữ liệu đầu vào
   const checkoutSchema = yup.object().shape({
     carName: yup.string().required("Vui lòng nhập Tên xe"),
     plateNumber: yup
@@ -120,7 +118,11 @@ const CreateCar = () => {
     yearOfManufacture: yup
       .number()
       .required("Vui lòng nhập Năm sản xuất")
-      .min(1886, "Năm sản xuất không hợp lệ"),
+      .min(1886, "Năm sản xuất không hợp lệ")
+      .max(
+        new Date().getFullYear(),
+        "Năm sản xuất không được lớn hơn năm hiện tại"
+      ),
     typeID: yup.number().required("Vui lòng chọn loại xe"),
     manufactory: yup.string().required("Vui lòng nhập Nhà sản xuất"),
   });
@@ -223,7 +225,9 @@ const CreateCar = () => {
                 >
                   {typeCars.map((type) => (
                     <MenuItem key={type.id} value={type.id}>
-                      {`Số chỗ: ${type.numSeat}, Giá: ${type.price} VNĐ`}
+                      <Typography variant="body1">
+                        Mẫu: {type.typeName} - Số chỗ: {type.numSeats}
+                      </Typography>
                     </MenuItem>
                   ))}
                 </Select>
@@ -298,33 +302,42 @@ const CreateCar = () => {
                 />
                 <Box display="flex" gap="10px" mt="10px">
                   {images.map((image, index) => (
-                    <img
-                      key={index}
-                      src={URL.createObjectURL(image)}
-                      alt={`preview-${index}`}
-                      style={{
-                        width: "500px",
-                        height: "auto",
-                        objectFit: "cover",
-                      }}
-                    />
+                    <Box key={index}>
+                      <img
+                        src={URL.createObjectURL(image)}
+                        alt={`img-${index}`}
+                        style={{ width: "80px", height: "80px" }}
+                      />
+                    </Box>
                   ))}
                 </Box>
               </Box>
             </Box>
-            <Box display="flex" justifyContent="end" mt="20px">
-              <Button type="submit" color="secondary" variant="contained">
-                Thêm Mới Xe
+
+            <Box display="flex" justifyContent="right" mt="20px">
+              <Button
+                type="submit"
+                variant="contained"
+                color="success"
+                disabled={isSubmitting}
+                sx={{ width: "100px" }}
+              >
+                {isSubmitting ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  "Thêm Xe"
+                )}
               </Button>
             </Box>
           </form>
         )}
       </Formik>
+
+      {/* Snackbar for messages */}
       <Snackbar
         open={snackbarOpen}
-        autoHideDuration={3000}
+        autoHideDuration={6000}
         onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
         <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarColor}>
           {snackbarMessage}

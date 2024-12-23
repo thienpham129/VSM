@@ -32,7 +32,10 @@ const Schedule = () => {
     const fetchData = async () => {
       try {
         const response = await request("get", "/public/schedules");
-        setSchedules(response.data); // Lưu data từ API vào state
+        const sortedData = response.data.sort(
+          (a, b) => new Date(b.startTime) - new Date(a.startTime)
+        );
+        setSchedules(sortedData); // Lưu data từ API vào state
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu lịch trình:", error);
       }
@@ -64,14 +67,14 @@ const Schedule = () => {
       headerName: "Giờ Xuất Phát",
       flex: 1,
     },
-    {
-      field: "endTime",
-      headerName: "Giờ Kết Thúc",
-      flex: 1,
-    },
+    // {
+    //   field: "endTime",
+    //   headerName: "Giờ Kết Thúc",
+    //   flex: 1,
+    // },
     {
       field: "route", // Cập nhật cột chuyến đường
-      headerName: "Chuyến Đường",
+      headerName: "Tuyến Đường",
       flex: 1,
       valueGetter: (params) => {
         const startLocation = params.row.route?.startLocation || "";
@@ -98,14 +101,14 @@ const Schedule = () => {
           >
             Chi Tiết
           </Button>
-          <Button
+          {/* <Button
             variant="contained"
             color="secondary"
             size="small"
             onClick={() => handleDelete(params.row.id)}
           >
             Xóa
-          </Button>
+          </Button> */}
         </Box>
       ),
     },

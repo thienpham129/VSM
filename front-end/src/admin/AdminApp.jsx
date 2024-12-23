@@ -31,6 +31,12 @@ import RouteAdmin from "scenes/route/Route";
 import Ticket from "scenes/ticket/Ticket";
 import DetailTicket from "scenes/ticket/detail/DetailTicket";
 import { useRef } from "react";
+import TemplateSeat from "scenes/templateSeat";
+import AddTemplateSeat from "scenes/templateSeat/create/createTemlate";
+import DetaiTemplateSeat from "scenes/templateSeat/detail/detailTemplate";
+import CarRoute from "scenes/carRoute";
+import DetailCarRoute from "scenes/carRoute/detail/DetailCarRoute";
+import CreateCarRoute from "scenes/carRoute/create/CreateCarRoute";
 
 function AdminApp() {
   const [theme, colorMode] = useMode();
@@ -58,10 +64,22 @@ function AdminApp() {
               <Route path="/parking" element={<ParkingLot />} />
               <Route path="/route" element={<RouteAdmin />} />
               <Route path="/type" element={<TypeCar />} />
+              <Route path="/car-route" element={<CarRoute />} />
+              <Route path="/car-route/create" element={<CreateCarRoute />} />
+              <Route path="/car-route/:id" element={<DetailCarRoute />} />
               <Route path="/car" element={<CarAdmin />} />
               <Route path="/car/create" element={<CreateCar />} />
               <Route path="/car/:id" element={<DetailCar />} />
               <Route path="/car/create" element={<CreateCar />} />
+              <Route path="/template-seat" element={<TemplateSeat />} />
+              <Route
+                path="/template-seat/addnew"
+                element={<AddTemplateSeat />}
+              />
+              <Route
+                path="/template-seat/:id"
+                element={<DetaiTemplateSeat />}
+              />
               <Route path="/team" element={<Team />} />
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/invoices" element={<Invoices />} />

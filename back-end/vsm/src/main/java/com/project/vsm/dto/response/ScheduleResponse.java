@@ -41,14 +41,12 @@ public class ScheduleResponse {
         return response;
     }
 
-    public static ScheduleResponse fromEntity(ScheduleEntity schedule) {
-        return ScheduleResponse.builder()
-                .scheduleId(schedule.getId())
-                .startTime(schedule.getStartTime())
-                .endTime(schedule.getEndTime())
-                .status(schedule.getStatus())
-                .car(schedule.getCar() != null ? CarResponse.mapCarResponse(schedule.getCar()) : null)
-                .build();
-    }
+	/*
+	 * public static ScheduleResponse fromEntity(ScheduleEntity schedule) { return
+	 * ScheduleResponse.builder() .scheduleId(schedule.getId())
+	 * .startTime(schedule.getStartTime()) .endTime(schedule.getEndTime())
+	 * .status(schedule.getStatus()) .car(schedule.getCar() != null ?
+	 * CarResponse.mapCarResponse(schedule.getCar()) : null) .build(); }
+	 */
 }
 

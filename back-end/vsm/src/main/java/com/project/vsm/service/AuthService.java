@@ -148,7 +148,8 @@ public class AuthService {
 		}
 	}
 	
-    public boolean forgotPassword(String email) {
+	
+	public boolean forgotPassword(String email) {
         try {
             Optional<AccountEntity> account = accountRepository.findByEmail(email);
             if (account.isEmpty()) {

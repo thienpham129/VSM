@@ -177,13 +177,17 @@ public class AccountService {
     //             .collect(Collectors.toList());
     // }
 
-    public List<TicketResponse> getTicketOfAccount() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountEntity accountEntity = accountRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Cannot find account with email: " + email));
-
-        return accountEntity.getTickets().stream().map(TicketResponse::fromEntity).collect(Collectors.toList());
-    }
+	/*
+	 * public List<TicketResponse> getTicketOfAccount() { String email =
+	 * SecurityContextHolder.getContext().getAuthentication().getName();
+	 * AccountEntity accountEntity = accountRepository.findByEmail(email)
+	 * .orElseThrow(() -> new RuntimeException("Cannot find account with email: " +
+	 * email));
+	 * 
+	 * return
+	 * accountEntity.getTickets().stream().map(TicketResponse::fromEntity).collect(
+	 * Collectors.toList()); }
+	 */
 
 }
 

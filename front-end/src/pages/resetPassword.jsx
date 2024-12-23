@@ -5,8 +5,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { root } from "helper/axiosClient";
 function ForgetPassword() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setSetConfirmPassword] = useState("");
   const [isClickSubmit, setIsClickSubmit] = useState(false);
   const notifyErrorSendEmail = () =>
     toast.error("Email Không Tồn Tại", {
@@ -22,33 +20,7 @@ function ForgetPassword() {
     });
 
   const notifyErrorEmptyEmail = () =>
-    toast.error("Vui Lòng Nhập nhập đầy đủ thông tin", {
-      position: "bottom-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-      transition: Bounce,
-    });
-
-  const notifyError = () =>
-    toast.error("Đã có lỗi xảy ra", {
-      position: "bottom-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-      transition: Bounce,
-    });
-
-  const notifyErrorPassword = () =>
-    toast.error("Hãy đảm bảo bạn xác nhận mật khẩu thật chính xác!", {
+    toast.error("Vui Lòng Nhập Email", {
       position: "bottom-right",
       autoClose: 1500,
       hideProgressBar: false,
@@ -61,29 +33,17 @@ function ForgetPassword() {
     });
   const handleClickVerify = async (e) => {
     e.preventDefault();
-    console.log(password + "   " + confirmPassword + "    " + email);
-    if (email && password && confirmPassword) {
-      if (password !== confirmPassword) {
-        notifyErrorPassword();
-      } else {
-        try {
-          const response = await root.get(
-            `/auth/reset-password?email=${email}`,
-            {
-              newPassword: password,
-              newPasswordRepeat: confirmPassword,
-            }
-          );
-          if (response.data) {
-            window.location.href = "/login";
-          } else {
-            setIsClickSubmit(true);
-            notifyError();
-          }
-        } catch (error) {
+    if (email) {
+      try {
+        const response = await root.get(`/auth/forgot-password?email=${email}`);
+        if (response.data === true) {
+          window.location.href = "/reset_password";
           setIsClickSubmit(true);
-          console.log(error);
         }
+      } catch (error) {
+        console.log(error);
+        notifyErrorSendEmail();
+        setIsClickSubmit(true);
       }
     } else {
       notifyErrorEmptyEmail();
@@ -103,7 +63,7 @@ function ForgetPassword() {
               autoFocus
               type="email"
               value={email}
-              placeholder="Nhập email"
+              placeholder="Nhập mật khẩu mới"
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
@@ -112,22 +72,24 @@ function ForgetPassword() {
             <input
               className="identify-email-input"
               required
-              type="password"
-              value={password}
-              placeholder="Nhập mật khẩu mới"
+              autoFocus
+              type="email"
+              value={email}
+              placeholder="Xác nhận mật khẩu mới"
               onChange={(e) => {
-                setPassword(e.target.value);
+                setEmail(e.target.value);
               }}
               style={{ marginBottom: "10px" }}
             />
             <input
               className="identify-email-input"
               required
-              type="password"
-              value={confirmPassword}
-              placeholder="xác nhận mật khẩu"
+              autoFocus
+              type="email"
+              value={email}
+              placeholder="Enter your email"
               onChange={(e) => {
-                setSetConfirmPassword(e.target.value);
+                setEmail(e.target.value);
               }}
               style={{ marginBottom: "10px" }}
             />
@@ -142,12 +104,10 @@ function ForgetPassword() {
             </button>
             <button
               className="verify-account"
-              type="submit"
               onClick={(e) => {
                 handleClickVerify(e);
                 setIsClickSubmit(true);
               }}
-              disabled={isClickSubmit}
             >
               Xác Nhận
             </button>

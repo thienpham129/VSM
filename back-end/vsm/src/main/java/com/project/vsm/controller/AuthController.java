@@ -63,7 +63,7 @@ public class AuthController {
 	public ResponseEntity<?> forgotPassword (@RequestParam String email){
 		return new ResponseEntity<>(authService.forgotPassword(email) , HttpStatus.OK);
 	}
-	@GetMapping("/reset-password")
+	@PostMapping("/reset-password")
 	public ResponseEntity<?> resetPassword (@RequestParam String email , @RequestBody ChangePasswordRequest request) {
 		return new ResponseEntity<>(authService.resetPassword(email , request) , HttpStatus.OK);
 	}

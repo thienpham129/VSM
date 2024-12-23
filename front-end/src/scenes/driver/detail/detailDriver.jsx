@@ -11,7 +11,19 @@ import { parseISO, format } from "date-fns";
 
 const checkoutSchema = yup.object().shape({
   address: yup.string().required("Vui lòng nhập địa chỉ của tài xế"),
-  dob: yup.string().required("Vui lòng nhập ngày sinh của tài xê"),
+  dob: yup
+    .string()
+    .required("Vui lòng nhập ngày sinh của tài xế")
+    .test(
+      "is-before-today",
+      "Ngày sinh phải nhỏ hơn ngày hiện tại",
+      (value) => {
+        if (!value) return false; // Trường hợp không có giá trị
+        const today = new Date(); // Lấy ngày hiện tại
+        const dob = new Date(value); // Chuyển giá trị nhập vào thành kiểu Date
+        return dob < today; // Kiểm tra ngày sinh nhỏ hơn ngày hiện tại
+      }
+    ),
   email: yup
     .string()
     .email("Vui lòng nhập email hợp lệ")

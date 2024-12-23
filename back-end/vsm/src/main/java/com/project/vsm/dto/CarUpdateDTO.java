@@ -24,16 +24,10 @@ public class CarUpdateDTO {
 	@NotEmpty(message = "plateNumber Car is required")
 	private String plateNumber;
 
-	@NotNull(message = "color Car is required")
-	@NotEmpty(message = "color Car is required")
 	private String color;
 
-	@NotNull(message = "manufactory Car is required")
-	@NotEmpty(message = "manufactory Car is required")
 	private String manufactory;
 
-	@NotNull(message = "yearOfManufacture Car is required")
-	@Min(value = 1900, message = "Capacity must be greater than 1900")
 	private int yearOfManufacture;
 
 	@NotNull(message = "typeID Car is required")
@@ -42,11 +36,7 @@ public class CarUpdateDTO {
 	
 	private Long parkingID;
 
-	@NotNull(message = "dayMaintenance Car is required")
-	@NotEmpty(message = "dayMaintenance Car is required")
 	private String dayMaintenance;
 
-//	@NotNull(message = "images Car is required")
-//	@NotEmpty(message = "images Car is required")
 	private List<MultipartFile> images;
 }

@@ -44,29 +44,23 @@ public class TicketResponse {
     String mapDrop;
     String mapStatus;
 
-    public static TicketResponse fromEntity(TicketEntity ticket) {
-        return TicketResponse.builder()
-                .ticketId(ticket.getTicketId())
-                .selectedSeat(Arrays.asList(ticket.getSelectedSeat().split(",")))
-                .totalPrice(ticket.getPrice())
-                .detailAddressToPickUp(ticket.getDetailAddressPickUp())
-                .detailAddressDropOff(ticket.getDetailAddressDropOff())
-                .fullName(ticket.getFullName())
-                .phoneNumber(ticket.getPhoneNumber())
-                .email(ticket.getEmail())
-                .note(ticket.getNote())
-                .paymentMethod(ticket.getPaymentMethod())
-                .startLocation(ticket.getStartLocation())
-                .stopLocation(ticket.getStopLocation())
-                .schedules(ScheduleResponse.fromEntity(ticket.getScheduleEntity()))
-                .startTime(ticket.getScheduleEntity().getStartTime())
-                .endTime(ticket.getScheduleEntity().getEndTime())
-                .status(ticket.getStatus())
-                .mapPickUp(ticket.getMapPickUp())
-                .mapDrop(ticket.getMapDrop())
-                .mapStatus(ticket.getMapStatus())
-                .isPaid(ticket.isPaid())
-                .build();
-    }
+	/*
+	 * public static TicketResponse fromEntity(TicketEntity ticket) { return
+	 * TicketResponse.builder() .ticketId(ticket.getTicketId())
+	 * .selectedSeat(Arrays.asList(ticket.getSelectedSeat().split(",")))
+	 * .totalPrice(ticket.getPrice())
+	 * .detailAddressToPickUp(ticket.getDetailAddressPickUp())
+	 * .detailAddressDropOff(ticket.getDetailAddressDropOff())
+	 * .fullName(ticket.getFullName()) .phoneNumber(ticket.getPhoneNumber())
+	 * .email(ticket.getEmail()) .note(ticket.getNote())
+	 * .paymentMethod(ticket.getPaymentMethod())
+	 * .startLocation(ticket.getStartLocation())
+	 * .stopLocation(ticket.getStopLocation())
+	 * .schedules(ScheduleResponse.fromEntity(ticket.getScheduleEntity()))
+	 * .startTime(ticket.getScheduleEntity().getStartTime())
+	 * .endTime(ticket.getScheduleEntity().getEndTime()) .status(ticket.getStatus())
+	 * .mapPickUp(ticket.getMapPickUp()) .mapDrop(ticket.getMapDrop())
+	 * .mapStatus(ticket.getMapStatus()) .isPaid(ticket.isPaid()) .build(); }
+	 */
 
 }

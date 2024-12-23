@@ -7,7 +7,7 @@ function OTP(props) {
   const [isBtnDisable, setIsBtnDisable] = useState(false);
   const [countDown, setCountDown] = useState(30);
   const notifyScucessResend = () =>
-    toast.success("Verification code has been sent back", {
+    toast.success("Mã OTP đã được gửi lại", {
       position: "bottom-right",
       autoClose: 1500,
       hideProgressBar: false,
@@ -20,7 +20,7 @@ function OTP(props) {
     });
 
   const notifyErrorResend = () =>
-    toast.error("Error Resend OTP", {
+    toast.error("Lỗi gửi OTP", {
       position: "bottom-right",
       autoClose: 1500,
       hideProgressBar: false,
@@ -33,7 +33,7 @@ function OTP(props) {
     });
 
   const notifyWrongOTP = () =>
-    toast.error("Wrong verification code!", {
+    toast.error("Không đúng mã OTP!", {
       position: "bottom-right",
       autoClose: 1500,
       hideProgressBar: false,
@@ -45,7 +45,7 @@ function OTP(props) {
       transition: Bounce,
     });
   const notifyErrorOTP = () =>
-    toast.error("Error verification.", {
+    toast.error("Lỗi Xác nhận.", {
       position: "bottom-right",
       autoClose: 1500,
       hideProgressBar: false,
@@ -58,7 +58,7 @@ function OTP(props) {
     });
 
   const notifyExpriedOTP = () =>
-    toast.warn("The OTP is exprired! Please resend the OTP", {
+    toast.warn("Mã OTP đã hết hạn! Vui lòng nhấn gửi lại", {
       position: "bottom-right",
       autoClose: 3500,
       hideProgressBar: false,
@@ -150,8 +150,8 @@ function OTP(props) {
   return (
     <div className="OTP">
       <div className="otp-card">
-        <h1 className="otp-title">OTP Verification</h1>
-        <p>code has been send to {props.email}</p>
+        <h1 className="otp-title">Xác nhận mã OTP</h1>
+        <p>Mã OTP được gửi tới {props.email}</p>
         <div className="otp-card-inputs">
           <input type="number" maxLength="1" autoFocus />
           <input type="number" maxLength="1" />
@@ -161,21 +161,22 @@ function OTP(props) {
           <input type="number" maxLength="1" />
         </div>
         <p>
-          Didn't get the OTP{" "}
+          Không nhận được mã OTP{" "}
           <span className="resend-otp" onClick={handleResendOTP}>
-            Resend
+            Gửi lại
           </span>{" "}
           !
         </p>
         <p>
-          The OTP will expire in <span className="time-otp"> {countDown} </span>{" "}
+          Mã OTP sẽ hết hạn trong{" "}
+          <span className="time-otp"> {countDown} </span>{" "}
         </p>
         <button
           className="verify"
           onClick={handleClickVerify}
           disabled={isBtnDisable}
         >
-          Verify
+          Xác nhận
         </button>
 
         <ToastContainer

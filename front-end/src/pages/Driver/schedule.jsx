@@ -42,9 +42,12 @@ function Schedule() {
   const [isSuccessUpdateUser, setIsSuccessUpdateUser] = useState(false);
   const [isPickingUp, setIsPickingUp] = useState(true);
   const [isDoneUpdateMapStatus, setIsDoneUpdateMapStatus] = useState(false);
+  const [arrayTicketDoneFee, setArrayTicketDoneFee] = useState([]);
   const [currentLat, setCurrentLat] = useState("");
   const [currentLong, setCurrentLong] = useState("");
-
+  const [checkDoubleRunningSchedule, setCheckDoubleRunningSchedule] =
+    useState(false);
+  const [idRunningSchedule, setIdRunningSchedule] = useState("");
   const columns = [
     {
       name: "Điểm Khởi Hành",
@@ -143,28 +146,44 @@ function Schedule() {
       changeDataScheduleDetail();
       let tempArrayInCar = [];
       let tempArrayNotInCar = [];
+      let tempArrayDoneFee = [];
       let countNotInCar = 0;
       let tempArraydataScheduleDetail = [];
+      let countWarningUpdate = 0;
       dataScheduleDetail.forEach((item, index) => {
         if (item.status.toLocaleUpperCase() === "ĐÃ LÊN XE") {
+          countWarningUpdate += 1;
+          // if (countWarningUpdate === 0) {
           setWarningUpdateSchedule(true);
+          // }
           tempArrayInCar.push(item.fullName);
-        }
-
-        if (item.status.toLocaleUpperCase() === "CHƯA LÊN XE") {
+        } else if (item.status.toLocaleUpperCase() === "CHƯA LÊN XE") {
+          countWarningUpdate += 1;
+          // if (countWarningUpdate === 0) {
           setWarningUpdateSchedule(true);
+          // }
           tempArrayNotInCar.push(item.fullName);
+        } else if (item.status.toLocaleUpperCase() === "ĐÃ THANH TOÁN") {
+          countWarningUpdate += 1;
+          // if (countWarningUpdate === 0) {
+          setWarningUpdateSchedule(true);
+          // }
+          tempArrayDoneFee.push(item.fullName);
         }
 
-        if (item.status.toLocaleUpperCase() === "") {
-        }
         if (item.mapStatus === "0") {
           countNotInCar += 1;
         }
       });
+      // alert(countWarningUpdate);
+
+      if (countWarningUpdate === 0) {
+        setWarningUpdateSchedule(false);
+      }
 
       setArrayTicketInCar(tempArrayInCar);
       setArrayTicketNotInCar(tempArrayNotInCar);
+      setArrayTicketDoneFee(tempArrayDoneFee);
     }
   }, [dataScheduleDetail]);
 
@@ -213,6 +232,61 @@ function Schedule() {
         });
         setDataScheduleDetail(tempArrayScheduleDetail);
         console.log(tempArrayScheduleDetail);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const checkAllowUpdateFunc = async (scheduleId) => {
+    const url = "/public/ticket-with-schedule";
+    try {
+      const response = await root.get(`${url}/${scheduleId}`);
+      if (response.data) {
+        let tempArrayScheduleDetail = [];
+        response.data.forEach((item, index) => {
+          if (item.status.toLocaleUpperCase() !== "HỦY ĐẶT VÉ") {
+            tempArrayScheduleDetail.push(item);
+          }
+        });
+        setDataScheduleDetail(tempArrayScheduleDetail);
+        console.log(tempArrayScheduleDetail);
+      }
+    } catch (error) {
+      setWarningUpdateSchedule(false);
+      console.log(error);
+    }
+  };
+
+  const checkDoubleRunningScheduleFunc = async () => {
+    // const url = `driver/schedules/${localStorage.getItem("userId")}`;
+    const date = new Date();
+    let day = date.getFullYear() + "-" + (+date.getMonth() + 1) + "-";
+    let dateTime = "";
+    if (date.getDate() < 10) {
+      dateTime = "0" + date.getDate();
+    } else {
+      dateTime = date.getDate();
+    }
+    day = day + dateTime;
+    const url = "driver/driver-schedule";
+    try {
+      const response = await root.post(url, {
+        accountId: localStorage.getItem("userId"),
+        day: day,
+      });
+      if (response.data) {
+        console.log(response.data);
+        let countRunningSchedule = 0;
+        response.data.forEach((item, index) => {
+          if (item.status.toLocaleUpperCase() === "ĐANG CHẠY") {
+            countRunningSchedule += 1;
+          }
+        });
+        if (countRunningSchedule >= 1) {
+          // alert("OK");
+          setCheckDoubleRunningSchedule(true);
+        }
       }
     } catch (error) {
       console.log(error);
@@ -532,26 +606,35 @@ function Schedule() {
           console.log(+startHourSchedule);
           notifyErrorUpdateSchedule();
         } else {
+          // alert(warningUpdateSchedule);
           if (
             !warningUpdateSchedule ||
             statusSchedule.toLocaleUpperCase() !== "ĐÃ HOÀN THÀNH"
           ) {
-            const url = "driver/update-status-schedule";
-            try {
-              const response = await root.put(url, {
-                status: statusSchedule,
-                schduleId: scheduleIdByRow,
-              });
-              if (response.data) {
-                fetchDataSchedule();
-                notifyScucessUpadte();
-              } else {
-                console.log(
-                  "Something went wrong with call api of handleUpdateSchedule "
-                );
+            if (
+              !checkDoubleRunningSchedule ||
+              statusSchedule.toLocaleUpperCase() !== "ĐANG CHẠY"
+            ) {
+              const url = "driver/update-status-schedule";
+              try {
+                const response = await root.put(url, {
+                  status: statusSchedule,
+                  schduleId: scheduleIdByRow,
+                });
+                if (response.data) {
+                  fetchDataSchedule();
+                  setCheckDoubleRunningSchedule(false);
+                  notifyScucessUpadte();
+                } else {
+                  console.log(
+                    "Something went wrong with call api of handleUpdateSchedule "
+                  );
+                }
+              } catch (error) {
+                console.log(error);
               }
-            } catch (error) {
-              console.log(error);
+            } else {
+              notifyErrorDoubleRunning();
             }
           } else {
             setToggleModalWarning(true);
@@ -591,9 +674,11 @@ function Schedule() {
           style={{ width: "75px", fontSize: "9px" }}
           variant="contained"
           onClick={(e) => {
+            setDataScheduleDetail([]);
             setIdSchedule(item.id);
             fetchDataScheduleDetail(item.id);
             CheckIsScheduleComplete(item.id);
+            setCheckDoubleRunningSchedule(false);
             setIsClickDetail(true);
           }}
         >
@@ -610,6 +695,8 @@ function Schedule() {
             showPopUpDetailData(
               e.target.parentElement.parentElement.parentElement
             );
+            checkAllowUpdateFunc(item.id);
+            checkDoubleRunningScheduleFunc();
             getStartHourByScheduleRow(item.id);
             setScheduleIdByRow(item.id);
           }}
@@ -727,6 +814,22 @@ function Schedule() {
       transition: Bounce,
     });
 
+  const notifyErrorDoubleRunning = () =>
+    toast.error(
+      "Không Thể Cập Nhật Trạng Thái Khi Có Hai Hoặc Nhiều Lịch Trình Đang Chạy!",
+      {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+      }
+    );
+
   const handleApply = () => {
     notifyScucessApply();
   };
@@ -740,9 +843,11 @@ function Schedule() {
             style={{ cursor: "pointer" }}
             color="primary"
             onClick={() => {
-              setDataScheduleDetail([]);
+              setIdSchedule("");
+              // setDataScheduleDetail([]);
               setIsComplete(false);
               setIsClickDetail(false);
+              setCheckDoubleRunningSchedule(false);
               setStartHourSchedule("");
             }}
           />
@@ -1035,6 +1140,18 @@ function Schedule() {
                         Hành Khách <span style={{ color: "red" }}>{item}</span>{" "}
                         vẫn đang ở trạng thái{" "}
                         <span style={{ color: "red" }}>Chưa Lên Xe</span>{" "}
+                      </h4>
+                    </li>
+                  </ul>
+                ))}
+
+                {arrayTicketDoneFee.map((item, index) => (
+                  <ul>
+                    <li>
+                      <h4>
+                        Hành Khách <span style={{ color: "red" }}>{item}</span>{" "}
+                        vẫn đang ở trạng thái{" "}
+                        <span style={{ color: "red" }}>Đã Thanh Toán</span>{" "}
                       </h4>
                     </li>
                   </ul>

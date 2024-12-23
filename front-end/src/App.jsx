@@ -29,8 +29,9 @@ import SidebarDriver from "pages/Driver/SidebarDriver";
 import Schedule from "pages/Driver/schedule";
 import Parking from "pages/Driver/Parking";
 import Map from "pages/Driver/Map";
-import ResetPassword from "pages/resetPassword";
+import RestPassword from "pages/resetPassword";
 import ImageUploadFile from "components/ImageUploadFile";
+import BranchAndBound from "pages/Driver/testBranhAndBound";
 import { getTokenFromLocalStorage } from "utils/tokenUtils";
 import { useEffect, useState } from "react";
 
@@ -88,7 +89,7 @@ function App() {
             <Route path="identify" element={<ForgetPassword />} />
             <Route path="bookingTicket" element={<BookingTicket />} />
             <Route path="methodPayment" element={<MethodPayment />} />
-            <Route path="reset_password" element={<ResetPassword />} />
+            <Route path="reset_password" element={<RestPassword />} />
           </Route>
         </Routes>
       ) : (
@@ -112,6 +113,7 @@ function App() {
         </Routes>
       )}
       <Routes>
+        <Route path="branchAndBound" element={<BranchAndBound />} />
         <Route path="/driver" element={<SidebarDriver />}>
           <Route path="/driver/schedule" element={<Schedule />} />
           <Route path="/driver/parking" element={<Parking />} />

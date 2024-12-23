@@ -36,12 +36,9 @@ public class CarCreateDTO {
 	@Min(value = 1900, message = "Capacity must be greater than 1900")
 	private int yearOfManufacture;
 
-	@NotNull(message = "yearOfManufacture Car is required")
-	@Min(value = 0, message = "Capacity must be greater than 0")
-	@Min(value = 0, message = "yearOfManufacture must be greater than 0")
+	@NotNull(message = "typeID is required")
+	@Min(value = 0, message = "typeID must be greater than 0")
 	private Long typeID;
 
-	@NotNull(message = "images Car is required")
-	@NotEmpty(message = "images Car is required")
 	private List<MultipartFile> images;
 }

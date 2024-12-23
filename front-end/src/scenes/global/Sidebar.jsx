@@ -5,17 +5,17 @@ import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
 import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
-import ChecklistIcon from "@mui/icons-material/Checklist";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import LibraryAddCheckIcon from "@mui/icons-material/LibraryAddCheck";
 import LocalParkingIcon from "@mui/icons-material/LocalParking";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import PersonIcon from "@mui/icons-material/Person";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import RouteIcon from "@mui/icons-material/Route";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import BackupTableIcon from "@mui/icons-material/BackupTable";
+import PriceChangeIcon from "@mui/icons-material/PriceChange";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -107,9 +107,7 @@ const Sidebar = () => {
                   color={colors.grey[100]}
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
-                >
-                  
-                </Typography>
+                ></Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
                   Quản Trị Viên
                 </Typography>
@@ -180,13 +178,6 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-            <Item
-              title="Nhân Viên"
-              to="/admin/user"
-              icon={<AccountBoxIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
             <Typography
               variant="h6"
               color={colors.grey[300]}
@@ -195,6 +186,13 @@ const Sidebar = () => {
               Quản Lý Tài Nguyên
             </Typography>
             <Item
+              title="Chi Tiết Giá"
+              to="/admin/car-route"
+              icon={<PriceChangeIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
               title="Xe"
               to="/admin/car"
               icon={<DirectionsCarFilledIcon />}
@@ -202,9 +200,9 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
             <Item
-              title="Bãi Đỗ Xe"
-              to="/admin/parking"
-              icon={<LocalParkingIcon />}
+              title="Mẫu Chỗ Ngồi"
+              to="/admin/template-seat"
+              icon={<BackupTableIcon />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -215,10 +213,17 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-            <Item
+            {/* <Item
               title="Loại Xe"
               to="/admin/type"
               icon={<ChecklistIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            /> */}
+            <Item
+              title="Bãi Đỗ Xe"
+              to="/admin/parking"
+              icon={<LocalParkingIcon />}
               selected={selected}
               setSelected={setSelected}
             />

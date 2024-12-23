@@ -113,129 +113,131 @@ const Schedule10SeatMobile = ({
   const [pickUpLon, setPickUpLon] = useState("");
   const [dropLat, setDropLat] = useState("");
   const [dropLon, setDropLon] = useState("");
+  const [messageVoucher, setMessageVoucher] = useState("");
+  const [voucher, setVoucher] = useState("");
 
   // Start Api
   // Handle change for specific addresses
-  const handlePickupSpecificAddressChange = (event) => {
-    setPickupSpecificAddress(event.target.value);
-  };
+  // const handlePickupSpecificAddressChange = (event) => {
+  //   setPickupSpecificAddress(event.target.value);
+  // };
 
-  const handleDropoffSpecificAddressChange = (event) => {
-    setDropoffSpecificAddress(event.target.value);
-  };
+  // const handleDropoffSpecificAddressChange = (event) => {
+  //   setDropoffSpecificAddress(event.target.value);
+  // };
 
   const createAddressValuePickUp = () => {
-    const newAddressPickUp = `${pickupSpecificAddress} ${
-      pickupWard
-        ? `${
-            pickupWards?.find((item) => item.ward_id === pickupWard)?.ward_name
-          },`
-        : ""
-    } ${
-      pickupDistrict
-        ? `${
-            pickupDistricts?.find((item) => item.district_id === pickupDistrict)
-              ?.district_name
-          },`
-        : ""
-    } ${
-      pickupProvince
-        ? pickupProvinces?.find((item) => item.province_id === pickupProvince)
-            ?.province_name
-        : ""
-    }`;
+    // const newAddressPickUp = `${pickupSpecificAddress} ${
+    //   pickupWard
+    //     ? `${
+    //         pickupWards?.find((item) => item.ward_id === pickupWard)?.ward_name
+    //       },`
+    //     : ""
+    // } ${
+    //   pickupDistrict
+    //     ? `${
+    //         pickupDistricts?.find((item) => item.district_id === pickupDistrict)
+    //           ?.district_name
+    //       },`
+    //     : ""
+    // } ${
+    //   pickupProvince
+    //     ? pickupProvinces?.find((item) => item.province_id === pickupProvince)
+    //         ?.province_name
+    //     : ""
+    // }`;
     // setDetailAddressToPickUp(newAddressPickUp.trim());
     setDetailAddressToPickUp(pickUpAddress);
   };
   const createAddressValueDropOff = () => {
-    const newAddressDropOff = `${dropoffSpecificAddress} ${
-      dropoffWard
-        ? `${
-            dropoffWards?.find((item) => item.ward_id === dropoffWard)
-              ?.ward_name
-          },`
-        : ""
-    } ${
-      dropoffDistrict
-        ? `${
-            dropoffDistricts?.find(
-              (item) => item.district_id === dropoffDistrict
-            )?.district_name
-          },`
-        : ""
-    } ${
-      dropoffProvince
-        ? dropoffProvinces?.find((item) => item.province_id === dropoffProvince)
-            ?.province_name
-        : ""
-    }`;
+    // const newAddressDropOff = `${dropoffSpecificAddress} ${
+    //   dropoffWard
+    //     ? `${
+    //         dropoffWards?.find((item) => item.ward_id === dropoffWard)
+    //           ?.ward_name
+    //       },`
+    //     : ""
+    // } ${
+    //   dropoffDistrict
+    //     ? `${
+    //         dropoffDistricts?.find(
+    //           (item) => item.district_id === dropoffDistrict
+    //         )?.district_name
+    //       },`
+    //     : ""
+    // } ${
+    //   dropoffProvince
+    //     ? dropoffProvinces?.find((item) => item.province_id === dropoffProvince)
+    //         ?.province_name
+    //     : ""
+    // }`;
     // setDetailAddressDropOff(newAddressDropOff.trim());
     setDetailAddressDropOff(dropAddress);
   };
 
   // Fetch provinces once and use them for both pick-up and drop-off
-  useEffect(() => {
-    const fetchProvinces = async () => {
-      const response = await apiGetPublicProvinces();
-      if (response.status === 200) {
-        setPickupProvinces(response.data.results);
-        setDropoffProvinces(response.data.results);
-      }
-    };
-    fetchProvinces();
-  }, []);
+  // useEffect(() => {
+  //   const fetchProvinces = async () => {
+  //     const response = await apiGetPublicProvinces();
+  //     if (response.status === 200) {
+  //       setPickupProvinces(response.data.results);
+  //       setDropoffProvinces(response.data.results);
+  //     }
+  //   };
+  //   fetchProvinces();
+  // }, []);
 
-  // Fetch districts and wards for pick-up location based on province and district selection
-  useEffect(() => {
-    const fetchPickupDistricts = async () => {
-      const response = await apiGetPublicDistrict(pickupProvince);
-      if (response.status === 200) {
-        setPickupDistricts(response.data.results);
-      }
-    };
-    pickupProvince && fetchPickupDistricts();
+  // // Fetch districts and wards for pick-up location based on province and district selection
+  // useEffect(() => {
+  //   const fetchPickupDistricts = async () => {
+  //     const response = await apiGetPublicDistrict(pickupProvince);
+  //     if (response.status === 200) {
+  //       setPickupDistricts(response.data.results);
+  //     }
+  //   };
+  //   pickupProvince && fetchPickupDistricts();
 
-    setPickupDistrict("");
-    setPickupWards([]);
-  }, [pickupProvince]);
+  //   setPickupDistrict("");
+  //   setPickupWards([]);
+  // }, [pickupProvince]);
 
-  useEffect(() => {
-    const fetchPickupWards = async () => {
-      const response = await apiGetPublicWard(pickupDistrict);
-      if (response.status === 200) {
-        setPickupWards(response.data.results);
-      }
-    };
-    pickupDistrict && fetchPickupWards();
+  // useEffect(() => {
+  //   const fetchPickupWards = async () => {
+  //     const response = await apiGetPublicWard(pickupDistrict);
+  //     if (response.status === 200) {
+  //       setPickupWards(response.data.results);
+  //     }
+  //   };
+  //   pickupDistrict && fetchPickupWards();
 
-    setPickupWard("");
-  }, [pickupDistrict]);
+  //   setPickupWard("");
+  // }, [pickupDistrict]);
 
-  // Fetch districts and wards for drop-off location based on province and district selection
-  useEffect(() => {
-    const fetchDropoffDistricts = async () => {
-      const response = await apiGetPublicDistrict(dropoffProvince);
-      if (response.status === 200) {
-        setDropoffDistricts(response.data.results);
-      }
-    };
-    dropoffProvince && fetchDropoffDistricts();
+  // // Fetch districts and wards for drop-off location based on province and district selection
+  // useEffect(() => {
+  //   const fetchDropoffDistricts = async () => {
+  //     const response = await apiGetPublicDistrict(dropoffProvince);
+  //     if (response.status === 200) {
+  //       setDropoffDistricts(response.data.results);
+  //     }
+  //   };
+  //   dropoffProvince && fetchDropoffDistricts();
 
-    setDropoffDistrict("");
-    setDropoffWards([]);
-  }, [dropoffProvince]);
+  //   setDropoffDistrict("");
+  //   setDropoffWards([]);
+  // }, [dropoffProvince]);
 
-  useEffect(() => {
-    const fetchDropoffWards = async () => {
-      const response = await apiGetPublicWard(dropoffDistrict);
-      if (response.status === 200) {
-        setDropoffWards(response.data.results);
-      }
-    };
-    dropoffDistrict && fetchDropoffWards();
+  // useEffect(() => {
+  //   const fetchDropoffWards = async () => {
+  //     const response = await apiGetPublicWard(dropoffDistrict);
+  //     if (response.status === 200) {
+  //       setDropoffWards(response.data.results);
+  //     }
+  //   };
+  //   dropoffDistrict && fetchDropoffWards();
 
-    setDropoffWard("");
-  }, [dropoffDistrict]);
+  //   setDropoffWard("");
+  // }, [dropoffDistrict]);
 
   useEffect(() => {
     createAddressValuePickUp();
@@ -504,6 +506,25 @@ const Schedule10SeatMobile = ({
       }
     }
   }, []);
+
+  useEffect(() => {
+    const checkVoucher = async () => {
+      try {
+        const response = await root.get(
+          `/public/check-voucher?voucher=${voucher}`
+        );
+        if (response.data.data.message !== "Mã hợp lệ có thể sử dụng") {
+          setMessageVoucher("Mã Đã Hết Hạn Hoặc Không Đúng !");
+        } else {
+          setMessageVoucher("");
+        }
+      } catch (error) {
+        setMessageVoucher("Mã Đã Hết Hạn Hoặc Không Đúng !");
+        console.log(error);
+      }
+    };
+    checkVoucher();
+  }, [voucher]);
   return (
     <div
       className={styles.bookingPage__mobile__item}
@@ -929,9 +950,23 @@ const Schedule10SeatMobile = ({
                   <input
                     type="text"
                     name="promotionCode"
-                    placeholder=""
                     defaultValue=""
+                    value={voucher}
+                    onChange={(e) => setVoucher(e.target.value)}
                   />
+                  {voucher ? (
+                    <p
+                      style={{
+                        color: "red",
+                        marginTop: "10px",
+                        marginLeft: "31%",
+                      }}
+                    >
+                      {messageVoucher}
+                    </p>
+                  ) : (
+                    ""
+                  )}
                 </div>
                 {/* <div className="" style={{ textAlign: "right" }}>
                   <button

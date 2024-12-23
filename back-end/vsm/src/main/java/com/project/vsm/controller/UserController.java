@@ -105,10 +105,11 @@ public class UserController {
 	}
 
 
-	@GetMapping("/user/view-my-ticket")
-	public ResponseEntity<List<TicketResponse>> getTicketOfAccount () {
-		return new ResponseEntity<>(accountService.getTicketOfAccount(), HttpStatus.OK);
-	}
+	/*
+	 * @GetMapping("/user/view-my-ticket") public
+	 * ResponseEntity<List<TicketResponse>> getTicketOfAccount () { return new
+	 * ResponseEntity<>(accountService.getTicketOfAccount(), HttpStatus.OK); }
+	 */
 }
 
 
