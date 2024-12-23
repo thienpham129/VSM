@@ -9,9 +9,8 @@ import {
 } from "services/app";
 import { getTokenFromLocalStorage } from "utils/tokenUtils";
 import { root } from "helper/axiosClient";
-import { jwtDecode } from "jwt-decode";
 import location_icon from "../BookingForm/location_icon.png";
-
+import { jwtDecode } from "jwt-decode";
 
 const Seat = ({ seatId, seatStatus, onSelect, bookedSeats }) => {
   const isSold = bookedSeats.soldSeats.includes(seatId);
@@ -71,7 +70,7 @@ const Schedule10SeatMobile = ({
     canceledSeats: [], // Thêm trạng thái "Đã hủy vé"
   });
 
-  const [availableSeats, setAvailableSeats] = useState(6); // Số ghế còn trống
+  const [availableSeats, setAvailableSeats] = useState(9); // Số ghế còn trống
 
   //
   const [userId, setUserId] = useState("");
@@ -88,7 +87,14 @@ const Schedule10SeatMobile = ({
   //
   const [pickupSpecificAddress, setPickupSpecificAddress] = useState("");
   const [dropoffSpecificAddress, setDropoffSpecificAddress] = useState("");
-  
+  const [dropoffProvinces, setDropoffProvinces] = useState([]);
+  const [dropoffDistricts, setDropoffDistricts] = useState([]);
+  const [dropoffWards, setDropoffWards] = useState([]);
+  const [dropoffProvince, setDropoffProvince] = useState("");
+  const [dropoffDistrict, setDropoffDistrict] = useState("");
+  const [dropoffWard, setDropoffWard] = useState("");
+
+  //
   const [pickUpAddress, setPickUpAddress] = useState("");
   const [dropAddress, setDropAddress] = useState("");
   const [suggesstPickUpAddress, setSuggestPickUpAddress] = useState([]);
@@ -99,6 +105,146 @@ const Schedule10SeatMobile = ({
   const [pickUpLon, setPickUpLon] = useState("");
   const [dropLat, setDropLat] = useState("");
   const [dropLon, setDropLon] = useState("");
+  const [messageVoucher, setMessageVoucher] = useState("");
+  const [voucher, setVoucher] = useState("");
+
+  // Start Api
+  // Handle change for specific addresses
+  // const handlePickupSpecificAddressChange = (event) => {
+  //   setPickupSpecificAddress(event.target.value);
+  // };
+
+  // const handleDropoffSpecificAddressChange = (event) => {
+  //   setDropoffSpecificAddress(event.target.value);
+  // };
+
+  const createAddressValuePickUp = () => {
+    // const newAddressPickUp = `${pickupSpecificAddress} ${
+    //   pickupWard
+    //     ? `${
+    //         pickupWards?.find((item) => item.ward_id === pickupWard)?.ward_name
+    //       },`
+    //     : ""
+    // } ${
+    //   pickupDistrict
+    //     ? `${
+    //         pickupDistricts?.find((item) => item.district_id === pickupDistrict)
+    //           ?.district_name
+    //       },`
+    //     : ""
+    // } ${
+    //   pickupProvince
+    //     ? pickupProvinces?.find((item) => item.province_id === pickupProvince)
+    //         ?.province_name
+    //     : ""
+    // }`;
+    // setDetailAddressToPickUp(newAddressPickUp.trim());
+    setDetailAddressToPickUp(pickUpAddress);
+  };
+  const createAddressValueDropOff = () => {
+    // const newAddressDropOff = `${dropoffSpecificAddress} ${
+    //   dropoffWard
+    //     ? `${
+    //         dropoffWards?.find((item) => item.ward_id === dropoffWard)
+    //           ?.ward_name
+    //       },`
+    //     : ""
+    // } ${
+    //   dropoffDistrict
+    //     ? `${
+    //         dropoffDistricts?.find(
+    //           (item) => item.district_id === dropoffDistrict
+    //         )?.district_name
+    //       },`
+    //     : ""
+    // } ${
+    //   dropoffProvince
+    //     ? dropoffProvinces?.find((item) => item.province_id === dropoffProvince)
+    //         ?.province_name
+    //     : ""
+    // }`;
+    // setDetailAddressDropOff(newAddressDropOff.trim());
+    setDetailAddressDropOff(dropAddress);
+  };
+
+  // Fetch provinces once and use them for both pick-up and drop-off
+  // useEffect(() => {
+  //   const fetchProvinces = async () => {
+  //     const response = await apiGetPublicProvinces();
+  //     if (response.status === 200) {
+  //       setPickupProvinces(response.data.results);
+  //       setDropoffProvinces(response.data.results);
+  //     }
+  //   };
+  //   fetchProvinces();
+  // }, []);
+
+  // // Fetch districts and wards for pick-up location based on province and district selection
+  // useEffect(() => {
+  //   const fetchPickupDistricts = async () => {
+  //     const response = await apiGetPublicDistrict(pickupProvince);
+  //     if (response.status === 200) {
+  //       setPickupDistricts(response.data.results);
+  //     }
+  //   };
+  //   pickupProvince && fetchPickupDistricts();
+
+  //   setPickupDistrict("");
+  //   setPickupWards([]);
+  // }, [pickupProvince]);
+
+  // useEffect(() => {
+  //   const fetchPickupWards = async () => {
+  //     const response = await apiGetPublicWard(pickupDistrict);
+  //     if (response.status === 200) {
+  //       setPickupWards(response.data.results);
+  //     }
+  //   };
+  //   pickupDistrict && fetchPickupWards();
+
+  //   setPickupWard("");
+  // }, [pickupDistrict]);
+
+  // // Fetch districts and wards for drop-off location based on province and district selection
+  // useEffect(() => {
+  //   const fetchDropoffDistricts = async () => {
+  //     const response = await apiGetPublicDistrict(dropoffProvince);
+  //     if (response.status === 200) {
+  //       setDropoffDistricts(response.data.results);
+  //     }
+  //   };
+  //   dropoffProvince && fetchDropoffDistricts();
+
+  //   setDropoffDistrict("");
+  //   setDropoffWards([]);
+  // }, [dropoffProvince]);
+
+  // useEffect(() => {
+  //   const fetchDropoffWards = async () => {
+  //     const response = await apiGetPublicWard(dropoffDistrict);
+  //     if (response.status === 200) {
+  //       setDropoffWards(response.data.results);
+  //     }
+  //   };
+  //   dropoffDistrict && fetchDropoffWards();
+
+  //   setDropoffWard("");
+  // }, [dropoffDistrict]);
+
+  useEffect(() => {
+    createAddressValuePickUp();
+    createAddressValueDropOff();
+  }, [
+    // pickupWard,
+    // pickupDistrict,
+    // pickupProvince,
+    // dropoffWard,
+    // dropoffDistrict,
+    // dropoffProvince,
+    pickUpAddress,
+    dropAddress,
+  ]);
+  // End Api
 
   //
   useEffect(() => {
@@ -131,7 +277,7 @@ const Schedule10SeatMobile = ({
         });
 
         // Đếm số ghế còn trống
-        const totalSeats = 6; // Xe có 6 ghế
+        const totalSeats = 9; // Xe có 6 ghế
         const soldAndBookedSeats = new Set([...seatsPaid, ...seatsPending]); // Ghế đã bán hoặc đang chờ xử lý
         const availableSeats = totalSeats - soldAndBookedSeats.size;
         setAvailableSeats(availableSeats);
@@ -195,9 +341,9 @@ const Schedule10SeatMobile = ({
     if (!email.trim()) {
       newErrors.email = "Email là bắt buộc.";
     }
-    if (!pickupSpecificAddress.trim())
+    if (!pickUpAddress.trim())
       newErrors.pickupSpecificAddress = "Vui lòng nhập địa chỉ điểm đi.";
-    if (!dropoffSpecificAddress.trim())
+    if (!dropAddress.trim())
       newErrors.dropoffSpecificAddress = "Vui lòng nhập địa chỉ điểm đến.";
 
     setErrors(newErrors);
@@ -261,49 +407,6 @@ const Schedule10SeatMobile = ({
   };
 
   //
-  const fetchUser = async (userId) => {
-    const token = getTokenFromLocalStorage();
-    try {
-      const response = await root.get(`/user/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = response.data;
-      console.log("««««« data »»»»»", data);
-      if (data) {
-        setEmail(data.email || "");
-        setPhoneNumber(data.phoneNumber || "");
-        setFullName(
-          `${response.data.firstName || ""} ${
-            response.data.lastName || ""
-          }`.trim()
-        );
-      }
-    } catch (error) {
-      console.error("Failed to retrieve user data:", error);
-    }
-  };
-
-  useEffect(() => {
-    const token = getTokenFromLocalStorage();
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-        const userId = decodedToken.sub;
-        if (userId) {
-          setUserId(userId);
-          fetchUser(userId);
-        } else {
-          console.error("userId not found in token");
-        }
-      } catch (error) {
-        console.error("Error decoding token:", error);
-      }
-    }
-  }, []);
-  //
-
   useEffect(() => {
     if (pickUpAddress) {
       const delayDebounceFn = setTimeout(() => {
@@ -354,6 +457,66 @@ const Schedule10SeatMobile = ({
     }
   }, [dropAddress]);
 
+  const fetchUser = async (userId) => {
+    const token = getTokenFromLocalStorage();
+    try {
+      const response = await root.get(`/user/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = response.data;
+      console.log("««««« data »»»»»", data);
+      if (data) {
+        setEmail(data.email || "");
+        setPhoneNumber(data.phoneNumber || "");
+        setFullName(
+          `${response.data.firstName || ""} ${
+            response.data.lastName || ""
+          }`.trim()
+        );
+      }
+    } catch (error) {
+      console.error("Failed to retrieve user data:", error);
+    }
+  };
+
+  useEffect(() => {
+    const token = getTokenFromLocalStorage();
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.sub;
+        if (userId) {
+          setUserId(userId);
+          fetchUser(userId);
+        } else {
+          console.error("userId not found in token");
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const checkVoucher = async () => {
+      try {
+        const response = await root.get(
+          `/public/check-voucher?voucher=${voucher}`
+        );
+        if (response.data.data.message !== "Mã hợp lệ có thể sử dụng") {
+          setMessageVoucher("Mã Đã Hết Hạn Hoặc Không Đúng !");
+        } else {
+          setMessageVoucher("");
+        }
+      } catch (error) {
+        setMessageVoucher("Mã Đã Hết Hạn Hoặc Không Đúng !");
+        console.log(error);
+      }
+    };
+    checkVoucher();
+  }, [voucher]);
   return (
     <div
       className={styles.bookingPage__mobile__item}
@@ -390,9 +553,10 @@ const Schedule10SeatMobile = ({
             </p>
           </h3>
           <p>
-            {availableSeats} chỗ ngồi còn trống <br />{" "}
+            còn {availableSeats} chỗ ngồi trống <br />{" "}
             <b className={styles.bookingPage__mobile__item__toggle_detail}>
-              Xe {car.name} <span className="avicon icon-caret-down-bg" />{" "}
+              {car.name} - {numSeat} chỗ ngồi{" "}
+              <span className="avicon icon-caret-down-bg" />{" "}
             </b>
           </p>
         </div>
@@ -778,9 +942,23 @@ const Schedule10SeatMobile = ({
                   <input
                     type="text"
                     name="promotionCode"
-                    placeholder=""
                     defaultValue=""
+                    value={voucher}
+                    onChange={(e) => setVoucher(e.target.value)}
                   />
+                  {voucher ? (
+                    <p
+                      style={{
+                        color: "red",
+                        marginTop: "10px",
+                        marginLeft: "31%",
+                      }}
+                    >
+                      {messageVoucher}
+                    </p>
+                  ) : (
+                    ""
+                  )}
                 </div>
                 {/* <div className="" style={{ textAlign: "right" }}>
                   <button

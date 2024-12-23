@@ -72,7 +72,7 @@ const VoucherAdmin = () => {
 
   useEffect(() => {
     fetchVouchers(); // Gọi hàm fetchVouchers khi component được mount
-  }, [vouchers, isLoading]);
+  }, []);
 
   const handleClickOpen = () => {
     setOpen(true);

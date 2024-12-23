@@ -76,13 +76,13 @@ const RouteAdmin = () => {
 
     if (!route.startLocation.trim())
       newErrors.startLocation = "Điểm bắt đầu không được để trống.";
-    else if (!vietnameseRegex.test(route.startLocation))
-      newErrors.startLocation = "Điểm bắt đầu chỉ được chứa chữ tiếng Việt.";
+    // else if (!vietnameseRegex.test(route.startLocation))
+    //   newErrors.startLocation = "Điểm bắt đầu chỉ được chứa chữ tiếng Việt.";
 
     if (!route.stopLocation.trim())
       newErrors.stopLocation = "Điểm kết thúc không được để trống.";
-    else if (!vietnameseRegex.test(route.stopLocation))
-      newErrors.stopLocation = "Điểm kết thúc chỉ được chứa chữ tiếng Việt.";
+    // else if (!vietnameseRegex.test(route.stopLocation))
+    //   newErrors.stopLocation = "Điểm kết thúc chỉ được chứa chữ tiếng Việt.";
 
     return newErrors;
   };

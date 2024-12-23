@@ -178,6 +178,10 @@ const Map = () => {
   const [currentCity, setCurrentCity] = useState("");
 
   const fetchCurrentSchedule = async () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      setCurrentLat(position.coords.latitude);
+      setCurrentLong(position.coords.longitude);
+    });
     const url = "/driver/find-schedule";
 
     try {
@@ -198,6 +202,10 @@ const Map = () => {
       fetchAllDataScheduleCurrentDay();
     }
   };
+
+  useEffect(() => {
+    fetchCurrentSchedule();
+  }, []);
 
   const fetchTicketsInCurrentShedule = async (scheduleId) => {
     const url = "/public/ticket-with-schedule";
@@ -241,7 +249,7 @@ const Map = () => {
           }
         });
 
-        if (checkIsPickingUp > 0) {
+        if (checkIsPickingUp > 0 && currentLat && currentLong) {
           if (countNextDes > 1) {
             let oldPositionOfShortestDistance = 0;
             let destination = "";
@@ -305,6 +313,7 @@ const Map = () => {
           }
 
           if (countInitial === arrayTicket.length) {
+            // alert("Yes");
             let oldPositionOfShortestDistance = 0;
             let destination = "";
             console.log(arrayTicket);
@@ -319,10 +328,14 @@ const Map = () => {
             console.log(destination + "   des");
             let elementsArray = [];
             if (currentLat && currentLong) {
+              // alert("Ok");
+              console.log(currentLat + "    " + currentLong);
+              // alert(currentLat + "      " + currentLong);
               const responseMap = await fetch(
                 `https://rsapi.goong.io/DistanceMatrix?origins=${currentLat},${currentLong}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
               );
               const data = await responseMap.json();
+              console.log(data);
               elementsArray = data.rows[0].elements;
             }
             console.log(elementsArray);
@@ -355,7 +368,8 @@ const Map = () => {
               }
             });
           }
-        } else {
+        }
+        if (checkIsPickingUp === 0 && currentLat && currentLong) {
           if (countNextDes > 1) {
             let oldPositionOfShortestDistance = 0;
             let destination = "";
@@ -429,16 +443,18 @@ const Map = () => {
   };
 
   useEffect(() => {
-    if (currScheduleId !== "") {
+    // alert(currScheduleId);
+    if (currScheduleId !== "" && currentLat && currentLong) {
+      // alert("ok 2");
       fetchTicketsInCurrentShedule(currScheduleId);
     }
-  }, [currScheduleId]);
-
-  useEffect(() => {
-    fetchCurrentSchedule();
-  }, []);
+  }, [currScheduleId, currentLat, currentLong]);
 
   const fetchAllDataScheduleCurrentDay = async () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      setCurrentLat(position.coords.latitude);
+      setCurrentLong(position.coords.longitude);
+    });
     const date = new Date();
     let day = date.getFullYear() + "-" + (+date.getMonth() + 1) + "-";
     let dateTime = "";
@@ -486,23 +502,18 @@ const Map = () => {
           }
         }
       }
-      setPreparedScheduleId(tempArrayCurrentDay[0].id);
-      setSchduleId(tempArrayCurrentDay[0].id);
+      if (tempArrayCurrentDay.length > 0) {
+        setPreparedScheduleId(tempArrayCurrentDay[0].id);
+        setSchduleId(tempArrayCurrentDay[0].id);
+      }
     }
   }, [allDataCurrentDay]);
 
   useEffect(() => {
-    if (preparedScheduleId !== "") {
+    if (preparedScheduleId !== "" && currentLat && currentLong) {
       fetchTicketsInCurrentShedule(preparedScheduleId);
     }
-  }, [preparedScheduleId]);
-
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      setCurrentLat(position.coords.latitude);
-      setCurrentLong(position.coords.longitude);
-    });
-  }, []);
+  }, [preparedScheduleId, currentLat, currentLong]);
 
   const getDistance = async (startLat, startLon, endLat, endLon) => {
     const url = `https://api.maptiler.com/routes/directions/v2/${startLon},${startLat};${endLon},${endLat}?key=4D4kbtoB1PV8gjRJMqgB&steps=false&geometries=geojson`;
@@ -570,22 +581,6 @@ const Map = () => {
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const fetchGeocode = async (address) => {
-    // const apiKey = "4D4kbtoB1PV8gjRJMqgB";
-    // const url = `https://api.maptiler.com/geocoding/${encodeURIComponent(
-    //   address
-    // )}.json?key=${apiKey}`;
-
-    // try {
-    //   const response = await fetch(url);
-    //   if (!response.ok) {
-    //     throw new Error("Failed to fetch geocoding data");
-    //   }
-    //   const data = await response.json();
-    //   return data;
-    // } catch (error) {
-    //   console.error("Error:", error);
-    // }
-
     try {
       const response = await fetch(
         `https://rsapi.goong.io/geocode?address=${address}&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
@@ -610,7 +605,9 @@ const Map = () => {
                 `https://rsapi.goong.io/Place/AutoComplete?api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo&input=${query}`
               );
               const data = await response.json();
-              setSuggestAddress(data.predictions);
+              if (data.predictions) {
+                setSuggestAddress(data.predictions);
+              }
             } catch (error) {
               console.log(error);
             }
@@ -625,29 +622,16 @@ const Map = () => {
   }, [inputCurrent]);
 
   const handleSearchInCurrent = async () => {
-    // fetchGeocode(inputCurrent.trim()).then((data) => {
-    //   if (data && data.features && data.features.length > 0) {
-    //     const { center } = data.features[0];
-    //     console.log("Coordinates:", center);
-    //     setCorsSearchCurrentLat(center[1]);
-    //     setCorsSearchCurrentLon(center[0]);
-    //   }
-    // });
-    navigator.geolocation.getCurrentPosition((position) => {
-      setCurrentLat(position.coords.latitude);
-      setCurrentLong(position.coords.longitude);
-    });
     fetchGeocode(inputCurrent.trim()).then((data) => {
       if (data) {
         console.log("Coordinates:", data.results[0].geometry.location.lat);
         setCorsSearchCurrentLat(data.results[0].geometry.location.lat);
         setCorsSearchCurrentLon(data.results[0].geometry.location.lng);
+        // setCurrentLat(data.results[0].geometry.location.lat);
+        // setCurrentLong(data.results[0].geometry.location.lng);
       }
     });
-    navigator.geolocation.getCurrentPosition((position) => {
-      setCurrentLat(position.coords.latitude);
-      setCurrentLong(position.coords.longitude);
-    });
+
     setUserLat("");
     setUserLon("");
     setVoiceSearchAddress1Lat("");
@@ -673,7 +657,9 @@ const Map = () => {
                 `https://rsapi.goong.io/Place/AutoComplete?api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo&input=${query}`
               );
               const data = await response.json();
-              setSuggestAddressPhase1(data.predictions);
+              if (data.predictions) {
+                setSuggestAddressPhase1(data.predictions);
+              }
             } catch (error) {
               console.log(error);
             }
@@ -698,7 +684,9 @@ const Map = () => {
                 `https://rsapi.goong.io/Place/AutoComplete?api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo&input=${query}`
               );
               const data = await response.json();
-              setSuggestAddressPhase2(data.predictions);
+              if (data.predictions) {
+                setSuggestAddressPhase2(data.predictions);
+              }
             } catch (error) {
               console.log(error);
             }
@@ -713,10 +701,6 @@ const Map = () => {
   }, [inputPhase2]);
 
   const handleSearchTwoPlaces = () => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      setCurrentLat(position.coords.latitude);
-      setCurrentLong(position.coords.longitude);
-    });
     if (inputPhase1) {
       fetchGeocode(inputPhase1.trim()).then((data) => {
         if (data) {
@@ -747,12 +731,6 @@ const Map = () => {
     setVoiceSearchOnceLat("");
     setVoiceSearchOnceLon("");
   };
-
-  useEffect(() => {
-    if (suggesstAddress.length > 0) {
-      console.log(suggesstAddress);
-    }
-  }, [suggesstAddress]);
 
   useEffect(() => {
     console.log(userLat + "   " + userLon + "    userLat and userLon");
@@ -799,12 +777,13 @@ const Map = () => {
     const text = e.results[0][0].transcript;
     setInforVoice(text);
     setIsRecording(false);
+    console.log(text);
     if (currentLat && currentLong) {
       const response = await fetch(
         `https://rsapi.goong.io/Geocode?latlng=${currentLat},${currentLong}&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
       );
       const data = await response.json();
-      if (data) {
+      if (data.results[0].compound.province) {
         setCurrentCity(data.results[0].compound.province);
         console.log(data.results[0].compound.province);
       }
@@ -828,13 +807,11 @@ const Map = () => {
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
-    console.log(text);
     setResultSeatchVoice(text);
   };
 
   useEffect(() => {
     if (resultSearchVoice) {
-      console.log(currentCity);
       if (resultSearchVoice.includes("&")) {
         let tempAddressStartVoice =
           resultSearchVoice.split("&&")[0].trim() + " " + currentCity;
@@ -843,7 +820,6 @@ const Map = () => {
           resultSearchVoice.split("&&")[1].trim() + " " + currentCity;
         setAddressEndVoice(tempAddressEndVoice);
       } else {
-        console.log("ONCEEEEEEEEEE");
         let tempAddressOnceVoice = resultSearchVoice.trim() + " " + currentCity;
         setAddressOnceVoice(tempAddressOnceVoice);
       }
@@ -852,7 +828,6 @@ const Map = () => {
 
   useEffect(() => {
     if (addressStartVoice) {
-      console.log("start:  " + addressStartVoice);
       try {
         const getCoorsStartVoice = async () => {
           const response = await fetch(
@@ -886,7 +861,6 @@ const Map = () => {
             setVoiceSearchAddress2Lon(data.results[0].geometry.location.lng);
           }
         };
-
         getCoorsStartVoice();
       } catch (error) {
         console.log(error);
@@ -1237,216 +1211,6 @@ const Map = () => {
           </div>
         )}
       </div>
-
-      {/* {corsSearchCurrentLat &&
-      corsSearchCurrentLon &&
-      currentLat &&
-      currentLong ? (
-        <MapContainer
-          center={[currentLat, currentLong]}
-          zoom={13}
-          zoomControl={true}
-          style={{ height: "100vh", width: "100%" }}
-        >
-          <RoutingControl
-            position={"topleft"}
-            start={[currentLat, currentLong]}
-            end={[corsSearchCurrentLat, corsSearchCurrentLon]}
-            color={"blue"}
-          />
-
-          <Marker position={[currentLat, currentLong]} icon={driverIcon}>
-            <Popup>Vị Trí Của Bạn Hiện Tại</Popup>
-          </Marker>
-
-          <Marker
-            position={[corsSearchCurrentLat, corsSearchCurrentLon]}
-            icon={destinationIcon}
-          >
-            <Popup>Điểm Đến: {inputCurrent}</Popup>
-          </Marker>
-
-          <LayersControl position="topright">
-            <LayersControl.BaseLayer checked name="Map">
-              <TileLayer
-                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                url={maps.base}
-              />
-            </LayersControl.BaseLayer>
-          </LayersControl>
-        </MapContainer>
-      ) : (
-        ""
-      )}
-
-      {corsSearchLat_1 &&
-      corsSearchLon_1 &&
-      corsSearchLat_2 &&
-      corsSearchLon_2 ? (
-        <MapContainer
-          center={[corsSearchLat_1, corsSearchLon_1]}
-          zoom={13}
-          zoomControl={true}
-          style={{ height: "100vh", width: "100%" }}
-        >
-          <RoutingControl
-            position={"topleft"}
-            start={[corsSearchLat_1, corsSearchLon_1]}
-            end={[corsSearchLat_2, corsSearchLon_2]}
-            color={"blue"}
-          />
-
-          <Marker
-            position={[corsSearchLat_1, corsSearchLon_1]}
-            icon={driverIcon}
-          >
-            <Popup>Điểm Bắt Đầu: {inputPhase1}</Popup>
-          </Marker>
-
-          <Marker
-            position={[corsSearchLat_2, corsSearchLon_2]}
-            icon={destinationIcon}
-          >
-            <Popup>Điểm Đến: {inputPhase2}</Popup>
-          </Marker>
-
-          <LayersControl position="topright">
-            <LayersControl.BaseLayer checked name="Map">
-              <TileLayer
-                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                url={maps.base}
-              />
-            </LayersControl.BaseLayer>
-          </LayersControl>
-        </MapContainer>
-      ) : (
-        ""
-      )}
-
-      {userLat && userLon && currentLat && currentLong ? (
-        <MapContainer
-          center={[currentLat, currentLong]}
-          zoom={13}
-          zoomControl={true}
-          style={{ height: "100vh", width: "100%" }}
-        >
-          <RoutingControl
-            position={"topleft"}
-            start={[currentLat, currentLong]}
-            end={[userLat, userLon]}
-            color={"blue"}
-          />
-
-          <Marker position={[currentLat, currentLong]} icon={driverIcon}>
-            <Popup>Vị Trí Của Bạn Hiện Tại</Popup>
-          </Marker>
-
-          <Marker position={[userLat, userLon]} icon={destinationIcon}>
-            <Popup>
-              Điểm Đến
-              <ul>
-                <li>Tên Khách Hàng: {userName}</li>
-                <li>Địa Chỉ: {userAddress}</li>
-                <li>SĐT: {userPhone}</li>
-              </ul>
-            </Popup>
-          </Marker>
-
-          <LayersControl position="topright">
-            <LayersControl.BaseLayer checked name="Map">
-              <TileLayer
-                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                url={maps.base}
-              />
-            </LayersControl.BaseLayer>
-          </LayersControl>
-        </MapContainer>
-      ) : (
-        ""
-      )}
-
-      {voiceSearchAddress1Lat &&
-      voiceSearchAddress1Lon &&
-      voiceSearchAddress2Lat &&
-      voiceSearchAddress2Lon ? (
-        <MapContainer
-          center={[voiceSearchAddress1Lat, voiceSearchAddress1Lon]}
-          zoom={13}
-          zoomControl={true}
-          style={{ height: "100vh", width: "100%" }}
-        >
-          <RoutingControl
-            position={"topleft"}
-            start={[voiceSearchAddress1Lat, voiceSearchAddress1Lon]}
-            end={[voiceSearchAddress2Lat, voiceSearchAddress2Lon]}
-            color={"blue"}
-          />
-
-          <Marker
-            position={[voiceSearchAddress1Lat, voiceSearchAddress1Lon]}
-            icon={driverIcon}
-          >
-            <Popup>Điểm Bắt Đầu</Popup>
-          </Marker>
-
-          <Marker
-            position={[voiceSearchAddress2Lat, voiceSearchAddress2Lon]}
-            icon={destinationIcon}
-          >
-            <Popup>Điểm Đến</Popup>
-          </Marker>
-
-          <LayersControl position="topright">
-            <LayersControl.BaseLayer checked name="Map">
-              <TileLayer
-                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                url={maps.base}
-              />
-            </LayersControl.BaseLayer>
-          </LayersControl>
-        </MapContainer>
-      ) : (
-        ""
-      )}
-
-      {voiceSearchOnceLat && voiceSearchOnceLon && currentLat && currentLong ? (
-        <MapContainer
-          center={[currentLat, currentLong]}
-          zoom={13}
-          zoomControl={true}
-          style={{ height: "100vh", width: "100%" }}
-        >
-          <RoutingControl
-            position={"topleft"}
-            start={[currentLat, currentLong]}
-            end={[voiceSearchOnceLat, voiceSearchOnceLon]}
-            color={"blue"}
-          />
-
-          <Marker position={[currentLat, currentLong]} icon={driverIcon}>
-            <Popup>Điểm Bắt Đầu: Vị Trí Của Bạn</Popup>
-          </Marker>
-
-          <Marker
-            position={[voiceSearchOnceLat, voiceSearchOnceLon]}
-            icon={destinationIcon}
-          >
-            <Popup>Điểm Đến</Popup>
-          </Marker>
-
-          <LayersControl position="topright">
-            <LayersControl.BaseLayer checked name="Map">
-              <TileLayer
-                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                url={maps.base}
-              />
-            </LayersControl.BaseLayer>
-          </LayersControl>
-        </MapContainer>
-      ) : (
-        ""
-      )} */}
-
       {voiceSearchAddress1Lat &&
       voiceSearchAddress1Lon &&
       voiceSearchAddress2Lat &&
@@ -1489,7 +1253,7 @@ const Map = () => {
         ""
       )}
 
-      {userLat && userLon && currentLat && currentLong ? (
+      {userLat && userLon ? (
         <GoongMapWithDirections
           origin={`${currentLat},${currentLong}`}
           destination={`${userLat},${userLon}`}

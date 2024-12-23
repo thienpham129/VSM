@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.vsm.dto.SendVoucherDTO;
 import com.project.vsm.dto.VoucherDTO;
+import com.project.vsm.dto.response.ResponseObject;
+import com.project.vsm.dto.response.VoucherResponse;
 import com.project.vsm.model.VoucherEntity;
 import com.project.vsm.service.VoucherService;
 
@@ -64,6 +66,14 @@ public class VoucherController {
 	@PostMapping("/admin/send-voucher")
 	public ResponseEntity<String> sendVoucher(@Valid @RequestBody SendVoucherDTO input) {
 		return new ResponseEntity<>(voucherService.sendVoucher(input), HttpStatus.OK);
+	}
+	
+	@GetMapping("/public/check-voucher")
+	public ResponseObject<VoucherResponse> checkVoucherValidOrNot (@RequestParam String voucher){
+		return ResponseObject.<VoucherResponse>builder()
+				.code(200)
+				.data(voucherService.checkVoucherUseOrNot(voucher))
+				.build();
 	}
 
 }

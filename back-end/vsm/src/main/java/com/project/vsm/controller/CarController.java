@@ -57,11 +57,11 @@ public class CarController {
         return new ResponseEntity<>(carService.updateCarById(id, carInput), HttpStatus.OK);
     }
 
-    @GetMapping("/public/cars/{typeId}")
-    public ResponseEntity<List<CarEntity>> getCarByType(@PathVariable long typeId) {
-        List<CarEntity> carEntity = carService.getCarByType(typeId);
-        return new ResponseEntity<>(carEntity, HttpStatus.OK);
-    }
+//    @GetMapping("/public/cars/{typeId}")
+//    public ResponseEntity<List<CarEntity>> getCarByType(@PathVariable long typeId) {
+//        List<CarEntity> carEntity = carService.getCarByType(typeId);
+//        return new ResponseEntity<>(carEntity, HttpStatus.OK);
+//    }
 
     @PostMapping("/public/cars/search")
     public ResponseEntity<PagingResponse<CarResponse>> getCarPagingAndSearch(@RequestBody CarSearchRequest request) {

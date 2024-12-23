@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.vsm.dto.SendVoucherDTO;
 import com.project.vsm.dto.VoucherDTO;
+import com.project.vsm.dto.response.VoucherResponse;
 import com.project.vsm.exception.NotFoundException;
 import com.project.vsm.model.AccountEntity;
 import com.project.vsm.model.VoucherEntity;
@@ -96,7 +97,7 @@ public class VoucherService {
 
 	public void sendDiscountEmail(String content, String discount, AccountEntity user) {
 		String subject = "Mã giảm giá";
-		String discountMessage = "Mã giảm giá của bạn là: " + discount + "%";
+		String discountMessage = "Mã giảm giá của bạn là: " + discount;
 
 		String htmlMessage = "<html>" + "<body style=\"font-family: Arial, sans-serif;\">"
 				+ "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
@@ -122,4 +123,15 @@ public class VoucherService {
 		}
 		return "Gửi mã thành công";
 	}
+	
+	public VoucherResponse checkVoucherUseOrNot(String code) {
+        VoucherEntity voucher = voucherRepository.findByCode(code)
+                .orElseThrow(() -> new RuntimeException("Mã khuyến mãi hết hạn hoặc không đúng"));
+
+        if (!voucher.isValid() || !voucher.getCode().equals(code)) {
+            return new VoucherResponse("Mã khuyến mãi hết hạn hoặc không đúng");
+        } else {
+            return new VoucherResponse(voucher.getDiscount(), "Mã hợp lệ có thể sử dụng");
+        }
+    }
 }

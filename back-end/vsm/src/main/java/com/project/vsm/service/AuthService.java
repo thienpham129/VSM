@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.vsm.dto.RegisterUserDto;
 import com.project.vsm.dto.VerifyUserDto;
+import com.project.vsm.dto.request.ChangePasswordRequest;
 import com.project.vsm.model.AccountEntity;
 import com.project.vsm.dto.response.LoginResponse;
 import com.project.vsm.repository.AccountRepository;
@@ -143,4 +144,35 @@ public class AuthService {
 			throw new RuntimeException("User not found");
 		}
 	}
+	
+	
+	public boolean forgotPassword(String email) {
+        try {
+            Optional<AccountEntity> account = accountRepository.findByEmail(email);
+            if (account.isEmpty()) {
+                throw new RuntimeException("Cannot found email : " + email);
+            }
+            emailService.sendEmailResetPassword(email);
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException("Send mail forgot password fail!" + e.getMessage());
+        }
+    }
+
+    public boolean resetPassword(String email, ChangePasswordRequest request) {
+        try {
+           AccountEntity account = accountRepository.findByEmail(email)
+                   .orElseThrow(() -> new RuntimeException("Email not found"));
+
+            if (!request.getNewPassword().equals(request.getNewPasswordRepeat())) {
+                throw new RuntimeException("New password and password repeat not macth!");
+            }
+            account.setPassword(passwordEncoder.encode(request.getNewPasswordRepeat()));
+            accountRepository.save(account);
+            return true;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Send mail reset password fail!" + e.getMessage());
+        }
+    }
 }

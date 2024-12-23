@@ -82,35 +82,30 @@ public class RouteService {
 		routeRepository.delete(optionalRoute.get());
 		return optionalRoute.get();
 	}
-	public List<RouteResponse> getRouteWithSchedule(String startLocation,
-													String stopLocation, LocalDate startTime) {
-		System.out.println("Start : " + startLocation);
-		System.out.println("Stop : " + stopLocation);
-		System.out.println("Date : " + startTime);
-		List<RouteEntity> routes = routeRepository.findStartLocationStopLocationStartTime
-				(startLocation, stopLocation, startTime);
-
-		if (routes.isEmpty()) {
-			System.out.println("No schedules found.");
-			return Collections.emptyList();
-		}
-		List<RouteResponse> responses = new ArrayList<>();
-		for (RouteEntity route : routes) {
-			List<ScheduleEntity> schedules = scheduleRepository.findByRouteIdAndStartTime(route.getId(), startTime);
-			List<ScheduleResponse> scheduleResponses = new ArrayList<>();
-
-			for (ScheduleEntity schedule : schedules) {
-				CarEntity car = schedule.getCar();
-				CarResponse carResponse = car != null ? CarResponse.mapCarResponse(car) : null;
-
-				ScheduleResponse scheduleResponse = ScheduleResponse.mapScheduleResponse(schedule, carResponse);
-				scheduleResponses.add(scheduleResponse);
-			}
-
-			RouteResponse routeResponse = RouteResponse.mapRouteResponse(route, scheduleResponses);
-			responses.add(routeResponse);
-		}
-		return responses;
-	}
+	/*
+	 * public List<RouteResponse> getRouteWithSchedule(String startLocation, String
+	 * stopLocation, LocalDate startTime) { System.out.println("Start : " +
+	 * startLocation); System.out.println("Stop : " + stopLocation);
+	 * System.out.println("Date : " + startTime); List<RouteEntity> routes =
+	 * routeRepository.findStartLocationStopLocationStartTime (startLocation,
+	 * stopLocation, startTime);
+	 * 
+	 * if (routes.isEmpty()) { System.out.println("No schedules found."); return
+	 * Collections.emptyList(); } List<RouteResponse> responses = new ArrayList<>();
+	 * for (RouteEntity route : routes) { List<ScheduleEntity> schedules =
+	 * scheduleRepository.findByRouteIdAndStartTime(route.getId(), startTime);
+	 * List<ScheduleResponse> scheduleResponses = new ArrayList<>();
+	 * 
+	 * for (ScheduleEntity schedule : schedules) { CarEntity car =
+	 * schedule.getCar(); CarResponse carResponse = car != null ?
+	 * CarResponse.mapCarResponse(car) : null;
+	 * 
+	 * ScheduleResponse scheduleResponse =
+	 * ScheduleResponse.mapScheduleResponse(schedule, carResponse);
+	 * scheduleResponses.add(scheduleResponse); }
+	 * 
+	 * RouteResponse routeResponse = RouteResponse.mapRouteResponse(route,
+	 * scheduleResponses); responses.add(routeResponse); } return responses; }
+	 */
 
 }

@@ -29,6 +29,7 @@ import SidebarDriver from "pages/Driver/SidebarDriver";
 import Schedule from "pages/Driver/schedule";
 import Parking from "pages/Driver/Parking";
 import Map from "pages/Driver/Map";
+import RestPassword from "pages/resetPassword";
 import ImageUploadFile from "components/ImageUploadFile";
 import { getTokenFromLocalStorage } from "utils/tokenUtils";
 import { useEffect } from "react";
@@ -86,6 +87,7 @@ function App() {
             <Route path="identify" element={<ForgetPassword />} />
             <Route path="bookingTicket" element={<BookingTicket />} />
             <Route path="methodPayment" element={<MethodPayment />} />
+            <Route path="reset_password" element={<RestPassword />} />
           </Route>
         </Routes>
       ) : (
