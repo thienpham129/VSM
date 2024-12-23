@@ -11,7 +11,7 @@ const RouteFrequencyPieChart = ({ data }) => {
 
   const fetchRoutes = async () => {
     try {
-      const response = await request("get", "/admin/routes");
+      const response = await request("get", "/public/routes");
       const formattedRoutes = response.data.map(
         (route) => `${route.startLocation} → ${route.stopLocation}`
       );

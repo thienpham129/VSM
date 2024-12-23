@@ -1,5 +1,8 @@
 package com.project.vsm.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -82,4 +85,20 @@ public class CarRouteService {
 		crrepository.deleteById(idCarRoute);
 		return carRoute;
 	}
+
+	public List<CarEntity> findCarsByRouteId(Long routeId) {
+		List<CarRouteEntity> carRoutes = crrepository.findByRoute_Id(routeId);
+		if (carRoutes.size() == 0) {
+			throw new InvalidInputException("No Route found for route ID: " + routeId);
+		}
+		// Kiểm tra xem có bất kỳ chiếc xe nào không
+		if (carRoutes.isEmpty()) {
+			// Nếu không có chiếc xe nào, ném ngoại lệ
+			throw new InvalidInputException("No cars found for route ID: " + routeId);
+		}
+		// Lấy danh sách tất cả các chiếc xe từ danh sách carRoutes
+		List<CarEntity> cars = carRoutes.stream().map(CarRouteEntity::getCar).collect(Collectors.toList());
+		return cars;
+	}
+
 }
