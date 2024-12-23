@@ -58,7 +58,7 @@ const DetailCarRoute = () => {
   useEffect(() => {
     const fetchRoute = async () => {
       try {
-        const response = await request("get", "/admin/routes");
+        const response = await request("get", "/public/routes");
         setRoutes(response.data);
       } catch (err) {
         console.log("Lỗi fetch routes: " + err);

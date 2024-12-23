@@ -56,7 +56,19 @@ const Schedule = () => {
             ? `${params.row.firstNameDriver} ${params.row.lastNameDriver}`
             : "Chưa phân công"
         }`,
-      cellClassName: "name-column--cell",
+      renderCell: (params) => {
+        const isUnassigned = !params.row.idDriver;
+        return (
+          <span
+            style={{
+              color: isUnassigned ? "red" : "inherit",
+              fontWeight: isUnassigned ? "bold" : "normal",
+            }}
+          >
+            {params.value}
+          </span>
+        );
+      },
     },
     {
       field: "carDetails",
@@ -88,6 +100,24 @@ const Schedule = () => {
       field: "status",
       headerName: "Trạng Thái",
       flex: 0.5,
+      renderCell: (params) => {
+        const statusColor = {
+          "Đã lên lịch": "yellow",
+          "Đang chạy": "orange",
+          "Đã hoàn thành": "green",
+        };
+
+        return (
+          <span
+            style={{
+              color: statusColor[params.value] || "inherit",
+              fontWeight: "bold",
+            }}
+          >
+            {params.value}
+          </span>
+        );
+      },
     },
     {
       field: "price",

@@ -1,5 +1,7 @@
 package com.project.vsm.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,4 +17,6 @@ public interface CarRouteRepository extends JpaRepository<CarRouteEntity, Long> 
 
 	@Query("SELECT cr FROM CarRouteEntity cr WHERE cr.car = :car AND cr.route = :route")
 	CarRouteEntity findByCarAndRoute(@Param("car") CarEntity car, @Param("route") RouteEntity route);
+	
+	List<CarRouteEntity> findByRoute_Id(Long routeId);
 }
