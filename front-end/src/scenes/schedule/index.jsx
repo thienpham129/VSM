@@ -31,7 +31,7 @@ const Schedule = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await request("get", "/public/schedules");
+        const response = await request("get", "/public/schedule");
         const sortedData = response.data.sort(
           (a, b) => new Date(b.startTime) - new Date(a.startTime)
         );
@@ -47,50 +47,59 @@ const Schedule = () => {
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
     {
-      field: "name",
+      field: "nameDriver",
       headerName: "Tài Xế",
-      flex: 1,
+      flex: 0.5,
       valueGetter: (params) =>
-        `${params.row.account?.firstName || ""} ${
-          params.row.account?.lastName || ""
+        `${
+          params.row.idDriver
+            ? `${params.row.firstNameDriver} ${params.row.lastNameDriver}`
+            : "Chưa phân công"
         }`,
       cellClassName: "name-column--cell",
     },
     {
-      field: "carName",
-      headerName: "Tên Xe",
+      field: "carDetails",
+      headerName: "Tên Xe - Biển Số",
       flex: 1,
-      valueGetter: (params) => params.row.car?.name || "",
+      valueGetter: (params) =>
+        `${params.row.nameCar || "Không rõ"} - ${
+          params.row.plateNumber || "Không rõ"
+        }`,
     },
     {
       field: "startTime",
       headerName: "Giờ Xuất Phát",
-      flex: 1,
+      flex: 0.5,
+      valueGetter: (params) =>
+        new Date(params.row.startTime).toLocaleString("vi-VN", {
+          dateStyle: "short",
+          timeStyle: "short",
+        }),
     },
-    // {
-    //   field: "endTime",
-    //   headerName: "Giờ Kết Thúc",
-    //   flex: 1,
-    // },
     {
-      field: "route", // Cập nhật cột chuyến đường
+      field: "route", // Cột tuyến đường
       headerName: "Tuyến Đường",
       flex: 1,
-      valueGetter: (params) => {
-        const startLocation = params.row.route?.startLocation || "";
-        const stopLocation = params.row.route?.stopLocation || "";
-        return `${startLocation} > ${stopLocation}`;
-      },
+      valueGetter: (params) =>
+        `${params.row.startLocation || ""} > ${params.row.stopLocation || ""}`,
     },
     {
       field: "status",
       headerName: "Trạng Thái",
-      flex: 1,
+      flex: 0.5,
+    },
+    {
+      field: "price",
+      headerName: "Giá Vé",
+      flex: 0.5,
+      valueGetter: (params) =>
+        `${params.row.price?.toLocaleString("vi-VN")} VND` || "Chưa cập nhật",
     },
     {
       field: "actions",
       headerName: "Hành Động",
-      flex: 1,
+      flex: 0.5,
       renderCell: (params) => (
         <Box display="flex" gap={1}>
           <Button
@@ -101,14 +110,6 @@ const Schedule = () => {
           >
             Chi Tiết
           </Button>
-          {/* <Button
-            variant="contained"
-            color="secondary"
-            size="small"
-            onClick={() => handleDelete(params.row.id)}
-          >
-            Xóa
-          </Button> */}
         </Box>
       ),
     },
@@ -158,10 +159,10 @@ const Schedule = () => {
         }}
       >
         <DataGrid
-          rows={schedules} // Thay mockDataSchedules bằng dữ liệu từ API
+          rows={schedules}
           columns={columns}
           components={{ Toolbar: GridToolbar }}
-          getRowId={(row) => row.id} // Xác định ID của mỗi row
+          getRowId={(row) => row.id}
         />
       </Box>
     </Box>
