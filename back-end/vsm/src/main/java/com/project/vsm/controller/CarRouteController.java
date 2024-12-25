@@ -1,5 +1,7 @@
 package com.project.vsm.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,9 +11,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.vsm.dto.CreateCarRouteDTO;
+import com.project.vsm.exception.InvalidInputException;
+import com.project.vsm.model.CarEntity;
 import com.project.vsm.model.CarRouteEntity;
 import com.project.vsm.service.CarRouteService;
 
@@ -49,5 +54,15 @@ public class CarRouteController {
 	public ResponseEntity<CarRouteEntity> deleteById(@PathVariable long id) {
 		CarRouteEntity carRoute = carRouteService.deteleCarRouteById(id);
 		return new ResponseEntity<>(carRoute, HttpStatus.CREATED);
+	}
+
+	@GetMapping("/public/find-car-by-route")
+	public ResponseEntity<List<CarEntity>> getAllCar(@RequestParam long idRoute) {
+		try {
+			List<CarEntity> cars = carRouteService.findCarsByRouteId(idRoute);
+			return new ResponseEntity<>(cars, HttpStatus.OK);
+		} catch (InvalidInputException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 }
