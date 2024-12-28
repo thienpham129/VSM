@@ -183,19 +183,16 @@ public class AuthService {
     }
 
     public boolean resetPassword(String email, ChangePasswordRequest request) {
-        try {
-           AccountEntity account = accountRepository.findByEmail(email)
-                   .orElseThrow(() -> new RuntimeException("Email not found"));
+        AccountEntity account = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Email không tồn tại"));
 
-            if (!request.getNewPassword().equals(request.getNewPasswordRepeat())) {
-                throw new RuntimeException("New password and password repeat not macth!");
-            }
-            account.setPassword(passwordEncoder.encode(request.getNewPasswordRepeat()));
-            accountRepository.save(account);
-            return true;
-
-        } catch (Exception e) {
-            throw new RuntimeException("Send mail reset password fail!" + e.getMessage());
+        if (!request.getNewPassword().equals(request.getNewPasswordRepeat())) {
+            throw new RuntimeException("Mật khẩu mới và mật khẩu xác nhận không khớp.");
         }
+
+        account.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        accountRepository.save(account);
+        return true;
     }
+
 }

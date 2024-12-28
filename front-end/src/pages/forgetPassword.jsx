@@ -1,16 +1,14 @@
-import { axiosClient } from "helper/axiosClient";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { root } from "helper/axiosClient";
 import { request } from "admin/helpers/axios_helper";
+
 function ForgetPassword() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setSetConfirmPassword] = useState("");
-  const [isClickSubmit, setIsClickSubmit] = useState(false);
-  const notifyErrorSendEmail = () =>
-    toast.error("Email Không Tồn Tại", {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const notifyError = (message) =>
+    toast.error(message, {
       position: "bottom-right",
       autoClose: 1500,
       hideProgressBar: false,
@@ -22,8 +20,8 @@ function ForgetPassword() {
       transition: Bounce,
     });
 
-  const notifyErrorEmptyEmail = () =>
-    toast.error("Vui Lòng Nhập nhập đầy đủ thông tin", {
+  const notifySuccess = (message) =>
+    toast.success(message, {
       position: "bottom-right",
       autoClose: 1500,
       hideProgressBar: false,
@@ -35,89 +33,37 @@ function ForgetPassword() {
       transition: Bounce,
     });
 
-  const notifyError = () =>
-    toast.error("Đã có lỗi xảy ra", {
-      position: "bottom-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-      transition: Bounce,
-    });
-
-  const notifyErrorPassword = () =>
-    toast.error("Hãy đảm bảo bạn xác nhận mật khẩu thật chính xác!", {
-      position: "bottom-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-      transition: Bounce,
-    });
   const handleClickVerify = async (e) => {
     e.preventDefault();
-    if (email && password && confirmPassword) {
-      if (password !== confirmPassword) {
-        // setIsClickSubmit(false);
-        notifyErrorPassword();
+
+    if (!email) {
+      notifyError("Vui lòng nhập email.");
+      return;
+    }
+
+    setIsSubmitting(true); // Vô hiệu hóa nút gửi khi đang xử lý
+
+    try {
+      const response = await request("GET", `/auth/forgot-password?email=${email}`);
+      if (response.data) {
+        notifySuccess("Yêu cầu quên mật khẩu đã được gửi thành công!");
       } else {
-        // try {
-        //   const response = await root.get(
-        //     `/auth/reset-password?email=${email}`,
-        //     {
-        //       newPassword: password,
-        //       newPasswordRepeat: confirmPassword,
-        //     }
-        //   );
-        //   console.log(password + "   " + confirmPassword + "    " + email);
-        //   if (response.data) {
-        //     window.location.href = "/login";
-        //   } else {
-        //     // setIsClickSubmit(false);
-        //     notifyError();
-        //   }
-        // } catch (error) {
-        //   // setIsClickSubmit(false);
-        //   console.log(error);
-        // }
-        const object = {
-          newPassword: password,
-          newPasswordRepeat: confirmPassword,
-        };
-        console.log(`/auth/reset-password?email=${email}`, object);
-        try {
-          const response = await request(
-            "POST",
-            `/auth/reset-password?email=${email}`,
-            object
-          );
-          if (response.data) {
-            window.location.href = "/login";
-          } else {
-            notifyError();
-          }
-        } catch (error) {
-          notifyError();
-          console.error(error);
-        }
+        notifyError("Có lỗi xảy ra. Vui lòng thử lại.");
       }
-    } else {
-      notifyErrorEmptyEmail();
-      // setIsClickSubmit(false);
+    } catch (error) {
+      notifyError("Email không tồn tại hoặc đã xảy ra lỗi.");
+      console.error(error);
+    } finally {
+      setIsSubmitting(false); // Bật lại nút gửi
     }
   };
+
   return (
     <div className="identify-email">
       <div className="box">
         <div className="box-content">
-          <h3>Thay đổi mật khẩu</h3>
-          <p>Hãy nhập mật khẩu mới cho tài khoản của bạn</p>
+          <h3>Quên mật khẩu</h3>
+          <p>Hãy điền email của bạn ở đây</p>
           <form onSubmit={handleClickVerify}>
             <input
               className="identify-email-input"
@@ -131,31 +77,9 @@ function ForgetPassword() {
               }}
               style={{ marginBottom: "10px" }}
             />
-            <input
-              className="identify-email-input"
-              required
-              type="password"
-              value={password}
-              placeholder="Nhập mật khẩu mới"
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-              style={{ marginBottom: "10px" }}
-            />
-            <input
-              className="identify-email-input"
-              required
-              type="password"
-              value={confirmPassword}
-              placeholder="xác nhận mật khẩu"
-              onChange={(e) => {
-                setSetConfirmPassword(e.target.value);
-              }}
-              style={{ marginBottom: "10px" }}
-            />
-            <br />
             <button
               className="cancel-verify-account"
+              type="button"
               onClick={() => {
                 window.location.href = "/login";
               }}
@@ -165,11 +89,7 @@ function ForgetPassword() {
             <button
               className="verify-account"
               type="submit"
-              onClick={(e) => {
-                handleClickVerify(e);
-                // setIsClickSubmit(true);
-              }}
-              disabled={isClickSubmit}
+              disabled={isSubmitting}
             >
               Xác Nhận
             </button>
@@ -192,4 +112,5 @@ function ForgetPassword() {
     </div>
   );
 }
+
 export default ForgetPassword;

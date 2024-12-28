@@ -1,113 +1,127 @@
-import { axiosClient } from "helper/axiosClient";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast, Bounce } from "react-toastify";
+import { root } from "helper/axiosClient"
 import "react-toastify/dist/ReactToastify.css";
-import { root } from "helper/axiosClient";
-function ForgetPassword() {
+
+function RestPassword() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  
   const [email, setEmail] = useState("");
-  const [isClickSubmit, setIsClickSubmit] = useState(false);
-  const notifyErrorSendEmail = () =>
-    toast.error("Email Không Tồn Tại", {
+  const [newPassword, setNewPassword] = useState("");
+  const [newPasswordRepeat, setNewPasswordRepeat] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Khi component mount, lấy email từ query string
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const emailParam = queryParams.get('email');
+    if (emailParam) {
+      setEmail(emailParam); 
+    }
+  }, [location]);
+
+  const notifyError = (message) =>
+    toast.error(message, {
       position: "bottom-right",
       autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
       theme: "colored",
       transition: Bounce,
     });
 
-  const notifyErrorEmptyEmail = () =>
-    toast.error("Vui Lòng Nhập Email", {
+  const notifySuccess = (message) =>
+    toast.success(message, {
       position: "bottom-right",
       autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
       theme: "colored",
       transition: Bounce,
     });
+
   const handleClickVerify = async (e) => {
     e.preventDefault();
-    if (email) {
-      try {
-        const response = await root.get(`/auth/forgot-password?email=${email}`);
-        if (response.data === true) {
-          window.location.href = "/reset_password";
-          setIsClickSubmit(true);
+
+    if (!email) {
+      notifyError("Email không hợp lệ.");
+      return;
+    }
+
+    if (!newPassword || !newPasswordRepeat) {
+      notifyError("Vui lòng nhập đầy đủ thông tin.");
+      return;
+    }
+
+    if (newPassword !== newPasswordRepeat) {
+      notifyError("Mật khẩu xác nhận không khớp.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await root.post(
+        `/auth/reset-password?email=${email}`,
+        {
+          newPassword,
+          newPasswordRepeat,
         }
-      } catch (error) {
-        console.log(error);
-        notifyErrorSendEmail();
-        setIsClickSubmit(true);
+      );
+
+      if (response.data) {
+        notifySuccess("Mật khẩu đã được đặt lại thành công!");
+        setTimeout(() => {
+          navigate("/login", { replace: true });
+        }, 1500);
+      } else {
+        notifyError("Đã xảy ra lỗi. Vui lòng thử lại.");
       }
-    } else {
-      notifyErrorEmptyEmail();
-      setIsClickSubmit(true);
+    } catch (error) {
+      console.error(error);
+      notifyError("Đã xảy ra lỗi. Vui lòng thử lại.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
   return (
     <div className="identify-email">
       <div className="box">
         <div className="box-content">
-          <h3>Thay đổi mật khẩu</h3>
+          <h3>Đặt lại mật khẩu</h3>
           <p>Hãy nhập mật khẩu mới cho tài khoản của bạn</p>
           <form onSubmit={handleClickVerify}>
             <input
               className="identify-email-input"
               required
-              autoFocus
-              type="email"
-              value={email}
+              type="password"
+              value={newPassword}
               placeholder="Nhập mật khẩu mới"
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
+              onChange={(e) => setNewPassword(e.target.value)}
               style={{ marginBottom: "10px" }}
             />
             <input
               className="identify-email-input"
               required
-              autoFocus
-              type="email"
-              value={email}
+              type="password"
+              value={newPasswordRepeat}
               placeholder="Xác nhận mật khẩu mới"
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-              style={{ marginBottom: "10px" }}
-            />
-            <input
-              className="identify-email-input"
-              required
-              autoFocus
-              type="email"
-              value={email}
-              placeholder="Enter your email"
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
+              onChange={(e) => setNewPasswordRepeat(e.target.value)}
               style={{ marginBottom: "10px" }}
             />
             <br />
             <button
               className="cancel-verify-account"
+              type="button"
               onClick={() => {
-                window.location.href = "/login";
+                navigate("/login"); // Điều hướng đến trang login khi bấm hủy
               }}
             >
               Hủy
             </button>
             <button
               className="verify-account"
-              onClick={(e) => {
-                handleClickVerify(e);
-                setIsClickSubmit(true);
-              }}
+              type="submit"
+              disabled={isSubmitting}
             >
               Xác Nhận
             </button>
@@ -130,4 +144,5 @@ function ForgetPassword() {
     </div>
   );
 }
-export default ForgetPassword;
+
+export default RestPassword;
