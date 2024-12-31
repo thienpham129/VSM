@@ -803,7 +803,7 @@ const Map = () => {
 
   const getAddressSearchVoice = async () => {
     const genAI = new GoogleGenerativeAI(
-      "AIzaSyBg4x4lMwU59_atcwAU-h0TuuGfwVQq51Y"
+      "AIzaSyD1QBez4ONdArmQuDpCksYxHN_3vckyBj4"
     );
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
