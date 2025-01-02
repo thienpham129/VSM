@@ -97,7 +97,7 @@ public class TicketService {
 
 		AccountEntity account = accountRepository.findByEmail(email)
 				.orElseThrow(() -> new RuntimeException("Account not found"));
-		
+
 		ScheduleEntity scheduleEntity = scheduleRepository.findById(request.getScheduleId())
 				.orElseThrow(() -> new RuntimeException("Schedule not found"));
 
@@ -127,7 +127,6 @@ public class TicketService {
 		ticket.setScheduleEntity(scheduleEntity);
 
 		ticket = ticketRepository.save(ticket);
-		
 
 		if (payment.getPaymentName().equalsIgnoreCase("vietQR")) {
 			String qrCodeUrl = paymentService.generateQrCode(totalPrice, ticket.getTicketId(), account.getEmail());
@@ -282,26 +281,30 @@ public class TicketService {
 		return ticket.isPaid();
 	}
 
-	/*
-	 * public TicketResponse updateMapByTicketId (String ticketId , TicketRequest
-	 * request) { TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
-	 * .orElseThrow(() -> new RuntimeException("Not found ticket with id : " +
-	 * ticketId));
-	 * 
-	 * // ticket.setMapPickUp(request.getMapPickUp()); //
-	 * ticket.setMapDrop(request.getMapDrop()); //
-	 * ticket.setMapStatus(request.getMapStatus()); if(request.getMapPickUp() !=
-	 * null) { ticket.setMapPickUp(request.getMapPickUp()); }
-	 * 
-	 * if(request.getMapDrop() != null) { ticket.setMapDrop(request.getMapDrop()); }
-	 * 
-	 * if(request.getMapStatus() != null) {
-	 * ticket.setMapStatus(request.getMapStatus()); }
-	 * 
-	 * ticketRepository.save(ticket);
-	 * 
-	 * return TicketResponse.fromEntity(ticket); }
-	 */
+	public TicketResponse updateMapByTicketId(String ticketId, TicketRequest request) {
+		TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
+				.orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
+
+		 ticket.setMapPickUp(request.getMapPickUp());
+		ticket.setMapDrop(request.getMapDrop()); //
+		ticket.setMapStatus(request.getMapStatus());
+		if (request.getMapPickUp() != null) {
+			ticket.setMapPickUp(request.getMapPickUp());
+		}
+
+		if (request.getMapDrop() != null) {
+			ticket.setMapDrop(request.getMapDrop());
+		}
+
+		if (request.getMapStatus() != null) {
+			ticket.setMapStatus(request.getMapStatus());
+		}
+
+		ticketRepository.save(ticket);
+
+		return TicketResponse.fromEntity(ticket);
+	}
+
 	public Boolean adminUpdateTicket(AdminUpdateTicketDTO input) {
 		Optional<TicketEntity> optionalTicket = ticketRepository.findById(input.getTicketId());
 		if (!optionalTicket.isPresent()) {

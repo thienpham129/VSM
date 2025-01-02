@@ -36,81 +36,81 @@ const MethodPayment = () => {
   const [dropLon, setDropLon] = useState("");
   const [messagePayment, setMessagePayment] = useState(false);
 
-  // useEffect(() => {
-  //   console.log(ticketId);
-  //   if (ticketId && detailAddressToPickUp && detailAddressDropOff) {
-  //     const updateCoordinates = async () => {
-  //       if (detailAddressToPickUp) {
-  //         // const data = await fetchGeocode(detailAddressToPickUp);
-  //         // if (data && data.features && data.features.length > 0) {
-  //         //   const { center } = data.features[0];
-  //         //   setPickUpLat(center[1].toString());
-  //         //   setPickUpLon(center[0].toString());
-  //         // }
-  //         fetchGeocode(detailAddressToPickUp.trim()).then((data) => {
-  //           if (data) {
-  //             // console.log("Coordinates:", data.results[0].geometry.location.lat);
-  //             setPickUpLat(data.results[0].geometry.location.lat);
-  //             setPickUpLon(data.results[0].geometry.location.lng);
-  //           }
-  //         });
-  //       }
+  useEffect(() => {
+    console.log(ticketId);
+    if (ticketId && detailAddressToPickUp && detailAddressDropOff) {
+      const updateCoordinates = async () => {
+        if (detailAddressToPickUp) {
+          // const data = await fetchGeocode(detailAddressToPickUp);
+          // if (data && data.features && data.features.length > 0) {
+          //   const { center } = data.features[0];
+          //   setPickUpLat(center[1].toString());
+          //   setPickUpLon(center[0].toString());
+          // }
+          fetchGeocode(detailAddressToPickUp.trim()).then((data) => {
+            if (data) {
+              // console.log("Coordinates:", data.results[0].geometry.location.lat);
+              setPickUpLat(data.results[0].geometry.location.lat);
+              setPickUpLon(data.results[0].geometry.location.lng);
+            }
+          });
+        }
 
-  //       if (detailAddressDropOff) {
-  //         // const data = await fetchGeocode(detailAddressDropOff);
-  //         // if (data && data.features && data.features.length > 0) {
-  //         //   const { center } = data.features[0];
-  //         //   setDropLat(center[1].toString());
-  //         //   setDropLon(center[0].toString());
-  //         // }
-  //         fetchGeocode(detailAddressDropOff.trim()).then((data) => {
-  //           if (data) {
-  //             // console.log("Coordinates:", data.results[0].geometry.location.lat);
-  //             setDropLat(data.results[0].geometry.location.lat);
-  //             setDropLon(data.results[0].geometry.location.lng);
-  //           }
-  //         });
-  //       }
-  //     };
+        if (detailAddressDropOff) {
+          // const data = await fetchGeocode(detailAddressDropOff);
+          // if (data && data.features && data.features.length > 0) {
+          //   const { center } = data.features[0];
+          //   setDropLat(center[1].toString());
+          //   setDropLon(center[0].toString());
+          // }
+          fetchGeocode(detailAddressDropOff.trim()).then((data) => {
+            if (data) {
+              // console.log("Coordinates:", data.results[0].geometry.location.lat);
+              setDropLat(data.results[0].geometry.location.lat);
+              setDropLon(data.results[0].geometry.location.lng);
+            }
+          });
+        }
+      };
 
-  //     updateCoordinates();
-  //   }
-  // }, [ticketId, detailAddressToPickUp, detailAddressDropOff]);
+      updateCoordinates();
+    }
+  }, [ticketId, detailAddressToPickUp, detailAddressDropOff]);
 
-  // useEffect(() => {
-  //   if (pickUpLat && pickUpLon && dropLat && dropLon) {
-  //     const mapPickUp = `${pickUpLat},${pickUpLon}`;
-  //     const mapDrop = `${dropLat},${dropLon}`;
-  //     const mapStatus = "0";
+  useEffect(() => {
+    if (pickUpLat && pickUpLon && dropLat && dropLon) {
+      const mapPickUp = `${pickUpLat},${pickUpLon}`;
+      const mapDrop = `${dropLat},${dropLon}`;
+      const mapStatus = "0";
 
-  //     console.log(mapPickUp + "   " + mapDrop + "   " + mapStatus);
-  //     console.log(
-  //       typeof mapPickUp + "   " + typeof mapDrop + "   " + typeof mapStatus
-  //     );
+      console.log(mapPickUp + "   " + mapDrop + "   " + mapStatus);
+      console.log(
+        typeof mapPickUp + "   " + typeof mapDrop + "   " + typeof mapStatus
+      );
 
-  //     try {
-  //       const updateTicKetMap = async () => {
-  //         const url = "/public/update-status-map/ticket";
-  //         const response = await root.put(`${url}/${ticketId}`, {
-  //           mapPickUp,
-  //           mapDrop,
-  //           mapStatus,
-  //         });
-  //         if (response.data) {
-  //           console.log(response.data);
-  //         } else {
-  //           console.log(
-  //             "Something went wrong with call api of updateTicKetMap"
-  //           );
-  //         }
-  //       };
+      try {
+        const updateTicKetMap = async () => {
+          const url = "/public/update-status-map/ticket";
+          const response = await root.put(`${url}/${ticketId}`, {
+            mapPickUp,
+            mapDrop,
+            mapStatus,
+          });
+          if (response.data) {
+            console.log(response.data);
+          } else {
+            console.log(
+              "Something went wrong with call api of updateTicKetMap"
+            );
+          }
+        };
 
-  //       updateTicKetMap();
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   }
-  // }, [pickUpLat, pickUpLon, dropLat, dropLon]);
+        updateTicKetMap();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [pickUpLat, pickUpLon, dropLat, dropLon]);
 
   // const fetchGeocode = async (address) => {
   //   const apiKey = "4D4kbtoB1PV8gjRJMqgB";
@@ -130,19 +130,19 @@ const MethodPayment = () => {
   //   }
   // };
 
-  // const fetchGeocode = async (address) => {
-  //   try {
-  //     const response = await fetch(
-  //       `https://rsapi.goong.io/geocode?address=${address}&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
-  //     );
-  //     const data = await response.json();
-  //     if (data) {
-  //       return data;
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const fetchGeocode = async (address) => {
+    try {
+      const response = await fetch(
+        `https://rsapi.goong.io/geocode?address=${address}&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+      );
+      const data = await response.json();
+      if (data) {
+        return data;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handlePayment = async () => {
     setMessagePayment(true);
