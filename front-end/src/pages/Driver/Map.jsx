@@ -177,6 +177,13 @@ const Map = () => {
 
   const [currentCity, setCurrentCity] = useState("");
 
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      setCurrentLat(position.coords.latitude);
+      setCurrentLong(position.coords.longitude);
+    });
+  }, []);
+
   const fetchCurrentSchedule = async () => {
     navigator.geolocation.getCurrentPosition((position) => {
       setCurrentLat(position.coords.latitude);
@@ -1265,6 +1272,24 @@ const Map = () => {
           userName={userName}
           userAddress={userAddress}
           userPhone={userPhone}
+        />
+      ) : (
+        ""
+      )}
+
+      {currentLat && currentLong ? (
+        <GoongMapWithDirections
+          origin={`${currentLat},${currentLong}`}
+          // origin="16.023552,108.2261504"
+          destination="16.026513367000064,108.22227876200009;16.034384525000064,108.21924603800005;16.065571275000025,108.20156259000004"
+          // destinations={[
+          //   "16.026513367000064,108.22227876200009",
+          //   "16.034384525000064,108.21924603800005",
+          //   "16.065571275000025,108.20156259000004",
+          // ]}
+          // userName={userName}
+          // userAddress={userAddress}
+          // userPhone={userPhone}
         />
       ) : (
         ""

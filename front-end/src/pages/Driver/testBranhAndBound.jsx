@@ -247,6 +247,7 @@ import React, { useState, useEffect } from "react";
 
 function TestBranchAndBound() {
   const [arrayFakeAPI, setArrayFakeAPI] = useState([]);
+  const [arrayFakeAPIDrop, setArrayFakeAPIDrop] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [arrayCorsPickUp, setArrayCorsPickUp] = useState([
     "16.026513367000064,108.22227876200009",
@@ -259,37 +260,58 @@ function TestBranchAndBound() {
     "16.47019663100002,107.58647058300005",
   ]);
 
-  const [check, setCheck] = useState(arrayCorsPickUp.length + 1);
+  // const [check, setCheck] = useState(arrayCorsPickUp.length + 1);
 
   const [currentLat, setCurrentLat] = useState("15.990784");
   const [currentLong, setCurrentLong] = useState("108.2523648");
   const [matrix, setMatrix] = useState([]);
+  const [phase, setPhase] = useState(1);
+  const [resultShortestPath, setResultShortestPath] = useState([]);
+  const [matrixDrop, setMatrixDrop] = useState([]);
 
   useEffect(() => {
-    if (arrayCorsPickUp.length === check) {
-      const newArray = [];
-      for (let i = 0; i < arrayCorsPickUp.length; i++) {
-        let subDestination = "";
-        for (let j = 0; j < arrayCorsPickUp.length; j++) {
-          if (i !== j && j !== arrayCorsPickUp.length - 1) {
-            subDestination += arrayCorsPickUp[j] + "%7C";
-          }
-          if (i !== j && j === arrayCorsPickUp.length - 1) {
-            subDestination += arrayCorsPickUp[j];
-          }
-          if (
-            i === arrayCorsPickUp.length - 1 &&
-            j === arrayCorsPickUp.length - 1
-          ) {
-            subDestination = subDestination.slice(0, subDestination.length - 3);
-          }
+    // if (arrayCorsPickUp.length === check) {
+    const newArray = [];
+    const newArrayDrop = [];
+    for (let i = 0; i < arrayCorsPickUp.length; i++) {
+      let subDestination = "";
+      for (let j = 0; j < arrayCorsPickUp.length; j++) {
+        if (i !== j && j !== arrayCorsPickUp.length - 1) {
+          subDestination += arrayCorsPickUp[j] + "%7C";
         }
-        newArray.push({ start: arrayCorsPickUp[i], des: subDestination });
+        if (i !== j && j === arrayCorsPickUp.length - 1) {
+          subDestination += arrayCorsPickUp[j];
+        }
+        if (
+          i === arrayCorsPickUp.length - 1 &&
+          j === arrayCorsPickUp.length - 1
+        ) {
+          subDestination = subDestination.slice(0, subDestination.length - 3);
+        }
       }
-
-      setArrayFakeAPI(newArray); // Update state only once after the loop
+      newArray.push({ start: arrayCorsPickUp[i], des: subDestination });
     }
-  }, [arrayCorsPickUp]); // Empty dependency array ensures this runs only once on mount
+
+    for (let i = 0; i < arrayCorsDrop.length; i++) {
+      let subDestination = "";
+      for (let j = 0; j < arrayCorsDrop.length; j++) {
+        if (i !== j && j !== arrayCorsDrop.length - 1) {
+          subDestination += arrayCorsDrop[j] + "%7C";
+        }
+        if (i !== j && j === arrayCorsDrop.length - 1) {
+          subDestination += arrayCorsDrop[j];
+        }
+        if (i === arrayCorsDrop.length - 1 && j === arrayCorsDrop.length - 1) {
+          subDestination = subDestination.slice(0, subDestination.length - 3);
+        }
+      }
+      newArrayDrop.push({ start: arrayCorsDrop[i], des: subDestination });
+    }
+
+    setArrayFakeAPI(newArray); // Update state only once after the loop
+    setArrayFakeAPIDrop(newArrayDrop);
+    // }
+  }, [arrayCorsPickUp, arrayCorsDrop]); // Empty dependency array ensures this runs only once on mount
 
   const getDistance = async (start, destination, indexCurrent) => {
     if (currentLat && currentLong) {
@@ -315,8 +337,14 @@ function TestBranchAndBound() {
         console.log(error);
       }
 
-      if (tempArrayDistance.length > 0) {
+      if (tempArrayDistance.length > 0 && phase === 1) {
         setMatrix((prevState) => {
+          return [...prevState, tempArrayDistance];
+        });
+      }
+
+      if (tempArrayDistance.length > 0 && phase === 2) {
+        setMatrixDrop((prevState) => {
           return [...prevState, tempArrayDistance];
         });
       }
@@ -324,7 +352,7 @@ function TestBranchAndBound() {
   };
 
   useEffect(() => {
-    if (arrayFakeAPI.length > 0) {
+    if (arrayFakeAPI.length > 0 && phase === 1) {
       // Start printing elements every 2 seconds
       const interval = setInterval(() => {
         // console.log(arrayFakeAPI[currentIndex]); //Call API TO GET DISTANCE
@@ -338,10 +366,34 @@ function TestBranchAndBound() {
             return prevIndex + 1; // Move to the next element
           } else {
             clearInterval(interval); // Stop when the last element is printed
+            setPhase(2);
             return prevIndex;
           }
         });
-      }, 2000);
+      }, 1300);
+
+      return () => clearInterval(interval); // Cleanup on component unmount
+    }
+
+    if (arrayFakeAPI.length > 0 && phase === 2) {
+      // Start printing elements every 2 seconds
+      const interval = setInterval(() => {
+        // console.log(arrayFakeAPI[currentIndex]); //Call API TO GET DISTANCE
+        getDistance(
+          arrayFakeAPI[currentIndex].start,
+          arrayFakeAPI[currentIndex].des,
+          currentIndex
+        );
+        setCurrentIndex((prevIndex) => {
+          if (prevIndex < arrayFakeAPI.length - 1) {
+            return prevIndex + 1; // Move to the next element
+          } else {
+            clearInterval(interval); // Stop when the last element is printed
+            setPhase(2);
+            return prevIndex;
+          }
+        });
+      }, 1300);
 
       return () => clearInterval(interval); // Cleanup on component unmount
     }
@@ -404,8 +456,20 @@ function TestBranchAndBound() {
 
       console.log(bestResult);
       console.log(bestTotal);
+      bestResult.shift();
+      setResultShortestPath(bestResult);
     }
   }, [matrix]);
+
+  useEffect(() => {
+    if (resultShortestPath.length > 0) {
+      let finalResult = [];
+      resultShortestPath.forEach((item) => {
+        finalResult.push(item - 1);
+      });
+      console.log(finalResult); // Save to DB the array shortest path at here
+    }
+  }, [resultShortestPath]);
 
   useEffect(() => {
     if (currentLat && currentLong) {
