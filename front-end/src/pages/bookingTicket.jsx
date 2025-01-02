@@ -23,7 +23,6 @@ const BookingTicket = () => {
   const [schedule, setSchedule] = useState(null);
 
   const carRouteId = selectedRoute;
-  console.log('««««« selectedRoute »»»»»', selectedRoute);
   // selectedRoute là routeId
   // selectedCar là carId
   const handleStartTimeChange = (e) => {
@@ -34,7 +33,7 @@ const BookingTicket = () => {
       setError("Bạn không thể chọn ngày giờ trong quá khứ!");
       setStartTime("");
     } else {
-      setError(""); // Xóa lỗi nếu hợp lệ
+      setError(""); 
       setStartTime(e.target.value);
     }
   };

@@ -14,6 +14,7 @@ const SeatMap = ({
   selectedRoute,
   selectedCar,
 }) => {
+  console.log('««««« scheduleId »»»»»', scheduleId);
   const [seats, setSeats] = useState(car.type.seatList); // Ghế từ car data
   const [selectedSeats, setSelectedSeats] = useState([]); // Ghế đã chọn
   const [tickets, setTickets] = useState([]); // Dữ liệu vé từ API
@@ -23,7 +24,7 @@ const SeatMap = ({
   useEffect(() => {
     // Gọi API để lấy vé theo scheduleId
     axios
-      .get("http://localhost:9000/public/ticket-with-schedule/25")
+      .get(`http://localhost:9000/public/ticket-with-schedule/${scheduleId}`)
       .then((response) => {
         setTickets(response.data); // Lưu dữ liệu vé vào state
 
