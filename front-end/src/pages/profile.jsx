@@ -177,6 +177,16 @@ const Profile = () => {
         "Số điện thoại phải bắt đầu bằng 0 và có độ dài từ 10 đến 11 số.";
     }
 
+    // Validate name
+    if (!namePattern.test(firstName)) {
+      validationErrors.firstName =
+        "Họ không được nhập số";
+    }
+    if (!namePattern.test(lastName)) {
+      validationErrors.lastName =
+        "Tên không được nhập số";
+    }
+
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
   };

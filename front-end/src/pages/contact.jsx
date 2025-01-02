@@ -15,7 +15,7 @@ const Contact = () => {
           <div className="container">
             <div className="row">
               <div className="col-md-12 text-center">
-                <h1>Liên Hệ</h1>
+                <h1>Đánh Giá</h1>
               </div>
               <div className="clearfix" />
             </div>
@@ -27,7 +27,7 @@ const Contact = () => {
         <div className="container">
           <div className="row g-custom-x">
             <div className="col-lg-8 mb-sm-30">
-              <h3>Bạn có thắc mắc gì không?</h3>
+              <h3>Bạn có thắc mắc hay nhận xét gì không?</h3>
               <form
                 name="contactForm"
                 id="contact_form"
@@ -36,7 +36,7 @@ const Contact = () => {
                 action="#"
               >
                 <div className="row">
-                  <div className="col-md-4 mb10">
+                  <div className="col-md-6 mb10">
                     <div className="field-set">
                       <input
                         type="text"
@@ -48,7 +48,7 @@ const Contact = () => {
                       />
                     </div>
                   </div>
-                  <div className="col-md-4 mb10">
+                  <div className="col-md-6 mb10">
                     <div className="field-set">
                       <input
                         type="text"
@@ -56,18 +56,6 @@ const Contact = () => {
                         id="email"
                         className="form-control"
                         placeholder="Nhập email"
-                        required=""
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-4 mb10">
-                    <div className="field-set">
-                      <input
-                        type="text"
-                        name="phone"
-                        id="phone"
-                        className="form-control"
-                        placeholder="Nhập số điện thoại"
                         required=""
                       />
                     </div>

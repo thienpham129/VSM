@@ -12,10 +12,10 @@ import com.project.vsm.model.TicketEntity;
 
 @Repository
 public interface TicketRepository extends JpaRepository<TicketEntity, String> {
-//	@Query("select t from TicketEntity  t where t.scheduleEntity.id = ?1")
-//	List<TicketEntity> getTicketByScheduleId(long scheduleId);
-//
-//	Optional<TicketEntity> findByTicketId (String ticketId);
+	@Query("select t from TicketEntity  t where t.scheduleEntity.id = ?1")
+	List<TicketEntity> getTicketByScheduleId(long scheduleId);
+
+	Optional<TicketEntity> findByTicketId (String ticketId);
 //
 //	@Query("SELECT CONCAT(s.account.firstName, ' ', s.account.lastName) AS driverName, "
 //			+ "MONTH(s.startTime) AS month, COUNT(DISTINCT s.id) AS tripCount " + "FROM TicketEntity t "
@@ -29,7 +29,7 @@ public interface TicketRepository extends JpaRepository<TicketEntity, String> {
 //			+ "GROUP BY r.startLocation, r.stopLocation, MONTH(s.startTime) "
 //			+ "ORDER BY r.startLocation, r.stopLocation, MONTH(s.startTime)")
 //	List<Object[]> countTicketsByRouteAndMonth();
-//
+
 //	@Query("SELECT COALESCE(SUM(t.price), 0) FROM TicketEntity t WHERE YEAR(t.scheduleEntity.startTime) = :year AND MONTH(t.scheduleEntity.startTime) = :month AND t.isPaid = true")
 //	double sumRevenueByMonth(@Param("year") int year, @Param("month") int month);
 //

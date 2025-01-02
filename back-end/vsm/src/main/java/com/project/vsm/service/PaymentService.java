@@ -43,18 +43,18 @@ public class PaymentService {
                 email);
     }
 
-//    public VNPayResponse generatePaymentUrl(String ticketId) {
-//        TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
-//                .orElseThrow(() -> new RuntimeException("Ticket not found !"));
-//
-//        if (!"vietQR".equalsIgnoreCase(ticket.getPaymentEntity().getPaymentName())) {
-//            throw new RuntimeException("Unsupported payment method");
-//        }
-//
-//        String paymentUrl = generateQrCode(ticket.getPrice(), ticket.getTicketId(), ticket.getAccount().getEmail());
-//
-//        return VNPayResponse.builder()
-//                .paymentUrl(paymentUrl)
-//                .build();
-//    }
+    public VNPayResponse generatePaymentUrl(String ticketId) {
+        TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found !"));
+
+        if (!"vietQR".equalsIgnoreCase(ticket.getPaymentEntity().getPaymentName())) {
+            throw new RuntimeException("Unsupported payment method");
+        }
+
+        String paymentUrl = generateQrCode(ticket.getPrice(), ticket.getTicketId(), ticket.getAccount().getEmail());
+
+        return VNPayResponse.builder()
+                .paymentUrl(paymentUrl)
+                .build();
+    }
 }

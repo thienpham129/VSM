@@ -162,7 +162,7 @@ const Header = () => {
                   </li>
                   <li>
                     <a className="menu-item" href="/contact">
-                      Liên Hệ
+                      Đánh Giá
                     </a>
                   </li>
                 </ul>

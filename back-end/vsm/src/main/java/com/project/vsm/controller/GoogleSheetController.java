@@ -22,10 +22,10 @@ public class GoogleSheetController {
     @Autowired
     private GoogleSheetsService googleSheetsService;
 
-//    @GetMapping("/check-ticket/{ticketId}")
-//    public ResponseEntity<TicketGoogleSheetResponse> updateStatusTicketBaseGoogleSheet (@PathVariable String ticketId) {
-//        return new ResponseEntity<>(googleSheetsService.updateTicketStatusFromGoogleSheet(ticketId) , HttpStatus.OK);
-//    }
+    @GetMapping("/check-ticket/{ticketId}")
+    public ResponseEntity<TicketGoogleSheetResponse> updateStatusTicketBaseGoogleSheet (@PathVariable String ticketId) {
+        return new ResponseEntity<>(googleSheetsService.updateTicketStatusFromGoogleSheet(ticketId) , HttpStatus.OK);
+    }
 
     @GetMapping("/admin/get-data-googlesheet")
     public void getDataFromGoogleSheet () throws GeneralSecurityException, IOException {
