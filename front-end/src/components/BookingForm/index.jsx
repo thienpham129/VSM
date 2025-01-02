@@ -384,7 +384,6 @@ function BookingForm({
         data-form-trip-id="PLT0Tc1ybgN295oCg20241015"
         onSubmit={handleSubmit}
       >
-        {/* <div className="d-none" data-content="additionPriceForUserType" /> */}
 
         <div className={styles.form_group}>
           <label htmlFor="">Ghế đã chọn</label>

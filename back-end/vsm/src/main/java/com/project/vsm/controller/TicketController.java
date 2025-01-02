@@ -110,13 +110,12 @@ public class TicketController {
 //		TicketResponseAdminDTO ticket = ticketService.getTicketByIDAdmin(id);
 //		return new ResponseEntity<>(ticket, HttpStatus.OK);
 //	}
-	/*
-	 * @PutMapping("/public/update-status-map/ticket/{ticketId}") public
-	 * ResponseEntity<TicketResponse> updateStatusMapByTicketId (@PathVariable
-	 * String ticketId , @RequestBody TicketRequest request) { return new
-	 * ResponseEntity<>(ticketService.updateMapByTicketId(ticketId , request)
-	 * ,HttpStatus.OK); }
-	 */
+
+	@PutMapping("/public/update-status-map/ticket/{ticketId}")
+	public ResponseEntity<TicketResponse> updateStatusMapByTicketId(@PathVariable String ticketId,
+			@RequestBody TicketRequest request) {
+		return new ResponseEntity<>(ticketService.updateMapByTicketId(ticketId, request), HttpStatus.OK);
+	}
 
 	@GetMapping("public/ticket/check/{id}")
 	public ResponseEntity<Boolean> checkTicketPaid(@PathVariable String id) {
