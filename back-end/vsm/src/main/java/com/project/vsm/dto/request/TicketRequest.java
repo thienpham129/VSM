@@ -17,7 +17,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class TicketRequest {
-	long typeId;
+//	long typeId;
     long scheduleId;
     List<String> selectedSeat;
     String fullName;
@@ -34,8 +34,10 @@ public class TicketRequest {
     String mapDrop;
     String mapStatus;
     long routeId;
+    long carRouteId;
+    double totalPrice;
 
-    public TicketEntity toEntity(AccountEntity account, PaymentEntity payment, VoucherEntity voucher, double totalPrice) {
+    public TicketEntity toEntity(AccountEntity account, PaymentEntity payment, VoucherEntity voucher) {
         return TicketEntity.builder()
                 .selectedSeat(String.join("," , this.selectedSeat))
                 .detailAddressPickUp(this.detailAddressToPickUp)

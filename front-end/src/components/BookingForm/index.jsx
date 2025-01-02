@@ -19,14 +19,16 @@ import MethodPayment from "pages/methodPayment";
 import { jwtDecode } from "jwt-decode";
 
 function BookingForm({
-  // selectedSeats,
-  // totalPrice,
-  // startTime,
-  // startLocation,
-  // stopLocation,
+  selectedSeats,
+  totalPriceTicket,
+  startTime,
+  startLocation,
+  stopLocation,
   // price,
-  // scheduleId,
-  // typeId,
+  scheduleId,
+  carRouteId,
+  selectedRoute,
+  selectedCar
 }) {
   const navigate = useNavigate();
 
@@ -42,6 +44,8 @@ function BookingForm({
   const [errors, setErrors] = useState({});
   const [ticketId, setTicketId] = useState(null);
   const [voucher, setVoucher] = useState(null);
+  const [discount, setDiscount] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(totalPriceTicket)
 
   // Pick-up location state
   const [pickupSpecificAddress, setPickupSpecificAddress] = useState("");
@@ -72,6 +76,11 @@ function BookingForm({
   const [dropLon, setDropLon] = useState("");
   const [messageVoucher, setMessageVoucher] = useState("");
 
+  useEffect(() => {
+    setTotalPrice(totalPriceTicket); // Cập nhật state khi props thay đổi
+  }, [totalPriceTicket]);
+
+
   const notifyErrorEmptyVoucher = () =>
     toast.error("Hãy nhập mã giảm giá của bạn !", {
       position: "bottom-right",
@@ -98,166 +107,29 @@ function BookingForm({
       transition: Bounce,
     });
 
-  // Handle change for specific addresses
-  // const handlePickupSpecificAddressChange = (event) => {
-  //   setPickupSpecificAddress(event.target.value);
-  // };
-
-  // const handleDropoffSpecificAddressChange = (event) => {
-  //   setDropoffSpecificAddress(event.target.value);
-  // };
-
   const createAddressValuePickUp = () => {
-    // const newAddressPickUp = `${pickupSpecificAddress} ${
-    //   pickupWard
-    //     ? `${
-    //         pickupWards?.find((item) => item.ward_id === pickupWard)?.ward_name
-    //       },`
-    //     : ""
-    // } ${
-    //   pickupDistrict
-    //     ? `${
-    //         pickupDistricts?.find((item) => item.district_id === pickupDistrict)
-    //           ?.district_name
-    //       },`
-    //     : ""
-    // } ${
-    //   pickupProvince
-    //     ? pickupProvinces?.find((item) => item.province_id === pickupProvince)
-    //         ?.province_name
-    //     : ""
-    // }`;
-    // setDetailAddressToPickUp(newAddressPickUp.trim());
     setDetailAddressToPickUp(pickUpAddress);
   };
   const createAddressValueDropOff = () => {
-    // const newAddressDropOff = `${dropoffSpecificAddress} ${
-    //   dropoffWard
-    //     ? `${
-    //         dropoffWards?.find((item) => item.ward_id === dropoffWard)
-    //           ?.ward_name
-    //       },`
-    //     : ""
-    // } ${
-    //   dropoffDistrict
-    //     ? `${
-    //         dropoffDistricts?.find(
-    //           (item) => item.district_id === dropoffDistrict
-    //         )?.district_name
-    //       },`
-    //     : ""
-    // } ${
-    //   dropoffProvince
-    //     ? dropoffProvinces?.find((item) => item.province_id === dropoffProvince)
-    //         ?.province_name
-    //     : ""
-    // }`;
-    // setDetailAddressDropOff(newAddressDropOff.trim());
     setDetailAddressDropOff(dropAddress);
   };
-
-  // Fetch provinces once and use them for both pick-up and drop-off
-  // useEffect(() => {
-  //   const fetchProvinces = async () => {
-  //     const response = await apiGetPublicProvinces();
-  //     if (response.status === 200) {
-  //       setPickupProvinces(response.data.results);
-  //       setDropoffProvinces(response.data.results);
-  //     }
-  //   };
-  //   fetchProvinces();
-  // }, []);
-
-  // // Tự động set pickupProvince khi startLocation thay đổi
-  // useEffect(() => {
-  //   if (startLocation && pickupProvinces.length > 0) {
-  //     // Tìm tỉnh có tên trùng với startLocation
-  //     const province = pickupProvinces.find(
-  //       (item) => item.province_name === startLocation
-  //     );
-  //     if (province) {
-  //       setPickupProvince(province.province_id);
-  //     }
-  //   }
-  // }, [startLocation, pickupProvinces]);
-
-  // // Fetch districts and wards for pick-up location based on province and district selection
-  // useEffect(() => {
-  //   const fetchPickupDistricts = async () => {
-  //     const response = await apiGetPublicDistrict(pickupProvince);
-  //     if (response.status === 200) {
-  //       setPickupDistricts(response.data.results);
-  //     }
-  //   };
-  //   pickupProvince && fetchPickupDistricts();
-
-  //   setPickupDistrict("");
-  //   setPickupWards([]);
-  // }, [pickupProvince]);
-
-  // useEffect(() => {
-  //   const fetchPickupWards = async () => {
-  //     const response = await apiGetPublicWard(pickupDistrict);
-  //     if (response.status === 200) {
-  //       setPickupWards(response.data.results);
-  //     }
-  //   };
-  //   pickupDistrict && fetchPickupWards();
-
-  //   setPickupWard("");
-  // }, [pickupDistrict]);
-
-  // // Fetch districts and wards for drop-off location based on province and district selection
-  // useEffect(() => {
-  //   const fetchDropoffDistricts = async () => {
-  //     const response = await apiGetPublicDistrict(dropoffProvince);
-  //     if (response.status === 200) {
-  //       setDropoffDistricts(response.data.results);
-  //     }
-  //   };
-  //   dropoffProvince && fetchDropoffDistricts();
-
-  //   setDropoffDistrict("");
-  //   setDropoffWards([]);
-  // }, [dropoffProvince]);
-
-  // useEffect(() => {
-  //   const fetchDropoffWards = async () => {
-  //     const response = await apiGetPublicWard(dropoffDistrict);
-  //     if (response.status === 200) {
-  //       setDropoffWards(response.data.results);
-  //     }
-  //   };
-  //   dropoffDistrict && fetchDropoffWards();
-
-  //   setDropoffWard("");
-  // }, [dropoffDistrict]);
 
   useEffect(() => {
     createAddressValuePickUp();
     createAddressValueDropOff();
-  }, [
-    // pickupWard,
-    // pickupDistrict,
-    // pickupProvince,
-    // dropoffWard,
-    // dropoffDistrict,
-    // dropoffProvince,
-    pickUpAddress,
-    dropAddress,
-  ]);
+  }, [pickUpAddress, dropAddress]);
 
-  // useEffect(() => {
-  //   setSelectedSeat(selectedSeats); // Set selectedSeat to the count of selected seats
-  // }, [selectedSeats]);
+  useEffect(() => {
+    setSelectedSeat(selectedSeats); // Set selectedSeat to the count of selected seats
+  }, [selectedSeats]);
 
   //
   const validateForm = () => {
     const newErrors = {};
 
     if (!fullName.trim()) newErrors.fullName = "Họ tên là bắt buộc.";
-    // if (!selectedSeats.length)
-    //   newErrors.selectedSeats = "Vui lòng chọn ít nhất một ghế.";
+    if (!selectedSeats.length)
+      newErrors.selectedSeats = "Vui lòng chọn ít nhất một ghế.";
     if (!phoneNumber.trim()) {
       newErrors.phoneNumber = "Số điện thoại là bắt buộc.";
     } else if (!/^\d{10}$/.test(phoneNumber)) {
@@ -278,63 +150,67 @@ function BookingForm({
   //
 
   // Create Ticket
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  //   if (!validateForm()) return;
+    if (!validateForm()) return;
 
-  //   const ticketData = {
-  //     fullName,
-  //     phoneNumber,
-  //     email,
-  //     note,
-  //     detailAddressToPickUp,
-  //     selectedSeat,
-  //     detailAddressDropOff,
-  //     paymentMethod,
-  //     scheduleId,
-  //     typeId,
-  //     ...(voucher && { voucher }),
-  //   };
+    const ticketData = {
+      fullName,
+      phoneNumber,
+      email,
+      note,
+      detailAddressToPickUp,
+      selectedSeat,
+      detailAddressDropOff,
+      paymentMethod,
+      scheduleId,
+      totalPrice,
+      ...(voucher && { voucher }),
+    };
+    console.log("««««« carRouteId »»»»»", carRouteId);
 
-  //   try {
-  //     const token = getTokenFromLocalStorage();
-  //     if (!token) {
-  //       window.location.href = "/login";
-  //     }
-  //     const response = await root.post("/public/tickets/create", ticketData, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
+    try {
+      const token = getTokenFromLocalStorage();
+      if (!token) {
+        window.location.href = "/login";
+      }
+      const response = await root.post("/public/tickets/create", ticketData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-  //     if (response.status === 200) {
-  //       console.log("Booking successful:", response.data);
-  //       navigate("/methodPayment", {
-  //         state: {
-  //           fullName,
-  //           phoneNumber,
-  //           email,
-  //           note,
-  //           detailAddressToPickUp,
-  //           selectedSeat,
-  //           detailAddressDropOff,
-  //           totalPrice: response.data.totalPrice,
-  //           startTime,
-  //           startLocation,
-  //           stopLocation,
-  //           ticketId: response.data.ticketId,
-  //           // voucher : response.data.voucher
-  //         },
-  //       });
-  //     } else {
-  //       console.error("Error submitting booking");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error submitting booking:", error);
-  //   }
-  // };
+      if (response.status === 200) {
+        console.log("Booking successful:", response.data);
+        console.log("««««« response.data »»»»»", response.data.totalPrice);
+        navigate("/methodPayment", {
+          state: {
+            fullName,
+            phoneNumber,
+            email,
+            note,
+            detailAddressToPickUp,
+            selectedSeat,
+            detailAddressDropOff,
+            totalPrice: response.data.totalPrice,
+            startTime,
+            startLocation,
+            stopLocation,
+            selectedCar,
+            selectedRoute,
+            ticketId: response.data.ticketId,
+            // voucher : response.data.voucher
+          },
+        });
+      } else {
+        console.error("Error submitting booking");
+      }
+    } catch (error) {
+      console.error("Error submitting booking:", error);
+    }
+  };
 
   useEffect(() => {
     if (pickUpAddress) {
@@ -474,6 +350,11 @@ function BookingForm({
         const response = await root.get(
           `/public/check-voucher?voucher=${voucher}`
         );
+        if(response.data.data){
+          setDiscount(response.data.data.discount)
+          const newTotalPrice = totalPriceTicket - (totalPriceTicket * response.data.data.discount / 100); 
+          setTotalPrice(newTotalPrice); 
+        }
         if (response.data.data.message !== "Mã hợp lệ có thể sử dụng") {
           setMessageVoucher("Mã Đã Hết Hạn Hoặc Không Đúng !");
         } else {
@@ -485,45 +366,40 @@ function BookingForm({
       }
     };
     checkVoucher();
-  }, [voucher]);
+  }, [voucher, totalPriceTicket]);
 
   return (
     <div className={styles.bookingPage__tickets__item__collapse__booking__user}>
-      <div
+      {/* <div
         className={styles.bookingPage__tickets__item__collapse__booking__title}
       >
         <h3>
-          {/* {startLocation} <i class="fa-solid fa-arrow-right" /> {stopLocation} */}
-          123
+          {startLocation} <i class="fa-solid fa-arrow-right" /> {stopLocation}
         </h3>
-        {/* <p>{new Date(startTime).toLocaleString()}</p> */}
-        456
-      </div>
+        <p>{new Date(startTime).toLocaleString()}</p>
+      </div> */}
       <form
         method="POST"
         data-trip-choosableseat={1}
         data-form-trip-id="PLT0Tc1ybgN295oCg20241015"
-        // onSubmit={handleSubmit}
+        onSubmit={handleSubmit}
       >
-        <div className="d-none" data-content="additionPriceForUserType" />
+        {/* <div className="d-none" data-content="additionPriceForUserType" /> */}
 
         <div className={styles.form_group}>
           <label htmlFor="">Ghế đã chọn</label>
           <div data-content="listSeat" className={styles.list_seat}>
-            {/* {selectedSeats.join(", ")} */}
-            789
+            {selectedSeats.join(", ")}
 
             <span className={styles.error}>{errors.selectedSeats}</span>
           </div>
         </div>
-        {/* <label htmlFor="seat_selected" className={styles.error} /> */}
 
         <div className={styles.form_group}>
           <label htmlFor="">Tổng tiền</label>
           <span className="total-monney">
             <span data-content="totalPrice">
-              {/* {totalPrice.toLocaleString().replace(",", ".")} VNĐ */}
-              890
+              {totalPriceTicket.toLocaleString().replace(",", ".")} VNĐ
             </span>{" "}
           </span>
         </div>
@@ -539,7 +415,7 @@ function BookingForm({
             onChange={(e) => setFullName(e.target.value)}
           />
           {errors.fullName && (
-            <span className={styles.error} style={{ marginLeft: "312px" }}>
+            <span className={styles.error} style={{ marginLeft: "112px" }}>
               {errors.fullName}
             </span>
           )}
@@ -555,7 +431,7 @@ function BookingForm({
             onChange={(e) => setPhoneNumber(e.target.value)}
           />
           {errors.phoneNumber && (
-            <span className={styles.error} style={{ marginLeft: "312px" }}>
+            <span className={styles.error} style={{ marginLeft: "112px" }}>
               {errors.phoneNumber}
             </span>
           )}
@@ -574,11 +450,7 @@ function BookingForm({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          {errors.email && (
-            <span className={styles.error} style={{ marginLeft: "312px" }}>
-              {errors.email}
-            </span>
-          )}
+          {errors.email && <span className={styles.error}>{errors.email}</span>}
         </div>
         <div className={styles.form_group}>
           <label htmlFor="">Ghi chú</label>
@@ -645,36 +517,6 @@ function BookingForm({
                 {errors.pickupSpecificAddress}
               </span>
             )}
-
-            {/* <div className="row">
-              <div className="col-md-12 form-group">
-                <SellectAddress
-                  type="province"
-                  value={pickupProvince}
-                  setValue={setPickupProvince}
-                  options={pickupProvinces}
-                  label="Province/City(Tỉnh)"
-                />
-              </div>
-              <div className="col-md-12 form-group">
-                <SellectAddress
-                  type="district"
-                  value={pickupDistrict}
-                  setValue={setPickupDistrict}
-                  options={pickupDistricts}
-                  label="District(Quận)"
-                />
-              </div>
-              <div className="col-md-12 form-group">
-                <SellectAddress
-                  type="ward"
-                  value={pickupWard}
-                  setValue={setPickupWard}
-                  options={pickupWards}
-                  label="Wards(phường)"
-                />
-              </div>
-            </div> */}
           </div>
           <label htmlFor="pointUp" className={styles.error} />
         </div>
@@ -683,14 +525,6 @@ function BookingForm({
             Điểm đến: <span className={styles.text_danger}>*</span>
           </label>
           <div className={styles.point_wrap}>
-            {/* <input
-              type="text"
-              onChange={handleDropoffSpecificAddressChange}
-              value={dropoffSpecificAddress}
-              placeholder="Nhập địa chỉ cụ thể"
-              style={{ width: "100%" }}
-            /> */}
-
             <input
               type="text"
               placeholder="Nhập địa chỉ cụ thể"
@@ -733,35 +567,6 @@ function BookingForm({
                 {errors.dropoffSpecificAddress}
               </span>
             )}
-            {/* <div className="row">
-              <div className="col-md-12 form-group">
-                <SellectAddress
-                  type="province"
-                  value={dropoffProvince}
-                  setValue={setDropoffProvince}
-                  options={dropoffProvinces}
-                  label="Province/City(Tỉnh)"
-                />
-              </div>
-              <div className="col-md-12 form-group">
-                <SellectAddress
-                  type="district"
-                  value={dropoffDistrict}
-                  setValue={setDropoffDistrict}
-                  options={dropoffDistricts}
-                  label="District(Quận)"
-                />
-              </div>
-              <div className="col-md-12 form-group">
-                <SellectAddress
-                  type="ward"
-                  value={dropoffWard}
-                  setValue={setDropoffWard}
-                  options={dropoffWards}
-                  label="Wards(phường)"
-                />
-              </div>
-            </div> */}
           </div>
           <label htmlFor="pointDown" className={styles.error} />
         </div>

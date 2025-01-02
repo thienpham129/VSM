@@ -170,7 +170,8 @@
 }
 
 .bookingPage__search__wrap .searchTicket {
-    width: 80%;
+    /* width: 85%; */
+    width: 100%;
 }
 
 .bookingPage__step__wrap {
@@ -232,7 +233,7 @@
 }
 
 .bookingPage__tickets__item {
-    padding: 0 25px;
+    /* padding: 0 25px; */
     position: relative;
 }
 

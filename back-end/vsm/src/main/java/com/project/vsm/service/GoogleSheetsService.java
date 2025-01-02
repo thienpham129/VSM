@@ -116,36 +116,36 @@ public class GoogleSheetsService {
         }
     }
 
-//    public TicketGoogleSheetResponse updateTicketStatusFromGoogleSheet(String ticketId) {
-//        try {
-//            RestTemplate restTemplate = new RestTemplate();
-//            ResponseEntity<String> response = restTemplate.getForEntity(SHEET_URL, String.class);
-//
-//            if (response.getStatusCode() == HttpStatus.OK) {
-//                String content = response.getBody();
-//                List<String> rows = parseRowsFromGoogleSheet(content);
-//
-//                for (String row : rows) {
-//                    if (row.toLowerCase().contains(String.valueOf(ticketId).toLowerCase())) {
-//                        TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
-//                                .orElseThrow(() -> new RuntimeException("Ticket not found"));
-//                        if (!ticket.isPaid()) {
-//                            ticket.setStatus("Đã thanh toán");
-//                            ticket.setPaid(true);
-//                            ticketRepository.save(ticket);
-//                            return new TicketGoogleSheetResponse("Đã thanh toán", true);
-//                        } else {
-//                            return new TicketGoogleSheetResponse("Vé đã được thanh toán", true);
-//                        }
-//                    }
-//                }
-//                return new TicketGoogleSheetResponse("Không tìm thấy ticketId trong Google Sheets", false);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return new TicketGoogleSheetResponse("Có lỗi xảy ra", false);
-//    }
+    public TicketGoogleSheetResponse updateTicketStatusFromGoogleSheet(String ticketId) {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.getForEntity(SHEET_URL, String.class);
+
+            if (response.getStatusCode() == HttpStatus.OK) {
+                String content = response.getBody();
+                List<String> rows = parseRowsFromGoogleSheet(content);
+
+                for (String row : rows) {
+                    if (row.toLowerCase().contains(String.valueOf(ticketId).toLowerCase())) {
+                        TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
+                                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+                        if (!ticket.isPaid()) {
+                            ticket.setStatus("Đã thanh toán");
+                            ticket.setPaid(true);
+                            ticketRepository.save(ticket);
+                            return new TicketGoogleSheetResponse("Đã thanh toán", true);
+                        } else {
+                            return new TicketGoogleSheetResponse("Vé đã được thanh toán", true);
+                        }
+                    }
+                }
+                return new TicketGoogleSheetResponse("Không tìm thấy ticketId trong Google Sheets", false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new TicketGoogleSheetResponse("Có lỗi xảy ra", false);
+    }
 
     private List<String> parseRowsFromGoogleSheet(String content) {
         return Arrays.asList(content.split("\n"));

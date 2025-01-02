@@ -102,7 +102,7 @@ const RouteAdmin = () => {
     }
 
     try {
-      await request("post", "/public/routes", trimmedRoute);
+      await request("post", "/admin/routes", trimmedRoute);
       fetchRoutes();
       setSnackbarMessage("Thêm mới tuyến đường thành công!");
       setSnackbarColor("success");

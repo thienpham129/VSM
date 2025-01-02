@@ -46,12 +46,6 @@ public class TicketEntity {
 	@Column(name = "is_paid")
 	boolean isPaid;
 
-	@Column(name = "start_location")
-	String startLocation;
-
-	@Column(name = "stop_location")
-	String stopLocation;
-
 	@Column(name = "status")
 	String status;
 
