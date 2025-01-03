@@ -1,54 +1,60 @@
 package com.project.vsm.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.project.vsm.model.ScheduleEntity;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import com.project.vsm.model.ScheduleEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ScheduleResponse {
-    long scheduleId;
-    LocalDateTime startTime;
-    LocalDateTime endTime;
-    String status;
-    String startLocation;
-    String stopLocation;
-    String startDate;
-    CarResponse car;
-    List<TicketResponse> tickets;
-
-    public static ScheduleResponse mapScheduleResponse(ScheduleEntity schedule, CarResponse carResponse) {
-        ScheduleResponse response = new ScheduleResponse();
-        response.setScheduleId(schedule.getId());
-        response.setStartTime(schedule.getStartTime());
-        response.setStartLocation(schedule.getRoute().getStartLocation());
-        response.setStopLocation(schedule.getRoute().getStopLocation());
-        response.setCar(carResponse);
-        return response;
-    }
-
-
-    public static ScheduleResponse fromEntity(ScheduleEntity schedule) {
-        return
-                ScheduleResponse.builder().scheduleId(schedule.getId())
-                        .startTime(schedule.getStartTime()).endTime(schedule.getEndTime())
-                        .status(schedule.getStatus()).car(schedule.getCar() != null ?
-                                CarResponse.mapCarResponse(schedule.getCar()) : null).build();
-    }
-
+	private long id;
+	private LocalDateTime startTime;
+	private LocalDateTime endTime;
+	private String status;
+	private int price;
+	private long idDriver;
+	private String firstNameDriver;
+	private String lastNameDriver;
+	private String phoneNumberDriver;
+	private long idCar;
+	private String nameCar;
+	private String plateNumber;
+	private Long idType;
+	private String typeCarName;
+	private int numSeats;
+	private Long idRoute;
+	private String startLocation;
+	private String stopLocation;
+	private int emptySeat;
+	public static ScheduleResponse convertFromEntity(ScheduleEntity entity) {
+		ScheduleResponse response = ScheduleResponse.builder().id(entity.getId()).startTime(entity.getStartTime())
+				.endTime(entity.getEndTime()).status(entity.getStatus()).price(entity.getCarRoute().getPrice())
+//				.idDriver(entity.getAccount().getId())
+//				.firstNameDriver(entity.getAccount().getFirstName())
+//				.lastNameDriver(entity.getAccount().getLastName())
+//				.phoneNumberDriver(entity.getAccount().getPhoneNumber())
+				.idCar(entity.getCarRoute().getCar().getCarId()).nameCar(entity.getCarRoute().getCar().getName())
+				.plateNumber(entity.getCarRoute().getCar().getPlateNumber())
+				.idType(entity.getCarRoute().getCar().getType().getId())
+				.typeCarName(entity.getCarRoute().getCar().getType().getTypeName())
+				.numSeats(entity.getCarRoute().getCar().getType().getNumSeats())
+				.idRoute(entity.getCarRoute().getRoute().getId())
+				.startLocation(entity.getCarRoute().getRoute().getStartLocation())
+				.stopLocation(entity.getCarRoute().getRoute().getStopLocation()).build();
+		if (entity.getAccount() != null) {
+			System.out.println(entity.getAccount().getId());
+		}
+		return response;
+	}
 }
-

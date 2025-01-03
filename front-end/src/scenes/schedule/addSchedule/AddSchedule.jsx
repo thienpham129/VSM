@@ -84,7 +84,7 @@ const AddSchedule = () => {
     // Gọi API để lấy danh sách tuyến đường
     const fetchRoutes = async () => {
       try {
-        const response = await request("get", "/admin/routes");
+        const response = await request("get", "/public/routes");
         setRoutes(response.data);
         setLoadingRoutes(false);
       } catch (error) {

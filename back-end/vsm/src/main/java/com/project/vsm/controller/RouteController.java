@@ -22,7 +22,7 @@ public class RouteController {
 	@Autowired
 	private RouteService routeService;
 
-	@GetMapping("admin/routes")
+	@GetMapping("public/routes")
 	public ResponseEntity<Iterable<RouteEntity>> getAllRoutes() {
 		return new ResponseEntity<>(routeService.getAllRoutes(), HttpStatus.OK);
 	}

@@ -34,6 +34,9 @@ import { useRef } from "react";
 import TemplateSeat from "scenes/templateSeat";
 import AddTemplateSeat from "scenes/templateSeat/create/createTemlate";
 import DetaiTemplateSeat from "scenes/templateSeat/detail/detailTemplate";
+import CarRoute from "scenes/carRoute";
+import DetailCarRoute from "scenes/carRoute/detail/DetailCarRoute";
+import CreateCarRoute from "scenes/carRoute/create/CreateCarRoute";
 
 function AdminApp() {
   const [theme, colorMode] = useMode();
@@ -61,6 +64,9 @@ function AdminApp() {
               <Route path="/parking" element={<ParkingLot />} />
               <Route path="/route" element={<RouteAdmin />} />
               <Route path="/type" element={<TypeCar />} />
+              <Route path="/car-route" element={<CarRoute />} />
+              <Route path="/car-route/create" element={<CreateCarRoute />} />
+              <Route path="/car-route/:id" element={<DetailCarRoute />} />
               <Route path="/car" element={<CarAdmin />} />
               <Route path="/car/create" element={<CreateCar />} />
               <Route path="/car/:id" element={<DetailCar />} />

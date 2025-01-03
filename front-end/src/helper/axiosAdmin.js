@@ -7,7 +7,7 @@ export const axiosAdmin = axios.create({
   },
 });
 // export const axiosAdmin = axios.create({
-//     baseURL: "http://localhost:9000/admin", // Main domain
+//     baseURL: "http://localhost:8080/admin", // Main domain
 //     headers: {
 //         "Content-Type": "application/json",
 

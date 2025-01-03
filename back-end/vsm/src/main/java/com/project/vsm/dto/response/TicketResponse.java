@@ -58,7 +58,7 @@ public class TicketResponse {
                 .paymentMethod(ticket.getPaymentMethod())
                 .startLocation(ticket.getStartLocation())
                 .stopLocation(ticket.getStopLocation())
-                .schedules(ScheduleResponse.fromEntity(ticket.getScheduleEntity()))
+                .schedules(ScheduleResponse.convertFromEntity(ticket.getScheduleEntity()))
                 .startTime(ticket.getScheduleEntity().getStartTime())
                 .endTime(ticket.getScheduleEntity().getEndTime())
                 .status(ticket.getStatus())

@@ -15,6 +15,7 @@ import RouteIcon from "@mui/icons-material/Route";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import BackupTableIcon from "@mui/icons-material/BackupTable";
+import PriceChangeIcon from "@mui/icons-material/PriceChange";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -184,6 +185,13 @@ const Sidebar = () => {
             >
               Quản Lý Tài Nguyên
             </Typography>
+            <Item
+              title="Chi Tiết Giá"
+              to="/admin/car-route"
+              icon={<PriceChangeIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
             <Item
               title="Xe"
               to="/admin/car"

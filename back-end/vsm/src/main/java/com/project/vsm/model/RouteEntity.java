@@ -26,4 +26,8 @@ public class RouteEntity {
 
 	@Column(name = "stop_location", nullable = false)
 	private String stopLocation;
+
+//	@JsonIgnore
+//	@OneToMany(mappedBy = "route", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//	private List<CarRouteEntity> carRoutes;
 }

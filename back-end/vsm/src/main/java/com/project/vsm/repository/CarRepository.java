@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.project.vsm.model.CarEntity;
 
 @Repository
-public interface CarRepository extends JpaRepository<CarEntity, Long> , JpaSpecificationExecutor<CarEntity> {
+public interface CarRepository extends JpaRepository<CarEntity, Long>, JpaSpecificationExecutor<CarEntity> {
 
-//	List<CarEntity> findByType_TypeId(Long typeId);
+	
 }

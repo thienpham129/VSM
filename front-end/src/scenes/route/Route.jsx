@@ -35,7 +35,7 @@ const RouteAdmin = () => {
   // Fetch routes from API
   const fetchRoutes = async () => {
     try {
-      const response = await request("get", "/admin/routes");
+      const response = await request("get", "/public/routes");
       setRoutes(response.data);
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu lịch trình:", error);
@@ -132,7 +132,7 @@ const RouteAdmin = () => {
     }
 
     try {
-      await request("put", `/admin/routes/${trimmedRoute.id}`, trimmedRoute);
+      await request("put", `/public/routes/${trimmedRoute.id}`, trimmedRoute);
       fetchRoutes();
       setSnackbarMessage("Cập nhật tuyến đường thành công!");
       setSnackbarColor("success");
@@ -149,7 +149,7 @@ const RouteAdmin = () => {
   // Handle deleting a route
   const handleDeleteRoute = async (id) => {
     try {
-      await request("delete", `/admin/routes/${id}`);
+      await request("delete", `/public/routes/${id}`);
       fetchRoutes();
       setSnackbarMessage("Xóa tuyến đường thành công!");
       setSnackbarColor("success");

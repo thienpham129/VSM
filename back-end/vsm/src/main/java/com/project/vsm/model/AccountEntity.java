@@ -75,11 +75,11 @@ public class AccountEntity {
 	private boolean isAvailable;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "account" , cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
 	private List<TicketEntity> tickets = new ArrayList<>();
-	
+
 	@JsonIgnore
-	@OneToMany(mappedBy = "account" , cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
 	private List<ScheduleEntity> schedules = new ArrayList<>();
 
 	@OneToMany(mappedBy = "account" , cascade = CascadeType.ALL)

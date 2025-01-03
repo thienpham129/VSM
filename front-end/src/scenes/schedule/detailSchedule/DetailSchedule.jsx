@@ -17,67 +17,32 @@ import { request } from "admin/helpers/axios_helper";
 import Header from "components/Header";
 import { Snackbar, Alert } from "@mui/material";
 
-// Schema xác thực Formik
 const scheduleSchema = yup.object().shape({
-  driver: yup.string().required("Tài xế là bắt buộc"),
-  car: yup.string().required("Tên xe là bắt buộc"),
-  route: yup.string().required("Tuyến đường là bắt buộc"),
-  date: yup.date().required("Ngày là bắt buộc"),
-  hour: yup.number().required("Giờ là bắt buộc"),
-  minute: yup.number().required("Phút là bắt buộc"),
+  idSchedule: yup.number().required("ID Lịch trình là bắt buộc"),
+  startTime: yup.date().required("Thời gian bắt đầu là bắt buộc"),
   status: yup.string().required("Trạng thái là bắt buộc"),
-  endTime: yup.date().nullable(), // Thêm xác thực cho trường giờ kết thúc
+  price: yup.number().required("Giá vé là bắt buộc"),
+  driver: yup.number().required("Tài xế là bắt buộc"),
+  car: yup.string().required("Xe là bắt buộc"),
+  route: yup.string().required("Tuyến đường là bắt buộc"),
+  emptySeat: yup.number().required("Số ghế trống là bắt buộc"),
 });
 
 const DetailSchedule = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
-  const { id } = useParams(); // Lấy id từ URL params
+  const { id } = useParams();
   const [loading, setLoading] = useState(true);
-  const [loadingDrivers, setLoadingDrivers] = useState(true);
-  const [loadingCars, setLoadingCars] = useState(true);
-  const [loadingRoutes, setLoadingRoutes] = useState(true);
-
   const [drivers, setDrivers] = useState([]);
-  const [cars, setCars] = useState([]);
-  const [routes, setRoutes] = useState([]);
+  const [scheduleData, setScheduleData] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-  const [initialValues, setInitialValues] = useState({
-    driver: "",
-    car: "",
-    route: "",
-    date: new Date().toISOString().split("T")[0],
-    hour: "",
-    minute: "",
-    status: "", // Thêm trạng thái vào initialValues
-    endTime: "", // Thêm giờ kết thúc vào initialValues
-  });
-
-  // Gọi API để lấy thông tin lịch trình
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
         const response = await request("get", `/public/schedule/${id}`);
-        const data = response.data;
-
-        const startDate = new Date(data.startTime);
-        const endDate = new Date(data.endTime); // Giả sử bạn có trường endTime trong response
-
-        setInitialValues({
-          driver: data.account?.id || "",
-          car: data.car?.carId || "",
-          route: data.route?.id || "",
-          date: startDate.toISOString().split("T")[0],
-          hour: startDate.getHours(),
-          minute: startDate.getMinutes(),
-          status: data.status || "", // Lấy trạng thái từ dữ liệu
-          endTime: endDate
-            ? endDate.toISOString().substring(0, 16) // Format datetime-local (YYYY-MM-DDTHH:mm)
-            : "",
-        });
-
+        setScheduleData(response.data);
         setLoading(false);
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu lịch trình:", error);
@@ -85,86 +50,39 @@ const DetailSchedule = () => {
       }
     };
 
-    fetchSchedule();
-  }, [id]);
-
-  // Gọi API để lấy danh sách tài xế
-  useEffect(() => {
     const fetchDrivers = async () => {
       try {
         const response = await request("get", "/driver/get-all");
         setDrivers(response.data);
-        setLoadingDrivers(false);
       } catch (error) {
         console.error("Lỗi khi lấy danh sách tài xế:", error);
-        setLoadingDrivers(false);
       }
     };
+
+    fetchSchedule();
     fetchDrivers();
-  }, []);
-
-  // Gọi API để lấy danh sách xe
-  useEffect(() => {
-    const fetchCars = async () => {
-      try {
-        const response = await request("get", "/public/cars");
-        setCars(response.data);
-        setLoadingCars(false);
-      } catch (error) {
-        console.error("Lỗi khi lấy danh sách xe:", error);
-        setLoadingCars(false);
-      }
-    };
-    fetchCars();
-  }, []);
-
-  // Gọi API để lấy danh sách tuyến đường
-  useEffect(() => {
-    const fetchRoutes = async () => {
-      try {
-        const response = await request("get", "/admin/routes");
-        setRoutes(response.data);
-        setLoadingRoutes(false);
-      } catch (error) {
-        console.error("Lỗi khi lấy danh sách tuyến đường:", error);
-        setLoadingRoutes(false);
-      }
-    };
-    fetchRoutes();
-  }, []);
+  }, [id]);
 
   const handleFormSubmit = async (values) => {
-    const endtimeInput =
-      values.endTime === "1970-01-01" ? null : values.endTime;
     try {
       const payload = {
-        schduleId: id,
-        accountId: values.driver,
-        carId: values.car,
-        routeId: values.route,
-        startTime: `${values.date}T${values.hour
-          .toString()
-          .padStart(2, "0")}:${values.minute.toString().padStart(2, "0")}:00`,
+        id: values.idSchedule,
         status: values.status,
-        endTime: endtimeInput,
+        accountId: values.driver,
       };
-      await request("put", `/admin/schedule`, payload);
+      await request("put", `/admin/schedule/${values.idSchedule}`, payload);
       setSnackbarMessage("Cập nhật lịch trình thành công!");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
     } catch (error) {
       console.error("Lỗi khi cập nhật lịch trình:", error);
-      // setSnackbarMessage("Có lỗi xảy ra, vui lòng thử lại!");
-      const errorMessage = error.response?.data?.startTime
-        ? "Thời gian bắt đầu phải lớn hơn thời điểm hiện tại!"
-        : error.response?.data;
-      setSnackbarMessage(errorMessage);
+      setSnackbarMessage("Có lỗi xảy ra, vui lòng thử lại!");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
     }
   };
 
-  if (loading || loadingDrivers || loadingCars || loadingRoutes) {
+  if (loading || !scheduleData) {
     return (
       <Box mt="20px" display="flex" justifyContent="center">
         <CircularProgress />
@@ -193,8 +111,16 @@ const DetailSchedule = () => {
 
       <Formik
         onSubmit={handleFormSubmit}
-        initialValues={initialValues}
-        enableReinitialize={true}
+        initialValues={{
+          idSchedule: scheduleData.id,
+          startTime: scheduleData.startTime,
+          status: scheduleData.status,
+          price: scheduleData.price,
+          driver: scheduleData.idDriver,
+          car: `${scheduleData.typeCarName} - ${scheduleData.numSeats} chỗ`,
+          route: `${scheduleData.startLocation} > ${scheduleData.stopLocation}`,
+          emptySeat: scheduleData.emptySeat,
+        }}
         validationSchema={scheduleSchema}
       >
         {({
@@ -214,7 +140,68 @@ const DetailSchedule = () => {
                 "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
               }}
             >
-              {/* Dropdown Tài Xế */}
+              <TextField
+                fullWidth
+                variant="filled"
+                label="ID Lịch Trình"
+                name="idSchedule"
+                value={values.idSchedule}
+                disabled
+                sx={{ gridColumn: "span 2" }}
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                type="datetime-local"
+                label="Thời Gian Bắt Đầu"
+                name="startTime"
+                value={values.startTime}
+                onChange={handleChange}
+                error={!!touched.startTime && !!errors.startTime}
+                helperText={touched.startTime && errors.startTime}
+                sx={{ gridColumn: "span 2" }}
+                disabled
+                InputLabelProps={{ shrink: true }}
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                label="Xe"
+                name="car"
+                value={values.car}
+                disabled
+                sx={{ gridColumn: "span 2" }}
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                label="Tuyến Đường"
+                name="route"
+                value={values.route}
+                disabled
+                sx={{ gridColumn: "span 2" }}
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                label="Giá Vé"
+                name="price"
+                disabled
+                value={values.price}
+                onChange={handleChange}
+                error={!!touched.price && !!errors.price}
+                helperText={touched.price && errors.price}
+                sx={{ gridColumn: "span 2" }}
+              />
+              <TextField
+                fullWidth
+                variant="filled"
+                label="Số Ghế Trống"
+                name="emptySeat"
+                value={values.emptySeat}
+                disabled
+                sx={{ gridColumn: "span 2" }}
+              />
               <FormControl
                 variant="filled"
                 sx={{ gridColumn: "span 2" }}
@@ -233,85 +220,6 @@ const DetailSchedule = () => {
                   ))}
                 </Select>
               </FormControl>
-
-              {/* Dropdown Tên Xe */}
-              <FormControl
-                variant="filled"
-                sx={{ gridColumn: "span 2" }}
-                error={!!touched.car && !!errors.car}
-              >
-                <InputLabel>Tên Xe</InputLabel>
-                <Select name="car" value={values.car} onChange={handleChange}>
-                  {cars.map((car) => (
-                    <MenuItem key={car.carId} value={car.carId}>
-                      Xe {car.plateNumber} - {car.type.numSeat} chỗ
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              {/* Dropdown Tuyến Đường */}
-              <FormControl
-                variant="filled"
-                sx={{ gridColumn: "span 4" }}
-                error={!!touched.route && !!errors.route}
-              >
-                <InputLabel>Tuyến Đường</InputLabel>
-                <Select
-                  name="route"
-                  value={values.route}
-                  onChange={handleChange}
-                >
-                  {routes.map((route) => (
-                    <MenuItem key={route.id} value={route.id}>
-                      {route.startLocation} {" > "}
-                      {route.stopLocation}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              {/* Các trường Ngày, Giờ, Phút */}
-              <TextField
-                fullWidth
-                variant="filled"
-                type="date"
-                label="Ngày"
-                name="date"
-                value={values.date}
-                onChange={handleChange}
-                error={!!touched.date && !!errors.date}
-                helperText={touched.date && errors.date}
-                sx={{ gridColumn: "span 2" }}
-                InputLabelProps={{ shrink: true }}
-              />
-
-              <FormControl variant="filled" sx={{ gridColumn: "span 1" }}>
-                <InputLabel>Giờ</InputLabel>
-                <Select name="hour" value={values.hour} onChange={handleChange}>
-                  {[...Array(24).keys()].map((hour) => (
-                    <MenuItem key={hour} value={hour}>
-                      {hour}h
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <FormControl variant="filled" sx={{ gridColumn: "span 1" }}>
-                <InputLabel>Phút</InputLabel>
-                <Select
-                  name="minute"
-                  value={values.minute}
-                  onChange={handleChange}
-                >
-                  {[0, 10, 20, 30, 40, 50].map((minute) => (
-                    <MenuItem key={minute} value={minute}>
-                      {minute} phút
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
               <FormControl
                 variant="filled"
                 sx={{ gridColumn: "span 2" }}
@@ -328,20 +236,6 @@ const DetailSchedule = () => {
                   <MenuItem value="Đã hoàn thành">Đã hoàn thành</MenuItem>
                 </Select>
               </FormControl>
-
-              <TextField
-                fullWidth
-                variant="filled"
-                type="datetime-local"
-                label="Giờ Kết Thúc"
-                name="endTime"
-                value={values.endTime}
-                onChange={handleChange}
-                error={!!touched.endTime && !!errors.endTime}
-                helperText={touched.endTime && errors.endTime}
-                sx={{ gridColumn: "span 2" }}
-                InputLabelProps={{ shrink: true }}
-              />
             </Box>
 
             <Box display="flex" justifyContent="end" mt="20px">

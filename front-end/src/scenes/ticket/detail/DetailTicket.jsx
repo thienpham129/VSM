@@ -45,7 +45,7 @@ const DetailTicket = () => {
   // Fetch route data
   const fetchRoutes = async () => {
     try {
-      const response = await request("GET", `/admin/routes`);
+      const response = await request("GET", `/public/routes`);
       setRoutes(response.data); // Set the routes data
     } catch (error) {
       console.error("Error fetching routes:", error);

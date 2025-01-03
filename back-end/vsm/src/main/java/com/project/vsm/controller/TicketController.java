@@ -43,10 +43,10 @@ public class TicketController {
 		return "Delete ticket has successfully";
 	}
 
-//    @PostMapping("/public/tickets/create")
-//    public ResponseEntity<TicketResponse> createTickets(@RequestBody TicketRequest ticketRequest) throws IOException {
-//        return new ResponseEntity<>(ticketService.createTicket(ticketRequest) , HttpStatus.OK);
-//    }
+    @PostMapping("/public/tickets/create")
+    public ResponseEntity<TicketResponse> createTickets(@RequestBody TicketRequest ticketRequest) throws IOException {
+        return new ResponseEntity<>(ticketService.createTicket(ticketRequest) , HttpStatus.OK);
+    }
 //
 //
 //    // @PutMapping("/admin/update/ticket/{ticketId}")
@@ -83,11 +83,11 @@ public class TicketController {
 		return new ResponseEntity<>(ticketService.getAllTicketAdmin(), HttpStatus.OK);
 	}
 
-	@GetMapping("driver/ticket/{id}")
-	public ResponseEntity<TicketResponseAdminDTO> getTicketByIdAdmin(@PathVariable String id) {
-		TicketResponseAdminDTO ticket = ticketService.getTicketByIDAdmin(id);
-		return new ResponseEntity<>(ticket, HttpStatus.OK);
-	}
+//	@GetMapping("driver/ticket/{id}")
+//	public ResponseEntity<TicketResponseAdminDTO> getTicketByIdAdmin(@PathVariable String id) {
+//		TicketResponseAdminDTO ticket = ticketService.getTicketByIDAdmin(id);
+//		return new ResponseEntity<>(ticket, HttpStatus.OK);
+//	}
 	/*
 	 * @PutMapping("/public/update-status-map/ticket/{ticketId}") public
 	 * ResponseEntity<TicketResponse> updateStatusMapByTicketId (@PathVariable
@@ -95,6 +95,8 @@ public class TicketController {
 	 * ResponseEntity<>(ticketService.updateMapByTicketId(ticketId , request)
 	 * ,HttpStatus.OK); }
 	 */
+
+
 
 
 	@GetMapping("public/ticket/check/{id}")
