@@ -13,8 +13,9 @@ const SeatMap = ({
   stopLocation,
   selectedRoute,
   selectedCar,
+  routeDetail,
+  carDetail,
 }) => {
-  console.log('««««« scheduleId »»»»»', scheduleId);
   const [seats, setSeats] = useState(car.type.seatList); // Ghế từ car data
   const [selectedSeats, setSelectedSeats] = useState([]); // Ghế đã chọn
   const [tickets, setTickets] = useState([]); // Dữ liệu vé từ API
@@ -22,23 +23,26 @@ const SeatMap = ({
   const [waitingSeats, setWaitingSeats] = useState([]); // Ghế đang chờ xử lý
 
   useEffect(() => {
-    // Gọi API để lấy vé theo scheduleId
+    setSeats(car.type.seatList);
+  }, [car]);
+  useEffect(() => {
     axios
       .get(`http://localhost:9000/public/ticket-with-schedule/${scheduleId}`)
       .then((response) => {
-        setTickets(response.data); // Lưu dữ liệu vé vào state
+        setTickets(response.data);
 
         // Lọc ghế có status là "Hủy thanh toán"
         const canceledSeats = response.data.filter(
           (ticket) => ticket.status === "Hủy thanh toán"
         );
-        setCanceledSeats(canceledSeats); // Lưu ghế hủy vào state
+        setCanceledSeats(canceledSeats); 
 
         // Lọc ghế có status là "Đang chờ xử lý"
         const waitingSeats = response.data.filter(
           (ticket) => ticket.status === "Đang chờ xử lý"
         );
-        setWaitingSeats(waitingSeats); // Lưu ghế đang chờ xử lý vào state
+        console.log("««««« waitingSeats »»»»»", waitingSeats);
+        setWaitingSeats(waitingSeats); 
       })
       .catch((error) => {
         console.error("Có lỗi xảy ra khi gọi API: ", error);
@@ -63,8 +67,8 @@ const SeatMap = ({
 
     // Kiểm tra nếu ghế này đã bị hủy hoặc đang chờ xử lý thì không thể chọn
     const isCanceled = checkCanceledTicket(seatPosition);
-    const isWaiting = waitingSeats.some(
-      (ticket) => ticket.selectedSeat.includes(seatPosition)
+    const isWaiting = waitingSeats.some((ticket) =>
+      ticket.selectedSeat.includes(seatPosition)
     );
     if (isCanceled || isWaiting) {
       return; // Không làm gì nếu ghế đã bị hủy hoặc đang chờ xử lý
@@ -125,14 +129,18 @@ const SeatMap = ({
             id="collapse--booking-ticketPLT0Tc1ybgN295oCg20241015"
           >
             <div
-              className={styles.bookingPage__tickets__item__collapse__booking__seat_map}
+              className={
+                styles.bookingPage__tickets__item__collapse__booking__seat_map
+              }
             >
               <h4 style={{ textAlign: "center" }}>
                 Xe {car.type.numSeats} chỗ
               </h4>
 
               <div
-                className={styles.bookingPage__tickets__item__collapse__booking__seat_map__floor}
+                className={
+                  styles.bookingPage__tickets__item__collapse__booking__seat_map__floor
+                }
               >
                 <table>
                   <tbody>
@@ -147,8 +155,8 @@ const SeatMap = ({
 
                             // Kiểm tra nếu ghế bị hủy, đang chờ xử lý hoặc không thể chọn
                             const isCanceled = checkCanceledTicket(position);
-                            const isWaiting = waitingSeats.some(
-                              (ticket) => ticket.selectedSeat.includes(position)
+                            const isWaiting = waitingSeats.some((ticket) =>
+                              ticket.selectedSeat.includes(position)
                             );
 
                             let seatClass = "icon-seat-empty";
@@ -182,11 +190,17 @@ const SeatMap = ({
                                 <div style={{ textAlign: "center" }}>
                                   <input
                                     type="button"
-                                    value={position === "A1" ? "Tài Xế" : seat.position}
+                                    value={
+                                      position === "A1"
+                                        ? "Tài Xế"
+                                        : seat.position
+                                    }
                                     readOnly
                                     className={`avicon ${seatClass}`}
                                     onClick={
-                                      position === "A1" || isCanceled || isWaiting
+                                      position === "A1" ||
+                                      isCanceled ||
+                                      isWaiting
                                         ? undefined
                                         : () => handleSeatClick(position)
                                     }
@@ -203,12 +217,17 @@ const SeatMap = ({
                                       style={{
                                         fontSize: "12px",
                                         marginTop: "5px",
-                                        color: seat.surcharge > 0 ? "red" : "green",
+                                        color:
+                                          seat.surcharge > 0 ? "red" : "green",
                                       }}
                                     >
                                       {seat.surcharge > 0
-                                        ? `Phụ thu giá sẽ cộng thêm ${formatCurrency(seat.surcharge)}`
-                                        : `Phụ thu giá sẽ giảm ${formatCurrency(Math.abs(seat.surcharge))}`}
+                                        ? `Phụ thu giá sẽ cộng thêm ${formatCurrency(
+                                            seat.surcharge
+                                          )}`
+                                        : `Phụ thu giá sẽ giảm ${formatCurrency(
+                                            Math.abs(seat.surcharge)
+                                          )}`}
                                     </div>
                                   )}
                                 </div>
@@ -223,7 +242,9 @@ const SeatMap = ({
               </div>
 
               <div
-                className={styles.bookingPage__tickets__item__collapse__booking__seat_map__note}
+                className={
+                  styles.bookingPage__tickets__item__collapse__booking__seat_map__note
+                }
               >
                 <p>
                   <span className="avicon icon-seat-empty" />
@@ -258,6 +279,8 @@ const SeatMap = ({
               startTime={startTime}
               selectedRoute={selectedRoute}
               selectedCar={selectedCar}
+              routeDetail={routeDetail}
+              carDetail={carDetail}
             />
           </div>
         </div>

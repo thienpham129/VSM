@@ -21,6 +21,9 @@ const BookingTicket = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [schedule, setSchedule] = useState(null);
+  const [routeDetail, setRouteDetail] = useState(null);
+  const [carDetail, setCarDetail] = useState(null);
+  console.log('««««« selectedCarSeatMap »»»»»', selectedCarSeatMap);
 
   const carRouteId = selectedRoute;
   // selectedRoute là routeId
@@ -52,10 +55,6 @@ const BookingTicket = () => {
     fetchRoutes();
   }, []);
 
-  const selectedRouteDetails = routes.find(
-    (route) => route.id === selectedRoute
-  );
-
   useEffect(() => {
     if (!selectedRoute) {
       setCars([]);
@@ -76,6 +75,39 @@ const BookingTicket = () => {
 
     fetchCars();
   }, [selectedRoute]);
+
+  // start detail
+  useEffect(() => {
+    if (selectedRoute) {
+      const selectedRouteDetails = routes.find((route) => route.id === selectedRoute);
+      if (selectedRouteDetails) {
+        setRouteDetail(
+          `${selectedRouteDetails.startLocation} - ${selectedRouteDetails.stopLocation}`
+        );
+      } else {
+        setRouteDetail(null); 
+      }
+    } else {
+      setRouteDetail(null); 
+    }
+  }, [selectedRoute, routes]);
+
+  useEffect(() => {
+    if (selectedCar) {
+      const selectedCarDetails = cars.find((car) => car.carId === selectedCar);
+      if (selectedCarDetails) {
+        setCarDetail(
+          `${selectedCarDetails.name} - ${selectedCarDetails.type.numSeats} Chỗ Ngồi`
+        );
+      } else {
+        setCarDetail(null); 
+      }
+    } else {
+      setCarDetail(null); 
+    }
+  }, [selectedCar, cars]);
+
+  // End detail
 
   // Hàm gọi API để tạo/lấy lịch trình
   useEffect(() => {
@@ -287,11 +319,6 @@ const BookingTicket = () => {
         >
           <div className={styles.container}>
             <div className={styles.bookingPage__tickets__wrap}>
-              {/* {startTime && selectedRoute && selectedCar && (
-                <SeatMap
-                  car={selectedCarSeatMap}
-                />
-              )} */}
               {schedule ? (
                 <SeatMap
                   priceOfSeat={schedule.price}
@@ -303,6 +330,8 @@ const BookingTicket = () => {
                   stopLocation={schedule.stopLocation}
                   selectedRoute={selectedRoute}
                   selectedCar={selectedCar}
+                  routeDetail={routeDetail}
+                  carDetail={carDetail}
                 /> // Truyền giá tiền vào SeatMap
               ) : (
                 // <p>Chưa có lịch trình.</p>

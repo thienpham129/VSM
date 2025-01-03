@@ -20,8 +20,8 @@ const MethodPayment = () => {
     startLocation,
     stopLocation,
     ticketId,
-    selectedRoute,
-    selectedCar
+      carDetail,
+      routeDetail
   } = state || {};
   console.log("««««« state.totalPrice »»»»»", state.totalPrice);
   const [paymentUrl, setPaymentUrl] = useState("");
@@ -165,26 +165,68 @@ const MethodPayment = () => {
 
   // Check payment ticket
 
+  // const checkPayment = async () => {
+  //   if (!ticketId) {
+  //     alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra thanh toán.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await root.get(
+  //       `/api/v1/google-sheet/check-ticket/${ticketId}`
+  //     );
+
+  //     if (response.status === 200) {
+  //       console.log("««««« response.data »»»»»", response.data);
+  //       if (response.data.paid === true) {
+  //         console.log("««««« Vé đã được thanh toán »»»»»");
+  //         navigate("/paymentSuccess"),{
+  //           state: {
+  //             startTime,
+  //             carDetail,
+  //             routeDetail,
+  //           },
+  //         };
+  //         return true;
+  //       } else {
+  //         console.log("««««« Vé chưa được thanh toán` »»»»»");
+  //         return false;
+  //       }
+  //     } else {
+  //       setError("Không thể kiểm tra trạng thái thanh toán.");
+  //     }
+  //   } catch (err) {
+  //     console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
+  //     setError("Đã xảy ra lỗi trong quá trình kiểm tra thanh toán.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
   const checkPayment = async () => {
     if (!ticketId) {
       alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra thanh toán.");
       return;
     }
-
+  
     try {
-      const response = await root.get(
-        `/api/v1/google-sheet/check-ticket/${ticketId}`
-      );
-
+      const response = await root.get(`/api/v1/google-sheet/check-ticket/${ticketId}`);
+  
       if (response.status === 200) {
         console.log("««««« response.data »»»»»", response.data);
         if (response.data.paid === true) {
           console.log("««««« Vé đã được thanh toán »»»»»");
-          navigate("/paymentSuccess");
-          return true;
+          // Điều hướng sang trang paymentSuccess với dữ liệu cần thiết
+          navigate("/paymentSuccess", {
+            state: {
+              startTime,
+              carDetail,
+              routeDetail,
+            },
+          });
+          // Thực hiện việc điều hướng thành công mà không cần trả về giá trị true
         } else {
-          console.log("««««« Vé chưa được thanh toán` »»»»»");
-          return false;
+          console.log("««««« Vé chưa được thanh toán »»»»»");
+          // Bạn có thể bỏ return false hoặc thực hiện hành động khác nếu cần
         }
       } else {
         setError("Không thể kiểm tra trạng thái thanh toán.");
@@ -196,6 +238,7 @@ const MethodPayment = () => {
       setIsLoading(false);
     }
   };
+  
 
   useEffect(() => {
     if (!ticketId) return;
@@ -313,11 +356,12 @@ const MethodPayment = () => {
                     <span className={styles.searchTicket__item__title}>
                       Tuyến Đường
                     </span>
-                    <select
+                    {/* <select
                       className={styles.pointUp}
                       id="searchPointUp"
-                      value={selectedRoute || ""}
-                    ></select>
+                      value={routeDetail || ""}
+                    ></select> */}
+                    <div>{routeDetail}</div>
                   </div>
                 </div>
                 <div className={styles.searchTicket__item}>
@@ -344,13 +388,7 @@ const MethodPayment = () => {
                     >
                       Loại xe
                     </span>
-                    <select
-                      className={styles.pointUp}
-                      id="searchPointUp"
-                      // value={selectedCar || ""}
-                      // onChange={(e) => setSelectedCar(Number(e.target.value))}
-                      value={selectedCar || ""}
-                    ></select>
+                    <div>{carDetail}</div>
                   </div>
                 </div>
               </div>

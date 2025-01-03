@@ -28,7 +28,9 @@ function BookingForm({
   scheduleId,
   carRouteId,
   selectedRoute,
-  selectedCar
+  selectedCar,
+  routeDetail,
+  carDetail
 }) {
   const navigate = useNavigate();
 
@@ -200,6 +202,8 @@ function BookingForm({
             stopLocation,
             selectedCar,
             selectedRoute,
+            routeDetail,
+            carDetail,
             ticketId: response.data.ticketId,
             // voucher : response.data.voucher
           },
@@ -384,7 +388,6 @@ function BookingForm({
         data-form-trip-id="PLT0Tc1ybgN295oCg20241015"
         onSubmit={handleSubmit}
       >
-
         <div className={styles.form_group}>
           <label htmlFor="">Ghế đã chọn</label>
           <div data-content="listSeat" className={styles.list_seat}>
