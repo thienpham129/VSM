@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.vsm.dto.ScheduleCreateDTO;
@@ -37,6 +38,18 @@ public class ScheduleController {
 		return ResponseEntity.ok(schedules);
 	}
 
+	@GetMapping("/public/empty-schedule")
+	public ResponseEntity<List<ScheduleResponse>> getAllEmptySchedules() {
+		List<ScheduleResponse> schedules = scheduleService.getEmptySchedules();
+		return ResponseEntity.ok(schedules);
+	}
+
+	@GetMapping("/driver/driver-schedule")
+	public ResponseEntity<List<ScheduleResponse>> getAllDriverSchedules(@RequestParam long accountId) {
+		List<ScheduleResponse> schedules = scheduleService.getScheduleByAccountId(accountId);
+		return ResponseEntity.ok(schedules);
+	}
+
 	@GetMapping("/public/schedule/{id}")
 	public ResponseEntity<ScheduleResponse> getScheduleById(@PathVariable Long id) {
 		ScheduleResponse schedule = scheduleService.getScheduleById(id);
@@ -47,6 +60,13 @@ public class ScheduleController {
 	public ResponseEntity<String> deleteScheduleById(@PathVariable Long id) {
 		scheduleService.deleteScheduleById(id);
 		return ResponseEntity.ok("Lịch trình đã được xóa");
+	}
+
+	@PutMapping("driver/update-schedule-account")
+	public ResponseEntity<ScheduleResponse> updateScheduleAccount(@RequestParam long scheduleId,
+			@RequestParam long accountId) {
+		ScheduleResponse updatedSchedule = scheduleService.updateScheduleAccount(scheduleId, accountId);
+		return ResponseEntity.ok(updatedSchedule);
 	}
 
 	// Update schedule by ID

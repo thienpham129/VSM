@@ -27,7 +27,7 @@ const SeatMap = ({
   }, [car]);
   useEffect(() => {
     axios
-      .get(`http://localhost:9000/public/ticket-with-schedule/${scheduleId}`)
+      .get(`http://localhost:8080/public/ticket-with-schedule/${scheduleId}`)
       .then((response) => {
         setTickets(response.data);
 
@@ -35,14 +35,14 @@ const SeatMap = ({
         const canceledSeats = response.data.filter(
           (ticket) => ticket.status === "Hủy thanh toán"
         );
-        setCanceledSeats(canceledSeats); 
+        setCanceledSeats(canceledSeats);
 
         // Lọc ghế có status là "Đang chờ xử lý"
         const waitingSeats = response.data.filter(
           (ticket) => ticket.status === "Đang chờ xử lý"
         );
         console.log("««««« waitingSeats »»»»»", waitingSeats);
-        setWaitingSeats(waitingSeats); 
+        setWaitingSeats(waitingSeats);
       })
       .catch((error) => {
         console.error("Có lỗi xảy ra khi gọi API: ", error);

@@ -23,7 +23,7 @@ const BookingTicket = () => {
   const [schedule, setSchedule] = useState(null);
   const [routeDetail, setRouteDetail] = useState(null);
   const [carDetail, setCarDetail] = useState(null);
-  console.log('««««« selectedCarSeatMap »»»»»', selectedCarSeatMap);
+  console.log("««««« selectedCarSeatMap »»»»»", selectedCarSeatMap);
 
   const carRouteId = selectedRoute;
   // selectedRoute là routeId
@@ -36,7 +36,7 @@ const BookingTicket = () => {
       setError("Bạn không thể chọn ngày giờ trong quá khứ!");
       setStartTime("");
     } else {
-      setError(""); 
+      setError("");
       setStartTime(e.target.value);
     }
   };
@@ -44,7 +44,7 @@ const BookingTicket = () => {
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const response = await fetch("http://localhost:9000/public/routes");
+        const response = await fetch("http://localhost:8080/public/routes");
         const data = await response.json();
         setRoutes(data);
       } catch (error) {
@@ -64,7 +64,7 @@ const BookingTicket = () => {
     const fetchCars = async () => {
       try {
         const response = await fetch(
-          `http://localhost:9000/public/find-car-by-route?idRoute=${selectedRoute}`
+          `http://localhost:8080/public/find-car-by-route?idRoute=${selectedRoute}`
         );
         const data = await response.json();
         setCars(data);
@@ -79,16 +79,18 @@ const BookingTicket = () => {
   // start detail
   useEffect(() => {
     if (selectedRoute) {
-      const selectedRouteDetails = routes.find((route) => route.id === selectedRoute);
+      const selectedRouteDetails = routes.find(
+        (route) => route.id === selectedRoute
+      );
       if (selectedRouteDetails) {
         setRouteDetail(
           `${selectedRouteDetails.startLocation} - ${selectedRouteDetails.stopLocation}`
         );
       } else {
-        setRouteDetail(null); 
+        setRouteDetail(null);
       }
     } else {
-      setRouteDetail(null); 
+      setRouteDetail(null);
     }
   }, [selectedRoute, routes]);
 
@@ -100,10 +102,10 @@ const BookingTicket = () => {
           `${selectedCarDetails.name} - ${selectedCarDetails.type.numSeats} Chỗ Ngồi`
         );
       } else {
-        setCarDetail(null); 
+        setCarDetail(null);
       }
     } else {
-      setCarDetail(null); 
+      setCarDetail(null);
     }
   }, [selectedCar, cars]);
 
@@ -122,7 +124,7 @@ const BookingTicket = () => {
 
       try {
         const response = await fetch(
-          "http://localhost:9000/public/create-or-find",
+          "http://localhost:8080/public/create-or-find",
           {
             method: "POST",
             headers: {

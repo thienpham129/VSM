@@ -1,5 +1,6 @@
 package com.project.vsm.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -149,6 +150,29 @@ public class ScheduleService {
 		return scheduleEntities.stream().map(this::convertToScheduleResponse).collect(Collectors.toList());
 	}
 
+	public List<ScheduleResponse> getEmptySchedules() {
+		// Lọc các schedule mà account là null hoặc không có accountId (chuỗi rỗng)
+		List<ScheduleEntity> scheduleEntities = scheduleRepository.findAll().stream()
+				.filter(schedule -> schedule.getAccount() == null).collect(Collectors.toList());
+		// Chuyển đổi các scheduleEntities thành scheduleResponse và trả về danh sách
+		return scheduleEntities.stream().map(this::convertToScheduleResponse).collect(Collectors.toList());
+	}
+
+	public List<ScheduleResponse> getScheduleByAccountId(long accountId) {
+		// Lấy ngày hiện tại và thiết lập thời gian là 00:00 (không tính giờ)
+//		LocalDateTime currentDateStart = LocalDate.now().atStartOfDay();
+		// Lọc danh sách ScheduleEntity với điều kiện:
+		// 1. startTime >= currentDateStart (ngày hiện tại, giờ 00:00)
+		// 2. accountId tương ứng với tài khoản được truyền vào
+		List<ScheduleEntity> scheduleEntities = scheduleRepository.findAll().stream()
+				.filter(schedule -> schedule.getAccount() != null && schedule.getAccount().getId() == accountId
+						&& !schedule.getStartTime().toLocalDate().isBefore(LocalDate.now()))
+				.collect(Collectors.toList());
+
+		// Chuyển các ScheduleEntity thành ScheduleResponse và trả về danh sách
+		return scheduleEntities.stream().map(this::convertToScheduleResponse).collect(Collectors.toList());
+	}
+
 	public ScheduleResponse getScheduleById(Long id) {
 		ScheduleEntity entity = scheduleRepository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lịch trình với ID: " + id));
@@ -159,6 +183,21 @@ public class ScheduleService {
 		ScheduleEntity schedule = scheduleRepository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lịch trình với ID: " + id));
 		scheduleRepository.delete(schedule);
+	}
+
+	public ScheduleResponse updateScheduleAccount(long scheduleId, long accountId) {
+		// Tìm kiếm Schedule theo ID
+		ScheduleEntity schedule = scheduleRepository.findById(scheduleId)
+				.orElseThrow(() -> new RuntimeException("Schedule not found with id: " + scheduleId));
+		// Tìm kiếm Account theo ID
+		AccountEntity account = accountRepository.findById(accountId)
+				.orElseThrow(() -> new RuntimeException("Account not found with id: " + accountId));
+		// Cập nhật tài khoản cho lịch trình
+		schedule.setAccount(account);
+		// Lưu lại thông tin đã cập nhật
+		scheduleRepository.save(schedule);
+		// Chuyển đổi ScheduleEntity thành ScheduleResponse (nếu cần)
+		return convertToScheduleResponse(schedule);
 	}
 
 	public ScheduleResponse updateSchedule(Long id, ScheduleUpdateDTO scheduleUpdateDTO) {
