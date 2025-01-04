@@ -33,18 +33,18 @@ public class FeedbackService {
         for (FeedbackEntity feedback : feedbacks) {
             FeedbackResponse feedbackResponse = FeedbackResponse
                     .builder().feedbackId(feedback.getFeedbackId())
-                    .service(feedback.getService())
-                    .content(feedback.getContent())
+                    .fullName(feedback.getFullName())
                     .createAt(feedback.getCreateAt())
-                    .rating(feedback.getRating())
+                    .content(feedback.getContent())
+                    .email(feedback.getEmail())
                     .build();
             AccountEntity account = feedback.getAccount();
             AccountResponse accountResponse = new AccountResponse();
             if (account != null) {
                 accountResponse.setId(account.getId());
                 accountResponse.setEmail(account.getEmail());
-                accountResponse.setFirstName(account.getFirstName());
-                accountResponse.setLastName(account.getLastName());
+                accountResponse.setUrlImage(account.getUrlImage());
+                accountResponse.setPhoneNumber(account.getPhoneNumber());
             }
             feedbackResponse.setAccount(accountResponse);
             responses.add(feedbackResponse);
@@ -59,53 +59,14 @@ public class FeedbackService {
                 .orElseThrow(() -> new RuntimeException("Not found email :" + email));
 
         FeedbackEntity feedback = FeedbackEntity.builder()
-                .service(request.getService())
+                .fullName(request.getFullName())
                 .content(request.getContent())
-                .rating(request.getRating())
                 .createAt(LocalDateTime.now())
+                .email(request.getEmail())
                 .account(account)
                 .build();
         feedbackRepository.save(feedback);
         return FeedbackResponse.fromEntity(feedback);
-    }
-
-    public String userDeleteFeedback(long feedbackId) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        AccountEntity account = accountRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Not found email :" + email));
-
-        FeedbackEntity feedback = feedbackRepository.findById(feedbackId)
-                .orElseThrow(() -> new RuntimeException("Not found feedback :" + feedbackId));
-
-        if (feedback.getAccount().getId() != (account.getId())) {
-            throw new RuntimeException("You are not authorized to delete this feedback");
-        }
-
-        feedbackRepository.delete(feedback);
-        return "Delete feedback successfully";
-    }
-
-    @Transactional
-    public FeedbackResponse userUpdateFeedback(long feedbackId, FeedbackRequest request) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        AccountEntity account = accountRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Not found email :" + email));
-
-        FeedbackEntity feedback = feedbackRepository.findById(feedbackId)
-                .orElseThrow(() -> new RuntimeException("Not found feedback :" + feedbackId));
-
-        if (feedback.getAccount().getId() == (account.getId())) {
-            feedback.setService(request.getService());
-            feedback.setContent(request.getContent());
-            feedback.setRating(request.getRating());
-            feedback.setCreateAt(LocalDateTime.now());
-            feedbackRepository.save(feedback);
-            return FeedbackResponse.fromEntity(feedback);
-        } else {
-            throw new RuntimeException("You are not authorized to update this feedback");
-        }
     }
 }
 

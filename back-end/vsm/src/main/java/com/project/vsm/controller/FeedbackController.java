@@ -33,21 +33,4 @@ public class FeedbackController {
                 .data(feedbackService.createFeedback(request))
                 .build();
     }
-
-    @DeleteMapping("/user/delete-feedback/{feedbackId}")
-    public ResponseObject<String> userDeleteFeedback(@PathVariable long feedbackId) {
-        return ResponseObject.<String>builder()
-                .code(200)
-                .data(feedbackService.userDeleteFeedback(feedbackId))
-                .build();
-    }
-
-    @PutMapping("/user/update-feedback/{feedbackId}")
-    public ResponseObject<FeedbackResponse> userUpdateFeedback(@PathVariable long feedbackId , @RequestBody FeedbackRequest request) {
-        return ResponseObject.<FeedbackResponse>builder()
-                .code(200)
-                .data(feedbackService.userUpdateFeedback(feedbackId , request))
-                .build();
-    }
-
 }

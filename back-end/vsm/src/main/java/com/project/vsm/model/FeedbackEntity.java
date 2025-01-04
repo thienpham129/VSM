@@ -5,6 +5,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.checkerframework.checker.units.qual.A;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,18 +23,19 @@ public class FeedbackEntity {
     @Column(name = "feedback_id")
     long feedbackId;
 
-    @Column(name = "service")
-    String service;
+    @Column(name = "full_name")
+    String fullName;
 
-    @Column(name = "content")
-    String content;
+    @Column(name = "email")
+    String email;
 
     @Column(name = "createAt")
     LocalDateTime createAt;
 
-    @Column(name = "rating")
-    double rating;
+    @Column(name = "content")
+    String content;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,
             CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH}, optional = false)
     @JoinColumn(name = "account_id")

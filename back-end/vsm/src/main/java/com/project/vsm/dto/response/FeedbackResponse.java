@@ -17,18 +17,18 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FeedbackResponse {
     long feedbackId;
-    String service;
-    String content;
+    String fullName;
+    String email;
     LocalDateTime createAt;
-    double rating;
+    String content;
     AccountResponse account;
 
     public static FeedbackResponse fromEntity (FeedbackEntity feedback) {
        return FeedbackResponse.builder()
                 .feedbackId(feedback.getFeedbackId())
-                .service(feedback.getService())
+                .fullName(feedback.getFullName())
                 .content(feedback.getContent())
-                .rating(feedback.getRating())
+                .content(feedback.getContent())
                 .createAt(feedback.getCreateAt())
                 .build();
     }

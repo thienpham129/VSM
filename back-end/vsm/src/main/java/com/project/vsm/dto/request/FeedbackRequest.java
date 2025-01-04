@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FeedbackRequest {
-     String service;
+     String fullName;
+     String email;
      String content;
-     double rating;
 }

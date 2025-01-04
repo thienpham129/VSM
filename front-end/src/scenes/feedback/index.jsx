@@ -12,58 +12,35 @@ const FeedbackAdmin = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [newUser, setNewUser] = useState({
-    email: "",
-    firstName: "",
-    lastName: "",
-    password: "",
-  });
-  const [errors, setErrors] = useState({
-    email: "",
-    password: "",
-  });
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [listUser, setListUser] = useState([]);
+  const [listFeedback, setListFeedback] = useState([]);
+  console.log('««««« listFeedback »»»»»', listFeedback);
 
   // call list user
-  const fetchUsers = async () => {
+  const fetchFeedback = async () => {
     try {
-      const response = await request("get", "/admin/users");
-      setListUser(response.data); // Cập nhật danh sách người dùng
-      console.log("««««« response.data »»»»»", response.data);
+      const response = await request("get", "/public/view-feedback");
+      const formattedData = response.data.data.map((item, index) => ({
+        id: item.feedbackId, 
+        fullName: item.fullName,
+        content: item.content,
+        email: item.account?.email || "Không có email",
+      }));
+      setListFeedback(formattedData);
     } catch (error) {
       console.error("Lỗi khi lấy danh sách người dùng:", error);
     }
   };
   useEffect(() => {
-    fetchUsers();
+    fetchFeedback();
   }, []);
 
 
 
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
-    {
-      field: "email",
-      headerName: "Email",
-      flex: 1,
-    },
-    {
-      field: "fullname",
-      headerName: "Họ và Tên",
-      flex: 1,
-      valueGetter: (params) =>
-        `${params.row.lastName || ""} ${params.row.firstName || ""}`,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "role",
-      headerName: "Đánh giá",
-      flex: 1,
-    },
-   
+    { field: "email", headerName: "Email", flex: 1 },
+    { field: "fullName", headerName: "Họ và Tên", flex: 1 },
+    { field: "content", headerName: "Nội Dung", flex: 1 },
   ];
 
   return (
@@ -102,7 +79,7 @@ const FeedbackAdmin = () => {
         }}
       >
         <UserDataGrid
-          rows={listUser} // Sử dụng dữ liệu thực tế từ API
+          rows={listFeedback} // Sử dụng dữ liệu thực tế từ API
           columns={columns} // Cập nhật cột để khớp với dữ liệu mới
         />
       </Box>

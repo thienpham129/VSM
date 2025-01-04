@@ -13,7 +13,8 @@ import lombok.experimental.FieldDefaults;
 public class AccountResponse {
     long id;
     String email;
-    String firstName;
-    String lastName;
+    String phoneNumber;
+    String urlImage;
+    
 
 }

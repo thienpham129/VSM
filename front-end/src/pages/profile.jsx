@@ -178,14 +178,14 @@ const Profile = () => {
     }
 
     // Validate name
-    if (!namePattern.test(firstName)) {
-      validationErrors.firstName =
-        "Họ không được nhập số";
-    }
-    if (!namePattern.test(lastName)) {
-      validationErrors.lastName =
-        "Tên không được nhập số";
-    }
+    // if (!namePattern.test(firstName)) {
+    //   validationErrors.firstName =
+    //     "Họ không được nhập số";
+    // }
+    // if (!namePattern.test(lastName)) {
+    //   validationErrors.lastName =
+    //     "Tên không được nhập số";
+    // }
 
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
