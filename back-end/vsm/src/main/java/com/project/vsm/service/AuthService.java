@@ -4,7 +4,13 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
 
+import com.project.vsm.dto.request.ChangePasswordRequest;
+import com.project.vsm.dto.request.ExchangeTokenRequest;
+import com.project.vsm.repository.OutboundIdentityClient;
+import lombok.experimental.NonFinal;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,109 +31,126 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-	@Autowired
-	private AccountRepository accountRepository;
-	@Autowired
-	private EmailService emailService;
-	@Autowired
-	private JwtIssuer jwtIssuer;
-	@Autowired
-	private AuthenticationManager authenticationManager;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private AccountRepository accountRepository;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private JwtIssuer jwtIssuer;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private OutboundIdentityClient outboundIdentityClient;
+
+    @NonFinal
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
+    private String CLIENT_ID;
+
+    @NonFinal
+    @Value("${spring.security.oauth2.client.registration.google.client-secret}")
+    protected String CLIENT_SECRET;
+
+    @NonFinal
+    @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
+    protected String REDIRECT_URI;
+
+    @NonFinal
+    @Value("${spring.security.oauth2.client.registration.google.scope}")
+    protected String SCOPE;
+
+    @NonFinal
+    protected final String GRANT_TYPE = "authorization_code";
 
 
-	public LoginResponse login(String email, String password) {
-		AccountEntity user = accountRepository.findByEmail(email)
-				.orElseThrow(() -> new RuntimeException("User not found"));
+    public LoginResponse login(String email, String password) {
+        AccountEntity user = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-		if (!user.isEnabled()) {
-			throw new RuntimeException("Account not verified. Please verify your account.");
-		}
-//
-		var authentication = authenticationManager
-				.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+        if (!user.isEnabled()) {
+            throw new RuntimeException("Account not verified. Please verify your account.");
+        }
+//		
+        var authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(email, password));
 
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		var principal = (UserPrinciple) authentication.getPrincipal();
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        var principal = (UserPrinciple) authentication.getPrincipal();
 
-		var roles = principal.getAuthorities().stream().map(grantedAuthority -> grantedAuthority.getAuthority())
-				.toList();
+        var roles = principal.getAuthorities().stream().map(grantedAuthority -> grantedAuthority.getAuthority())
+                .toList();
 
-		var token = jwtIssuer.issuer(principal.getUserID(), principal.getEmail(), roles);
+        var token = jwtIssuer.issuer(principal.getUserID(), principal.getEmail(), roles);
 
-		return LoginResponse.builder().accessToken(token).build();
-	}
-	
-	public AccountEntity identifyUser(String email) {
-		AccountEntity user = accountRepository.findByEmail(email)
-				.orElseThrow(() -> new RuntimeException("User not found"));
-		return user;
-	}
+        return LoginResponse.builder().accessToken(token).build();
+    }
 
-	public AccountEntity signup(RegisterUserDto input) {
-		if (accountRepository.existsByEmail(input.getEmail())) {
-			throw new RuntimeException("Email already exists");
-		}
+    public AccountEntity signup(RegisterUserDto input) {
+        if (accountRepository.existsByEmail(input.getEmail())) {
+            throw new RuntimeException("Email already exists");
+        }
 
-		AccountEntity account = new AccountEntity(input.getEmail(), passwordEncoder.encode(input.getPassword()));
-		account.setVerificationCode(generateVerificationCode());
-		account.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
-		account.setEnabled(false);
-		account.setRole("ROLE_USER");
-		account.setCreateDate(LocalDateTime.now());
-		sendVerificationEmail(account);
+        AccountEntity account = new AccountEntity(input.getEmail(), passwordEncoder.encode(input.getPassword()));
+        account.setVerificationCode(generateVerificationCode());
+        account.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+        account.setEnabled(false);
+        account.setRole("ROLE_USER");
+        account.setCreateDate(LocalDateTime.now());
+        sendVerificationEmail(account);
 
-		return accountRepository.save(account);
-	}
+        return accountRepository.save(account);
+    }
 
-	public void verifyUser(VerifyUserDto input) {
-		Optional<AccountEntity> optionalUser = accountRepository.findByEmail(input.getEmail());
-		if (optionalUser.isPresent()) {
-			AccountEntity user = optionalUser.get();
-			System.out.println(user);
-			if (user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
-				throw new RuntimeException("Verification code has expired");
-			}
-			if (user.getVerificationCode().equals(input.getVerificationCode())) {
-				user.setEnabled(true);
-				user.setVerificationCode(null);
-				user.setVerificationCodeExpiresAt(null);
-				accountRepository.save(user);
-			} else {
-				throw new RuntimeException("Invalid verification code");
-			}
-		} else {
-			throw new RuntimeException("User not found");
-		}
-	}
+    public void verifyUser(VerifyUserDto input) {
+        Optional<AccountEntity> optionalUser = accountRepository.findByEmail(input.getEmail());
+        if (optionalUser.isPresent()) {
+            AccountEntity user = optionalUser.get();
+            System.out.println(user);
+            if (user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
+                throw new RuntimeException("Verification code has expired");
+            }
+            if (user.getVerificationCode().equals(input.getVerificationCode())) {
+                user.setEnabled(true);
+                user.setVerificationCode(null);
+                user.setVerificationCodeExpiresAt(null);
+                accountRepository.save(user);
+            } else {
+                throw new RuntimeException("Invalid verification code");
+            }
+        } else {
+            throw new RuntimeException("User not found");
+        }
+    }
 
-	private void sendVerificationEmail(AccountEntity user) {
-		String subject = "Account Verification";
-		String verificationCode = "VERIFICATION CODE " + user.getVerificationCode();
-		String htmlMessage = "<html>" + "<body style=\"font-family: Arial, sans-serif;\">"
-				+ "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
-				+ "<h2 style=\"color: #333;\">Welcome to our app!</h2>"
-				+ "<p style=\"font-size: 16px;\">Please enter the verification code below to continue:</p>"
-				+ "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
-				+ "<h3 style=\"color: #333;\">Verification Code:</h3>"
-				+ "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + verificationCode + "</p>"
-				+ "</div>" + "</div>" + "</body>" + "</html>";
+    private void sendVerificationEmail(AccountEntity user) {
+        String subject = "Account Verification";
+        String verificationCode = "VERIFICATION CODE " + user.getVerificationCode();
+        String htmlMessage = "<html>" + "<body style=\"font-family: Arial, sans-serif;\">"
+                + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
+                + "<h2 style=\"color: #333;\">Welcome to our app!</h2>"
+                + "<p style=\"font-size: 16px;\">Please enter the verification code below to continue:</p>"
+                + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
+                + "<h3 style=\"color: #333;\">Verification Code:</h3>"
+                + "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + verificationCode + "</p>"
+                + "</div>" + "</div>" + "</body>" + "</html>";
 
-		try {
-			emailService.sendVerificationEmail(user.getEmail(), subject, htmlMessage);
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		}
-	}
+        try {
+            emailService.sendVerificationEmail(user.getEmail(), subject, htmlMessage);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
 
-	private String generateVerificationCode() {
-		Random random = new Random();
-		int code = random.nextInt(900000) + 100000;
-		return String.valueOf(code);
-	}
+    private String generateVerificationCode() {
+        Random random = new Random();
+        int code = random.nextInt(900000) + 100000;
+        return String.valueOf(code);
+    }
 
 	public void resendVerificationCode(String email) {
 		Optional<AccountEntity> optionalUser = accountRepository.findByEmail(email);
@@ -160,19 +183,16 @@ public class AuthService {
     }
 
     public boolean resetPassword(String email, ChangePasswordRequest request) {
-        try {
-           AccountEntity account = accountRepository.findByEmail(email)
-                   .orElseThrow(() -> new RuntimeException("Email not found"));
+        AccountEntity account = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Email không tồn tại"));
 
-            if (!request.getNewPassword().equals(request.getNewPasswordRepeat())) {
-                throw new RuntimeException("New password and password repeat not macth!");
-            }
-            account.setPassword(passwordEncoder.encode(request.getNewPasswordRepeat()));
-            accountRepository.save(account);
-            return true;
-
-        } catch (Exception e) {
-            throw new RuntimeException("Send mail reset password fail!" + e.getMessage());
+        if (!request.getNewPassword().equals(request.getNewPasswordRepeat())) {
+            throw new RuntimeException("Mật khẩu mới và mật khẩu xác nhận không khớp.");
         }
+
+        account.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        accountRepository.save(account);
+        return true;
     }
+
 }

@@ -75,6 +75,7 @@ const Header = () => {
     window.location.href = "/login";
   };
 
+
   return (
     <header className="transparent scroll-light has-topbar">
       <div id="topbar" className="topbar-dark text-light">

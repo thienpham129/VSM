@@ -25,21 +25,22 @@ public class EmailService {
 
 		emailSender.send(message);
 	}
-	
 	public void sendEmailResetPassword(String email) {
 		MimeMessage message = emailSender.createMimeMessage();
 		try {
 			MimeMessageHelper helper = new MimeMessageHelper(message, true);
 			helper.setTo(email);
 			helper.setSubject("Reset password");
-			helper.setText("""
-                    <div>
-                      <a href="http://localhost:8080/forgot-password?email=%s" target="_blank">click link to verify</a>
-                    </div>
-                    """.formatted(email), true);
+
+			// Tạo đường dẫn với email đã được thêm vào đúng cách
+			String resetLink = String.format("http://localhost:3000/reset_password?email=%s", email);
+
+			// Sử dụng link đã tạo trong nội dung email
+			helper.setText("<div><a href=\"" + resetLink + "\" target=\"_blank\">Click link to verify</a></div>", true);
 			emailSender.send(message);
 		} catch (Exception e) {
-			throw new RuntimeException("Send mail resetpassword fail :" + e.getMessage());
+			throw new RuntimeException("Send mail resetpassword fail: " + e.getMessage());
 		}
 	}
+
 }

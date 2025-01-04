@@ -18,6 +18,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.checkerframework.checker.units.qual.A;
 
 @Getter
 @Setter
@@ -80,6 +81,9 @@ public class AccountEntity {
 	@JsonIgnore
 	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
 	private List<ScheduleEntity> schedules = new ArrayList<>();
+
+	@OneToMany(mappedBy = "account" , cascade = CascadeType.ALL)
+	private List<FeedbackEntity> feedbacks = new ArrayList<>();
 
 	public AccountEntity(String email, String password) {
 		super();

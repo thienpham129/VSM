@@ -54,6 +54,7 @@ public class SheetsQuickstart {
 
         ValueRange response = service.spreadsheets().values().get(spreadsheetId, range).execute();
         List<List<Object>> values = response.getValues();
+
         if (values == null || values.isEmpty()) {
             System.out.println("No data found.");
         } else {
@@ -61,6 +62,17 @@ public class SheetsQuickstart {
                     "Mã GD", "Nội dung", "Số tiền", "Ngày diễn ra", "Số tài khoản", "Mã tham chiếu", "Số dư");
 
             for (List<Object> row : values) {
+                // Xử lý mỗi cột bằng cách kiểm tra số lượng phần tử trong row
+                String maGD = row.size() > 0 ? row.get(0).toString() : "";
+                String noiDung = row.size() > 1 ? row.get(1).toString() : "";
+                String soTien = row.size() > 2 ? row.get(2).toString() : "";
+                String ngayDienRa = row.size() > 3 ? row.get(3).toString() : "";
+                String soTaiKhoan = row.size() > 4 ? row.get(4).toString() : "";
+                String maThamChieu = row.size() > 5 ? row.get(5).toString() : "";
+                String soDu = row.size() > 6 ? row.get(6).toString() : "";
+
+                System.out.printf("%-10s %-80s %-15s %-20s %-15s %-20s %-10s%n",
+                        maGD, noiDung, soTien, ngayDienRa, soTaiKhoan, maThamChieu, soDu);
                 if (row.size() >= 7) {
                     System.out.printf("%-10s %-80s %-15s %-20s %-15s %-20s %-10s%n",
                             row.get(0), row.get(1), row.get(2), row.get(3),

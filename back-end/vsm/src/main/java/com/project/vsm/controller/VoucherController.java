@@ -3,6 +3,9 @@ package com.project.vsm.controller;
 import java.util.List;
 import java.util.Optional;
 
+import com.project.vsm.dto.response.LoginResponse;
+import com.project.vsm.dto.response.ResponseObject;
+import com.project.vsm.dto.response.VoucherResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,7 +70,6 @@ public class VoucherController {
 	public ResponseEntity<String> sendVoucher(@Valid @RequestBody SendVoucherDTO input) {
 		return new ResponseEntity<>(voucherService.sendVoucher(input), HttpStatus.OK);
 	}
-	
 	@GetMapping("/public/check-voucher")
 	public ResponseObject<VoucherResponse> checkVoucherValidOrNot (@RequestParam String voucher){
 		return ResponseObject.<VoucherResponse>builder()
@@ -75,5 +77,4 @@ public class VoucherController {
 				.data(voucherService.checkVoucherUseOrNot(voucher))
 				.build();
 	}
-
 }

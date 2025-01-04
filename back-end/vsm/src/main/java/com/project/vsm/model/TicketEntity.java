@@ -67,24 +67,24 @@ public class TicketEntity {
 	@Column(name = "phone_number")
 	String phoneNumber;
 
-    @Column(name = "detail_address_pick_up")
-    String detailAddressPickUp;
+	@Column(name = "detail_address_pick_up")
+	String detailAddressPickUp;
 
-    @Column(name = "detail_address_drop_off")
-    String detailAddressDropOff;
+	@Column(name = "detail_address_drop_off")
+	String detailAddressDropOff;
 
-    @Column(name = "map_pick_up")
-    String mapPickUp;
+	@Column(name = "map_pick_up")
+	String mapPickUp;
 
-    @Column(name = "map_drop")
-    String mapDrop;
+	@Column(name = "map_drop")
+	String mapDrop;
 
-    @Column(name = "map_status")
-    String mapStatus;
+	@Column(name = "map_status")
+	String mapStatus;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "voucher_id")
-    VoucherEntity voucher;
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH })
+	@JoinColumn(name = "voucher_id")
+	VoucherEntity voucher;
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "payment_id")

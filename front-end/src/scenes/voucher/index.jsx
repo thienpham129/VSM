@@ -270,7 +270,6 @@ const VoucherAdmin = () => {
                   content: values.content,
                   discount: values.discount,
                 });
-
                 console.log("Gửi mã giảm giá thành công:", response.data);
                 setSnackbarMessage("Gửi mã giảm giá thành công!");
                 setSnackbarOpen(true);

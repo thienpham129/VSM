@@ -1,5 +1,6 @@
 package com.project.vsm.dto.response;
 
+import com.project.vsm.model.AccountEntity;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -9,11 +10,10 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class VoucherResponse {
-    double discount;
-    String message;
+public class AccountResponse {
+    long id;
+    String email;
+    String firstName;
+    String lastName;
 
-    public VoucherResponse(String message) {
-        this.message = message;
-    }
 }
