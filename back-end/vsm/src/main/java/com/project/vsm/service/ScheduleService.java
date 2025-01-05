@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.project.vsm.dto.ScheduleCreateDTO;
 import com.project.vsm.dto.ScheduleUpdateDTO;
 import com.project.vsm.dto.response.ScheduleResponse;
+import com.project.vsm.exception.NotFoundException;
 import com.project.vsm.model.AccountEntity;
 import com.project.vsm.model.CarEntity;
 import com.project.vsm.model.CarRouteEntity;
@@ -200,6 +201,23 @@ public class ScheduleService {
 		return convertToScheduleResponse(schedule);
 	}
 
+	public ScheduleResponse removeAccountFromSchedule(long idSchedule) {
+		// Tìm kiếm Schedule theo ID
+		ScheduleEntity schedule = scheduleRepository.findById(idSchedule)
+				.orElseThrow(() -> new NotFoundException("Schedule không tồn tại với id: " + idSchedule));
+		// Kiểm tra điều kiện startTime phải từ ngày mai trở đi
+		LocalDateTime today = LocalDateTime.now();
+		if (!schedule.getStartTime().isAfter(today.toLocalDate().atStartOfDay().plusDays(1))) {
+			throw new IllegalArgumentException(
+					"Không thể xóa tài khoản. Thời gian bắt đầu là ngày hôm nay hoặc đã qua.");
+		}
+		// Xóa tài khoản khỏi Schedule
+		schedule.setAccount(null);
+		// Lưu thay đổi
+		scheduleRepository.save(schedule);
+		return convertToScheduleResponse(schedule);
+	}
+
 	public ScheduleResponse updateSchedule(Long id, ScheduleUpdateDTO scheduleUpdateDTO) {
 		// Tìm lịch trình cần cập nhật
 		ScheduleEntity schedule = scheduleRepository.findById(id)
@@ -221,5 +239,13 @@ public class ScheduleService {
 		ScheduleEntity updatedSchedule = scheduleRepository.save(schedule);
 		// Chuyển đổi sang ScheduleResponse và trả về
 		return convertToScheduleResponse(updatedSchedule);
+	}
+
+	public ScheduleResponse updateStatus(long idSchedule, String status) {
+		ScheduleEntity schedule = scheduleRepository.findById(idSchedule)
+				.orElseThrow(() -> new NotFoundException("Schedule không tồn tại với id: " + idSchedule));
+		schedule.setStatus(status);
+		scheduleRepository.save(schedule);
+		return convertToScheduleResponse(schedule);
 	}
 }

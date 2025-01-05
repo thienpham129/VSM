@@ -87,18 +87,14 @@ public class CarRouteService {
 	}
 
 	public List<CarEntity> findCarsByRouteId(Long routeId) {
+		// Tìm tất cả các CarRouteEntity có routeId trùng
 		List<CarRouteEntity> carRoutes = crrepository.findByRoute_Id(routeId);
-		if (carRoutes.size() == 0) {
-			throw new InvalidInputException("No Route found for route ID: " + routeId);
-		}
-		// Kiểm tra xem có bất kỳ chiếc xe nào không
+		// Nếu không tìm thấy tuyến đường hoặc xe
 		if (carRoutes.isEmpty()) {
-			// Nếu không có chiếc xe nào, ném ngoại lệ
 			throw new InvalidInputException("No cars found for route ID: " + routeId);
 		}
-		// Lấy danh sách tất cả các chiếc xe từ danh sách carRoutes
-		List<CarEntity> cars = carRoutes.stream().map(CarRouteEntity::getCar).collect(Collectors.toList());
-		return cars;
+		// Lấy danh sách các chiếc xe từ danh sách carRoutes
+		return carRoutes.stream().map(CarRouteEntity::getCar).collect(Collectors.toList());
 	}
 
 }

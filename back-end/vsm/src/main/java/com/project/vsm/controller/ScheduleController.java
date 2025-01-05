@@ -69,6 +69,19 @@ public class ScheduleController {
 		return ResponseEntity.ok(updatedSchedule);
 	}
 
+	@PutMapping("driver/update-remove-schedule")
+	public ResponseEntity<ScheduleResponse> deleteDriverSchedule(@RequestParam long scheduleId) {
+		ScheduleResponse updatedSchedule = scheduleService.removeAccountFromSchedule(scheduleId);
+		return ResponseEntity.ok(updatedSchedule);
+	}
+
+	@PutMapping("driver/update-status-schedule")
+	public ResponseEntity<ScheduleResponse> updateStatusSchedule(@RequestParam long scheduleId,
+			@RequestParam String status) {
+		ScheduleResponse updatedSchedule = scheduleService.updateStatus(scheduleId, status);
+		return ResponseEntity.ok(updatedSchedule);
+	}
+
 	// Update schedule by ID
 	@PutMapping("/admin/schedule/{id}")
 	public ResponseEntity<ScheduleResponse> updateSchedule(@PathVariable Long id,
