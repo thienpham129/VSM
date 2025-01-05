@@ -1,5 +1,6 @@
 package com.project.vsm.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.vsm.dto.ScheduleCreateDTO;
 import com.project.vsm.dto.ScheduleUpdateDTO;
 import com.project.vsm.dto.response.ScheduleResponse;
+import com.project.vsm.model.CarEntity;
 import com.project.vsm.service.ScheduleService;
 
 import jakarta.validation.Valid;
@@ -88,6 +90,12 @@ public class ScheduleController {
 			@RequestBody ScheduleUpdateDTO scheduleUpdateDTO) {
 		ScheduleResponse updatedSchedule = scheduleService.updateSchedule(id, scheduleUpdateDTO);
 		return ResponseEntity.ok(updatedSchedule);
+	}
+
+	@GetMapping("/public/find-schedule")
+	public ResponseEntity<List<CarEntity>> find(@RequestParam LocalDateTime time, @RequestParam Long routeId) {
+		List<CarEntity> schedule = scheduleService.findCarsInScheduleWithinTimeRangeAndRoute(time, routeId);
+		return ResponseEntity.ok(schedule);
 	}
 //	@GetMapping("public/schedules")
 //	public ResponseEntity<Iterable<ScheduleEntity>> getAllSchedules() {

@@ -1,5 +1,6 @@
 package com.project.vsm.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,8 @@ public class CarRouteService {
 	private CarRepository carRepository;
 	@Autowired
 	private RouteRepository routeRepository;
+	@Autowired
+	private ScheduleService scheduleService;
 
 	public Iterable<CarRouteEntity> getAllCarRoute() {
 		Iterable<CarRouteEntity> listRoutes = crrepository.findAll();
@@ -97,4 +100,14 @@ public class CarRouteService {
 		return carRoutes.stream().map(CarRouteEntity::getCar).collect(Collectors.toList());
 	}
 
+	public List<CarEntity> findAvailableCarsByRouteAndTime(LocalDateTime time, Long routeId) {
+		// Lấy tất cả các xe thuộc tuyến đường (routeId)
+		List<CarEntity> allCars = findCarsByRouteId(routeId);
+		// Lấy danh sách các xe có trong lịch trình (đã được sử dụng)
+		List<CarEntity> carsInSchedules = scheduleService.findCarsInScheduleWithinTimeRangeAndRoute(time, routeId);
+		// Trừ các xe có trong lịch trình khỏi danh sách tất cả các xe
+		List<CarEntity> availableCars = allCars.stream().filter(car -> !carsInSchedules.contains(car))
+				.collect(Collectors.toList());
+		return availableCars;
+	}
 }
