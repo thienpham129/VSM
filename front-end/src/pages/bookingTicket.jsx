@@ -45,7 +45,7 @@ const BookingTicket = () => {
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const response = await fetch("http://localhost:9000/public/routes");
+        const response = await fetch("http://localhost:8080/public/routes");
         const data = await response.json();
         setRoutes(data);
       } catch (error) {
@@ -65,7 +65,7 @@ const BookingTicket = () => {
     const fetchCars = async () => {
       try {
         const response = await fetch(
-          `http://localhost:9000/public/find-car-by-route?idRoute=${selectedRoute}`
+          `http://localhost:8080/public/find-car-by-route?idRoute=${selectedRoute}`
         );
         const data = await response.json();
         setCars(data);
@@ -125,7 +125,7 @@ const BookingTicket = () => {
 
       try {
         const response = await fetch(
-          "http://localhost:9000/public/create-or-find",
+          "http://localhost:8080/public/create-or-find",
           {
             method: "POST",
             headers: {

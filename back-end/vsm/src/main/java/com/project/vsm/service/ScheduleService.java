@@ -1,5 +1,6 @@
 package com.project.vsm.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.project.vsm.dto.ScheduleCreateDTO;
 import com.project.vsm.dto.ScheduleUpdateDTO;
 import com.project.vsm.dto.response.ScheduleResponse;
+import com.project.vsm.exception.NotFoundException;
 import com.project.vsm.model.AccountEntity;
 import com.project.vsm.model.CarEntity;
 import com.project.vsm.model.CarRouteEntity;
@@ -149,6 +151,29 @@ public class ScheduleService {
 		return scheduleEntities.stream().map(this::convertToScheduleResponse).collect(Collectors.toList());
 	}
 
+	public List<ScheduleResponse> getEmptySchedules() {
+		// Lọc các schedule mà account là null hoặc không có accountId (chuỗi rỗng)
+		List<ScheduleEntity> scheduleEntities = scheduleRepository.findAll().stream()
+				.filter(schedule -> schedule.getAccount() == null).collect(Collectors.toList());
+		// Chuyển đổi các scheduleEntities thành scheduleResponse và trả về danh sách
+		return scheduleEntities.stream().map(this::convertToScheduleResponse).collect(Collectors.toList());
+	}
+
+	public List<ScheduleResponse> getScheduleByAccountId(long accountId) {
+		// Lấy ngày hiện tại và thiết lập thời gian là 00:00 (không tính giờ)
+//		LocalDateTime currentDateStart = LocalDate.now().atStartOfDay();
+		// Lọc danh sách ScheduleEntity với điều kiện:
+		// 1. startTime >= currentDateStart (ngày hiện tại, giờ 00:00)
+		// 2. accountId tương ứng với tài khoản được truyền vào
+		List<ScheduleEntity> scheduleEntities = scheduleRepository.findAll().stream()
+				.filter(schedule -> schedule.getAccount() != null && schedule.getAccount().getId() == accountId
+						&& !schedule.getStartTime().toLocalDate().isBefore(LocalDate.now()))
+				.collect(Collectors.toList());
+
+		// Chuyển các ScheduleEntity thành ScheduleResponse và trả về danh sách
+		return scheduleEntities.stream().map(this::convertToScheduleResponse).collect(Collectors.toList());
+	}
+
 	public ScheduleResponse getScheduleById(Long id) {
 		ScheduleEntity entity = scheduleRepository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lịch trình với ID: " + id));
@@ -159,6 +184,38 @@ public class ScheduleService {
 		ScheduleEntity schedule = scheduleRepository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lịch trình với ID: " + id));
 		scheduleRepository.delete(schedule);
+	}
+
+	public ScheduleResponse updateScheduleAccount(long scheduleId, long accountId) {
+		// Tìm kiếm Schedule theo ID
+		ScheduleEntity schedule = scheduleRepository.findById(scheduleId)
+				.orElseThrow(() -> new RuntimeException("Schedule not found with id: " + scheduleId));
+		// Tìm kiếm Account theo ID
+		AccountEntity account = accountRepository.findById(accountId)
+				.orElseThrow(() -> new RuntimeException("Account not found with id: " + accountId));
+		// Cập nhật tài khoản cho lịch trình
+		schedule.setAccount(account);
+		// Lưu lại thông tin đã cập nhật
+		scheduleRepository.save(schedule);
+		// Chuyển đổi ScheduleEntity thành ScheduleResponse (nếu cần)
+		return convertToScheduleResponse(schedule);
+	}
+
+	public ScheduleResponse removeAccountFromSchedule(long idSchedule) {
+		// Tìm kiếm Schedule theo ID
+		ScheduleEntity schedule = scheduleRepository.findById(idSchedule)
+				.orElseThrow(() -> new NotFoundException("Schedule không tồn tại với id: " + idSchedule));
+		// Kiểm tra điều kiện startTime phải từ ngày mai trở đi
+		LocalDateTime today = LocalDateTime.now();
+		if (!schedule.getStartTime().isAfter(today.toLocalDate().atStartOfDay().plusDays(1))) {
+			throw new IllegalArgumentException(
+					"Không thể xóa tài khoản. Thời gian bắt đầu là ngày hôm nay hoặc đã qua.");
+		}
+		// Xóa tài khoản khỏi Schedule
+		schedule.setAccount(null);
+		// Lưu thay đổi
+		scheduleRepository.save(schedule);
+		return convertToScheduleResponse(schedule);
 	}
 
 	public ScheduleResponse updateSchedule(Long id, ScheduleUpdateDTO scheduleUpdateDTO) {
@@ -183,4 +240,31 @@ public class ScheduleService {
 		// Chuyển đổi sang ScheduleResponse và trả về
 		return convertToScheduleResponse(updatedSchedule);
 	}
+
+	public ScheduleResponse updateStatus(long idSchedule, String status) {
+		ScheduleEntity schedule = scheduleRepository.findById(idSchedule)
+				.orElseThrow(() -> new NotFoundException("Schedule không tồn tại với id: " + idSchedule));
+		schedule.setStatus(status);
+		scheduleRepository.save(schedule);
+		return convertToScheduleResponse(schedule);
+	}
+
+	public List<CarEntity> findCarsInScheduleWithinTimeRangeAndRoute(LocalDateTime time, Long routeId) {
+	    // Tính khoảng thời gian cần truy vấn
+	    LocalDateTime startTimeRange = time.minusHours(3);
+	    LocalDateTime endTimeRange = time.plusHours(3);
+
+	    // Lấy danh sách lịch trình trong khoảng thời gian và có routeId khớp
+	    List<ScheduleEntity> schedules = scheduleRepository.findSchedulesByTimeRangeAndRoute(
+	        startTimeRange, endTimeRange, routeId);
+
+	    // Lọc các lịch trình có emptySeat = 0 và trả về danh sách xe
+	    return schedules.stream()
+	            .filter(schedule -> schedule.getEmptySeat() == 0)
+	            .map(schedule -> schedule.getCarRoute().getCar())
+	            .distinct() // Đảm bảo không trùng xe
+	            .collect(Collectors.toList());
+	}
+	
+	
 }

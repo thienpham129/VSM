@@ -18,7 +18,6 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.checkerframework.checker.units.qual.A;
 
 @Getter
 @Setter

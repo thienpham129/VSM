@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.vsm.dto.CreateDriverDTO;
 import com.project.vsm.dto.DriverUpdateDTO;
-import com.project.vsm.dto.request.UpdateAccountRequest;
 import com.project.vsm.model.AccountEntity;
 import com.project.vsm.service.DriverService;
 

@@ -21,12 +21,11 @@ const VoucherAdmin = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const [open, setOpen] = useState(false);
-  const [openSend, setOpenSend] = useState(false); // Modal gửi mã giảm giá
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [vouchers, setVouchers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [openDialog, setOpenDialog] = useState(null);
 
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
@@ -41,15 +40,35 @@ const VoucherAdmin = () => {
       valueFormatter: (params) => `${params.value * 100}%`, // Định dạng hiển thị
     },
     {
+      field: "expiredDate",
+      headerName: "Hạn Sử Dụng",
+      flex: 1,
+      type: "date",
+      valueFormatter: (params) => {
+        const date = new Date(params.value);
+        return date.toLocaleDateString("vi-VN", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        });
+      }, // Định dạng hiển thị theo ngày/tháng/năm
+      headerAlign: "left",
+      align: "left",
+    },
+    {
       field: "valid",
       headerName: "Trạng Thái",
       type: "boolean",
       headerAlign: "left",
       align: "left",
       flex: 1,
-      renderCell: (params) => (
-        <strong>{params.value ? "Có thể sử dụng" : "Hết hạn"}</strong>
-      ),
+      renderCell: (params) => {
+        const currentDate = new Date();
+        const expiredDate = new Date(params.row.expiredDate); // Lấy ngày hết hạn từ dòng hiện tại
+        const isExpired = expiredDate <= currentDate || !params.row.valid; // Kiểm tra nếu expiredDate nhỏ hơn ngày hiện tại hoặc valid là false
+
+        return <strong>{isExpired ? "Hết hạn" : "Có thể sử dụng"}</strong>;
+      },
     },
   ];
 
@@ -62,6 +81,7 @@ const VoucherAdmin = () => {
         code: voucher.code,
         discount: voucher.discount / 100, // Chia cho 100 nếu cần
         valid: voucher.valid,
+        expiredDate: voucher.expiredDate,
       }));
 
       setVouchers(formattedData);
@@ -74,20 +94,12 @@ const VoucherAdmin = () => {
     fetchVouchers(); // Gọi hàm fetchVouchers khi component được mount
   }, []);
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleClickOpen = (dialogType) => {
+    setOpenDialog(dialogType); // Mở modal tương ứng
   };
 
   const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleClickOpenSend = () => {
-    setOpenSend(true);
-  };
-
-  const handleCloseSend = () => {
-    setOpenSend(false);
+    setOpenDialog(null); // Đóng tất cả các modal
   };
 
   const validationSchema = Yup.object({
@@ -99,16 +111,19 @@ const VoucherAdmin = () => {
       .required("Vui lòng nhập Giảm giá")
       .min(1, "Giảm giá phải từ 1 đến 100")
       .max(100, "Giảm giá phải từ 1 đến 100"),
+    expiredDate: Yup.date()
+      .required("Vui lòng chọn Hạn sử dụng")
+      .min(new Date(), "Hạn sử dụng phải lớn hơn ngày hiện tại"),
   });
 
   const validationSendSchema = Yup.object({
-    content: Yup.string()
-      .required("Vui lòng nhập nội dung.")
-      .max(500, "Nội dung không được vượt quá 500 ký tự."),
+    content: Yup.string().required("Vui lòng nhập nội dung"),
     discount: Yup.number()
-      .required("Vui lòng nhập Giảm giá")
-      .min(1, "Giảm giá phải từ 1 đến 100")
-      .max(100, "Giảm giá phải từ 1 đến 100"),
+      .required("Vui lòng nhập giảm giá")
+      .positive("Giảm giá phải lớn hơn 0"),
+    expirationDate: Yup.date()
+      .required("Vui lòng chọn ngày hết hạn")
+      .min(new Date(), "Ngày hết hạn phải lớn hơn ngày hiện tại"),
   });
 
   return (
@@ -119,13 +134,17 @@ const VoucherAdmin = () => {
       />
 
       <Box display="flex" justifyContent="flex-end" mb={-5}>
-        <Button variant="contained" color="secondary" onClick={handleClickOpen}>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => handleClickOpen("add")}
+        >
           Thêm Mã Giảm Giá
         </Button>
         <Button
           variant="contained"
           color="primary"
-          onClick={handleClickOpenSend}
+          onClick={() => handleClickOpen("send")}
           sx={{ marginLeft: "10px" }}
         >
           Gửi Mã Giảm Giá
@@ -172,114 +191,31 @@ const VoucherAdmin = () => {
       </Box>
 
       {/* Modal Thêm Voucher */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Thêm Voucher</DialogTitle>
-        <DialogContent>
-          <Formik
-            initialValues={{ number: "", discount: "" }}
-            validationSchema={validationSchema}
-            onSubmit={async (values) => {
-              try {
-                const response = await request("POST", "/admin/voucher", {
-                  discount: values.discount,
-                  quantity: values.number,
-                });
-
-                console.log("Thêm voucher thành công:", response.data);
-                setSnackbarMessage("Thêm voucher thành công!");
-                setSnackbarOpen(true);
-                handleClose();
-                await fetchVouchers();
-              } catch (error) {
-                console.error("Lỗi khi thêm voucher:", error);
-                setSnackbarMessage("Có lỗi xảy ra khi thêm voucher.");
-                setSnackbarOpen(true);
-              }
-            }}
-          >
-            {({ errors, touched }) => (
-              <Form>
-                <Field name="number">
-                  {({ field }) => (
-                    <TextField
-                      {...field}
-                      autoFocus
-                      margin="dense"
-                      label="Số Lượng"
-                      type="number"
-                      fullWidth
-                      variant="outlined"
-                      error={touched.number && !!errors.number}
-                      helperText={touched.number && errors.number}
-                    />
-                  )}
-                </Field>
-                <Field name="discount">
-                  {({ field }) => (
-                    <TextField
-                      {...field}
-                      margin="dense"
-                      label="Giảm Giá"
-                      type="number"
-                      fullWidth
-                      variant="outlined"
-                      error={touched.discount && !!errors.discount}
-                      helperText={touched.discount && errors.discount}
-                    />
-                  )}
-                </Field>
-                <DialogActions>
-                  <Button
-                    onClick={handleClose}
-                    sx={{
-                      backgroundColor: "gray",
-                      color: "white",
-                      "&:hover": { backgroundColor: "darkgray" },
-                    }}
-                  >
-                    Hủy
-                  </Button>
-                  <Button
-                    type="submit"
-                    sx={{
-                      backgroundColor: "green",
-                      color: "white",
-                      "&:hover": { backgroundColor: "darkgreen" },
-                    }}
-                  >
-                    Tạo Mới
-                  </Button>
-                </DialogActions>
-              </Form>
-            )}
-          </Formik>
-        </DialogContent>
-      </Dialog>
-
-      {/* Modal Gửi Mã Giảm Giá */}
-      <Dialog open={openSend} onClose={handleCloseSend}>
+      <Dialog open={openDialog === "send"} onClose={handleClose}>
         <DialogTitle>Gửi Mã Giảm Giá</DialogTitle>
         <DialogContent>
           <Formik
-            initialValues={{ content: "", discount: "" }}
+            initialValues={{ content: "", discount: "", expirationDate: "" }}
             validationSchema={validationSendSchema}
             onSubmit={async (values) => {
-              setIsLoading(true); // Bắt đầu xử lý
+              setIsLoading(true);
               try {
                 const response = await request("POST", "/admin/send-voucher", {
                   content: values.content,
                   discount: values.discount,
+                  expiredDate: values.expirationDate,
                 });
+                fetchVouchers();
                 console.log("Gửi mã giảm giá thành công:", response.data);
                 setSnackbarMessage("Gửi mã giảm giá thành công!");
                 setSnackbarOpen(true);
-                handleCloseSend();
+                handleClose();
               } catch (error) {
                 console.error("Lỗi khi gửi mã giảm giá:", error);
                 setSnackbarMessage("Có lỗi xảy ra khi gửi mã giảm giá.");
                 setSnackbarOpen(true);
               } finally {
-                setIsLoading(false); // Kết thúc xử lý
+                setIsLoading(false);
               }
             }}
           >
@@ -314,10 +250,29 @@ const VoucherAdmin = () => {
                     />
                   )}
                 </Field>
+                <Field name="expirationDate">
+                  {({ field }) => (
+                    <TextField
+                      {...field}
+                      margin="dense"
+                      label="Ngày Hết Hạn"
+                      type="date"
+                      fullWidth
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      variant="outlined"
+                      error={touched.expirationDate && !!errors.expirationDate}
+                      helperText={
+                        touched.expirationDate && errors.expirationDate
+                      }
+                    />
+                  )}
+                </Field>
                 <DialogActions>
                   <Button
-                    onClick={handleCloseSend}
-                    disabled={isLoading} // Disable khi đang xử lý
+                    onClick={handleClose}
+                    disabled={isLoading}
                     sx={{
                       backgroundColor: "gray",
                       color: "white",
@@ -328,7 +283,7 @@ const VoucherAdmin = () => {
                   </Button>
                   <Button
                     type="submit"
-                    disabled={isLoading} // Disable khi đang xử lý
+                    disabled={isLoading}
                     sx={{
                       backgroundColor: isLoading ? "gray" : "green",
                       color: "white",
@@ -337,8 +292,115 @@ const VoucherAdmin = () => {
                       },
                     }}
                   >
-                    {isLoading ? "Đang gửi..." : "Gửi Mã Giảm Giá"}{" "}
-                    {/* Trạng thái nút */}
+                    {isLoading ? "Đang gửi..." : "Gửi Mã Giảm Giá"}
+                  </Button>
+                </DialogActions>
+              </Form>
+            )}
+          </Formik>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal Thêm Voucher */}
+      <Dialog open={openDialog === "add"} onClose={handleClose}>
+        <DialogTitle>Thêm Mã Giảm Giá</DialogTitle>
+        <DialogContent>
+          <Formik
+            initialValues={{ number: "", discount: "", expiredDate: "" }}
+            validationSchema={validationSchema}
+            onSubmit={async (values) => {
+              setIsLoading(true);
+              try {
+                const response = await request("POST", "/admin/voucher", {
+                  quantity: values.number,
+                  discount: values.discount,
+                  expiredDate: values.expiredDate,
+                });
+                fetchVouchers();
+                console.log("Thêm mã giảm giá thành công:", response.data);
+                setSnackbarMessage("Thêm mã giảm giá thành công!");
+                setSnackbarOpen(true);
+                handleClose();
+              } catch (error) {
+                console.error("Lỗi khi thêm mã giảm giá:", error);
+                setSnackbarMessage("Có lỗi xảy ra khi thêm mã giảm giá.");
+                setSnackbarOpen(true);
+              } finally {
+                setIsLoading(false);
+              }
+            }}
+          >
+            {({ errors, touched }) => (
+              <Form>
+                <Field name="number">
+                  {({ field }) => (
+                    <TextField
+                      {...field}
+                      margin="dense"
+                      label="Số Lượng"
+                      type="number"
+                      fullWidth
+                      variant="outlined"
+                      error={touched.number && !!errors.number}
+                      helperText={touched.number && errors.number}
+                    />
+                  )}
+                </Field>
+                <Field name="discount">
+                  {({ field }) => (
+                    <TextField
+                      {...field}
+                      margin="dense"
+                      label="Giảm Giá"
+                      type="number"
+                      fullWidth
+                      variant="outlined"
+                      error={touched.discount && !!errors.discount}
+                      helperText={touched.discount && errors.discount}
+                    />
+                  )}
+                </Field>
+                <Field name="expiredDate">
+                  {({ field }) => (
+                    <TextField
+                      {...field}
+                      margin="dense"
+                      label="Ngày Hết Hạn"
+                      type="date"
+                      fullWidth
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      variant="outlined"
+                      error={touched.expiredDate && !!errors.expiredDate}
+                      helperText={touched.expiredDate && errors.expiredDate}
+                    />
+                  )}
+                </Field>
+                <DialogActions>
+                  <Button
+                    onClick={handleClose}
+                    disabled={isLoading}
+                    sx={{
+                      backgroundColor: "gray",
+                      color: "white",
+                      "&:hover": { backgroundColor: "darkgray" },
+                    }}
+                  >
+                    Hủy
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isLoading}
+                    sx={{
+                      backgroundColor: isLoading ? "gray" : "green",
+                      color: "white",
+                      "&:hover": {
+                        backgroundColor: isLoading ? "gray" : "darkgreen",
+                      },
+                    }}
+                  >
+                    {isLoading ? "Đang thêm..." : "Thêm Mã Giảm Giá"}
                   </Button>
                 </DialogActions>
               </Form>
