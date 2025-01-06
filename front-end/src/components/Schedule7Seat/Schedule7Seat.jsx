@@ -10,16 +10,14 @@ const Seat = ({ seatId, seatStatus, onSelect, bookedSeats }) => {
   const [isSelected, setIsSelected] = useState(false);
 
   const handleSeatClick = () => {
-    if (isSold || isBooked) return; // Không cho chọn nếu ghế đã đặt hoặc bán
-    setIsSelected((prev) => !prev);
-    onSelect(seatId, !isSelected);
+    // if (status === "Đã thanh toán" || status === "Đang chờ xử lý") return;
+    // setIsSelected((prev) => !prev);
+    // onSelect(seatId, !isSelected);
   };
 
   return (
     <td
-      className={`${styles.avseat} ${
-        isSold ? styles.soldSeat : isBooked ? styles.bookedSeat : ""
-      }`}
+      className={styles.avseat}
       onClick={handleSeatClick}
       data-seat-id={seatId}
       title={seatId}

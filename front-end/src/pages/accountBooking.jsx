@@ -13,6 +13,8 @@ const AccountBooking = () => {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
+  console.log('««««« tickets »»»»»', tickets);
+
   useEffect(() => {
     getAllTicketOfUser();
   }, []);
@@ -53,6 +55,7 @@ const AccountBooking = () => {
     const selectedPage = data.selected;
     setCurrentPage(selectedPage);
   };
+
 
   return (
     <div className="no-bottom no-top zebra" id="content">
@@ -134,7 +137,7 @@ const AccountBooking = () => {
                                 TÊN XE
                               </span>
                               <span className="bold">
-                                {ticket.schedules?.car?.name ||
+                                {ticket.schedules?.nameCar ||
                                   "Không có dữ liệu"}
                               </span>
                             </td>
@@ -142,7 +145,7 @@ const AccountBooking = () => {
                               <span className="d-lg-none d-sm-block">
                                 Loại xe
                               </span>
-                              {ticket.schedules?.car?.type?.numSeat ||
+                              {ticket.schedules?.numSeats ||
                                 "Không có dữ liệu"}{" "}
                               chỗ
                             </td>
@@ -150,7 +153,7 @@ const AccountBooking = () => {
                               <span className="d-lg-none d-sm-block">
                                 TUYẾN ĐƯỜNG
                               </span>
-                              {ticket.startLocation} - {ticket.stopLocation}
+                              {ticket.schedules?.startLocation} - {ticket.schedules?.stopLocation}
                             </td>
                             <td>
                               <span className="d-lg-none d-sm-block">

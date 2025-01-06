@@ -215,7 +215,7 @@ function Parking() {
   const handleSearchParking = (e) => {
     if (searchName) {
       if (viewOption) {
-        if (viewOption.toLocaleUpperCase() === "THÀNH PHỐ ĐÀ NẴNG") {
+        if (viewOption.toLocaleUpperCase() === "ĐÀ NẴNG") {
           setDataInput(e.target.value);
           const tempArray = [];
           daNangParkings.forEach((item, index) => {
@@ -290,7 +290,7 @@ function Parking() {
       }
     } else {
       if (viewOption) {
-        if (viewOption.toLocaleUpperCase() === "THÀNH PHỐ ĐÀ NẴNG") {
+        if (viewOption.toLocaleUpperCase() === "ĐÀ NẴNG") {
           setDataInput(e.target.value);
           const tempArray = [];
           daNangParkings.forEach((item, index) => {
@@ -398,7 +398,7 @@ function Parking() {
       hueParkings &&
       qnParkings
     ) {
-      if (currentDestination.toLocaleUpperCase() === "THÀNH PHỐ ĐÀ NẴNG") {
+      if (currentDestination.toLocaleUpperCase() === "ĐÀ NẴNG") {
         setCurrentDataParking(daNangParkings);
       }
 
@@ -446,7 +446,7 @@ function Parking() {
   };
 
   const generateDataTable = (addressOption) => {
-    if (addressOption.toLocaleUpperCase() === "THÀNH PHỐ ĐÀ NẴNG") {
+    if (addressOption.toLocaleUpperCase() === "ĐÀ NẴNG") {
       return <DataTable columns={columns} data={daNangParkings} />;
     }
 
@@ -504,7 +504,7 @@ function Parking() {
             <MenuItem value={currentDestination}>
               Mặc Định (Xem Bãi Đỗ Theo Lịch Trình){" "}
             </MenuItem>
-            <MenuItem value="THÀNH PHỐ ĐÀ NẴNG">Xem Bãi Đỗ Đà Nẵng</MenuItem>
+            <MenuItem value="ĐÀ NẴNG">Xem Bãi Đỗ Đà Nẵng</MenuItem>
             <MenuItem value="THỪA THIÊN HUẾ">Xem Bãi Đỗ Huế</MenuItem>
             <MenuItem value="TỈNH QUẢNG NAM">Xem Bãi Đỗ Quảng Nam</MenuItem>
             <MenuItem value="ALL">Xem Tất Cả Bãi Đỗ</MenuItem>

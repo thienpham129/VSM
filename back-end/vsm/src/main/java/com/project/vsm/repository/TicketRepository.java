@@ -1,9 +1,11 @@
 package com.project.vsm.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -36,3 +38,4 @@ public interface TicketRepository extends JpaRepository<TicketEntity, String> {
 //	@Query("SELECT COUNT(t) FROM TicketEntity t JOIN t.scheduleEntity s WHERE EXTRACT(MONTH FROM s.startTime) = :month AND EXTRACT(YEAR FROM s.startTime) = :year")
 //	long countTicketsByMonthAndYear(int month, int year);
 }
+

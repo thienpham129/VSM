@@ -1,10 +1,138 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios"; // nếu bạn sử dụng axios
+import { getTokenFromLocalStorage } from "utils/tokenUtils";
+import { jwtDecode } from "jwt-decode";
+import { root } from "helper/axiosClient";
+import { useEffect } from "react";
+import { ToastContainer, toast, Bounce } from "react-toastify";
 
 const Contact = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [userId, setUserId] = useState("");
+  const [urlImage, setUrlImage] = useState();
+
+  const [name, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [feedbackList, setFeedbackList] = useState([]);
+
+  //
+  const fetchUser = async (userId) => {
+    const token = getTokenFromLocalStorage();
+    try {
+      const response = await root.get(`/user/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = response.data;
+      if (data) {
+        setFullName(
+          `${response.data.firstName || ""} ${
+            response.data.lastName || ""
+          }`.trim()
+        );
+        setEmail(data.email || "");
+        setUrlImage(response.data.urlImage);
+      }
+    } catch (error) {
+      console.error("Failed to retrieve user data:", error);
+    }
+  };
+
+  useEffect(() => {
+    const token = getTokenFromLocalStorage();
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.sub;
+        if (userId) {
+          setUserId(userId);
+          fetchUser(userId);
+        } else {
+          console.error("userId not found in token");
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    }
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const feedbackData = {
+      fullName: name,
+      email: email,
+      content: message,
+    };
+
+    try {
+      const response = await root.post("/user/create-feedback", feedbackData);
+
+      if (response.status === 200) {
+        notifySuccessSend();
+        setMessage("");
+      }
+    } catch (error) {
+      notifyErrorSend();
+    }
+  };
+
+  const fetchAllFeedback = async () => {
+    const token = getTokenFromLocalStorage();
+    try {
+      const response = await root.get("/public/view-feedback", {
+        headers: {
+          Authorization: `Bearer ${token}`, 
+        },
+      });
+
+      if (response.status === 200) {
+        setFeedbackList(response.data.data || []);
+      }
+    } catch (error) {
+      console.error("Failed to fetch feedback:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllFeedback();
+  }, [feedbackList]);
+
+  // Notifications
+  const notifySuccessSend = () =>
+    toast.success("Gửi đánh giá thành công! ", {
+      position: "bottom-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+
+  const notifyErrorSend = () =>
+    toast.error("Gửi đánh giá thất bại!", {
+      position: "bottom-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+
+  //
+
   return (
     <div className="no-bottom no-top" id="content">
       <div id="top" />
-      {/* section begin */}
       <section id="subheader" className="jarallax text-light">
         <img
           src="images/background/subheader.jpg"
@@ -17,12 +145,11 @@ const Contact = () => {
               <div className="col-md-12 text-center">
                 <h1>Đánh Giá</h1>
               </div>
-              <div className="clearfix" />
             </div>
           </div>
         </div>
       </section>
-      {/* section close */}
+
       <section aria-label="section">
         <div className="container">
           <div className="row g-custom-x">
@@ -32,8 +159,7 @@ const Contact = () => {
                 name="contactForm"
                 id="contact_form"
                 className="form-border"
-                method="post"
-                action="#"
+                onSubmit={handleSubmit} 
               >
                 <div className="row">
                   <div className="col-md-6 mb10">
@@ -44,7 +170,9 @@ const Contact = () => {
                         id="name"
                         className="form-control"
                         placeholder="Nhập tên của bạn"
-                        required=""
+                        value={name}
+                        onChange={(e) => setFullName(e.target.value)} 
+                        required
                       />
                     </div>
                   </div>
@@ -56,7 +184,9 @@ const Contact = () => {
                         id="email"
                         className="form-control"
                         placeholder="Nhập email"
-                        required=""
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)} 
+                        disabled
                       />
                     </div>
                   </div>
@@ -67,8 +197,9 @@ const Contact = () => {
                     id="message"
                     className="form-control"
                     placeholder="Lời nhắn"
-                    required=""
-                    defaultValue={""}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)} 
+                    required
                   />
                 </div>
                 <div
@@ -79,18 +210,32 @@ const Contact = () => {
                   <input
                     type="submit"
                     id="send_message"
-                    defaultValue="Send Message"
+                    value="Gửi đánh giá"
                     className="btn-main"
                   />
                 </div>
-                <div id="success_message" className="success">
-                  Your message has been sent successfully. Refresh this page if
-                  you want to send more messages.
-                </div>
-                <div id="error_message" className="error">
-                  Sorry there was an error sending your form.
-                </div>
               </form>
+              <div className="feedback-container">
+                {feedbackList.map((feedback, index) => (
+                  <div className="feedback-card" key={index}>
+                    <div className="user-avatar">
+                      {urlImage ? (
+                        <img src={urlImage} className="img-fluid" alt="" />
+                      ) : (
+                        <img
+                          src="images/avatar_user.png"
+                          className="img-fluid"
+                          alt=""
+                        />
+                      )}
+                    </div>
+                    <div className="feedback-content">
+                      <h4 className="user-name">{feedback.fullName}</h4>
+                      <p className="user-feedback">{feedback.content}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="col-lg-4">
               <div className="de-box mb30">
@@ -108,34 +253,25 @@ const Contact = () => {
                     <i className="id-color fa fa-envelope-o fa-lg" />
                     <a href="mailto:contact@example.com">vsm@email.com</a>
                   </span>
-                  
                 </address>
               </div>
-              {/* <div className="de-box mb30">
-                <h4>AU Office</h4>
-                <address className="s1">
-                  <span>
-                    <i className="fa fa-map-marker fa-lg" />
-                    100 Mainstreet Center, Sydney
-                  </span>
-                  <span>
-                    <i className="fa fa-phone fa-lg" />
-                    +61 333 9296
-                  </span>
-                  <span>
-                    <i className="fa fa-envelope-o fa-lg" />
-                    <a href="mailto:contact@example.com">contact@example.com</a>
-                  </span>
-                  <span>
-                    <i className="fa fa-file-pdf-o fa-lg" />
-                    <a href="#">Download Brochure</a>
-                  </span>
-                </address>
-              </div> */}
             </div>
           </div>
         </div>
       </section>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={1500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
     </div>
   );
 };

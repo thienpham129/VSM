@@ -7,31 +7,38 @@ import java.util.List;
 import java.util.Scanner;
 
 public class TSP {
-	public static List<String> inputPoints(int n, Scanner scanner) {
-		List<String> points = new ArrayList<>();
-		for (int i = 0; i < n; i++) {
-			System.out.print("Nhập tên điểm " + (i + 1) + ": ");
-			points.add(scanner.nextLine());
+
+	// Hàm thêm điểm mới
+	public static void addPoint(List<String> points, int[][] dist, Scanner scanner) {
+		System.out.print("Nhập tên điểm mới: ");
+		String newPoint = scanner.nextLine();
+
+		// Thêm điểm mới vào danh sách
+		points.add(newPoint);
+		int n = points.size();
+
+		// Mở rộng ma trận khoảng cách
+		int[][] newDist = new int[n][n];
+		for (int i = 0; i < n - 1; i++) {
+			System.arraycopy(dist[i], 0, newDist[i], 0, n - 1);
 		}
-		return points;
+
+		// Nhập khoảng cách từ điểm mới đến các điểm hiện có
+		for (int i = 0; i < n - 1; i++) {
+			System.out.print("Nhập khoảng cách từ " + newPoint + " đến " + points.get(i) + ": ");
+			int distance = scanner.nextInt();
+			scanner.nextLine(); // Đọc bỏ ký tự newline
+			newDist[n - 1][i] = distance;
+			newDist[i][n - 1] = distance; // Gán chiều ngược lại
+		}
+
+		// Gán ma trận mới vào biến dist
+		for (int i = 0; i < n; i++) {
+			System.arraycopy(newDist[i], 0, dist[i], 0, n);
+		}
 	}
 
-	// Hàm nhập ma trận khoảng cách giữa các điểm
-	public static int[][] inputDistanceMatrix(int n, List<String> points, Scanner scanner) {
-		int[][] dist = new int[n][n];
-		System.out.println(
-				"Nhập ma trận trọng số (trọng số giữa các điểm). Chỉ nhập 1 chiều, chương trình sẽ tự động gán chiều ngược lại.");
-		for (int i = 0; i < n; i++) {
-			for (int j = i + 1; j < n; j++) {
-				System.out.print("Trọng số từ " + points.get(i) + " đến " + points.get(j) + ": ");
-				dist[i][j] = scanner.nextInt();
-				dist[j][i] = dist[i][j]; // Tự động gán chiều ngược lại
-			}
-		}
-		return dist;
-	}
-
-	// Hàm tính toán đường đi ngắn nhất (TSP) và in ra đường đi
+	// Hàm tính toán TSP và in ra kết quả
 	public static double tsp(int n, int[][] dist, int startPoint, List<String> points) {
 		double[][] dp = new double[1 << n][n];
 		int[][] parent = new int[1 << n][n];
@@ -49,18 +56,14 @@ public class TSP {
 					continue;
 
 				for (int v = 0; v < n; v++) {
-					if (mask == (1 << n) - 1 && v == startPoint) {
-						dp[mask][v] = Math.min(dp[mask][v], dp[mask][u] + dist[u][v]);
-						if (dp[mask][v] == dp[mask][u] + dist[u][v]) {
-							parent[mask][v] = u;
-						}
-					} else if ((mask & (1 << v)) == 0) {
-						int nextMask = mask | (1 << v);
-						double newCost = dp[mask][u] + dist[u][v];
-						if (newCost < dp[nextMask][v]) {
-							dp[nextMask][v] = newCost;
-							parent[nextMask][v] = u;
-						}
+					if ((mask & (1 << v)) != 0)
+						continue;
+
+					int nextMask = mask | (1 << v);
+					double newCost = dp[mask][u] + dist[u][v];
+					if (newCost < dp[nextMask][v]) {
+						dp[nextMask][v] = newCost;
+						parent[nextMask][v] = u;
 					}
 				}
 			}
@@ -70,9 +73,12 @@ public class TSP {
 		double minCost = Double.MAX_VALUE;
 		int lastPoint = -1;
 		for (int i = 0; i < n; i++) {
-			if (i != startPoint && dp[(1 << n) - 1][i] + dist[i][startPoint] < minCost) {
-				minCost = dp[(1 << n) - 1][i] + dist[i][startPoint];
-				lastPoint = i;
+			if (i != startPoint) {
+				double cost = dp[(1 << n) - 1][i] + dist[i][startPoint];
+				if (cost < minCost) {
+					minCost = cost;
+					lastPoint = i;
+				}
 			}
 		}
 
@@ -83,7 +89,7 @@ public class TSP {
 			path.add(lastPoint);
 			int temp = lastPoint;
 			lastPoint = parent[mask][lastPoint];
-			mask ^= (1 << temp); // Loại bỏ điểm cuối cùng khỏi mask
+			mask ^= (1 << temp);
 		}
 		path.add(startPoint);
 
@@ -96,7 +102,7 @@ public class TSP {
 
 	// Hàm in đường đi theo tên
 	public static void printPath(List<Integer> path, List<String> points) {
-		System.out.print("Đường đi ngắn nhất (theo tên): ");
+		System.out.print("Đường đi ngắn nhất: ");
 		for (int i = 0; i < path.size(); i++) {
 			System.out.print(points.get(path.get(i)) + (i < path.size() - 1 ? " -> " : ""));
 		}
@@ -107,23 +113,29 @@ public class TSP {
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 
-		// Nhập tổng số điểm
-		System.out.print("Nhập tổng số điểm cần đi: ");
-		int n = scanner.nextInt();
-		scanner.nextLine(); // Đọc ký tự newline dư thừa
+		// Danh sách các điểm và ma trận khoảng cách
+		List<String> points = new ArrayList<>();
+		int[][] dist = new int[100][100]; // Giả sử tối đa 100 điểm
 
-		// Nhập danh sách các điểm
-		List<String> points = inputPoints(n, scanner);
-
-		// Nhập ma trận khoảng cách
-		int[][] dist = inputDistanceMatrix(n, points, scanner);
+		// Nhập các điểm
+		while (true) {
+			System.out.print("Bạn có muốn nhập điểm mới không? (y/n): ");
+			String choice = scanner.nextLine();
+			if (choice.equalsIgnoreCase("y")) {
+				addPoint(points, dist, scanner);
+			} else {
+				break;
+			}
+		}
 
 		// Nhập điểm bắt đầu
-		System.out.print("Nhập điểm bắt đầu (1 đến " + n + "): ");
-		int startPoint = scanner.nextInt() - 1; // Chuyển đổi từ 1-based index sang 0-based
+		System.out.print("Nhập điểm bắt đầu (1 đến " + points.size() + "): ");
+		int startPoint = scanner.nextInt() - 1; // Chuyển từ 1-based sang 0-based
 
 		// Tính toán đường đi ngắn nhất
-		double minCost = tsp(n, dist, startPoint, points);
+		double minCost = tsp(points.size(), dist, startPoint, points);
 		System.out.println("Chi phí tối thiểu: " + minCost);
+
+		scanner.close();
 	}
 }

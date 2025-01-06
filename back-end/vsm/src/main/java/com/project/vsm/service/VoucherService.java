@@ -39,15 +39,18 @@ public class VoucherService {
 
 	public List<VoucherEntity> createNewVoucher(VoucherDTO voucherInput) {
 		List<VoucherEntity> listVoucher = new ArrayList<>();
+		// Lấy expiredDate từ voucherInput
+		LocalDate expiredDate = voucherInput.getExpiredDate();
 		for (int i = 0; i < voucherInput.getQuantity(); i++) {
 			VoucherEntity voucherEntity = new VoucherEntity();
 			voucherEntity.setDiscount(voucherInput.getDiscount());
 			voucherEntity.setValid(true);
 			voucherEntity.setCode(generateRandomString());
 			voucherEntity.setCreatedDate(LocalDate.now());
-			voucherEntity.setExpiredDate(LocalDate.now().plusDays(5));
+			voucherEntity.setExpiredDate(expiredDate); // Sử dụng expiredDate từ DTO
 			listVoucher.add(voucherEntity);
 		}
+		// Lưu danh sách các voucher vào database
 		for (VoucherEntity voucherEntity : listVoucher) {
 			voucherRepository.save(voucherEntity);
 		}
@@ -118,20 +121,21 @@ public class VoucherService {
 	public String sendVoucher(SendVoucherDTO input) {
 		List<AccountEntity> listUser = accountRepository.findByRole("ROLE_USER");
 		for (AccountEntity user : listUser) {
-			VoucherEntity voucher = createNewVoucher(new VoucherDTO(input.getDiscount(), 1)).get(0);
+			VoucherEntity voucher = createNewVoucher(new VoucherDTO(input.getDiscount(), 1, input.getExpiredDate()))
+					.get(0);
 			sendDiscountEmail(input.getContent(), voucher.getCode(), user);
 		}
 		return "Gửi mã thành công";
 	}
-	
-	public VoucherResponse checkVoucherUseOrNot(String code) {
-        VoucherEntity voucher = voucherRepository.findByCode(code)
-                .orElseThrow(() -> new RuntimeException("Mã khuyến mãi hết hạn hoặc không đúng"));
 
-        if (!voucher.isValid() || !voucher.getCode().equals(code)) {
-            return new VoucherResponse("Mã khuyến mãi hết hạn hoặc không đúng");
-        } else {
-            return new VoucherResponse(voucher.getDiscount(), "Mã hợp lệ có thể sử dụng");
-        }
-    }
+	public VoucherResponse checkVoucherUseOrNot(String code) {
+		VoucherEntity voucher = voucherRepository.findByCode(code)
+				.orElseThrow(() -> new RuntimeException("Mã khuyến mãi hết hạn hoặc không đúng"));
+
+		if (!voucher.isValid() || !voucher.getCode().equals(code)) {
+			return new VoucherResponse("Mã khuyến mãi hết hạn hoặc không đúng");
+		} else {
+			return new VoucherResponse(voucher.getDiscount(), "Mã hợp lệ có thể sử dụng");
+		}
+	}
 }

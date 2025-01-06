@@ -81,6 +81,9 @@ public class AccountEntity {
 	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
 	private List<ScheduleEntity> schedules = new ArrayList<>();
 
+	@OneToMany(mappedBy = "account" , cascade = CascadeType.ALL)
+	private List<FeedbackEntity> feedbacks = new ArrayList<>();
+
 	public AccountEntity(String email, String password) {
 		super();
 		this.email = email;

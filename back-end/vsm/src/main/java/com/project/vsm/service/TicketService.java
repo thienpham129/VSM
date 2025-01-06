@@ -214,28 +214,28 @@ public class TicketService {
 	}
 
 	// NHAT FIX
-//	public TicketResponseAdminDTO getTicketByIDAdmin(String id) {
-//		Optional<TicketEntity> optionalTicket = ticketRepository.findByTicketId(id);
-//		if (!optionalTicket.isPresent()) {
-//			throw new NotFoundException("Not found Ticket with id " + id);
-//		}
-//		RouteEntity routeEntity = routeRepository.findByStartLocationAndStopLocation(
-//				optionalTicket.get().getScheduleEntity().getRoute().getStartLocation(),
-//				optionalTicket.get().getScheduleEntity().getRoute().getStopLocation()).get(0);
-//		if (routeEntity == null) {
-//			throw new NotFoundException("Not found Route ");
-//		}
-//		TicketResponseAdminDTO ticketDetail = TicketResponseAdminDTO.builder()
-//				.ticketId(optionalTicket.get().getTicketId()).price(optionalTicket.get().getPrice())
-//				.paymentMethod(optionalTicket.get().getPaymentMethod()).isPaid(optionalTicket.get().isPaid())
-//				.status(optionalTicket.get().getStatus()).QRPayment(optionalTicket.get().getQRPayment())
-//				.selectedSeat(optionalTicket.get().getSelectedSeat()).note(optionalTicket.get().getNote())
-//				.email(optionalTicket.get().getEmail()).fullName(optionalTicket.get().getFullName())
-//				.phoneNumber(optionalTicket.get().getPhoneNumber())
-//				.detailAddressDropOff(optionalTicket.get().getDetailAddressDropOff())
-//				.detailAddressPickUp(optionalTicket.get().getDetailAddressPickUp()).route(routeEntity).build();
-//		return ticketDetail;
-//	}
+	public TicketResponseAdminDTO getTicketByIDAdmin(String id) {
+		Optional<TicketEntity> optionalTicket = ticketRepository.findByTicketId(id);
+		if (!optionalTicket.isPresent()) {
+			throw new NotFoundException("Not found Ticket with id " + id);
+		}
+		RouteEntity routeEntity = routeRepository.findByStartLocationAndStopLocation(
+				optionalTicket.get().getScheduleEntity().getCarRoute().getRoute().getStartLocation(),
+				optionalTicket.get().getScheduleEntity().getCarRoute().getRoute().getStopLocation()).get(0);
+		if (routeEntity == null) {
+			throw new NotFoundException("Not found Route ");
+		}
+		TicketResponseAdminDTO ticketDetail = TicketResponseAdminDTO.builder()
+				.ticketId(optionalTicket.get().getTicketId()).price(optionalTicket.get().getPrice())
+				.paymentMethod(optionalTicket.get().getPaymentMethod()).isPaid(optionalTicket.get().isPaid())
+				.status(optionalTicket.get().getStatus()).QRPayment(optionalTicket.get().getQRPayment())
+				.selectedSeat(optionalTicket.get().getSelectedSeat()).note(optionalTicket.get().getNote())
+				.email(optionalTicket.get().getEmail()).fullName(optionalTicket.get().getFullName())
+				.phoneNumber(optionalTicket.get().getPhoneNumber())
+				.detailAddressDropOff(optionalTicket.get().getDetailAddressDropOff())
+				.detailAddressPickUp(optionalTicket.get().getDetailAddressPickUp()).route(routeEntity).build();
+		return ticketDetail;
+	}
 
 //	public Boolean checkTicketPaid(String id) {
 //		Optional<TicketEntity> optionalTicket = ticketRepository.findByTicketId(id);

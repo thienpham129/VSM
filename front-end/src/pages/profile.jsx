@@ -178,20 +178,21 @@ const Profile = () => {
     }
 
     // Validate name
-    if (!namePattern.test(firstName)) {
-      validationErrors.firstName =
-        "Họ không được nhập số";
-    }
-    if (!namePattern.test(lastName)) {
-      validationErrors.lastName =
-        "Tên không được nhập số";
-    }
+    // if (!namePattern.test(firstName)) {
+    //   validationErrors.firstName =
+    //     "Họ không được nhập số";
+    // }
+    // if (!namePattern.test(lastName)) {
+    //   validationErrors.lastName =
+    //     "Tên không được nhập số";
+    // }
 
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
   };
 
   const handleFormSubmit = async () => {
+    
     const formData = new FormData();
     let dobFormatted = "";
     if (dob) {
@@ -232,7 +233,6 @@ const Profile = () => {
   };
 
   // Number of tickets
-
   const getAllTicketOfUser = async () => {
     const token = getTokenFromLocalStorage();
     try {
@@ -282,6 +282,7 @@ const Profile = () => {
   //
 
   return (
+    
     <div className="no-bottom no-top zebra" id="content">
       <div id="top" />
       <section id="subheader" className="jarallax text-light">

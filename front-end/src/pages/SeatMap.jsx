@@ -13,6 +13,8 @@ const SeatMap = ({
   stopLocation,
   selectedRoute,
   selectedCar,
+  routeDetail,
+  carDetail,
 }) => {
   console.log("««««« scheduleId »»»»»", scheduleId);
   const [seats, setSeats] = useState(car.type.seatList); // Ghế từ car data
@@ -22,23 +24,26 @@ const SeatMap = ({
   const [waitingSeats, setWaitingSeats] = useState([]); // Ghế đang chờ xử lý
 
   useEffect(() => {
-    // Gọi API để lấy vé theo scheduleId
+    setSeats(car.type.seatList);
+  }, [car]);
+  useEffect(() => {
     axios
       .get(`http://localhost:8080/public/ticket-with-schedule/${scheduleId}`)
       .then((response) => {
-        setTickets(response.data); // Lưu dữ liệu vé vào state
+        setTickets(response.data);
 
         // Lọc ghế có status là "Hủy thanh toán"
         const canceledSeats = response.data.filter(
           (ticket) => ticket.status === "Hủy thanh toán"
         );
-        setCanceledSeats(canceledSeats); // Lưu ghế hủy vào state
+        setCanceledSeats(canceledSeats);
 
         // Lọc ghế có status là "Đang chờ xử lý"
         const waitingSeats = response.data.filter(
           (ticket) => ticket.status === "Đang chờ xử lý"
         );
-        setWaitingSeats(waitingSeats); // Lưu ghế đang chờ xử lý vào state
+        console.log("««««« waitingSeats »»»»»", waitingSeats);
+        setWaitingSeats(waitingSeats);
       })
       .catch((error) => {
         console.error("Có lỗi xảy ra khi gọi API: ", error);
@@ -275,6 +280,8 @@ const SeatMap = ({
               startTime={startTime}
               selectedRoute={selectedRoute}
               selectedCar={selectedCar}
+              routeDetail={routeDetail}
+              carDetail={carDetail}
             />
           </div>
         </div>

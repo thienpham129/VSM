@@ -67,13 +67,10 @@ public class VoucherController {
 	public ResponseEntity<String> sendVoucher(@Valid @RequestBody SendVoucherDTO input) {
 		return new ResponseEntity<>(voucherService.sendVoucher(input), HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/public/check-voucher")
-	public ResponseObject<VoucherResponse> checkVoucherValidOrNot (@RequestParam String voucher){
-		return ResponseObject.<VoucherResponse>builder()
-				.code(200)
-				.data(voucherService.checkVoucherUseOrNot(voucher))
+	public ResponseObject<VoucherResponse> checkVoucherValidOrNot(@RequestParam String voucher) {
+		return ResponseObject.<VoucherResponse>builder().code(200).data(voucherService.checkVoucherUseOrNot(voucher))
 				.build();
 	}
-
 }

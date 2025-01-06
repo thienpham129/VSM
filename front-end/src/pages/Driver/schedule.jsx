@@ -48,14 +48,18 @@ function Schedule() {
   const [checkDoubleRunningSchedule, setCheckDoubleRunningSchedule] =
     useState(false);
   const [idRunningSchedule, setIdRunningSchedule] = useState("");
+
+  const [arrayTicketTemp, setArrayTicketTemp] = useState([]);
+  const [arrayCorsPickUp, setArrayCorsPickUp] = useState([]);
+  const [arrayCorsDrop, setArrayCorsDrop] = useState([]);
   const columns = [
     {
       name: "Điểm Khởi Hành",
-      selector: (row) => row.route.startLocation,
+      selector: (row) => row.startLocation,
     },
     {
       name: "Điểm Đến",
-      selector: (row) => row.route.stopLocation,
+      selector: (row) => row.stopLocation,
     },
     {
       name: "Giờ Khỏi Hành",
@@ -64,6 +68,14 @@ function Schedule() {
           row.startTime.split("T")[1] + " / " + row.startTime.split("T")[0]
         );
       },
+    },
+    {
+      name: "Loại Xe",
+      selector: (row) => row.typeCarName,
+    },
+    {
+      name: "Biển Số Xe",
+      selector: (row) => row.plateNumber,
     },
     {
       name: "Trạng Thái",
@@ -193,22 +205,23 @@ function Schedule() {
   }, [isClickDetail]);
 
   const fetchDataSchedule = async () => {
+    //http://localhost:8080/driver/driver-schedule?accountId=3
     // const url = `driver/schedules/${localStorage.getItem("userId")}`;
-    const date = new Date();
-    let day = date.getFullYear() + "-" + (+date.getMonth() + 1) + "-";
-    let dateTime = "";
-    if (date.getDate() < 10) {
-      dateTime = "0" + date.getDate();
-    } else {
-      dateTime = date.getDate();
-    }
-    day = day + dateTime;
-    const url = "driver/driver-schedule";
+    // const date = new Date();
+    // let day = date.getFullYear() + "-" + (+date.getMonth() + 1) + "-";
+    // let dateTime = "";
+    // if (date.getDate() < 10) {
+    //   dateTime = "0" + date.getDate();
+    // } else {
+    //   dateTime = date.getDate();
+    // }
+    // day = day + dateTime;
+    // const url = "driver/driver-schedule";
+    const driverId = localStorage.getItem("userId");
     try {
-      const response = await root.post(url, {
-        accountId: localStorage.getItem("userId"),
-        day: day,
-      });
+      const response = await root.get(
+        `/driver/driver-schedule?accountId=${driverId}`
+      );
       if (response) {
         setDataSchedule(response.data);
       }
@@ -834,8 +847,40 @@ function Schedule() {
     notifyScucessApply();
   };
 
+  useEffect(() => {
+    if (currentLat && currentLong) {
+      const getScheduleByID = async () => {
+        const url = "/public/ticket-with-schedule/2";
+        try {
+          const response = await root.get(url);
+          if (response.data) {
+            let currentCoordinate = "";
+            currentCoordinate = `${currentLat},${currentLong}`;
+            let tempArrayPickUp = [];
+            tempArrayPickUp.push(currentCoordinate);
+            let tempArrayDrop = [];
+            response.data.forEach((item) => {
+              tempArrayPickUp.push(item.mapPickUp);
+              tempArrayDrop.push(item.mapDrop);
+            });
+
+            console.log(response.data);
+            console.log(tempArrayPickUp);
+            console.log(tempArrayDrop);
+            setArrayCorsPickUp(tempArrayPickUp);
+            setArrayCorsDrop(tempArrayDrop);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      getScheduleByID();
+    }
+  }, [currentLat, currentLong]);
+
   return (
     <div className={styles.schdule}>
+      <button>Generate Schedule Map</button>
       {isClickDetail ? (
         <div className="schedule_detail">
           <h1>Lịch Trình Cụ Thể </h1>
@@ -1055,9 +1100,25 @@ function Schedule() {
                   </li>
                   <li>
                     <h4>
-                      Trạng Thái:{" "}
+                      Loại Xe:{" "}
                       <span className={styles.content_popup}>
                         {rowDataPopUp[3]}{" "}
+                      </span>
+                    </h4>
+                  </li>
+                  <li>
+                    <h4>
+                      Biển Số Xe:{" "}
+                      <span className={styles.content_popup}>
+                        {rowDataPopUp[4]}{" "}
+                      </span>
+                    </h4>
+                  </li>
+                  <li>
+                    <h4>
+                      Trạng Thái:{" "}
+                      <span className={styles.content_popup}>
+                        {rowDataPopUp[5]}{" "}
                       </span>
                     </h4>
                   </li>

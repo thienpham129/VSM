@@ -176,6 +176,42 @@ public class CarService {
 		return carRepository.save(optionalCar.get());
 	}
 
+	public CarEntity updateParking(long carId, long parkingId) {
+        // Lấy xe theo carId
+        Optional<CarEntity> optionalCar = carRepository.findById(carId);
+        if (!optionalCar.isPresent()) {
+            throw new NotFoundException("Not found car with id " + carId);
+        }
+        CarEntity carUpdate = optionalCar.get();
+        // Lấy thông tin parkingUpdate theo parkingId
+        ParkingEntity parkingUpdate = parkingRepository.findById(parkingId)
+                .orElseThrow(() -> new NotFoundException("Not found parking with id " + parkingId));
+        // Cập nhật số lượng xe trong bãi đỗ
+        parkingUpdate.setNumCar(parkingUpdate.getNumCar() + 1);
+
+        // Kiểm tra nếu bãi đỗ đầy, cập nhật trạng thái là không trống
+        if (parkingUpdate.getCapacity() == parkingUpdate.getNumCar()) {
+            parkingUpdate.setEmpty(false);
+        }
+        // Lưu lại bãi đỗ đã cập nhật
+        parkingRepository.save(parkingUpdate);
+        // Nếu xe đã có bãi đỗ trước đó, xử lý bãi đỗ cũ
+        if (carUpdate.getParking() != null) {
+            ParkingEntity oldParking = carUpdate.getParking();
+            oldParking.setNumCar(oldParking.getNumCar() - 1);
+            // Kiểm tra nếu bãi đỗ cũ còn trống hay không
+            if (oldParking.getNumCar() < oldParking.getCapacity()) {
+                oldParking.setEmpty(true);
+            }
+            // Lưu lại bãi đỗ cũ đã cập nhật
+            parkingRepository.save(oldParking);
+        }
+        // Cập nhật lại bãi đỗ cho xe
+        carUpdate.setParking(parkingUpdate);
+        // Lưu lại xe đã cập nhật
+        return carRepository.save(carUpdate);
+    }
+
 //	public List<CarEntity> getCarByType(long idType) {
 //		Optional<TypeEntity> optionalType = typeRepository.findById(idType);
 //		if (!optionalType.isPresent()) {
