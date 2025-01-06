@@ -588,7 +588,7 @@ const MethodPayment = () => {
           </div>
         </form>
       </section>
-      {/* <MethodPaymentMobile
+      <MethodPaymentMobile
         fullName={fullName}
         phoneNumber={phoneNumber}
         email={email}
@@ -601,7 +601,7 @@ const MethodPayment = () => {
         startLocation={startLocation}
         stopLocation={stopLocation}
         ticketId={ticketId}
-      /> */}
+      />
     </div>
   );
 };

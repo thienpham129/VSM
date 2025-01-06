@@ -170,7 +170,6 @@ function BookingForm({
       totalPrice,
       ...(voucher && { voucher }),
     };
-    console.log("««««« carRouteId »»»»»", carRouteId);
 
     try {
       const token = getTokenFromLocalStorage();
@@ -186,7 +185,6 @@ function BookingForm({
 
       if (response.status === 200) {
         console.log("Booking successful:", response.data);
-        console.log("««««« response.data »»»»»", response.data.totalPrice);
         navigate("/methodPayment", {
           state: {
             fullName,
