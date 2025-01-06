@@ -3,7 +3,6 @@ package com.project.vsm.controller;
 import java.io.IOException;
 import java.util.List;
 
-import com.project.vsm.dto.request.TicketRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,10 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.vsm.dto.AdminUpdateTicketDTO;
-import com.project.vsm.dto.TicketResponseAdminDTO;
 import com.project.vsm.dto.request.TicketRequest;
 import com.project.vsm.dto.response.TicketResponse;
-import com.project.vsm.model.TicketEntity;
 import com.project.vsm.service.TicketService;
 
 import lombok.AccessLevel;
@@ -33,7 +30,7 @@ import lombok.experimental.FieldDefaults;
 public class TicketController {
 	TicketService ticketService;
 
-	@GetMapping("/public/tickets")
+	@GetMapping("/admin/tickets")
 	public ResponseEntity<List<TicketResponse>> getAllTickets() {
 		return new ResponseEntity<>(ticketService.getAllTicket(), HttpStatus.OK);
 	}

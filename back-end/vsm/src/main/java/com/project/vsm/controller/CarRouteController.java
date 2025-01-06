@@ -1,5 +1,6 @@
 package com.project.vsm.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,16 @@ public class CarRouteController {
 	public ResponseEntity<List<CarEntity>> getAllCar(@RequestParam long idRoute) {
 		try {
 			List<CarEntity> cars = carRouteService.findCarsByRouteId(idRoute);
+			return new ResponseEntity<>(cars, HttpStatus.OK);
+		} catch (InvalidInputException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@GetMapping("/public/find-car")
+	public ResponseEntity<List<CarEntity>> getAllCar(@RequestParam long idRoute, @RequestParam LocalDateTime time) {
+		try {
+			List<CarEntity> cars = carRouteService.findAvailableCarsByRouteAndTime(time, idRoute);
 			return new ResponseEntity<>(cars, HttpStatus.OK);
 		} catch (InvalidInputException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
