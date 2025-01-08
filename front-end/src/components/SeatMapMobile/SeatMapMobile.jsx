@@ -376,7 +376,7 @@ const SeatMapMobile = ({
       }
     };
     checkVoucher();
-  }, [voucher, totalPriceTicket]);
+  }, [voucher]);
 
   return (
     <div

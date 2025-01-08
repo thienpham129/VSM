@@ -618,7 +618,8 @@
 }
 
 .bookingPage__tickets__item__collapse__booking__seat_map__floor table td {
-    padding: 8px 4px;
+    /* padding: 8px 4px; */
+    padding: 17px 4px;
 }
 
 .bookingPage__tickets__item__collapse__booking__seat_map__note {

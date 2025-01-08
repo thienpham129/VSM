@@ -1,19 +1,10 @@
 import React, { useEffect, useState } from "react";
 import styles from "pages/bookingTicket.module.css";
-import BookingForm from "components/BookingForm";
-// import BookingSeatSevenMobile from "components/Booking7SeatMobile/BookingSeatSevenMobile";
-import Schedule7Seat from "components/Schedule7Seat/Schedule7Seat";
-import Schedule10Seat from "components/Schedule10Seat/Schedule10Seat";
-import { useNavigate } from "react-router-dom";
-import Schedule7SeatMobile from "components/Schedule7SeatMobile/Schedule7SeatMobile";
-import { root } from "helper/axiosClient";
-import Schedule10SeatMobile from "components/Schedule10SeatMobile/Schedule10SeatMobile";
 import SeatMap from "./SeatMap";
 import SeatMapMobile from "components/SeatMapMobile/SeatMapMobile";
 
 const BookingTicket = () => {
   const [startTime, setStartTime] = useState("");
-  // const [schedules, setSchedules] = useState([]);
   const [cars, setCars] = useState([]);
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [selectedCar, setSelectedCar] = useState(null);
@@ -24,7 +15,6 @@ const BookingTicket = () => {
   const [schedule, setSchedule] = useState(null);
   const [routeDetail, setRouteDetail] = useState(null);
   const [carDetail, setCarDetail] = useState(null);
-  console.log("««««« selectedCarSeatMap »»»»»", selectedCarSeatMap);
 
   const carRouteId = selectedRoute;
   // selectedRoute là routeId
@@ -45,7 +35,7 @@ const BookingTicket = () => {
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const response = await fetch("http://localhost:8080/public/routes");
+        const response = await fetch("http://localhost:9000/public/routes");
         const data = await response.json();
         setRoutes(data);
       } catch (error) {
@@ -57,25 +47,32 @@ const BookingTicket = () => {
   }, []);
 
   useEffect(() => {
-    if (!selectedRoute) {
-      setCars([]);
-      return;
-    }
-
-    const fetchCars = async () => {
+    const fetchCarsByRouteAndTime = async () => {
+      if (!startTime || !selectedRoute) {
+        return; 
+      }
+  
       try {
+        setLoading(true); 
         const response = await fetch(
-          `http://localhost:8080/public/find-car-by-route?idRoute=${selectedRoute}`
+          `http://localhost:9000/public/find-car?idRoute=${selectedRoute}&time=${startTime}`
         );
+        if (!response.ok) {
+          throw new Error("Không thể lấy danh sách xe khả dụng");
+        }
         const data = await response.json();
-        setCars(data);
+        setCars(data); 
       } catch (error) {
-        console.error("Lỗi khi gọi API xe:", error);
+        console.error("Lỗi khi gọi API:", error);
+        setError("Không thể lấy danh sách xe. Vui lòng thử lại!");
+      } finally {
+        setLoading(false); 
       }
     };
-
-    fetchCars();
-  }, [selectedRoute]);
+  
+    fetchCarsByRouteAndTime();
+  }, [startTime, selectedRoute]);
+  
 
   // start detail
   useEffect(() => {
@@ -115,7 +112,6 @@ const BookingTicket = () => {
   // Hàm gọi API để tạo/lấy lịch trình
   useEffect(() => {
     const findOrCreateSchedule = async () => {
-      // Kiểm tra nếu thiếu bất kỳ giá trị nào
       if (!startTime || !selectedRoute || !selectedCar) {
         return;
       }
@@ -125,7 +121,7 @@ const BookingTicket = () => {
 
       try {
         const response = await fetch(
-          "http://localhost:8080/public/create-or-find",
+          "http://localhost:9000/public/create-or-find",
           {
             method: "POST",
             headers: {
@@ -323,6 +319,10 @@ const BookingTicket = () => {
           <div className={styles.container}>
             <div className={styles.bookingPage__tickets__wrap}>
               {schedule ? (
+                <>
+                <div>
+                xin chào
+                </div>
                 <SeatMap
                   priceOfSeat={schedule.price}
                   car={selectedCarSeatMap}
@@ -335,7 +335,8 @@ const BookingTicket = () => {
                   selectedCar={selectedCar}
                   routeDetail={routeDetail}
                   carDetail={carDetail}
-                /> // Truyền giá tiền vào SeatMap
+                /> 
+                </>
               ) : (
                 // <p>Chưa có lịch trình.</p>
                 ""

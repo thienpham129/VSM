@@ -77,7 +77,7 @@ const CreateCar = () => {
     try {
       const token = getAuthToken();
       const response = await axios.post(
-        "http://localhost:8080/admin/car",
+        "http://localhost:9000/admin/car",
         formData,
         {
           headers: {
