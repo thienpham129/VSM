@@ -1,5 +1,20 @@
 package com.project.vsm.service;
 
+import com.project.vsm.dto.AdminUpdateTicketDTO;
+import com.project.vsm.dto.request.TicketRequest;
+import com.project.vsm.dto.response.ScheduleResponse;
+import com.project.vsm.dto.response.TicketResponse;
+import com.project.vsm.exception.NotFoundException;
+import com.project.vsm.model.*;
+import com.project.vsm.repository.*;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,38 +24,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
-import com.project.vsm.dto.AdminUpdateTicketDTO;
-import com.project.vsm.dto.TicketResponseAdminDTO;
-import com.project.vsm.dto.request.TicketRequest;
-import com.project.vsm.dto.response.ScheduleResponse;
-import com.project.vsm.dto.response.TicketResponse;
-import com.project.vsm.exception.NotFoundException;
-import com.project.vsm.model.AccountEntity;
-import com.project.vsm.model.CarRouteEntity;
-import com.project.vsm.model.PaymentEntity;
-import com.project.vsm.model.RouteEntity;
-import com.project.vsm.model.ScheduleEntity;
-import com.project.vsm.model.TicketEntity;
-import com.project.vsm.model.TypeEntity;
-import com.project.vsm.model.VoucherEntity;
-import com.project.vsm.repository.AccountRepository;
-import com.project.vsm.repository.CarRouteRepository;
-import com.project.vsm.repository.PaymentRepository;
-import com.project.vsm.repository.RouteRepository;
-import com.project.vsm.repository.ScheduleRepository;
-import com.project.vsm.repository.TicketRepository;
-import com.project.vsm.repository.TypeRepository;
-import com.project.vsm.repository.VoucherRepository;
-
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -131,16 +114,6 @@ public class TicketService {
 
         ticket = ticketRepository.save(ticket);
 
-        if (payment.getPaymentName().equalsIgnoreCase("vietQR")) {
-            String qrCodeUrl = paymentService.generateQrCode(totalPrice, ticket.getTicketId(), account.getEmail());
-            ticket.setQRPayment(qrCodeUrl);
-            ticketRepository.save(ticket);
-        }
-        boolean paymentSuccess = checkPaymentStatus(ticket.getTicketId());
-
-        if (paymentSuccess) {
-            googleSheetsService.sendDataToGoogleSheet(ticket, totalPrice, payment.getPaymentName());
-        }
         return TicketResponse.fromEntity(ticket);
     }
 

@@ -12,5 +12,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class VNPayResponse {
+    String code;
+    String message;
     String paymentUrl;
 }

@@ -40,17 +40,8 @@ public class TicketEntity {
 	@Column(name = "price")
 	double price;
 
-    @Column(name = "payment_method")
-    String paymentMethod;
-
 	@Column(name = "is_paid")
 	boolean isPaid;
-
-	@Column(name = "start_location")
-	String startLocation;
-
-	@Column(name = "stop_location")
-	String stopLocation;
 
 	@Column(name = "status")
 	String status;

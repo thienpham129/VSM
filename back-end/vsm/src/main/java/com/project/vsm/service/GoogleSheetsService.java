@@ -15,7 +15,9 @@ import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import com.project.vsm.SheetsQuickstart;
 import com.project.vsm.dto.response.TicketGoogleSheetResponse;
+import com.project.vsm.model.ScheduleEntity;
 import com.project.vsm.model.TicketEntity;
+import com.project.vsm.repository.ScheduleRepository;
 import com.project.vsm.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +44,8 @@ public class GoogleSheetsService {
     @Value("${google.sheet.spread.sheetURL}")
     String SHEET_URL;
 
-    @Autowired
     private TicketRepository ticketRepository;
+    private ScheduleRepository scheduleRepository;
 
     private static final String APPLICATION_NAME = "Google Sheets API Java Quickstart";
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
@@ -116,36 +118,53 @@ public class GoogleSheetsService {
         }
     }
 
-//    public TicketGoogleSheetResponse updateTicketStatusFromGoogleSheet(String ticketId) {
-//        try {
-//            RestTemplate restTemplate = new RestTemplate();
-//            ResponseEntity<String> response = restTemplate.getForEntity(SHEET_URL, String.class);
-//
-//            if (response.getStatusCode() == HttpStatus.OK) {
-//                String content = response.getBody();
-//                List<String> rows = parseRowsFromGoogleSheet(content);
-//
-//                for (String row : rows) {
-//                    if (row.toLowerCase().contains(String.valueOf(ticketId).toLowerCase())) {
-//                        TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
-//                                .orElseThrow(() -> new RuntimeException("Ticket not found"));
-//                        if (!ticket.isPaid()) {
-//                            ticket.setStatus("Đã thanh toán");
-//                            ticket.setPaid(true);
-//                            ticketRepository.save(ticket);
-//                            return new TicketGoogleSheetResponse("Đã thanh toán", true);
-//                        } else {
-//                            return new TicketGoogleSheetResponse("Vé đã được thanh toán", true);
-//                        }
-//                    }
-//                }
-//                return new TicketGoogleSheetResponse("Không tìm thấy ticketId trong Google Sheets", false);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return new TicketGoogleSheetResponse("Có lỗi xảy ra", false);
-//    }
+    public TicketGoogleSheetResponse updateTicketStatusFromGoogleSheet(String ticketId) {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.getForEntity(SHEET_URL, String.class);
+
+            if (response.getStatusCode() == HttpStatus.OK) {
+                String content = response.getBody();
+                List<String> rows = parseRowsFromGoogleSheet(content);
+
+                for (String row : rows) {
+                    if (row.toLowerCase().contains(ticketId.toLowerCase())) {
+                        TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
+                                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+
+                        if (!ticket.isPaid()) {
+                            ScheduleEntity scheduleEntity = ticket.getScheduleEntity();
+                            if (scheduleEntity != null) {
+                                int emptySeat = scheduleEntity.getEmptySeat();
+                                int seatsBooked = ticket.getSelectedSeat().split(",").length;
+
+                                if (emptySeat >= seatsBooked) {
+                                    scheduleEntity.setEmptySeat(emptySeat - seatsBooked);
+                                    scheduleRepository.save(scheduleEntity);
+
+                                    ticket.setStatus("Đã thanh toán");
+                                    ticket.setPaid(true);
+                                    ticketRepository.save(ticket);
+
+                                    return new TicketGoogleSheetResponse("Đã thanh toán và cập nhật số lượng ghế thành công", true);
+                                } else {
+                                    return new TicketGoogleSheetResponse("Không đủ số lượng ghế trống", false);
+                                }
+                            } else {
+                                return new TicketGoogleSheetResponse("Schedule không tồn tại", false);
+                            }
+                        } else {
+                            return new TicketGoogleSheetResponse("Vé đã được thanh toán", true);
+                        }
+                    }
+                }
+                return new TicketGoogleSheetResponse("Không tìm thấy ticketId trong Google Sheets", false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new TicketGoogleSheetResponse("Có lỗi xảy ra", false);
+    }
 
     private List<String> parseRowsFromGoogleSheet(String content) {
         return Arrays.asList(content.split("\n"));
