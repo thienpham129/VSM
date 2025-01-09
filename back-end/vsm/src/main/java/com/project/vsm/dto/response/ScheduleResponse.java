@@ -3,6 +3,7 @@ package com.project.vsm.dto.response;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.project.vsm.model.ScheduleEntity;
 
 import com.project.vsm.model.ScheduleEntity;
 import lombok.AllArgsConstructor;

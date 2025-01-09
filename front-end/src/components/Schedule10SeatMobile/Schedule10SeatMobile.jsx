@@ -84,16 +84,8 @@ const Schedule10SeatMobile = ({
   const [selectedSeat, setSelectedSeat] = useState(0);
   const [errors, setErrors] = useState({});
 
-  // Pick-up location state
+  //
   const [pickupSpecificAddress, setPickupSpecificAddress] = useState("");
-  const [pickupProvinces, setPickupProvinces] = useState([]);
-  const [pickupDistricts, setPickupDistricts] = useState([]);
-  const [pickupWards, setPickupWards] = useState([]);
-  const [pickupProvince, setPickupProvince] = useState("");
-  const [pickupDistrict, setPickupDistrict] = useState("");
-  const [pickupWard, setPickupWard] = useState("");
-
-  // Drop-off location state
   const [dropoffSpecificAddress, setDropoffSpecificAddress] = useState("");
   const [dropoffProvinces, setDropoffProvinces] = useState([]);
   const [dropoffDistricts, setDropoffDistricts] = useState([]);

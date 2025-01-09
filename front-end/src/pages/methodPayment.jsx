@@ -20,7 +20,10 @@ const MethodPayment = () => {
     startLocation,
     stopLocation,
     ticketId,
+      carDetail,
+      routeDetail
   } = state || {};
+  console.log("««««« state.totalPrice »»»»»", state.totalPrice);
   const [paymentUrl, setPaymentUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -141,27 +144,6 @@ const MethodPayment = () => {
     }
   };
 
-  const handleSearch = async () => {
-    if (!startLocation || !stopLocation || !startTime) {
-      alert("Vui lòng chọn đầy đủ thông tin!");
-      return;
-    }
-
-    try {
-      const response = await root.get(`/public/route/search`, {
-        params: {
-          startLocation,
-          stopLocation,
-          startTime,
-        },
-      });
-      setSchedules(response.data);
-    } catch (error) {
-      console.error("Lỗi khi gọi API:", error);
-      alert("Không tìm thấy lịch trình phù hợp.");
-    }
-  };
-
   const handlePayment = async () => {
     setMessagePayment(true);
     setIsLoading(true);
@@ -183,26 +165,68 @@ const MethodPayment = () => {
 
   // Check payment ticket
 
+  // const checkPayment = async () => {
+  //   if (!ticketId) {
+  //     alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra thanh toán.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await root.get(
+  //       `/api/v1/google-sheet/check-ticket/${ticketId}`
+  //     );
+
+  //     if (response.status === 200) {
+  //       console.log("««««« response.data »»»»»", response.data);
+  //       if (response.data.paid === true) {
+  //         console.log("««««« Vé đã được thanh toán »»»»»");
+  //         navigate("/paymentSuccess"),{
+  //           state: {
+  //             startTime,
+  //             carDetail,
+  //             routeDetail,
+  //           },
+  //         };
+  //         return true;
+  //       } else {
+  //         console.log("««««« Vé chưa được thanh toán` »»»»»");
+  //         return false;
+  //       }
+  //     } else {
+  //       setError("Không thể kiểm tra trạng thái thanh toán.");
+  //     }
+  //   } catch (err) {
+  //     console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
+  //     setError("Đã xảy ra lỗi trong quá trình kiểm tra thanh toán.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
   const checkPayment = async () => {
     if (!ticketId) {
       alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra thanh toán.");
       return;
     }
-
+  
     try {
-      const response = await root.get(
-        `/api/v1/google-sheet/check-ticket/${ticketId}`
-      );
-
+      const response = await root.get(`/api/v1/google-sheet/check-ticket/${ticketId}`);
+  
       if (response.status === 200) {
         console.log("««««« response.data »»»»»", response.data);
         if (response.data.paid === true) {
           console.log("««««« Vé đã được thanh toán »»»»»");
-          navigate("/paymentSuccess");
-          return true;
+          // Điều hướng sang trang paymentSuccess với dữ liệu cần thiết
+          navigate("/paymentSuccess", {
+            state: {
+              startTime,
+              carDetail,
+              routeDetail,
+            },
+          });
+          // Thực hiện việc điều hướng thành công mà không cần trả về giá trị true
         } else {
-          console.log("««««« Vé chưa được thanh toán` »»»»»");
-          return false;
+          console.log("««««« Vé chưa được thanh toán »»»»»");
+          // Bạn có thể bỏ return false hoặc thực hiện hành động khác nếu cần
         }
       } else {
         setError("Không thể kiểm tra trạng thái thanh toán.");
@@ -214,6 +238,7 @@ const MethodPayment = () => {
       setIsLoading(false);
     }
   };
+  
 
   useEffect(() => {
     if (!ticketId) return;
@@ -283,119 +308,6 @@ const MethodPayment = () => {
                   <div className={styles.searchTicket__item__left}>
                     <span className={`${styles.avicon} ${styles.iconsvg}`}>
                       <svg
-                        width={14}
-                        height={20}
-                        viewBox="0 0 14 20"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M7 0C3.13 0 0 3.13 0 7C0 11.17 4.42 16.92 6.24 19.11C6.64 19.59 7.37 19.59 7.77 19.11C9.58 16.92 14 11.17 14 7C14 3.13 10.87 0 7 0ZM7 9.5C6.33696 9.5 5.70107 9.23661 5.23223 8.76777C4.76339 8.29893 4.5 7.66304 4.5 7C4.5 6.33696 4.76339 5.70107 5.23223 5.23223C5.70107 4.76339 6.33696 4.5 7 4.5C7.66304 4.5 8.29893 4.76339 8.76777 5.23223C9.23661 5.70107 9.5 6.33696 9.5 7C9.5 7.66304 9.23661 8.29893 8.76777 8.76777C8.29893 9.23661 7.66304 9.5 7 9.5Z"
-                          fill="#FFA000"
-                        />
-                      </svg>
-                    </span>
-                  </div>
-                  <div className={styles.searchTicket__item__right}>
-                    <span className={styles.searchTicket__item__title}>
-                      Điểm đi
-                    </span>
-                    <select
-                      className={styles.pointUp}
-                      value={startLocation}
-                      id="searchPointUp"
-                      // onChange={(e) => setStartLocation(e.target.value)}
-                    >
-                      <option value="">Chọn điểm lên</option>
-                      <optgroup label="Quảng Nam">
-                        <option
-                          value="Quảng Nam"
-                          data-route-id="R0U11yleLOCho9m,R0Tu1yipwtweLFh,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0Tu1yiptmYVave,R0DA1s6Bu8rN9mg,R0NY1wD4MMlyUEQ,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0NY1wD4LJD2IxB,R0DA1s6C94QCePS,R0DA1s6Bk8LFiei,R0DB1s6UOpGDcXh"
-                        >
-                          QN: 1 Quảng Nam
-                        </option>
-                      </optgroup>
-                      <optgroup label="Đà Nẵng">
-                        <option
-                          value="Đà Nẵng"
-                          data-route-id="R0U11yleLOCho9m,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0DA1s6Bu8rN9mg,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0DB1s6UOpGDcXh"
-                        >
-                          ĐN: 21 Đà Nẵng
-                        </option>
-                      </optgroup>
-
-                      <optgroup label="Thừa Thiên Huế">
-                        <option
-                          value="Huế"
-                          data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
-                        >
-                          H: 28 Huế
-                        </option>
-                      </optgroup>
-                    </select>
-                  </div>
-                </div>
-                <div className={styles.searchTicket__item}>
-                  <div className={styles.searchTicket__item__left}>
-                    <span className={`${styles.avicon} ${styles.iconsvg}`}>
-                      <svg
-                        width={14}
-                        height={20}
-                        viewBox="0 0 14 20"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M7 0C3.13 0 0 3.13 0 7C0 11.17 4.42 16.92 6.24 19.11C6.64 19.59 7.37 19.59 7.77 19.11C9.58 16.92 14 11.17 14 7C14 3.13 10.87 0 7 0ZM7 9.5C6.33696 9.5 5.70107 9.23661 5.23223 8.76777C4.76339 8.29893 4.5 7.66304 4.5 7C4.5 6.33696 4.76339 5.70107 5.23223 5.23223C5.70107 4.76339 6.33696 4.5 7 4.5C7.66304 4.5 8.29893 4.76339 8.76777 5.23223C9.23661 5.70107 9.5 6.33696 9.5 7C9.5 7.66304 9.23661 8.29893 8.76777 8.76777C8.29893 9.23661 7.66304 9.5 7 9.5Z"
-                          fill="#FFA000"
-                        />
-                      </svg>
-                    </span>
-                  </div>
-                  <div className={styles.searchTicket__item__right}>
-                    <span className={styles.searchTicket__item__title}>
-                      Điểm đến
-                    </span>
-                    <select
-                      className={styles.pointUp}
-                      id="searchPointUp"
-                      value={stopLocation}
-                      // onChange={(e) => setStopLocation(e.target.value)}
-                    >
-                      <option value="">Chọn điểm lên</option>
-                      <optgroup label="Quảng Nam">
-                        <option
-                          value="Quảng Nam"
-                          data-route-id="R0U11yleLOCho9m,R0Tu1yipwtweLFh,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0Tu1yiptmYVave,R0DA1s6Bu8rN9mg,R0NY1wD4MMlyUEQ,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0NY1wD4LJD2IxB,R0DA1s6C94QCePS,R0DA1s6Bk8LFiei,R0DB1s6UOpGDcXh"
-                        >
-                          QN: 1 Quảng Nam
-                        </option>
-                      </optgroup>
-                      <optgroup label="Đà Nẵng">
-                        <option
-                          value="Đà Nẵng"
-                          data-route-id="R0U11yleLOCho9m,R0DB1s6ShKApv4w,R0U11yleMeCbGpm,R0DB1s6Tt7KMXT6,R0DA1s6Bu8rN9mg,R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO,R0DB1s6UOpGDcXh"
-                        >
-                          ĐN: 21 Đà Nẵng
-                        </option>
-                      </optgroup>
-
-                      <optgroup label="Thừa Thiên Huế">
-                        <option
-                          value="Huế"
-                          data-route-id="R0Qn1xUYC8NtCtn,R0Qo1xUvJJtTpEO"
-                        >
-                          H: 28 Huế
-                        </option>
-                      </optgroup>
-                    </select>
-                  </div>
-                </div>
-
-                <div className={styles.searchTicket__item}>
-                  <div className={styles.searchTicket__item__left}>
-                    <span className={`${styles.avicon} ${styles.iconsvg}`}>
-                      <svg
                         width={24}
                         height={24}
                         viewBox="0 0 24 24"
@@ -416,23 +328,80 @@ const MethodPayment = () => {
                     </span>
                     <input
                       className={styles.ticket_date}
-                      type="date"
+                      type="datetime-local"
                       value={startTime}
-                      // onChange={(e) => setStartTime(e.target.value)}
-                      min={new Date().toISOString().split("T")[0]}
+                      min={new Date().toISOString().slice(0, 16)}
                     />
+                    {error && <p style={{ color: "red" }}>{error}</p>}
+                  </div>
+                </div>
+                <div className={styles.searchTicket__item}>
+                  <div className={styles.searchTicket__item__left}>
+                    <span className={`${styles.avicon} ${styles.iconsvg}`}>
+                      <svg
+                        width={14}
+                        height={20}
+                        viewBox="0 0 14 20"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M7 0C3.13 0 0 3.13 0 7C0 11.17 4.42 16.92 6.24 19.11C6.64 19.59 7.37 19.59 7.77 19.11C9.58 16.92 14 11.17 14 7C14 3.13 10.87 0 7 0ZM7 9.5C6.33696 9.5 5.70107 9.23661 5.23223 8.76777C4.76339 8.29893 4.5 7.66304 4.5 7C4.5 6.33696 4.76339 5.70107 5.23223 5.23223C5.70107 4.76339 6.33696 4.5 7 4.5C7.66304 4.5 8.29893 4.76339 8.76777 5.23223C9.23661 5.70107 9.5 6.33696 9.5 7C9.5 7.66304 9.23661 8.29893 8.76777 8.76777C8.29893 9.23661 7.66304 9.5 7 9.5Z"
+                          fill="#FFA000"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                  <div className={styles.searchTicket__item__right}>
+                    <span className={styles.searchTicket__item__title}>
+                      Tuyến Đường
+                    </span>
+                    {/* <select
+                      className={styles.pointUp}
+                      id="searchPointUp"
+                      value={routeDetail || ""}
+                    ></select> */}
+                    <div>{routeDetail}</div>
+                  </div>
+                </div>
+                <div className={styles.searchTicket__item}>
+                  <div className={styles.searchTicket__item__left}>
+                    <span className={`${styles.avicon} ${styles.iconsvg}`}>
+                      <svg
+                        width={14}
+                        height={20}
+                        viewBox="0 0 14 20"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M7 0C3.13 0 0 3.13 0 7C0 11.17 4.42 16.92 6.24 19.11C6.64 19.59 7.37 19.59 7.77 19.11C9.58 16.92 14 11.17 14 7C14 3.13 10.87 0 7 0ZM7 9.5C6.33696 9.5 5.70107 9.23661 5.23223 8.76777C4.76339 8.29893 4.5 7.66304 4.5 7C4.5 6.33696 4.76339 5.70107 5.23223 5.23223C5.70107 4.76339 6.33696 4.5 7 4.5C7.66304 4.5 8.29893 4.76339 8.76777 5.23223C9.23661 5.70107 9.5 6.33696 9.5 7C9.5 7.66304 9.23661 8.29893 8.76777 8.76777C8.29893 9.23661 7.66304 9.5 7 9.5Z"
+                          fill="#FFA000"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                  <div className={styles.searchTicket__item__right}>
+                    <span
+                      className={styles.searchTicket__item__title}
+                      style={{ paddingRight: "100px" }}
+                    >
+                      Loại xe
+                    </span>
+                    <div>{carDetail}</div>
                   </div>
                 </div>
               </div>
-              <div className={styles.bookingPage__search__triggle}>
+              {/* <div className={styles.bookingPage__search__triggle}>
                 <a
                   href="javascript:;"
                   data-action="searchTrip"
-                  onClick={handleSearch}
+                  // onClick={handleSearch}
                 >
                   <i className="fa fa-search" aria-hidden="true" /> Tìm chuyến
                 </a>
-              </div>
+                
+              </div> */}
             </div>
           </div>
         </div>
@@ -619,7 +588,7 @@ const MethodPayment = () => {
           </div>
         </form>
       </section>
-      <MethodPaymentMobile
+      {/* <MethodPaymentMobile
         fullName={fullName}
         phoneNumber={phoneNumber}
         email={email}
@@ -632,7 +601,7 @@ const MethodPayment = () => {
         startLocation={startLocation}
         stopLocation={stopLocation}
         ticketId={ticketId}
-      />
+      /> */}
     </div>
   );
 };

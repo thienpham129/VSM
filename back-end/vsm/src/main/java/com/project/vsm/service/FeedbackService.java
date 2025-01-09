@@ -34,7 +34,6 @@ public class FeedbackService {
             FeedbackResponse feedbackResponse = FeedbackResponse
                     .builder().feedbackId(feedback.getFeedbackId())
                     .fullName(feedback.getFullName())
-                    .content(feedback.getContent())
                     .createAt(feedback.getCreateAt())
                     .content(feedback.getContent())
                     .email(feedback.getEmail())
@@ -44,8 +43,8 @@ public class FeedbackService {
             if (account != null) {
                 accountResponse.setId(account.getId());
                 accountResponse.setEmail(account.getEmail());
-                accountResponse.setFirstName(account.getFirstName());
-                accountResponse.setLastName(account.getLastName());
+                accountResponse.setUrlImage(account.getUrlImage());
+                accountResponse.setPhoneNumber(account.getPhoneNumber());
             }
             feedbackResponse.setAccount(accountResponse);
             responses.add(feedbackResponse);
@@ -61,7 +60,6 @@ public class FeedbackService {
 
         FeedbackEntity feedback = FeedbackEntity.builder()
                 .fullName(request.getFullName())
-                .content(request.getContent())
                 .content(request.getContent())
                 .createAt(LocalDateTime.now())
                 .email(request.getEmail())

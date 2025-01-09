@@ -1,5 +1,8 @@
 package com.project.vsm.dto;
 
+import java.time.LocalDate;
+
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -14,6 +17,10 @@ public class VoucherDTO {
 	private double discount;
 	
 	@NotNull(message = "Quantity is required")
-	@Min(value = 1, message = "Quantity must be greater than 1")
+	@Min(value = 0, message = "Quantity must be greater than 0")
 	private int quantity;
+	
+	@NotNull(message = "Expired date is required")
+    @Future(message = "Expired date must be in the future")
+    private LocalDate expiredDate;
 }

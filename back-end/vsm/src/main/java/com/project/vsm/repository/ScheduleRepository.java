@@ -18,4 +18,12 @@ public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Long> 
 			+ "AND s.emptySeat > 0")
 	List<ScheduleEntity> findScheduleByCarRouteAndTimeRange(@Param("carRoute") CarRouteEntity carRoute,
 			@Param("minTime") LocalDateTime minTime, @Param("maxTime") LocalDateTime maxTime);
+
+	@Query("""
+			    SELECT s FROM ScheduleEntity s
+			    WHERE s.startTime BETWEEN :startTimeRange AND :endTimeRange
+			    AND s.carRoute.route.id = :routeId
+			""")
+	List<ScheduleEntity> findSchedulesByTimeRangeAndRoute(LocalDateTime startTimeRange, LocalDateTime endTimeRange,
+			Long routeId);
 }

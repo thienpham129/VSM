@@ -40,7 +40,6 @@ import java.util.Optional;
 import jakarta.validation.Valid;
 import lombok.NoArgsConstructor;
 
-
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -49,8 +48,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-
-
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -89,27 +86,20 @@ public class UserController {
 	}
 
 	@PostMapping("/user/update-my-info")
-	public ResponseEntity<AccountEntity> updateProfile (@ModelAttribute UpdateAccountRequest request,
-														@RequestPart (value = "urlImage" , required = false)
-														MultipartFile file) throws IOException {
-		return new ResponseEntity<>(accountService.getMyInfoToViewOrUpdate(request , file) , HttpStatus.OK);
+	public ResponseEntity<AccountEntity> updateProfile(@ModelAttribute UpdateAccountRequest request,
+			@RequestPart(value = "urlImage", required = false) MultipartFile file) throws IOException {
+		return new ResponseEntity<>(accountService.getMyInfoToViewOrUpdate(request, file), HttpStatus.OK);
 	}
-	
+
 	@PostMapping("/user/change-password")
 	public ResponseObject<ChangePasswordResponse> changePassword(@RequestBody ChangePasswordRequest request) {
-		return  ResponseObject.<ChangePasswordResponse>builder()
-				.code(200)
-				.message("Change password successfully")
-				.data(accountService.changePassword(request))
-				.build();
+		return ResponseObject.<ChangePasswordResponse>builder().code(200).message("Change password successfully")
+				.data(accountService.changePassword(request)).build();
 	}
 
+	@GetMapping("/user/view-my-ticket")
+	public ResponseEntity<List<TicketResponse>> getTicketOfAccount() {
+		return new ResponseEntity<>(accountService.getTicketOfAccount(), HttpStatus.OK);
+	}
 
-	/*
-	 * @GetMapping("/user/view-my-ticket") public
-	 * ResponseEntity<List<TicketResponse>> getTicketOfAccount () { return new
-	 * ResponseEntity<>(accountService.getTicketOfAccount(), HttpStatus.OK); }
-	 */
 }
-
-

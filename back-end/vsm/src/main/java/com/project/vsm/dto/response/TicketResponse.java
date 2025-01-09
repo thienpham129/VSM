@@ -20,29 +20,27 @@ import java.util.List;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TicketResponse {
-    String ticketId;
-    List<String> selectedSeat;
-    double totalPrice;
-    String fullName;
-    String phoneNumber;
-    String email;
-    String note;
-    boolean isPaid;
-    String startLocation;
-    String stopLocation;
-    String status;
-    String QRPayment;
-    String paymentMethod;
-    ScheduleResponse schedules;
-    String paymentUrl;
-    String qrCodeBase64;
-    LocalDateTime startTime;
-    LocalDateTime endTime;
-    String detailAddressToPickUp;
-    String detailAddressDropOff;
-    String mapPickUp;
-    String mapDrop;
-    String mapStatus;
+	String ticketId;
+	List<String> selectedSeat;
+	double totalPrice;
+	String fullName;
+	String phoneNumber;
+	String email;
+	String note;
+	boolean isPaid;
+	String status;
+	String QRPayment;
+	String paymentMethod;
+	ScheduleResponse schedules;
+	String paymentUrl;
+	String qrCodeBase64;
+	LocalDateTime startTime;
+	LocalDateTime endTime;
+	String detailAddressToPickUp;
+	String detailAddressDropOff;
+	String mapPickUp;
+	String mapDrop;
+	String mapStatus;
 
     public static TicketResponse fromEntity(TicketEntity ticket) {
         return TicketResponse.builder()

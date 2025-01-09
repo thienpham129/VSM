@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "components/bookingTicket.module.css";
 import { useNavigate } from "react-router-dom";
-
 import SellectAddress from "components/SellectAddress";
-
 import {
   apiGetPublicDistrict,
   apiGetPublicProvinces,
@@ -86,16 +84,8 @@ const Schedule7SeatMobile = ({
   const [selectedSeat, setSelectedSeat] = useState(0);
   const [errors, setErrors] = useState({});
 
-  // Pick-up location state
+  //
   const [pickupSpecificAddress, setPickupSpecificAddress] = useState("");
-  const [pickupProvinces, setPickupProvinces] = useState([]);
-  const [pickupDistricts, setPickupDistricts] = useState([]);
-  const [pickupWards, setPickupWards] = useState([]);
-  const [pickupProvince, setPickupProvince] = useState("");
-  const [pickupDistrict, setPickupDistrict] = useState("");
-  const [pickupWard, setPickupWard] = useState("");
-
-  // Drop-off location state
   const [dropoffSpecificAddress, setDropoffSpecificAddress] = useState("");
   const [dropoffProvinces, setDropoffProvinces] = useState([]);
   const [dropoffDistricts, setDropoffDistricts] = useState([]);
@@ -841,6 +831,14 @@ const Schedule7SeatMobile = ({
                     Điểm đi: <span className={styles.text_danger}>*</span>
                   </label>
                   <div className={styles.point_wrap}>
+                    {/* <input
+                      type="text"
+                      placeholder="Nhập địa chỉ cụ thể"
+                      className={styles.input_box}
+                      id="input-box"
+                      value={pickUpAddress}
+                      style={{ width: "100%" }}
+                    /> */}
                     <input
                       type="text"
                       placeholder="Nhập địa chỉ cụ thể"
@@ -960,17 +958,6 @@ const Schedule7SeatMobile = ({
                     ""
                   )}
                 </div>
-                {/* <div className="" style={{ textAlign: "right" }}>
-                  <button
-                    type="button"
-                    className="btn btn-info"
-                    data-action="checkPromotion"
-                    data-trip-id="PLT0Tc1ybgN295oCg20241015"
-                  >
-                    <i className="fa fa-search mr-2" aria-hidden="true" />
-                    Kiểm tra mã
-                  </button>
-                </div> */}
                 <div
                   className="form-group mb-2"
                   data-discount-trip="PLT0Tc1ybgN295oCg20241015"

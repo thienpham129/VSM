@@ -31,7 +31,7 @@ public interface TicketRepository extends JpaRepository<TicketEntity, String> {
 //			+ "GROUP BY r.startLocation, r.stopLocation, MONTH(s.startTime) "
 //			+ "ORDER BY r.startLocation, r.stopLocation, MONTH(s.startTime)")
 //	List<Object[]> countTicketsByRouteAndMonth();
-//
+
 //	@Query("SELECT COALESCE(SUM(t.price), 0) FROM TicketEntity t WHERE YEAR(t.scheduleEntity.startTime) = :year AND MONTH(t.scheduleEntity.startTime) = :month AND t.isPaid = true")
 //	double sumRevenueByMonth(@Param("year") int year, @Param("month") int month);
 //
