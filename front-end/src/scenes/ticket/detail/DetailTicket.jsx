@@ -28,7 +28,7 @@ const DetailTicket = () => {
   // Fetch ticket data
   const fetchTicket = async () => {
     try {
-      const response = await request("GET", `/driver/ticket/${id}`);
+      const response = await request("GET", `/driver/tickets/${id}`);
       setTicket(response.data); // Set the ticket data
       setLoading(false); // Data has been loaded, set loading to false
       console.log(response.data);
@@ -84,17 +84,17 @@ const DetailTicket = () => {
   const initialValues = ticket
     ? {
         ticketId: ticket.ticketId,
-        price: ticket.price,
-        paymentMethod: ticket.paymentMethod,
-        status: ticket.status || "Đang chờ xử lý", // Default to status if null
-        selectedSeat: ticket.selectedSeat,
+        price: ticket.priceTicket,
+        paymentMethod: "VietQR",
+        status: ticket.statusTicket || "Đang chờ xử lý", // Default to status if null
+        selectedSeat: ticket.selectSeat,
         note: ticket.note,
         email: ticket.email,
         fullName: ticket.fullName,
         phoneNumber: ticket.phoneNumber,
-        detailAddressPickUp: ticket.detailAddressPickUp,
-        detailAddressDropOff: ticket.detailAddressDropOff,
-        route: `${ticket.route.startLocation} > ${ticket.route.stopLocation}`,
+        detailAddressPickUp: ticket.addressPickup,
+        detailAddressDropOff: ticket.addressDropOff,
+        route: `${ticket.startLocation} > ${ticket.stopLocation}`,
         paid: ticket.paid ? "Đã thanh toán" : "Chưa thanh toán", // Update paid field to be a string
       }
     : {};
