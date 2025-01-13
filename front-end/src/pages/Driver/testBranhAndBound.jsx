@@ -439,8 +439,6 @@ function TestBranchAndBound() {
             checkTraveled[i] = true;
             total += matrix[result[index - 1]][i];
             if (index === arrayCorsPickUp.length - 1) {
-              // console.log(result);
-              // console.log(total);
               update();
             } else {
               travel(index + 1);
