@@ -42,12 +42,12 @@ function ScheduleNotAssignment() {
     {
       name: "",
       selector: (row) => row.detail,
-      width: "110px",
+      width: "200px",
     },
-    {
-      name: "",
-      selector: (row) => row.update,
-    },
+    // {
+    //   name: "",
+    //   selector: (row) => row.update,
+    // },
   ];
 
   const notifyUpdateSuccess = () =>
@@ -121,17 +121,17 @@ function ScheduleNotAssignment() {
           Xác Nhận
         </Button>
       ),
-      update: (
-        <Button
-          style={{ width: "75px", fontSize: "9px" }}
-          variant="contained"
-          onClick={(e) => {
-            setToggleCancelModal(true);
-          }}
-        >
-          Hủy
-        </Button>
-      ),
+      // update: (
+      //   <Button
+      //     style={{ width: "75px", fontSize: "9px" }}
+      //     variant="contained"
+      //     onClick={(e) => {
+      //       setToggleCancelModal(true);
+      //     }}
+      //   >
+      //     Hủy
+      //   </Button>
+      // ),
     }));
     setScheduleNotAssignFinal(tempArray);
   };
@@ -170,10 +170,12 @@ function ScheduleNotAssignment() {
   return (
     <div>
       <h1>Lịch Trình Chưa Phân Công</h1>
-      {scheduelNotAssignFinal ? (
+      {scheduleNotAssignment.length > 0 ? (
         <DataTable columns={columns} data={scheduelNotAssignFinal}></DataTable>
       ) : (
-        ""
+        <h3 style={{ color: "red" }}>
+          Không Có Lịch Trình Chưa Được Phân Công Ở Thời Điểm Hiện Tại !
+        </h3>
       )}
       {toggleConfirmModal ? (
         <div className={styles.modal}>

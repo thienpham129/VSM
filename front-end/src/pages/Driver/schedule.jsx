@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import styles from "./schedule.module.css";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { root } from "helper/axiosClient";
+import wating from "./waiting.webp";
 import { faL } from "@fortawesome/free-solid-svg-icons";
 function Schedule() {
   const navigate = useNavigate();
@@ -52,6 +53,37 @@ function Schedule() {
   const [arrayTicketTemp, setArrayTicketTemp] = useState([]);
   const [arrayCorsPickUp, setArrayCorsPickUp] = useState([]);
   const [arrayCorsDrop, setArrayCorsDrop] = useState([]);
+
+  const [firstDay, setFirstDay] = useState("");
+  const [secondDay, setSecondDay] = useState("");
+  const [thirdDay, setThirdDay] = useState("");
+
+  const [dateDropDown, setDateDropDown] = useState("");
+
+  const [startTimeSchedule, setStartTimeSchedule] = useState();
+  const [toggleCancelModal, setToggleCancelModal] = useState(false);
+  const [rowDataSchedulePopUp, setRowDataSchedulePopUp] = useState([]);
+
+  const [isCalculatPathMapPickUp, setIsCalculatePathMapPickUp] =
+    useState(false);
+  const [arrayFakeAPI, setArrayFakeAPI] = useState([]);
+  const [arrayFakeAPIDrop, setArrayFakeAPIDrop] = useState([]);
+  const [matrixPickUp, setMatrixPickUp] = useState([]);
+  const [matrixDrop, setMatrixDrop] = useState([]);
+  const [resultShortestPathPickUp, setResultShortestPathPickUp] = useState("");
+  const [resultShortestPathDrop, setResultShortestPathDrop] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndexDrop, setCurrentIndexDrop] = useState(0);
+  const [lengthMatrixPickup, setLengthMatrixPickUp] = useState(0);
+  const [lengthMatrixDrop, setLengthMatrixDrop] = useState(0);
+  const [isDonePathPickUp, setIsDonePathPickUp] = useState(false);
+  const [isDonePathDrop, setIsDonePathDrop] = useState(false);
+  const [hasShortestPathInDB, setHasShortestPathInDB] = useState(true);
+  // const [phase, setPhase] = useState(1);
+
+  // const [checkRunningUpdatedStatus, setCheckRunningUpdatedStatus] =
+  //   useState(false);
+  // const [allDayDataSchedule, setAllDayDataSchedule] = useState([]);
   const columns = [
     {
       name: "Điểm Khởi Hành",
@@ -90,6 +122,12 @@ function Schedule() {
     {
       name: "",
       selector: (row) => row.update,
+      width: "110px",
+    },
+
+    {
+      name: "",
+      selector: (row) => row.cancel,
     },
   ];
 
@@ -137,20 +175,11 @@ function Schedule() {
     },
   ];
 
-  // useEffect(() => {
-  //   if (dataSchedule.length > 0) {
-  //     changeDataSchedule();
-  //   }
-  //   if (dataScheduleDetail.length > 0) {
-  //     changeDataScheduleDetail();
-  //   }
-  // }, [isClickDetail]);
-
   useEffect(() => {
-    if (dataSchedule.length > 0) {
-      console.log(dataSchedule);
-      changeDataSchedule();
-    }
+    // if (dataSchedule.length > 0) {
+    console.log(dataSchedule);
+    changeDataSchedule();
+    // }
   }, [dataSchedule]);
 
   useEffect(() => {
@@ -222,20 +251,40 @@ function Schedule() {
       const response = await root.get(
         `/driver/driver-schedule?accountId=${driverId}`
       );
-      if (response) {
-        setDataSchedule(response.data);
+      if (response.status === 200) {
+        const tempArraySchedule = response.data;
+        let arraySchedule = [];
+        for (let i = 0; i < tempArraySchedule.length; i++) {
+          for (let j = i + 1; j < tempArraySchedule.length; j++) {
+            const firstDate = new Date(tempArraySchedule[i].startTime);
+            const secondDate = new Date(tempArraySchedule[j].startTime);
+            if (firstDate > secondDate) {
+              let temp = tempArraySchedule[i];
+              tempArraySchedule[i] = tempArraySchedule[j];
+              tempArraySchedule[j] = temp;
+            }
+          }
+        }
+        arraySchedule = tempArraySchedule.filter((item) => {
+          return String(item.startTime.split("T")[0]) === String(dateDropDown);
+        });
+        setDataSchedule(arraySchedule);
       }
-      console.log(response.data);
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    fetchDataSchedule();
+  }, [dateDropDown]);
 
   const fetchDataScheduleDetail = async (scheduleId) => {
     const url = "/public/ticket-with-schedule";
     console.log(idSchedule);
     try {
       const response = await root.get(`${url}/${idSchedule}`);
+      // const response = await root.get(`${url}/${scheduleId}`);
       if (response.data) {
         let tempArrayScheduleDetail = [];
         response.data.forEach((item, index) => {
@@ -273,22 +322,26 @@ function Schedule() {
 
   const checkDoubleRunningScheduleFunc = async () => {
     // const url = `driver/schedules/${localStorage.getItem("userId")}`;
-    const date = new Date();
-    let day = date.getFullYear() + "-" + (+date.getMonth() + 1) + "-";
-    let dateTime = "";
-    if (date.getDate() < 10) {
-      dateTime = "0" + date.getDate();
-    } else {
-      dateTime = date.getDate();
-    }
-    day = day + dateTime;
-    const url = "driver/driver-schedule";
+    // const date = new Date();
+    // let day = date.getFullYear() + "-" + (+date.getMonth() + 1) + "-";
+    // let dateTime = "";
+    // if (date.getDate() < 10) {
+    //   dateTime = "0" + date.getDate();
+    // } else {
+    //   dateTime = date.getDate();
+    // }
+    // day = day + dateTime;
+    // const url = "driver/driver-schedule";
+    const driverId = localStorage.getItem("userId");
     try {
-      const response = await root.post(url, {
-        accountId: localStorage.getItem("userId"),
-        day: day,
-      });
-      if (response.data) {
+      // const response = await root.post(url, {
+      //   accountId: localStorage.getItem("userId"),
+      //   day: day,
+      // });
+      const response = await root.get(
+        `/driver/driver-schedule?accountId=${driverId}`
+      );
+      if (response.status === 200) {
         console.log(response.data);
         let countRunningSchedule = 0;
         response.data.forEach((item, index) => {
@@ -300,6 +353,10 @@ function Schedule() {
           // alert("OK");
           setCheckDoubleRunningSchedule(true);
         }
+      } else {
+        console.log(
+          "Something went wrong with schedule api getAllDayDataSchedule"
+        );
       }
     } catch (error) {
       console.log(error);
@@ -439,148 +496,148 @@ function Schedule() {
     }
   }, [isSuccessUpdateUser]);
 
-  useEffect(() => {
-    if (dataScheduleDetail.length > 0 && isDoneUpdateMapStatus) {
-      const findNextDestination = async () => {
-        let countNotInCar = 0;
-        let arrayNotIncarUser = [];
-        let arrayIncarUser = [];
-        dataScheduleDetail.forEach((item, index) => {
-          if (
-            item.status.toLocaleUpperCase().trim() === "CHƯA LÊN XE" ||
-            item.status.toLocaleUpperCase().trim() === "ĐÃ THANH TOÁN"
-          ) {
-            countNotInCar += 1;
-            arrayNotIncarUser.push(item);
-          }
+  // useEffect(() => {
+  //   if (dataScheduleDetail.length > 0 && isDoneUpdateMapStatus) {
+  //     const findNextDestination = async () => {
+  //       let countNotInCar = 0;
+  //       let arrayNotIncarUser = [];
+  //       let arrayIncarUser = [];
+  //       dataScheduleDetail.forEach((item, index) => {
+  //         if (
+  //           item.status.toLocaleUpperCase().trim() === "CHƯA LÊN XE" ||
+  //           item.status.toLocaleUpperCase().trim() === "ĐÃ THANH TOÁN"
+  //         ) {
+  //           countNotInCar += 1;
+  //           arrayNotIncarUser.push(item);
+  //         }
 
-          if (item.status.toLocaleUpperCase().trim() === "ĐÃ LÊN XE") {
-            arrayIncarUser.push(item);
-          }
-        });
-        console.log(arrayNotIncarUser);
-        console.log(arrayIncarUser);
-        if (arrayIncarUser.length > 0 || arrayNotIncarUser.length > 0) {
-          if (countNotInCar !== 0) {
-            let oldPositionOfShortestDistance = 0;
-            let destination = "";
-            arrayNotIncarUser.forEach((item, index) => {
-              if (index === arrayNotIncarUser.length - 1) {
-                destination += item.mapPickUp;
-              } else {
-                destination += item.mapPickUp + "%7C";
-              }
-            });
-            let elementsArray = [];
-            if (currentLat && currentLong) {
-              const responseMap = await fetch(
-                `https://rsapi.goong.io/DistanceMatrix?origins=${currentLat},${currentLong}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
-              );
-              const data = await responseMap.json();
-              elementsArray = data.rows[0].elements;
-            }
-            console.log(elementsArray);
-            console.log(currentLat + "         " + currentLong);
-            console.log(destination);
-            let testArray = [];
-            elementsArray.forEach((item, index) => {
-              testArray.push(item.distance.value);
-            });
-            for (let i = 0; i < 1; i++) {
-              for (let j = i + 1; j < testArray.length; j++) {
-                if (testArray[i] > testArray[j]) {
-                  oldPositionOfShortestDistance = j;
-                  let temp = testArray[i];
-                  testArray[i] = testArray[j];
-                  testArray[j] = temp;
-                }
-              }
-            }
-            arrayNotIncarUser.forEach((item, index) => {
-              if (oldPositionOfShortestDistance === index) {
-                try {
-                  const updateStatusMap = async () => {
-                    const responseMap = await root.put(
-                      `/public/update-status-map/ticket/${item.ticketId}`,
-                      {
-                        mapStatus: "5",
-                      }
-                    );
-                    if (!responseMap.data) {
-                      console.log(
-                        "Something went wrong with call api of updateStatusMap"
-                      );
-                    }
-                  };
-                  updateStatusMap();
-                } catch (error) {
-                  console.log(error);
-                }
-              }
-            });
-          } else {
-            let oldPositionOfShortestDistance = 0;
-            let destination = "";
-            arrayIncarUser.forEach((item, index) => {
-              if (index === arrayIncarUser.length - 1) {
-                destination += item.mapDrop;
-              } else {
-                destination += item.mapDrop + "%7C";
-              }
-            });
-            let elementsArray = [];
-            if (currentLat && currentLong) {
-              const responseMap = await fetch(
-                `https://rsapi.goong.io/DistanceMatrix?origins=${currentLat},${currentLong}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
-              );
-              const data = await responseMap.json();
-              elementsArray = data.rows[0].elements;
-            }
-            console.log(elementsArray);
-            console.log(currentLat + "         " + currentLong);
-            console.log(destination);
-            let testArray = [];
-            elementsArray.forEach((item, index) => {
-              testArray.push(item.distance.value);
-            });
-            for (let i = 0; i < 1; i++) {
-              for (let j = i + 1; j < testArray.length; j++) {
-                if (testArray[i] > testArray[j]) {
-                  oldPositionOfShortestDistance = j;
-                  let temp = testArray[i];
-                  testArray[i] = testArray[j];
-                  testArray[j] = temp;
-                }
-              }
-            }
-            arrayIncarUser.forEach((item, index) => {
-              if (oldPositionOfShortestDistance === index) {
-                try {
-                  const updateStatusMap = async () => {
-                    const responseMap = await root.put(
-                      `/public/update-status-map/ticket/${item.ticketId}`,
-                      {
-                        mapStatus: "5",
-                      }
-                    );
-                    if (!responseMap.data) {
-                      console.log(
-                        "Something went wrong with call api of updateStatusMap"
-                      );
-                    }
-                  };
-                  updateStatusMap();
-                } catch (error) {
-                  console.log(error);
-                }
-              }
-            });
-          }
-        }
-      };
-      findNextDestination();
-    }
-  }, [isDoneUpdateMapStatus, dataScheduleDetail]);
+  //         if (item.status.toLocaleUpperCase().trim() === "ĐÃ LÊN XE") {
+  //           arrayIncarUser.push(item);
+  //         }
+  //       });
+  //       console.log(arrayNotIncarUser);
+  //       console.log(arrayIncarUser);
+  //       if (arrayIncarUser.length > 0 || arrayNotIncarUser.length > 0) {
+  //         if (countNotInCar !== 0) {
+  //           let oldPositionOfShortestDistance = 0;
+  //           let destination = "";
+  //           arrayNotIncarUser.forEach((item, index) => {
+  //             if (index === arrayNotIncarUser.length - 1) {
+  //               destination += item.mapPickUp;
+  //             } else {
+  //               destination += item.mapPickUp + "%7C";
+  //             }
+  //           });
+  //           let elementsArray = [];
+  //           if (currentLat && currentLong) {
+  //             const responseMap = await fetch(
+  //               `https://rsapi.goong.io/DistanceMatrix?origins=${currentLat},${currentLong}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+  //             );
+  //             const data = await responseMap.json();
+  //             elementsArray = data.rows[0].elements;
+  //           }
+  //           console.log(elementsArray);
+  //           console.log(currentLat + "         " + currentLong);
+  //           console.log(destination);
+  //           let testArray = [];
+  //           elementsArray.forEach((item, index) => {
+  //             testArray.push(item.distance.value);
+  //           });
+  //           for (let i = 0; i < 1; i++) {
+  //             for (let j = i + 1; j < testArray.length; j++) {
+  //               if (testArray[i] > testArray[j]) {
+  //                 oldPositionOfShortestDistance = j;
+  //                 let temp = testArray[i];
+  //                 testArray[i] = testArray[j];
+  //                 testArray[j] = temp;
+  //               }
+  //             }
+  //           }
+  //           arrayNotIncarUser.forEach((item, index) => {
+  //             if (oldPositionOfShortestDistance === index) {
+  //               try {
+  //                 const updateStatusMap = async () => {
+  //                   const responseMap = await root.put(
+  //                     `/public/update-status-map/ticket/${item.ticketId}`,
+  //                     {
+  //                       mapStatus: "5",
+  //                     }
+  //                   );
+  //                   if (!responseMap.data) {
+  //                     console.log(
+  //                       "Something went wrong with call api of updateStatusMap"
+  //                     );
+  //                   }
+  //                 };
+  //                 updateStatusMap();
+  //               } catch (error) {
+  //                 console.log(error);
+  //               }
+  //             }
+  //           });
+  //         } else {
+  //           let oldPositionOfShortestDistance = 0;
+  //           let destination = "";
+  //           arrayIncarUser.forEach((item, index) => {
+  //             if (index === arrayIncarUser.length - 1) {
+  //               destination += item.mapDrop;
+  //             } else {
+  //               destination += item.mapDrop + "%7C";
+  //             }
+  //           });
+  //           let elementsArray = [];
+  //           if (currentLat && currentLong) {
+  //             const responseMap = await fetch(
+  //               `https://rsapi.goong.io/DistanceMatrix?origins=${currentLat},${currentLong}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+  //             );
+  //             const data = await responseMap.json();
+  //             elementsArray = data.rows[0].elements;
+  //           }
+  //           console.log(elementsArray);
+  //           console.log(currentLat + "         " + currentLong);
+  //           console.log(destination);
+  //           let testArray = [];
+  //           elementsArray.forEach((item, index) => {
+  //             testArray.push(item.distance.value);
+  //           });
+  //           for (let i = 0; i < 1; i++) {
+  //             for (let j = i + 1; j < testArray.length; j++) {
+  //               if (testArray[i] > testArray[j]) {
+  //                 oldPositionOfShortestDistance = j;
+  //                 let temp = testArray[i];
+  //                 testArray[i] = testArray[j];
+  //                 testArray[j] = temp;
+  //               }
+  //             }
+  //           }
+  //           arrayIncarUser.forEach((item, index) => {
+  //             if (oldPositionOfShortestDistance === index) {
+  //               try {
+  //                 const updateStatusMap = async () => {
+  //                   const responseMap = await root.put(
+  //                     `/public/update-status-map/ticket/${item.ticketId}`,
+  //                     {
+  //                       mapStatus: "5",
+  //                     }
+  //                   );
+  //                   if (!responseMap.data) {
+  //                     console.log(
+  //                       "Something went wrong with call api of updateStatusMap"
+  //                     );
+  //                   }
+  //                 };
+  //                 updateStatusMap();
+  //               } catch (error) {
+  //                 console.log(error);
+  //               }
+  //             }
+  //           });
+  //         }
+  //       }
+  //     };
+  //     findNextDestination();
+  //   }
+  // }, [isDoneUpdateMapStatus, dataScheduleDetail]);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -589,15 +646,441 @@ function Schedule() {
     });
   }, []);
 
+  const getTicketByScheduleId = async () => {
+    try {
+      const response = await root.get(
+        `/public/ticket-with-schedule/${scheduleIdByRow}`
+      );
+      if (response.status === 200) {
+        const tempCorsPickUpArray = [];
+        tempCorsPickUpArray.push(`${currentLat},${currentLong}`);
+        const tempCorsDropArray = [];
+        response.data.forEach((item) => {
+          if (item.status.toLocaleUpperCase() !== "HỦY ĐẶT VÉ") {
+            tempCorsPickUpArray.push(item.mapPickUp);
+            tempCorsDropArray.push(item.mapDrop);
+          }
+        });
+        // tempCorsDropArray.unshift(
+        //   tempCorsPickUpArray[tempCorsPickUpArray.length - 1]
+        // );
+        console.log(tempCorsPickUpArray);
+        setLengthMatrixPickUp(tempCorsPickUpArray.length);
+        setLengthMatrixDrop(tempCorsDropArray.length + 1);
+        setArrayCorsPickUp(tempCorsPickUpArray);
+        setArrayCorsDrop(tempCorsDropArray);
+      } else {
+        console.log("Something went wrong with api getAllDayDataSchedule !");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (isCalculatPathMapPickUp && !hasShortestPathInDB) {
+      const newArray = [];
+      for (let i = 0; i < arrayCorsPickUp.length; i++) {
+        let subDestination = "";
+        for (let j = 0; j < arrayCorsPickUp.length; j++) {
+          if (i !== j && j !== arrayCorsPickUp.length - 1) {
+            subDestination += arrayCorsPickUp[j] + "%7C";
+          }
+          if (i !== j && j === arrayCorsPickUp.length - 1) {
+            subDestination += arrayCorsPickUp[j];
+          }
+          if (
+            i === arrayCorsPickUp.length - 1 &&
+            j === arrayCorsPickUp.length - 1
+          ) {
+            subDestination = subDestination.slice(0, subDestination.length - 3);
+          }
+        }
+        newArray.push({ start: arrayCorsPickUp[i], des: subDestination });
+      }
+      setArrayFakeAPI(newArray);
+    }
+  }, [arrayCorsPickUp, arrayCorsDrop]);
+
+  const getDistance = async (start, destination, indexCurrent) => {
+    if (isCalculatPathMapPickUp && !hasShortestPathInDB) {
+      if (currentLat && currentLong) {
+        let tempArrayDistance = [];
+        try {
+          const responseMap = await fetch(
+            `https://rsapi.goong.io/DistanceMatrix?origins=${start}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+          );
+          const data = await responseMap.json();
+          // console.log(data);
+          console.log(data.rows[0].elements);
+          if (data.rows[0].elements) {
+            data.rows[0].elements.forEach((item, index) => {
+              tempArrayDistance.push(item.distance.value);
+            });
+            tempArrayDistance = [
+              ...tempArrayDistance.slice(0, indexCurrent),
+              0,
+              ...tempArrayDistance.slice(indexCurrent),
+            ];
+          }
+        } catch (error) {
+          console.log(error);
+        }
+
+        if (tempArrayDistance.length > 0) {
+          setMatrixPickUp((prevState) => {
+            return [...prevState, tempArrayDistance];
+          });
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (isCalculatPathMapPickUp && !hasShortestPathInDB) {
+      if (arrayFakeAPI.length > 0) {
+        const interval = setInterval(() => {
+          getDistance(
+            arrayFakeAPI[currentIndex].start,
+            arrayFakeAPI[currentIndex].des,
+            currentIndex
+          );
+          setCurrentIndex((prevIndex) => {
+            if (prevIndex < arrayFakeAPI.length - 1) {
+              return prevIndex + 1;
+            } else {
+              clearInterval(interval);
+              return prevIndex;
+            }
+          });
+        }, 1300);
+
+        return () => clearInterval(interval);
+      }
+    }
+  }, [arrayFakeAPI, currentIndex]);
+
+  useEffect(() => {
+    if (
+      matrixPickUp.length === lengthMatrixPickup &&
+      isCalculatPathMapPickUp &&
+      !hasShortestPathInDB
+    ) {
+      // console.log(matrixPickUp);
+      const result = [];
+      result[0] = 0;
+      const checkTraveled = [];
+      let total = 0;
+      let bestTotal = Number.MAX_VALUE;
+      let bestResult = [];
+      for (let i = 0; i < arrayCorsPickUp.length; i++) {
+        checkTraveled[i] = false;
+      }
+      checkTraveled[0] = true;
+      // console.log(checkTraveled);
+      // console.log(arrayCorsPickUp);
+
+      const update = () => {
+        console.log(total);
+        console.log(result);
+        if (total < bestTotal) {
+          console.log("OK   " + total);
+          bestTotal = total;
+          bestResult = [];
+          for (let i = 0; i < result.length; i++) {
+            bestResult.push(result[i]);
+          }
+          console.log(bestResult + "     best choice");
+        }
+      };
+
+      const travel = (index) => {
+        if (total > bestTotal) {
+          return;
+        }
+
+        for (let i = 0; i < arrayCorsPickUp.length; i++) {
+          if (!checkTraveled[i] && matrixPickUp[result[index - 1]][i] > 0) {
+            result[index] = i;
+            checkTraveled[i] = true;
+            total += matrixPickUp[result[index - 1]][i];
+            if (index === arrayCorsPickUp.length - 1) {
+              update();
+            } else {
+              travel(index + 1);
+            }
+
+            total -= matrixPickUp[result[index - 1]][i];
+            checkTraveled[i] = false;
+          }
+        }
+      };
+
+      travel(1);
+
+      // console.log(bestResult);
+      // console.log(bestTotal);
+      bestResult.shift();
+      // let finalResult = [];
+      let tempFinalResult = "";
+      bestResult.forEach((item, index) => {
+        if (index === bestResult.length - 1) {
+          tempFinalResult += arrayCorsPickUp[item];
+          setArrayCorsDrop((prevState) => {
+            return [arrayCorsPickUp[item], ...prevState];
+          });
+        } else {
+          tempFinalResult += arrayCorsPickUp[item] + ";";
+        }
+      });
+      // bestResult.forEach((item) => {
+      //   finalResult.push(item - 1);
+      // });
+
+      setResultShortestPathPickUp(tempFinalResult);
+      setIsDonePathPickUp(true);
+      console.log("---------Done Pick UP Path----------");
+      // console.log(finalResult);
+      console.log(bestTotal);
+      console.log(tempFinalResult);
+    }
+  }, [matrixPickUp]);
+
+  useEffect(() => {
+    if (isDonePathPickUp && !hasShortestPathInDB) {
+      const newArray = [];
+      for (let i = 0; i < arrayCorsDrop.length; i++) {
+        let subDestination = "";
+        for (let j = 0; j < arrayCorsDrop.length; j++) {
+          if (i !== j && j !== arrayCorsDrop.length - 1) {
+            subDestination += arrayCorsDrop[j] + "%7C";
+          }
+          if (i !== j && j === arrayCorsDrop.length - 1) {
+            subDestination += arrayCorsDrop[j];
+          }
+          if (
+            i === arrayCorsDrop.length - 1 &&
+            j === arrayCorsDrop.length - 1
+          ) {
+            subDestination = subDestination.slice(0, subDestination.length - 3);
+          }
+        }
+        newArray.push({ start: arrayCorsDrop[i], des: subDestination });
+      }
+      setArrayFakeAPIDrop(newArray);
+    }
+  }, [isDonePathPickUp]);
+
+  const getDistanceDrop = async (start, destination, indexCurrent) => {
+    if (isDonePathPickUp && !hasShortestPathInDB) {
+      // if (currentLat && currentLong) {
+      let tempArrayDistance = [];
+      try {
+        const responseMap = await fetch(
+          `https://rsapi.goong.io/DistanceMatrix?origins=${start}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+        );
+        const data = await responseMap.json();
+        // console.log(data);
+        console.log(data.rows[0].elements);
+        if (data.rows[0].elements) {
+          data.rows[0].elements.forEach((item, index) => {
+            tempArrayDistance.push(item.distance.value);
+          });
+          tempArrayDistance = [
+            ...tempArrayDistance.slice(0, indexCurrent),
+            0,
+            ...tempArrayDistance.slice(indexCurrent),
+          ];
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
+      if (tempArrayDistance.length > 0) {
+        setMatrixDrop((prevState) => {
+          return [...prevState, tempArrayDistance];
+        });
+      }
+      // }
+    }
+  };
+
+  useEffect(() => {
+    if (isDonePathPickUp && !hasShortestPathInDB) {
+      if (arrayFakeAPIDrop.length > 0) {
+        const interval = setInterval(() => {
+          getDistanceDrop(
+            arrayFakeAPIDrop[currentIndexDrop].start,
+            arrayFakeAPIDrop[currentIndexDrop].des,
+            currentIndexDrop
+          );
+          setCurrentIndexDrop((prevIndex) => {
+            if (prevIndex < arrayFakeAPIDrop.length - 1) {
+              return prevIndex + 1;
+            } else {
+              clearInterval(interval);
+              return prevIndex;
+            }
+          });
+        }, 1300);
+
+        return () => clearInterval(interval);
+      }
+    }
+  }, [arrayFakeAPIDrop, currentIndexDrop]);
+
+  useEffect(() => {
+    if (
+      matrixDrop.length === lengthMatrixDrop &&
+      isDonePathPickUp &&
+      !hasShortestPathInDB
+    ) {
+      // console.log(matrixPickUp);
+      const result = [];
+      result[0] = 0;
+      const checkTraveled = [];
+      let total = 0;
+      let bestTotal = Number.MAX_VALUE;
+      let bestResult = [];
+      for (let i = 0; i < arrayCorsDrop.length; i++) {
+        checkTraveled[i] = false;
+      }
+      checkTraveled[0] = true;
+      // console.log(checkTraveled);
+      // console.log(arrayCorsPickUp);
+
+      const update = () => {
+        console.log(total);
+        console.log(result);
+        if (total < bestTotal) {
+          console.log("OK   " + total);
+          bestTotal = total;
+          bestResult = [];
+          for (let i = 0; i < result.length; i++) {
+            bestResult.push(result[i]);
+          }
+          console.log(bestResult + "     best choice");
+        }
+      };
+
+      const travel = (index) => {
+        if (total > bestTotal) {
+          return;
+        }
+
+        for (let i = 0; i < arrayCorsDrop.length; i++) {
+          if (!checkTraveled[i] && matrixDrop[result[index - 1]][i] > 0) {
+            result[index] = i;
+            checkTraveled[i] = true;
+            total += matrixDrop[result[index - 1]][i];
+            if (index === arrayCorsDrop.length - 1) {
+              update();
+            } else {
+              travel(index + 1);
+            }
+
+            total -= matrixDrop[result[index - 1]][i];
+            checkTraveled[i] = false;
+          }
+        }
+      };
+
+      travel(1);
+
+      // console.log(bestResult);
+      // console.log(bestTotal);
+      // bestResult.shift();
+      // let finalResult = [];
+      // bestResult.forEach((item) => {
+      //   finalResult.push(item - 1);
+      // });
+      // setResultShortestPathDrop(finalResult);
+      // setIsDonePathPickUp(true);
+      let tempFinalResult = "";
+      bestResult.forEach((item, index) => {
+        if (index === bestResult.length - 1) {
+          tempFinalResult += arrayCorsDrop[item];
+        } else {
+          tempFinalResult += arrayCorsDrop[item] + ";";
+        }
+      });
+
+      setResultShortestPathDrop(tempFinalResult);
+      setIsDonePathDrop(true);
+      console.log("---------Done Drop Off Path----------");
+      // console.log(finalResult);
+      console.log(bestTotal);
+      console.log(tempFinalResult);
+    }
+  }, [matrixDrop]);
+
+  useEffect(() => {
+    if (
+      isDonePathDrop &&
+      resultShortestPathDrop &&
+      resultShortestPathPickUp &&
+      !hasShortestPathInDB
+    ) {
+      try {
+        const saveAllPathToDB = async () => {
+          const response = await root.post("/driver/move-order", {
+            pickupOrder: resultShortestPathPickUp,
+            dropoffOrder: resultShortestPathDrop,
+            scheduleId: scheduleIdByRow,
+          });
+          console.log(response);
+        };
+        saveAllPathToDB();
+
+        //   const [isCalculatPathMapPickUp, setIsCalculatePathMapPickUp] =
+        //   useState(false);
+        // const [arrayFakeAPI, setArrayFakeAPI] = useState([]);
+        // const [arrayFakeAPIDrop, setArrayFakeAPIDrop] = useState([]);
+        // const [matrixPickUp, setMatrixPickUp] = useState([]);
+        // const [matrixDrop, setMatrixDrop] = useState([]);
+        // const [resultShortestPathPickUp, setResultShortestPathPickUp] = useState("");
+        // const [resultShortestPathDrop, setResultShortestPathDrop] = useState("");
+        // const [currentIndex, setCurrentIndex] = useState(0);
+        // const [currentIndexDrop, setCurrentIndexDrop] = useState(0);
+        // const [lengthMatrixPickup, setLengthMatrixPickUp] = useState(0);
+        // const [lengthMatrixDrop, setLengthMatrixDrop] = useState(0);
+        // const [isDonePathPickUp, setIsDonePathPickUp] = useState(false);
+        // const [isDonePathDrop, setIsDonePathDrop] = useState(false);
+        // const [hasShortestPathInDB, setHasShortestPathInDB] = useState(true);
+        setIsCalculatePathMapPickUp(false);
+        setArrayFakeAPI([]);
+        setArrayFakeAPIDrop([]);
+        setMatrixPickUp([]);
+        setMatrixDrop([]);
+        setResultShortestPathPickUp("");
+        setResultShortestPathDrop("");
+        setCurrentIndex(0);
+        setCurrentIndexDrop(0);
+        setLengthMatrixPickUp(0);
+        setLengthMatrixDrop(0);
+        setIsDonePathPickUp(false);
+        setIsDonePathDrop(false);
+        setHasShortestPathInDB(true);
+        setArrayCorsPickUp([]);
+        setArrayCorsDrop([]);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [isDonePathDrop]);
+
   const handleUpdateSchedule = async () => {
     if (updateAnyWay) {
       const url = "driver/update-status-schedule";
       try {
-        const response = await root.put(url, {
-          status: statusSchedule,
-          schduleId: scheduleIdByRow,
-        });
-        if (response.data) {
+        // const response = await root.put(url, {
+        //   status: statusSchedule,
+        //   schduleId: scheduleIdByRow,
+        // });
+        const response = await root.put(
+          `${url}?scheduleId=${scheduleIdByRow}&status=${statusSchedule}`
+        );
+        if (response.status === 200) {
           fetchDataSchedule();
           SetUpdateAnyWay(false);
           notifyScucessUpadte();
@@ -614,7 +1097,11 @@ function Schedule() {
         notifyWarningUpdate();
       } else {
         const date = new Date();
-        if (date.getHours() + date.getMinutes() / 60 < +startHourSchedule) {
+        const currentDate = new Date();
+        const targetDate = new Date(startTimeSchedule);
+        if (
+          ~~(targetDate.getTime() / 60000) >= ~~(currentDate.getTime() / 60000)
+        ) {
           console.log(date.getHours() + date.getMinutes() / 60);
           console.log(+startHourSchedule);
           notifyErrorUpdateSchedule();
@@ -630,13 +1117,55 @@ function Schedule() {
             ) {
               const url = "driver/update-status-schedule";
               try {
-                const response = await root.put(url, {
-                  status: statusSchedule,
-                  schduleId: scheduleIdByRow,
-                });
-                if (response.data) {
+                // const response = await root.put(url, {
+                //   status: statusSchedule,
+                //   schduleId: scheduleIdByRow,
+                // });
+                const response = await root.put(
+                  `${url}?scheduleId=${scheduleIdByRow}&status=${statusSchedule}`
+                );
+                console.log(response);
+                if (response.status === 200) {
                   fetchDataSchedule();
                   setCheckDoubleRunningSchedule(false);
+                  if (statusSchedule.toLocaleUpperCase() === "ĐANG CHẠY") {
+                    try {
+                      const responseMoveOrder = await root.get(
+                        `/driver/move-order-schedule/${scheduleIdByRow}`
+                      );
+                      if (responseMoveOrder.status === 200) {
+                        setHasShortestPathInDB(true);
+                        console.log("OK 123");
+                      }
+                    } catch (error) {
+                      if (error.status === 404) {
+                        try {
+                          const responseTicket = await root.get(
+                            `/public/ticket-with-schedule/${scheduleIdByRow}`
+                          );
+                          if (responseTicket.status === 200) {
+                            let count = 0;
+                            responseTicket.data.forEach((item) => {
+                              if (
+                                item.status.toLocaleUpperCase() !== "HỦY ĐẶT VÉ"
+                              ) {
+                                count += 1;
+                              }
+                            });
+                            if (count > 0) {
+                              getTicketByScheduleId();
+                              setHasShortestPathInDB(false);
+                              setIsCalculatePathMapPickUp(true);
+                            }
+                            console.log(responseTicket);
+                          }
+                        } catch (error) {
+                          console.log(error);
+                        }
+                      }
+                      console.log(error);
+                    }
+                  }
                   notifyScucessUpadte();
                 } else {
                   console.log(
@@ -663,6 +1192,41 @@ function Schedule() {
     }
   }, [updateAnyWay]);
 
+  // useEffect(() => {
+  //   if (checkRunningUpdatedStatus) {
+  //     getAllDayDataSchedule();
+  //   }
+  // }, [checkRunningUpdatedStatus])
+
+  const handleCancelSchedule = async () => {
+    const currentDate = new Date();
+    const targetDate = new Date(startTimeSchedule.toString());
+    const twentyFourHoursInMin = 24 * 60;
+    if (
+      ~~(targetDate.getTime() / 60000 - twentyFourHoursInMin) >=
+      ~~(currentDate.getTime() / 60000)
+    ) {
+      // alert("OK");
+      try {
+        const response = await root.put(
+          `driver/update-remove-schedule?scheduleId=${scheduleIdByRow}`
+        );
+        if (response.status === 200) {
+          console.log(response);
+          setToggleCancelModal(false);
+          notifyCancelScheduleSuccess();
+          fetchDataSchedule();
+        } else {
+          console.log("Something went worng with api handleCancelSchedule");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      notifyErrorCancelSchedule();
+    }
+  };
+
   const showPopUpDetailData = (rowData) => {
     setStatusUSer("");
     setStatusSchedule("");
@@ -679,46 +1243,102 @@ function Schedule() {
     setRowDataPopUp(rowDataArray);
   };
 
-  const changeDataSchedule = () => {
-    const tempArray = dataSchedule.map((item, index) => ({
-      ...item,
-      detail: (
-        <Button
-          style={{ width: "75px", fontSize: "9px" }}
-          variant="contained"
-          onClick={(e) => {
-            setDataScheduleDetail([]);
-            setIdSchedule(item.id);
-            fetchDataScheduleDetail(item.id);
-            CheckIsScheduleComplete(item.id);
-            setCheckDoubleRunningSchedule(false);
-            setIsClickDetail(true);
-          }}
-        >
-          Xem Chi Tiết
-        </Button>
-      ),
+  const showPopUpDetailDataSchedule = (rowData) => {
+    setStatusUSer("");
+    setStatusSchedule("");
+    let count = 1;
+    let rowDataArray = [];
+    rowData.childNodes.forEach((item, index) => {
+      if (count <= 6) {
+        rowDataArray.push(item.innerText);
+        count += 1;
+      } else {
+        return;
+      }
+    });
+    setRowDataSchedulePopUp(rowDataArray);
+  };
 
-      update: (
-        <Button
-          style={{ width: "75px", fontSize: "9px" }}
-          variant="contained"
-          onClick={(e) => {
-            setToggleModal(true);
-            showPopUpDetailData(
-              e.target.parentElement.parentElement.parentElement
-            );
-            checkAllowUpdateFunc(item.id);
-            checkDoubleRunningScheduleFunc();
-            getStartHourByScheduleRow(item.id);
-            setScheduleIdByRow(item.id);
-          }}
-          disabled={item.status.toLocaleUpperCase() === "ĐÃ HOÀN THÀNH"}
-        >
-          Cập Nhật
-        </Button>
-      ),
-    }));
+  const changeDataSchedule = () => {
+    const tempArray = dataSchedule.map((item, index) => {
+      const currentDate = new Date();
+      const targetDate = new Date(item.startTime.toString());
+      const twentyFourHoursInMin = 24 * 60;
+      let isDisplayCancelBtn = false;
+      if (
+        ~~(targetDate.getTime() / 60000 - twentyFourHoursInMin) >=
+        ~~(currentDate.getTime() / 60000)
+      ) {
+        isDisplayCancelBtn = true;
+      } else {
+        isDisplayCancelBtn = false;
+      }
+      return {
+        ...item,
+        detail: (
+          <Button
+            style={{ width: "75px", fontSize: "9px" }}
+            variant="contained"
+            onClick={(e) => {
+              setDataScheduleDetail([]);
+              setIdSchedule(item.id);
+              fetchDataScheduleDetail(item.id);
+              CheckIsScheduleComplete(item.id);
+              setCheckDoubleRunningSchedule(false);
+              setIsClickDetail(true);
+            }}
+          >
+            Xem Chi Tiết
+          </Button>
+        ),
+
+        update: (
+          <Button
+            style={{ width: "75px", fontSize: "9px" }}
+            variant="contained"
+            onClick={(e) => {
+              setToggleModal(true);
+              showPopUpDetailData(
+                e.target.parentElement.parentElement.parentElement
+              );
+              checkAllowUpdateFunc(item.id);
+              checkDoubleRunningScheduleFunc();
+              getStartHourByScheduleRow(item.id);
+              setScheduleIdByRow(item.id);
+              setStartTimeSchedule(item.startTime);
+              navigator.geolocation.getCurrentPosition((position) => {
+                setCurrentLat(position.coords.latitude);
+                setCurrentLong(position.coords.longitude);
+              });
+            }}
+            disabled={item.status.toLocaleUpperCase() === "ĐÃ HOÀN THÀNH"}
+          >
+            Cập Nhật
+          </Button>
+        ),
+
+        cancel: isDisplayCancelBtn ? (
+          <Button
+            style={{ width: "75px", fontSize: "9px" }}
+            variant="contained"
+            onClick={(e) => {
+              setScheduleIdByRow(item.id);
+              setToggleCancelModal(true);
+              showPopUpDetailDataSchedule(
+                e.target.parentElement.parentElement.parentElement
+              );
+              setStartTimeSchedule(item.startTime);
+              // handleCancelSchedule(item.startTime, item.id);
+            }}
+            // disabled={item.status.toLocaleUpperCase() === "ĐÃ HOÀN THÀNH"}
+          >
+            Hủy Chuyến
+          </Button>
+        ) : (
+          ""
+        ),
+      };
+    });
 
     setDataScheduleFinal(tempArray);
   };
@@ -843,6 +1463,32 @@ function Schedule() {
       }
     );
 
+  const notifyErrorCancelSchedule = () =>
+    toast.error("Không Thể Hủy Lịch Trình Sau 24 Giờ Thời Gian Khởi Hành !", {
+      position: "bottom-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+
+  const notifyCancelScheduleSuccess = () =>
+    toast.success("Hủy Lịch Trình Thành Công", {
+      position: "bottom-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+
   const handleApply = () => {
     notifyScucessApply();
   };
@@ -878,9 +1524,49 @@ function Schedule() {
     }
   }, [currentLat, currentLong]);
 
+  useEffect(() => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    const dayThree = new Date(today);
+    dayThree.setDate(today.getDate() + 2);
+
+    setFirstDay(
+      today.getFullYear() +
+        "-" +
+        String(today.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(today.getDate()).padStart(2, "0")
+    );
+
+    setSecondDay(
+      tomorrow.getFullYear() +
+        "-" +
+        String(tomorrow.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(tomorrow.getDate()).padStart(2, "0")
+    );
+
+    setThirdDay(
+      dayThree.getFullYear() +
+        "-" +
+        String(dayThree.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(dayThree.getDate()).padStart(2, "0")
+    );
+
+    setDateDropDown(
+      today.getFullYear() +
+        "-" +
+        String(today.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(today.getDate()).padStart(2, "0")
+    );
+  }, []);
+
   return (
     <div className={styles.schdule}>
-      <button>Generate Schedule Map</button>
+      {/* <button onClick={checkDate}>Generate Schedule Map</button> */}
       {isClickDetail ? (
         <div className="schedule_detail">
           <h1>Lịch Trình Cụ Thể </h1>
@@ -1063,7 +1749,40 @@ function Schedule() {
         <div className="schedule">
           <h1>Lịch Trình</h1>
           {/* <DataTable columns={columns} data={dataScheduleFinal}></DataTable> */}
+          <FormControl style={{ width: "200px" }}>
+            <InputLabel id="demo-simple-select-label">
+              Lịch Trình Trong Ngày
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={dateDropDown}
+              label="Lịch Trình Trong Ngày"
+              onChange={(e) => {
+                // setStatusUSer(e.target.value);
+                setDateDropDown(e.target.value);
+              }}
+            >
+              <MenuItem value={firstDay}>{firstDay}</MenuItem>
+              <MenuItem value={secondDay}>{secondDay}</MenuItem>
+              <MenuItem value={thirdDay}>{thirdDay}</MenuItem>
+            </Select>
+          </FormControl>
           <DataTable columns={columns} data={dataScheduleFinal}></DataTable>
+          {isCalculatPathMapPickUp ? (
+            <div className={styles.modal}>
+              <div className={styles.overlay}></div>
+              <div className={styles.modal_content}>
+                <h3>
+                  Hệ Thống Đang Tính Đường Đi Ngắn Nhất. Vui Lòng Chờ Trong Giây
+                  Lát... !
+                </h3>
+                <img src={wating} alt="waiting" />
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
           {toggleModal ? (
             <div className={styles.modal}>
               <div
@@ -1268,6 +1987,97 @@ function Schedule() {
           ) : (
             ""
           )}
+
+          {toggleCancelModal ? (
+            <div className={styles.modal}>
+              <div
+                className={styles.overlay}
+                onClick={() => {
+                  setToggleCancelModal(false);
+                }}
+              ></div>
+              <div className={styles.modal_content}>
+                <ul>
+                  <li>
+                    <h4>
+                      Điểm Khởi Hành:{" "}
+                      <span className={styles.content_popup}>
+                        {rowDataSchedulePopUp[0]}{" "}
+                      </span>
+                    </h4>
+                  </li>
+                  <li>
+                    <h4>
+                      Điểm Đến:{" "}
+                      <span className={styles.content_popup}>
+                        {" "}
+                        {rowDataSchedulePopUp[1]}{" "}
+                      </span>{" "}
+                    </h4>
+                  </li>
+                  <li>
+                    <h4>
+                      Giờ Khởi Hành:{" "}
+                      <span className={styles.content_popup}>
+                        {rowDataSchedulePopUp[2]}
+                      </span>{" "}
+                    </h4>
+                  </li>
+                  <li>
+                    <h4>
+                      Loại Xe:{" "}
+                      <span className={styles.content_popup}>
+                        {" "}
+                        {rowDataSchedulePopUp[3]}{" "}
+                      </span>{" "}
+                    </h4>
+                  </li>
+                  <li>
+                    <h4>
+                      Biển Số Xe:{" "}
+                      <span className={styles.content_popup}>
+                        {" "}
+                        {rowDataSchedulePopUp[4]}{" "}
+                      </span>{" "}
+                    </h4>
+                  </li>
+                  <li>
+                    <h4>
+                      Trạng Thái:{" "}
+                      <span className={styles.content_popup}>
+                        {" "}
+                        {rowDataSchedulePopUp[5]}{" "}
+                      </span>{" "}
+                    </h4>
+                  </li>
+                  <li style={{ listStyle: "none" }}>
+                    <h4>Bạn Có Chắc Chắn Muốn Hủy Chạy Chuyến này Không ?</h4>
+                  </li>
+                  <li style={{ listStyle: "none" }}>
+                    <Button
+                      variant="contained"
+                      style={{ fontSize: "11px" }}
+                      onClick={(e) => {
+                        handleCancelSchedule(e);
+                      }}
+                    >
+                      Xác Nhận
+                    </Button>
+                  </li>
+                </ul>
+
+                <HighlightOffIcon
+                  className={styles.close_modal}
+                  onClick={() => {
+                    setToggleCancelModal(false);
+                  }}
+                />
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
+
           <ToastContainer
             position="bottom-right"
             autoClose={1500}
