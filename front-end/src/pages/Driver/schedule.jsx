@@ -998,10 +998,14 @@ function Schedule() {
       // setIsDonePathPickUp(true);
       let tempFinalResult = "";
       bestResult.forEach((item, index) => {
-        if (index === bestResult.length - 1) {
-          tempFinalResult += arrayCorsDrop[item];
+        if (index === 0) {
+          tempFinalResult += arrayCorsDrop[item] + "/";
         } else {
-          tempFinalResult += arrayCorsDrop[item] + ";";
+          if (index === bestResult.length - 1) {
+            tempFinalResult += arrayCorsDrop[item];
+          } else {
+            tempFinalResult += arrayCorsDrop[item] + ";";
+          }
         }
       });
 

@@ -109,6 +109,7 @@ function Parking() {
   const [parking, setParking] = useState("");
   const [parkingId, setParkingId] = useState("");
   const [isClickConfirm, setIsClickConfirm] = useState(false);
+  const [scheduleId, setScheduleId] = useState("");
   const changeDataParking = () => {
     const updatedData = dataParking.map((item) => ({
       ...item,
@@ -186,17 +187,80 @@ function Parking() {
     });
   };
 
-  const hanldeConfirm = async () => {
-    if (isParkingEmpty) {
-      const url = "driver/update-parking";
-      try {
-        const response = await root.post(url, {
-          accountId: localStorage.getItem("userId"),
-          parkingId: parkingId,
+  const getAllDataschedule = async () => {
+    const driverId = localStorage.getItem("userId");
+    try {
+      const response = await root.get(
+        `/driver/driver-schedule?accountId=${driverId}`
+      );
+      if (response.status === 200) {
+        response.data.forEach((item) => {
+          if (item.status.toLocaleUpperCase() === "ĐANG CHẠY") {
+            setScheduleId(item.id);
+            setCurrentDestination(item.stopLocation);
+            return;
+          }
         });
-        if (response.data) {
+      } else {
+        console.log("Something went wrong with api getAllDataschedule !");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getAllDataschedule();
+  }, []);
+
+  useEffect(() => {
+    if (scheduleId) {
+      getScheduleByID();
+    }
+  }, [scheduleId]);
+
+  const getScheduleByID = async () => {
+    try {
+      const response = await root.get(`/public/schedule/${scheduleId}`);
+      if (response.status === 200) {
+        setCarId(response.data.idCar);
+      } else {
+        console.log("Something went wrong with api getScheduleByID !");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (carId) {
+      try {
+        const getCarById = async () => {
+          const response = await root.get(`public/car/${carId}`);
+          if (response.status === 200) {
+            setAddressParkingRes(response.data.parking.location);
+            setNameParkingRes(response.data.parking.name);
+          } else {
+            console.log("Something went wrong with api getCarById !");
+          }
+        };
+        getCarById();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [carId]);
+
+  const handleConfirm = async () => {
+    if (isParkingEmpty) {
+      const url = `driver/update-parking?carId=${carId}&parkingId=${parkingId}`;
+      try {
+        const response = await root.put(url);
+        console.log(response);
+        if (response.status === 200) {
+          setAddressParkingRes(response.data.parking.location);
+          setNameParkingRes(response.data.parking.name);
           fetchData();
-          fetchCurrentScheduleData();
           notifyScucessConfirm();
           setToggleModal(false);
         } else {
@@ -366,31 +430,6 @@ function Parking() {
     }
   };
 
-  const fetchCurrentScheduleData = async () => {
-    const url = "/driver/find-schedule";
-    try {
-      const response = await root.get(
-        `${url}/${localStorage.getItem("userId")}`
-      );
-      if (response.data) {
-        setCurrentDestination(response.data.route.stopLocation);
-        setCarId(response.data.car.carId);
-        setNameParkingRes(response.data.car.parking.name);
-        setAddressParkingRes(response.data.car.parking.location);
-      } else {
-        console.log(
-          "Something went wrong when call api for fetchCurrentScheduleData function"
-        );
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchCurrentScheduleData();
-  }, []);
-
   useEffect(() => {
     if (
       currentDestination !== "" &&
@@ -439,11 +478,6 @@ function Parking() {
       classifyDataParking();
     }
   }, [allDataParkings]);
-
-  const getParkingById = async () => {
-    const url = "/driver/parking/";
-    // const response = root.get
-  };
 
   const generateDataTable = (addressOption) => {
     if (addressOption.toLocaleUpperCase() === "ĐÀ NẴNG") {
@@ -644,7 +678,7 @@ function Parking() {
                 variant="contained"
                 onClick={() => {
                   setIsClickConfirm(true);
-                  hanldeConfirm();
+                  handleConfirm();
                 }}
               >
                 Xác Nhận
