@@ -15,7 +15,7 @@ const BookingTicket = () => {
   const [schedule, setSchedule] = useState(null);
   const [routeDetail, setRouteDetail] = useState(null);
   const [carDetail, setCarDetail] = useState(null);
-
+  console.log("««««« schedule »»»»»", schedule);
   const carRouteId = selectedRoute;
   // selectedRoute là routeId
   // selectedCar là carId
@@ -49,11 +49,11 @@ const BookingTicket = () => {
   useEffect(() => {
     const fetchCarsByRouteAndTime = async () => {
       if (!startTime || !selectedRoute) {
-        return; 
+        return;
       }
-  
+
       try {
-        setLoading(true); 
+        setLoading(true);
         const response = await fetch(
           `http://localhost:9000/public/find-car?idRoute=${selectedRoute}&time=${startTime}`
         );
@@ -61,18 +61,18 @@ const BookingTicket = () => {
           throw new Error("Không thể lấy danh sách xe khả dụng");
         }
         const data = await response.json();
-        setCars(data); 
+        console.log("««««« data »»»»»", data);
+        setCars(data);
       } catch (error) {
         console.error("Lỗi khi gọi API:", error);
         setError("Không thể lấy danh sách xe. Vui lòng thử lại!");
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
-  
+
     fetchCarsByRouteAndTime();
   }, [startTime, selectedRoute]);
-  
 
   // start detail
   useEffect(() => {
@@ -110,6 +110,61 @@ const BookingTicket = () => {
   // End detail
 
   // Hàm gọi API để tạo/lấy lịch trình
+  // useEffect(() => {
+  //   const handleScheduleUpdate = async () => {
+  //     if (!startTime || !selectedRoute || !selectedCar) {
+  //       return;
+  //     }
+
+  //     setLoading(true);
+  //     setError("");
+
+  //     let newSchedule = null;
+
+  //     try {
+  //       // Gọi API tạo/lấy lịch trình mới
+  //       const response = await fetch(
+  //         "http://localhost:9000/public/create-or-find",
+  //         {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             startTime,
+  //             routeId: selectedRoute,
+  //             carId: selectedCar,
+  //           }),
+  //         }
+  //       );
+
+  //       if (!response.ok) {
+  //         throw new Error("Không thể tạo/lấy lịch trình!");
+  //       }
+
+  //       newSchedule = await response.json();
+
+  //       // Nếu lịch trình cũ tồn tại, gọi API DELETE
+  //       if (schedule && schedule.id) {
+  //         await fetch(`http://localhost:9000/public/schedule/${schedule.id}`, {
+  //           method: "DELETE",
+  //         });
+  //       }
+
+  //       // Cập nhật lịch trình mới
+  //       setSchedule(newSchedule);
+  //     } catch (error) {
+  //       console.error("Lỗi khi gọi API:", error);
+  //       setError("Không thể cập nhật lịch trình!");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   handleScheduleUpdate();
+  // }, [startTime, selectedRoute, selectedCar]);
+
+  // Xóa lịch
   useEffect(() => {
     const findOrCreateSchedule = async () => {
       if (!startTime || !selectedRoute || !selectedCar) {
@@ -120,6 +175,14 @@ const BookingTicket = () => {
       setError("");
 
       try {
+        // Nếu đã có schedule trước đó, gọi API delete trước khi tạo mới
+        if (schedule && schedule.id) {
+          await fetch(`http://localhost:9000/public/schedule/${schedule.id}`, {
+            method: "DELETE",
+          });
+        }
+
+        // Gọi API tạo/lấy lịch trình mới
         const response = await fetch(
           "http://localhost:9000/public/create-or-find",
           {
@@ -135,8 +198,12 @@ const BookingTicket = () => {
           }
         );
 
+        if (!response.ok) {
+          throw new Error("Không thể tạo/lấy lịch trình!");
+        }
+
         const data = await response.json();
-        setSchedule(data);
+        setSchedule(data); // Cập nhật lịch trình mới
       } catch (error) {
         console.error("Lỗi khi gọi API:", error);
         setError("Không thể lấy thông tin lịch trình!");
@@ -320,22 +387,20 @@ const BookingTicket = () => {
             <div className={styles.bookingPage__tickets__wrap}>
               {schedule ? (
                 <>
-                <div>
-                xin chào
-                </div>
-                <SeatMap
-                  priceOfSeat={schedule.price}
-                  car={selectedCarSeatMap}
-                  carRouteId={carRouteId}
-                  scheduleId={schedule.id}
-                  startTime={schedule.startTime}
-                  startLocation={schedule.startLocation}
-                  stopLocation={schedule.stopLocation}
-                  selectedRoute={selectedRoute}
-                  selectedCar={selectedCar}
-                  routeDetail={routeDetail}
-                  carDetail={carDetail}
-                /> 
+                  <div>xin chào</div>
+                  <SeatMap
+                    priceOfSeat={schedule.price}
+                    car={selectedCarSeatMap}
+                    carRouteId={carRouteId}
+                    scheduleId={schedule.id}
+                    startTime={schedule.startTime}
+                    startLocation={schedule.startLocation}
+                    stopLocation={schedule.stopLocation}
+                    selectedRoute={selectedRoute}
+                    selectedCar={selectedCar}
+                    routeDetail={routeDetail}
+                    carDetail={carDetail}
+                  />
                 </>
               ) : (
                 // <p>Chưa có lịch trình.</p>

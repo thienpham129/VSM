@@ -41,7 +41,7 @@ function BookingForm({
   const [note, setNote] = useState("");
   const [detailAddressToPickUp, setDetailAddressToPickUp] = useState("");
   const [detailAddressDropOff, setDetailAddressDropOff] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("vietQR");
+  const [paymentMethod, setPaymentMethod] = useState("VNPay");
   const [selectedSeat, setSelectedSeat] = useState([]);
   const [errors, setErrors] = useState({});
   const [ticketId, setTicketId] = useState(null);

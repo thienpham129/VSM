@@ -43,7 +43,7 @@ const SeatMapMobile = ({
   const [note, setNote] = useState("");
   const [detailAddressToPickUp, setDetailAddressToPickUp] = useState("");
   const [detailAddressDropOff, setDetailAddressDropOff] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("vietQR");
+  const [paymentMethod, setPaymentMethod] = useState("VNPay");
   const [selectedSeat, setSelectedSeat] = useState(0);
   const [errors, setErrors] = useState({});
 
