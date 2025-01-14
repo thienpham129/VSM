@@ -79,6 +79,8 @@ function Schedule() {
   const [isDonePathPickUp, setIsDonePathPickUp] = useState(false);
   const [isDonePathDrop, setIsDonePathDrop] = useState(false);
   const [hasShortestPathInDB, setHasShortestPathInDB] = useState(true);
+  const [pickUpOrder, setPickUpOrder] = useState("");
+  const [dropOrder, setDropOder] = useState("");
   // const [phase, setPhase] = useState(1);
 
   // const [checkRunningUpdatedStatus, setCheckRunningUpdatedStatus] =
@@ -822,20 +824,24 @@ function Schedule() {
       // console.log(bestTotal);
       bestResult.shift();
       // let finalResult = [];
+      let tempOrderPickUp = "";
       let tempFinalResult = "";
       bestResult.forEach((item, index) => {
         if (index === bestResult.length - 1) {
           tempFinalResult += arrayCorsPickUp[item];
+          tempOrderPickUp += item;
           setArrayCorsDrop((prevState) => {
             return [arrayCorsPickUp[item], ...prevState];
           });
         } else {
           tempFinalResult += arrayCorsPickUp[item] + ";";
+          tempOrderPickUp += item + ",";
         }
       });
       // bestResult.forEach((item) => {
       //   finalResult.push(item - 1);
       // });
+      tempFinalResult = tempFinalResult + "!" + tempOrderPickUp;
 
       setResultShortestPathPickUp(tempFinalResult);
       setIsDonePathPickUp(true);
@@ -997,17 +1003,21 @@ function Schedule() {
       // setResultShortestPathDrop(finalResult);
       // setIsDonePathPickUp(true);
       let tempFinalResult = "";
+      let tempOrderDrop = "";
       bestResult.forEach((item, index) => {
         if (index === 0) {
           tempFinalResult += arrayCorsDrop[item] + "/";
         } else {
           if (index === bestResult.length - 1) {
             tempFinalResult += arrayCorsDrop[item];
+            tempOrderDrop += item;
           } else {
             tempFinalResult += arrayCorsDrop[item] + ";";
+            tempOrderDrop += item + ",";
           }
         }
       });
+      tempFinalResult = tempFinalResult + "!" + tempOrderDrop;
 
       setResultShortestPathDrop(tempFinalResult);
       setIsDonePathDrop(true);
@@ -1942,7 +1952,11 @@ function Schedule() {
                 ))}
                 <ul style={{ listStyle: "none" }}>
                   <li>
-                    <h4>Bạn Vẫn Muốn Cập Nhật Lịch Trình Này Chứ ?</h4>
+                    {/* <h4>Bạn Vẫn Muốn Cập Nhật Lịch Trình Này Chứ ?</h4> */}
+                    <h4>
+                      Hãy Cập Nhật Đúng Trạng Thái Của Khách Hàng Trước Khi Hoàn
+                      Thành Chuyến Xe !
+                    </h4>
                   </li>
                 </ul>
 
@@ -1954,7 +1968,7 @@ function Schedule() {
                     alignItems: "center",
                   }}
                 >
-                  <Button
+                  {/* <Button
                     variant="contained"
                     style={{ fontSize: "11px", marginRight: "10px" }}
                     onClick={(e) => {
@@ -1966,7 +1980,7 @@ function Schedule() {
                     }}
                   >
                     Cập Nhật
-                  </Button>
+                  </Button> */}
 
                   <Button
                     variant="contained"

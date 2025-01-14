@@ -12,9 +12,11 @@ mapboxgl.accessToken = GOONG_MAPS_TILE_API_KEY;
 const GoongMapWithDirections = ({
   origin,
   destination,
-  userName,
-  userAddress,
-  userPhone,
+  arrayPopUpInfor,
+  status,
+  // userName,
+  // userAddress,
+  // userPhone,
 }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -35,15 +37,21 @@ const GoongMapWithDirections = ({
   }, []);
 
   useEffect(() => {
-    if (!origin || !destination || !map.current) return;
+    console.log(arrayPopUpInfor);
+  }, [arrayPopUpInfor]);
+
+  useEffect(() => {
+    if (!origin || !destination || !map.current || arrayPopUpInfor.length === 0)
+      return;
 
     const fetchDirections = async () => {
       let popUpText = "";
-      if (userName && userAddress && userPhone) {
-        popUpText = `Tên: ${userName}<br/>
-                     SĐT: ${userPhone}<br/>
-                     ĐC: ${userAddress}<br/>`;
-      }
+      // if (userName && userAddress && userPhone) {
+      //   popUpText = `Tên: ${userName}<br/>
+      //                SĐT: ${userPhone}<br/>
+      //                ĐC: ${userAddress}<br/>`;
+      // }
+      // alert(pickUpInforArray);
       try {
         const response = await fetch(
           `https://rsapi.goong.io/Direction?origin=${origin}&destination=${destination}&vehicle=car&api_key=${GOONG_MAPS_API_KEY}`
@@ -98,47 +106,90 @@ const GoongMapWithDirections = ({
               });
             }
 
-            new mapboxgl.Marker({ color: "green" }) // Green marker for the origin
-              .setLngLat([origin.split(",")[1], origin.split(",")[0]])
-              .setPopup(
-                new mapboxgl.Popup({ offset: 25 }).setText("Điểm Bắt Đầu")
-              )
-              .addTo(map.current);
+            if (status === "1" || status === "0") {
+              new mapboxgl.Marker({ color: "green" }) // Green marker for the origin
+                .setLngLat([origin.split(",")[1], origin.split(",")[0]])
+                .setPopup(
+                  new mapboxgl.Popup({ offset: 25 }).setText("Điểm Bắt Đầu")
+                )
+                .addTo(map.current);
+            }
             const destinations = destination.split(";");
+            if (status === "0") {
+              destinations.forEach((dest, index) => {
+                const [lat, lng] = dest.split(",").map(Number); // Ensure values are numbers
+                if (!isNaN(lat) && !isNaN(lng)) {
+                  const markerElement = document.createElement("div");
+                  markerElement.style.backgroundColor = "red";
+                  markerElement.style.color = "white";
+                  markerElement.style.width = "40px";
+                  markerElement.style.height = "40px";
+                  markerElement.style.borderRadius = "50%";
+                  markerElement.style.display = "flex";
+                  markerElement.style.justifyContent = "center";
+                  markerElement.style.alignItems = "center";
+                  markerElement.style.fontWeight = "bold";
+                  markerElement.textContent = `Khách ${index + 1}`;
+                  markerElement.style.fontSize = "9px";
 
-            destinations.forEach((dest, index) => {
-              const [lat, lng] = dest.split(",").map(Number); // Ensure values are numbers
-              if (!isNaN(lat) && !isNaN(lng)) {
-                const markerElement = document.createElement("div");
-                markerElement.style.backgroundColor = "red";
-                markerElement.style.color = "white";
-                markerElement.style.width = "40px";
-                markerElement.style.height = "40px";
-                markerElement.style.borderRadius = "50%";
-                markerElement.style.display = "flex";
-                markerElement.style.justifyContent = "center";
-                markerElement.style.alignItems = "center";
-                markerElement.style.fontWeight = "bold";
-                markerElement.textContent = `Khách ${index + 1}`;
-                markerElement.style.fontSize = "9px";
+                  // new mapboxgl.Marker({ color: "red" })
+                  new mapboxgl.Marker(markerElement)
 
-                // new mapboxgl.Marker({ color: "red" })
-                new mapboxgl.Marker(markerElement)
-
-                  .setLngLat([lng, lat]) // Longitude first, then latitude
-                  .setPopup(
-                    new mapboxgl.Popup({ offset: 25 }).setText(
-                      `Điểm Đến ${index + 1}`
+                    .setLngLat([lng, lat]) // Longitude first, then latitude
+                    .setPopup(
+                      new mapboxgl.Popup({ offset: 25 }).setHTML(
+                        `Điểm Đến ${index + 1}<br /> 
+                           Tên: ${arrayPopUpInfor[index].name}<br />
+                           Email: ${arrayPopUpInfor[index].email}<br />
+                           SĐT: ${arrayPopUpInfor[index].phone} <br />
+                           Địa Chỉ: ${arrayPopUpInfor[index].address}`
+                      )
                     )
+                    .addTo(map.current);
+                } else {
+                  console.error(
+                    `Invalid coordinates for destination ${index + 1}: ${dest}`
+                  );
+                }
+              });
+            }
+            if (status === "1") {
+              new mapboxgl.Marker({ color: "red" }) // Red marker for the destination
+                .setLngLat([
+                  destination.split(",")[1],
+                  destination.split(",")[0],
+                ])
+                .setPopup(
+                  new mapboxgl.Popup({ offset: 25 }).setHTML(
+                    `Điểm Đến <br/>
+                     Địa Chỉ:  ${arrayPopUpInfor[0]}
+                  `
                   )
-                  .addTo(map.current);
-              } else {
-                console.error(
-                  `Invalid coordinates for destination ${index + 1}: ${dest}`
-                );
-              }
-            });
+                )
+                .addTo(map.current);
+            }
+            if (status === "2") {
+              new mapboxgl.Marker({ color: "red" }) // Green marker for the origin
+                .setLngLat([
+                  destination.split(",")[1],
+                  destination.split(",")[0],
+                ])
+                .setPopup(
+                  new mapboxgl.Popup({ offset: 25 }).setHTML(
+                    `Điểm Đến <br /> Địa Chỉ: ${arrayPopUpInfor[1]}`
+                  )
+                )
+                .addTo(map.current);
 
+              new mapboxgl.Marker({ color: "green" }) // Green marker for the origin
+                .setLngLat([origin.split(",")[1], origin.split(",")[0]])
+                .setPopup(
+                  new mapboxgl.Popup({ offset: 25 }).setHTML(
+                    `Điểm Bắt Đầu <br /> Địa Chỉ: ${arrayPopUpInfor[0]}`
+                  )
+                )
+                .addTo(map.current);
+            }
             // Adjust the map view to fit the route
             const bounds = new mapboxgl.LngLatBounds();
             coordinates.forEach((coord) => bounds.extend(coord));
@@ -153,7 +204,7 @@ const GoongMapWithDirections = ({
     };
 
     fetchDirections();
-  }, [origin, destination]);
+  }, [origin, destination, arrayPopUpInfor, status]);
 
   return (
     <div>
