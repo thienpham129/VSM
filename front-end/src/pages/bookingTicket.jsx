@@ -387,7 +387,7 @@ const BookingTicket = () => {
             <div className={styles.bookingPage__tickets__wrap}>
               {schedule ? (
                 <>
-                  <div>xin chào</div>
+                  {/* <div>xin chào</div> */}
                   <SeatMap
                     priceOfSeat={schedule.price}
                     car={selectedCarSeatMap}
