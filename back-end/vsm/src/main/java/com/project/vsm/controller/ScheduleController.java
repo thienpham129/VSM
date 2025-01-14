@@ -97,6 +97,7 @@ public class ScheduleController {
 		List<CarEntity> schedule = scheduleService.findCarsInScheduleWithinTimeRangeAndRoute(time, routeId);
 		return ResponseEntity.ok(schedule);
 	}
+	
 //	@GetMapping("public/schedules")
 //	public ResponseEntity<Iterable<ScheduleEntity>> getAllSchedules() {
 //		return new ResponseEntity<>(scheduleService.getAllSchedules(), HttpStatus.OK);

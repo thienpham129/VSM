@@ -37,6 +37,7 @@ const DetailSchedule = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [carData, setCarData] = useState(null);
 
   useEffect(() => {
     const fetchSchedule = async () => {
@@ -44,6 +45,14 @@ const DetailSchedule = () => {
         const response = await request("get", `/public/schedule/${id}`);
         setScheduleData(response.data);
         setLoading(false);
+        if (response.data.idRoute) {
+          const carResponse = await request(
+            "get",
+            `/public/find-car-by-route?idRoute=${response.data.idRoute}`
+          );
+          setCarData(carResponse.data);
+          console.log(carResponse.data);
+        }
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu lịch trình:", error);
         setLoading(false);
@@ -69,7 +78,11 @@ const DetailSchedule = () => {
         id: values.idSchedule,
         status: values.status,
         accountId: values.driver,
+        carId: values.car,
+        routeId: scheduleData.idRoute,
       };
+      console.log(payload);
+
       await request("put", `/admin/schedule/${values.idSchedule}`, payload);
       setSnackbarMessage("Cập nhật lịch trình thành công!");
       setSnackbarSeverity("success");
@@ -117,7 +130,7 @@ const DetailSchedule = () => {
           status: scheduleData.status,
           price: scheduleData.price,
           driver: scheduleData.idDriver,
-          car: `${scheduleData.typeCarName} - ${scheduleData.numSeats} chỗ`,
+          car: scheduleData.idCar,
           route: `${scheduleData.startLocation} > ${scheduleData.stopLocation}`,
           emptySeat: scheduleData.emptySeat,
         }}
@@ -163,15 +176,30 @@ const DetailSchedule = () => {
                 disabled
                 InputLabelProps={{ shrink: true }}
               />
-              <TextField
-                fullWidth
+              <FormControl
                 variant="filled"
-                label="Xe"
-                name="car"
-                value={values.car}
-                disabled
                 sx={{ gridColumn: "span 2" }}
-              />
+                error={!!touched.car && !!errors.car}
+              >
+                <InputLabel>Xe</InputLabel>
+                <Select
+                  name="car"
+                  value={values.car || scheduleData.idCar}
+                  onChange={handleChange}
+                >
+                  {carData && carData.length > 0 ? (
+                    carData.map((car) => (
+                      <MenuItem key={car.carId} value={car.carId}>
+                        {`${car.name} - ${car.type.numSeats} chỗ`}
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem value="">
+                      <em>Không có xe nào</em>
+                    </MenuItem>
+                  )}
+                </Select>
+              </FormControl>
               <TextField
                 fullWidth
                 variant="filled"
