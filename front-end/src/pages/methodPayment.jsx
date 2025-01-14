@@ -20,10 +20,9 @@ const MethodPayment = () => {
     startLocation,
     stopLocation,
     ticketId,
-      carDetail,
-      routeDetail
+    carDetail,
+    routeDetail,
   } = state || {};
-  console.log("««««« state.totalPrice »»»»»", state.totalPrice);
   const [paymentUrl, setPaymentUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -35,6 +34,8 @@ const MethodPayment = () => {
   const [dropLat, setDropLat] = useState("");
   const [dropLon, setDropLon] = useState("");
   const [messagePayment, setMessagePayment] = useState(false);
+
+  const [isClickPayment, setIsClickPayment] = useState(false);
 
   useEffect(() => {
     console.log(ticketId);
@@ -144,22 +145,44 @@ const MethodPayment = () => {
     }
   };
 
-  const handlePayment = async () => {
-    setMessagePayment(true);
-    setIsLoading(true);
-    setError(null);
+  const handlePayment = async (e) => {
+    // setMessagePayment(true);
+    // setIsLoading(true);
+    // setError(null);
+    e.preventDefault();
     try {
-      const response = await root.get(`/api/v1/payment/pay/${ticketId}`);
+      const response = await root.get(
+        `/api/v1/payment/vn-pay?bankCode=NCB&ticketId=${state.ticketId}`
+      );
 
       if (response.status === 200) {
-        setPaymentUrl(response.data.data.paymentUrl);
+        // setPaymentUrl(response.data.data.paymentUrl);
+        window.open(response.data.data.paymentUrl);
+
+        console.log(response);
       } else {
         setError("Failed to fetch payment URL");
       }
     } catch (err) {
       setError("An error occurred during payment.");
-    } finally {
-      setIsLoading(false);
+    }
+    // finally {
+    //   setIsLoading(false);
+    // }
+  };
+
+  const vnPayCallBack = async () => {
+    try {
+      const response = await root.get(
+        `http://localhost:8080/api/v1/payment/vn-pay-callback?vnp_ResponseCode=00&vnp_TxnRef=b5c02e9fd1`
+      );
+      if (response.code === 200) {
+        window.location.href = "/paymentSuccess";
+      } else {
+        alert("Error");
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -202,86 +225,87 @@ const MethodPayment = () => {
   //     setIsLoading(false);
   //   }
   // };
-  const checkPayment = async () => {
-    if (!ticketId) {
-      alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra thanh toán.");
-      return;
-    }
-  
-    try {
-      const response = await root.get(`/api/v1/google-sheet/check-ticket/${ticketId}`);
-  
-      if (response.status === 200) {
-        console.log("««««« response.data »»»»»", response.data);
-        if (response.data.paid === true) {
-          console.log("««««« Vé đã được thanh toán »»»»»");
-          // Điều hướng sang trang paymentSuccess với dữ liệu cần thiết
-          navigate("/paymentSuccess", {
-            state: {
-              startTime,
-              carDetail,
-              routeDetail,
-            },
-          });
-          // Thực hiện việc điều hướng thành công mà không cần trả về giá trị true
-        } else {
-          console.log("««««« Vé chưa được thanh toán »»»»»");
-          // Bạn có thể bỏ return false hoặc thực hiện hành động khác nếu cần
-        }
-      } else {
-        setError("Không thể kiểm tra trạng thái thanh toán.");
-      }
-    } catch (err) {
-      console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
-      setError("Đã xảy ra lỗi trong quá trình kiểm tra thanh toán.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
+  // const checkPayment = async () => {
+  //   if (!ticketId) {
+  //     alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra thanh toán.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await root.get(
+  //       `/api/v1/google-sheet/check-ticket/${ticketId}`
+  //     );
+
+  //     if (response.status === 200) {
+  //       console.log("««««« response.data »»»»»", response.data);
+  //       if (response.data.paid === true) {
+  //         console.log("««««« Vé đã được thanh toán »»»»»");
+  //         // Điều hướng sang trang paymentSuccess với dữ liệu cần thiết
+  //         navigate("/paymentSuccess", {
+  //           state: {
+  //             startTime,
+  //             carDetail,
+  //             routeDetail,
+  //           },
+  //         });
+  //         // Thực hiện việc điều hướng thành công mà không cần trả về giá trị true
+  //       } else {
+  //         console.log("««««« Vé chưa được thanh toán »»»»»");
+  //         // Bạn có thể bỏ return false hoặc thực hiện hành động khác nếu cần
+  //       }
+  //     } else {
+  //       setError("Không thể kiểm tra trạng thái thanh toán.");
+  //     }
+  //   } catch (err) {
+  //     console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
+  //     setError("Đã xảy ra lỗi trong quá trình kiểm tra thanh toán.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
     if (!ticketId) return;
 
     const interval = setInterval(() => {
-      checkPayment();
+      // checkPayment();
     }, 10000); // Gọi hàm mỗi 5 giây
 
     return () => clearInterval(interval); // Xóa interval khi component bị unmount
   }, [ticketId, navigate]);
 
   // Check cancle ticket
-  const checkCancelTicket = async () => {
-    if (!ticketId) {
-      alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra.");
-      return;
-    }
+  // const checkCancelTicket = async () => {
+  //   if (!ticketId) {
+  //     alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra.");
+  //     return;
+  //   }
 
-    try {
-      const response = await root.get(`public/ticket/check/${ticketId}`);
+  //   try {
+  //     const response = await root.get(`public/ticket/check/${ticketId}`);
 
-      if (response.status === 200) {
-        console.log("««««« response.data123 »»»»»", response.data);
-        if (response.data === true) {
-          console.log("««««« Vé đã được thanh toán »»»»»");
-          return true;
-        } else {
-          console.log("««««« Vé chưa được xử lý »»»»»");
-          return false;
-        }
-      } else {
-        setError("Không thể kiểm tra trạng thái thanh toán.");
-      }
-    } catch (err) {
-      console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     if (response.status === 200) {
+  //       console.log("««««« response.data123 »»»»»", response.data);
+  //       if (response.data === true) {
+  //         console.log("««««« Vé đã được thanh toán »»»»»");
+  //         return true;
+  //       } else {
+  //         console.log("««««« Vé chưa được xử lý »»»»»");
+  //         return false;
+  //       }
+  //     } else {
+  //       setError("Không thể kiểm tra trạng thái thanh toán.");
+  //     }
+  //   } catch (err) {
+  //     console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    checkCancelTicket();
-  }, []);
+  // useEffect(() => {
+  //   checkCancelTicket();
+  // }, []);
 
   return (
     <div className="no-bottom no-top zebra" id="content">
@@ -545,11 +569,11 @@ const MethodPayment = () => {
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Ghế</label>
                         <p className="list-seat">
-                          <span>
+                          {/* <span>
                             {selectedSeat.length > 0
                               ? selectedSeat.join(", ")
                               : "Chưa chọn ghế"}
-                          </span>
+                          </span> */}
                         </p>
                       </div>
                       {/* <div className={styles.bookingPayment__info__item}>
@@ -577,7 +601,7 @@ const MethodPayment = () => {
                           Tổng tiền :
                         </label>
                         <p style={{ fontSize: "26px", paddingTop: "7px" }}>
-                          {totalPrice.toLocaleString().replace(",", ".")} VNĐ
+                          {/* {totalPrice.toLocaleString().replace(",", ".")} VNĐ */}
                         </p>
                       </div>
                     </div>

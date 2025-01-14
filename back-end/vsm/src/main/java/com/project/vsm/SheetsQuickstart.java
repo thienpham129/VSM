@@ -25,16 +25,33 @@ public class SheetsQuickstart {
     private static final String APPLICATION_NAME = "Google Sheets API Java Quickstart";
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
-    private static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS_READONLY);
-    private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
-    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
+    /**
+     * Global instance of the scopes required by this quickstart.
+     * If modifying these scopes, delete your previously saved tokens/ folder.
+     */
+    private static final List<String> SCOPES =
+            Collections.singletonList(SheetsScopes.SPREADSHEETS_READONLY);
+    private static final String CREDENTIALS_FILE_PATH = "";
+
+    /**
+     * Creates an authorized Credential object.
+     *
+     * @param HTTP_TRANSPORT The network HTTP Transport.
+     * @return An authorized Credential object.
+     * @throws IOException If the credentials.json file cannot be found.
+     */
+    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT)
+            throws IOException {
+        // Load client secrets.
         InputStream in = SheetsQuickstart.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         if (in == null) {
             throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
         }
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+        GoogleClientSecrets clientSecrets =
+                GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
+        // Build flow and trigger user authorization request.
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
                 .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
@@ -45,39 +62,25 @@ public class SheetsQuickstart {
     }
 
     public static void main(String... args) throws IOException, GeneralSecurityException {
+        // Build a new authorized API client service.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        final String spreadsheetId = "1unBOFItnNztTXPQBW3-KufybO5MWeF0XObko-Aq0dY0";
-        final String range = "Sheet1";
-        Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-                .setApplicationName(APPLICATION_NAME)
-                .build();
-
-        ValueRange response = service.spreadsheets().values().get(spreadsheetId, range).execute();
+        final String spreadsheetId = "1-Byu0Q5Gbt4krxDoSO21Mf7_YjtR3aOwWJ3dvIlLGi0";
+        final String range = "Class Data!A2:E";
+        Sheets service =
+                new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+                        .setApplicationName(APPLICATION_NAME)
+                        .build();
+        ValueRange response = service.spreadsheets().values()
+                .get(spreadsheetId, range)
+                .execute();
         List<List<Object>> values = response.getValues();
-
         if (values == null || values.isEmpty()) {
             System.out.println("No data found.");
         } else {
-            System.out.printf("%-10s %-80s %-15s %-20s %-15s %-20s %-10s%n",
-                    "Mã GD", "Nội dung", "Số tiền", "Ngày diễn ra", "Số tài khoản", "Mã tham chiếu", "Số dư");
-
-            for (List<Object> row : values) {
-                // Xử lý mỗi cột bằng cách kiểm tra số lượng phần tử trong row
-                String maGD = row.size() > 0 ? row.get(0).toString() : "";
-                String noiDung = row.size() > 1 ? row.get(1).toString() : "";
-                String soTien = row.size() > 2 ? row.get(2).toString() : "";
-                String ngayDienRa = row.size() > 3 ? row.get(3).toString() : "";
-                String soTaiKhoan = row.size() > 4 ? row.get(4).toString() : "";
-                String maThamChieu = row.size() > 5 ? row.get(5).toString() : "";
-                String soDu = row.size() > 6 ? row.get(6).toString() : "";
-
-                System.out.printf("%-10s %-80s %-15s %-20s %-15s %-20s %-10s%n",
-                        maGD, noiDung, soTien, ngayDienRa, soTaiKhoan, maThamChieu, soDu);
-                if (row.size() >= 7) {
-                    System.out.printf("%-10s %-80s %-15s %-20s %-15s %-20s %-10s%n",
-                            row.get(0), row.get(1), row.get(2), row.get(3),
-                            row.get(4), row.get(5), row.get(6));
-                } 
+            System.out.println("Name, Major");
+            for (List row : values) {
+                // Print columns A and E, which correspond to indices 0 and 4.
+                System.out.printf("%s, %s\n", row.get(0), row.get(4));
             }
         }
     }

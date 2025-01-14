@@ -187,52 +187,85 @@ const SeatMap = ({
                             }
 
                             return (
-                              <td key={colIndex}>
-                                <div style={{ textAlign: "center" }}>
-                                  <input
-                                    type="button"
-                                    value={
-                                      position === "A1"
-                                        ? "Tài Xế"
-                                        : seat.position
-                                    }
-                                    readOnly
-                                    className={`avicon ${seatClass}`}
-                                    onClick={
-                                      position === "A1" ||
-                                      isCanceled ||
-                                      isWaiting
-                                        ? undefined
-                                        : () => handleSeatClick(position)
-                                    }
+                              <>
+                                <td key={colIndex}>
+                                  {/* <div style={{ position: "relative", textAlign: "center", width: "80px" }}> */}
+                                  <div
                                     style={{
-                                      display: "inline-block",
-                                      width: "80px",
                                       textAlign: "center",
-                                      cursor: cursorStyle, // Cập nhật style con trỏ
+                                      position: "relative",
                                     }}
-                                  />
-                                  {/* Hiển thị thông báo phụ thu nếu có */}
-                                  {seat && seat.surcharge !== 0 && (
-                                    <div
+                                  >
+                                    <input
+                                      type="button"
+                                      value={
+                                        position === "A1"
+                                          ? "Tài Xế"
+                                          : seat.position
+                                      }
+                                      readOnly
+                                      className={`avicon ${seatClass}`}
+                                      onClick={
+                                        position === "A1" ||
+                                        isCanceled ||
+                                        isWaiting
+                                          ? undefined
+                                          : () => handleSeatClick(position)
+                                      }
                                       style={{
-                                        fontSize: "12px",
-                                        marginTop: "5px",
-                                        color:
-                                          seat.surcharge > 0 ? "red" : "green",
+                                        display: "inline-block",
+                                        width: "80px",
+                                        textAlign: "center",
+                                        cursor: cursorStyle, // Cập nhật style con trỏ
                                       }}
-                                    >
-                                      {seat.surcharge > 0
-                                        ? `Phụ thu giá sẽ cộng thêm ${formatCurrency(
-                                            seat.surcharge
-                                          )}`
-                                        : `Phụ thu giá sẽ giảm ${formatCurrency(
-                                            Math.abs(seat.surcharge)
-                                          )}`}
-                                    </div>
-                                  )}
-                                </div>
-                              </td>
+                                    />
+                                    {seat && seat.surcharge !== 0 && (
+                                      <div
+                                        style={{
+                                          position: "absolute",
+                                          bottom: "-28px",
+                                          left: "50%",
+                                          transform: "translateX(-50%)",
+                                          fontSize: "12px",
+                                          color:
+                                            seat.surcharge > 0
+                                              ? "red"
+                                              : "green",
+                                          whiteSpace: "nowrap",
+                                        }}
+                                      >
+                                        {seat.surcharge > 0
+                                          ? `Phụ thu giá sẽ cộng thêm ${formatCurrency(
+                                              seat.surcharge
+                                            )}`
+                                          : `Phụ thu giá sẽ giảm ${formatCurrency(
+                                              Math.abs(seat.surcharge)
+                                            )}`}
+                                      </div>
+                                    )}
+                                    {/* {seat && seat.surcharge !== 0 && (
+                                      <div
+                                        style={{
+                                          fontSize: "12px",
+                                          marginTop: "5px",
+                                          color:
+                                            seat.surcharge > 0
+                                              ? "red"
+                                              : "green",
+                                        }}
+                                      >
+                                        {seat.surcharge > 0
+                                          ? `Phụ thu giá sẽ cộng thêm ${formatCurrency(
+                                              seat.surcharge
+                                            )}`
+                                          : `Phụ thu giá sẽ giảm ${formatCurrency(
+                                              Math.abs(seat.surcharge)
+                                            )}`}
+                                      </div>
+                                    )} */}
+                                  </div>
+                                </td>
+                              </>
                             );
                           })}
                         </tr>

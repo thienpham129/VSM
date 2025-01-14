@@ -40,9 +40,6 @@ public class TicketEntity {
 	@Column(name = "price")
 	double price;
 
-    @Column(name = "payment_method")
-    String paymentMethod;
-
 	@Column(name = "is_paid")
 	boolean isPaid;
 
