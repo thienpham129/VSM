@@ -63,13 +63,19 @@ public class ScheduleController {
 		scheduleService.deleteScheduleById(id);
 		return ResponseEntity.ok("Lịch trình đã được xóa");
 	}
+	
+	@DeleteMapping("/public/schedule/{id}")
+	public ResponseEntity<String> deleteScheduleByIdPublic(@PathVariable Long id) {
+		scheduleService.deleteScheduleById(id);
+		return ResponseEntity.ok("Lịch trình đã được xóa");
+	}
 
 	@PutMapping("driver/update-schedule-account")
 	public ResponseEntity<ScheduleResponse> updateScheduleAccount(@RequestParam long scheduleId,
 			@RequestParam long accountId) {
 		ScheduleResponse updatedSchedule = scheduleService.updateScheduleAccount(scheduleId, accountId);
 		return ResponseEntity.ok(updatedSchedule);
-	}
+	}	
 
 	@PutMapping("driver/update-remove-schedule")
 	public ResponseEntity<ScheduleResponse> deleteDriverSchedule(@RequestParam long scheduleId) {

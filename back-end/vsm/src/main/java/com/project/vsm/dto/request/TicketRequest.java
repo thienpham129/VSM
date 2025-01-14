@@ -53,7 +53,6 @@ public class TicketRequest {
                 .voucher(voucher)
                 .account(account)
                 .paymentEntity(payment)
-                .paymentMethod(this.paymentMethod)
                 .QRPayment(qrCode)
                 .status("Đang chờ xử lý")
                 .build();

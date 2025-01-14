@@ -226,7 +226,7 @@ public class TicketService {
 		}
 		TicketResponseAdminDTO ticketDetail = TicketResponseAdminDTO.builder()
 				.ticketId(optionalTicket.get().getTicketId()).price(optionalTicket.get().getPrice())
-				.paymentMethod(optionalTicket.get().getPaymentMethod()).isPaid(optionalTicket.get().isPaid())
+//				.paymentMethod(optionalTicket.get().getPaymentMethod()).isPaid(optionalTicket.get().isPaid())
 				.status(optionalTicket.get().getStatus()).QRPayment(optionalTicket.get().getQRPayment())
 				.selectedSeat(optionalTicket.get().getSelectedSeat()).note(optionalTicket.get().getNote())
 				.email(optionalTicket.get().getEmail()).fullName(optionalTicket.get().getFullName())
@@ -313,7 +313,7 @@ public class TicketService {
 					updatedTicket.setStatus("Hủy đặt vé");
 					ticketRepository.save(updatedTicket);
 				}
-			}, 3, TimeUnit.MINUTES);
+			}, 15, TimeUnit.MINUTES);
 			scheduler.shutdown();
 		}
 

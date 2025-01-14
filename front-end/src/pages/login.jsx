@@ -288,8 +288,9 @@ const Login = () => {
                           </button>
                           <p
                             className="title-forgot-account"
+                            style={{ cursor: "pointer" }}
                             onClick={() => {
-                              window.location.href = "/identify";
+                              window.location.href = "/reset_password";
                             }}
                             style={{ cursor: "pointer" }}
                           >

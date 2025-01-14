@@ -69,6 +69,14 @@ public class TicketController {
 	// return new ResponseEntity<>(ticketService.updateStatusTicketById(ticketId ,
 	// request) , HttpStatus.OK);
 	// }
+	
+	  @PutMapping("/driver/update-status/ticket/{ticketId}") public
+	  ResponseEntity<TicketResponse> updateStatusTicketById(@PathVariable String
+	  ticketId,
+	  
+	  @RequestBody TicketRequest request) { return new
+	  ResponseEntity<>(ticketService.updateStatusTicketById(ticketId, request),
+	  HttpStatus.OK); }
 
 	/*
 	 * @PutMapping("/driver/update-status/ticket/{ticketId}") public

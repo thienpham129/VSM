@@ -31,8 +31,10 @@ import Parking from "pages/Driver/Parking";
 import Map from "pages/Driver/Map";
 import RestPassword from "pages/resetPassword";
 import ImageUploadFile from "components/ImageUploadFile";
+import BranchAndBound from "pages/Driver/testBranhAndBound";
+import ScheduleNotAssignment from "pages/Driver/scheduleNotAssignment";
 import { getTokenFromLocalStorage } from "utils/tokenUtils";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // import RequireAuth from "RequireAuth";
 import AdminRoute from "admin/AdminRoute";
@@ -45,21 +47,23 @@ function App() {
   const navigate = useNavigate();
   const role = localStorage.getItem("role");
   const location = useLocation();
+  const [checkNavigated, setCheckNavigated] = useState(false);
 
-  useEffect(() => {
-    if (token) {
-      if (role === "ROLE_ADMIN") {
-        navigate("/admin/dashboard");
-      }
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (token) {
+  //     if (role === "ROLE_ADMIN") {
+  //       navigate("/admin/dashboard");
+  //     }
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (
       location.pathname === "/driver/schedule" ||
       location.pathname === "/driver/parking" ||
       location.pathname === "/driver/map" ||
-      location.pathname === "/driver/profile"
+      location.pathname === "/driver/profile" ||
+      location.pathname === "/driver/scheduleNotAssignment"
     ) {
       document.body.style.overflowX = "hidden";
       document.body.style.overflowY = "auto";
@@ -111,7 +115,12 @@ function App() {
         </Routes>
       )}
       <Routes>
+        <Route path="branchAndBound" element={<BranchAndBound />} />
         <Route path="/driver" element={<SidebarDriver />}>
+          <Route
+            path="/driver/scheduleNotAssignment"
+            element={<ScheduleNotAssignment />}
+          />
           <Route path="/driver/schedule" element={<Schedule />} />
           <Route path="/driver/parking" element={<Parking />} />
           <Route path="/driver/map" element={<Map />} />

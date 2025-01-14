@@ -41,7 +41,7 @@ function BookingForm({
   const [note, setNote] = useState("");
   const [detailAddressToPickUp, setDetailAddressToPickUp] = useState("");
   const [detailAddressDropOff, setDetailAddressDropOff] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("vietQR");
+  const [paymentMethod, setPaymentMethod] = useState("VNPay");
   const [selectedSeat, setSelectedSeat] = useState([]);
   const [errors, setErrors] = useState({});
   const [ticketId, setTicketId] = useState(null);
@@ -170,7 +170,6 @@ function BookingForm({
       totalPrice,
       ...(voucher && { voucher }),
     };
-    console.log("««««« carRouteId »»»»»", carRouteId);
 
     try {
       const token = getTokenFromLocalStorage();
@@ -186,7 +185,6 @@ function BookingForm({
 
       if (response.status === 200) {
         console.log("Booking successful:", response.data);
-        console.log("««««« response.data »»»»»", response.data.totalPrice);
         navigate("/methodPayment", {
           state: {
             fullName,
@@ -370,7 +368,7 @@ function BookingForm({
       }
     };
     checkVoucher();
-  }, [voucher, totalPriceTicket]);
+  }, [voucher]);
 
   return (
     <div className={styles.bookingPage__tickets__item__collapse__booking__user}>
@@ -382,12 +380,16 @@ function BookingForm({
         </h3>
         <p>{new Date(startTime).toLocaleString()}</p>
       </div> */}
+      <h4 style={{textAlign: 'center'}}>
+          Thông tin khách hàng
+        </h4>
       <form
         method="POST"
         data-trip-choosableseat={1}
         data-form-trip-id="PLT0Tc1ybgN295oCg20241015"
         onSubmit={handleSubmit}
       >
+        
         <div className={styles.form_group}>
           <label htmlFor="">Ghế đã chọn</label>
           <div data-content="listSeat" className={styles.list_seat}>
