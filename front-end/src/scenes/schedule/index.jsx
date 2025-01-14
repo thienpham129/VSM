@@ -151,11 +151,11 @@ const Schedule = () => {
         title="Quản Lý Lịch Trình"
         subtitle="Danh Sách Thông Tin Lịch Trình"
       />
-      <Box display="flex" justifyContent="flex-end" mb={-5}>
+      {/* <Box display="flex" justifyContent="flex-end" mb={-5}>
         <Button variant="contained" color="secondary" onClick={handleClickOpen}>
           Thêm Mới Lịch Trình
         </Button>
-      </Box>
+      </Box> */}
       <Box
         m="40px 0 0 0"
         height="75vh"

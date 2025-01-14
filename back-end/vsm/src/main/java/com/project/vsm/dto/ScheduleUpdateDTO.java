@@ -16,4 +16,8 @@ public class ScheduleUpdateDTO {
 
 	@NotNull(message = "Status is required")
 	private String status;
+
+	private Long carId;
+
+	private Long routeId;
 }

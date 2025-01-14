@@ -19,4 +19,5 @@ public interface CarRouteRepository extends JpaRepository<CarRouteEntity, Long> 
 	CarRouteEntity findByCarAndRoute(@Param("car") CarEntity car, @Param("route") RouteEntity route);
 	
 	List<CarRouteEntity> findByRoute_Id(Long routeId);
+	
 }
