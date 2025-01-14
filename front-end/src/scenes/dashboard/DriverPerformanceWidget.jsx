@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, IconButton } from "@mui/material";
+import { Box, Typography, IconButton, Grid } from "@mui/material";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import RevenueChart from "./chart/RevenueChart";
 import { tokens } from "../../theme";
@@ -9,9 +9,10 @@ import DriverPerformanceChart from "./chart/DriverPerformanceChart";
 const DriverPerformanceWidget = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
   return (
     <Box
-      gridColumn="span 8"
+      gridColumn="span 12" // Make it span across the entire width on small screens
       gridRow="span 3"
       backgroundColor={colors.primary[400]}
       borderRadius="8px"
@@ -22,6 +23,7 @@ const DriverPerformanceWidget = () => {
       gap="20px"
     >
       {/* Header */}
+      {/* Uncomment the header part if needed */}
       {/* <Box display="flex" justifyContent="space-between" alignItems="center">
         <Box>
           <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>
