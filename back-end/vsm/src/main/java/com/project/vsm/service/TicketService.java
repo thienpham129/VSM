@@ -258,7 +258,7 @@ public class TicketService {
 					updatedTicket.setStatus("Hủy đặt vé");
 					ticketRepository.save(updatedTicket);
 				}
-			}, 3, TimeUnit.MINUTES);
+			}, 15, TimeUnit.MINUTES);
 			scheduler.shutdown();
 		}
 
