@@ -569,11 +569,11 @@ const MethodPayment = () => {
                       <div className={styles.bookingPayment__info__item}>
                         <label htmlFor="">Ghế</label>
                         <p className="list-seat">
-                          {/* <span>
+                          <span>
                             {selectedSeat.length > 0
                               ? selectedSeat.join(", ")
                               : "Chưa chọn ghế"}
-                          </span> */}
+                          </span>
                         </p>
                       </div>
                       {/* <div className={styles.bookingPayment__info__item}>
@@ -601,7 +601,7 @@ const MethodPayment = () => {
                           Tổng tiền :
                         </label>
                         <p style={{ fontSize: "26px", paddingTop: "7px" }}>
-                          {/* {totalPrice.toLocaleString().replace(",", ".")} VNĐ */}
+                          {totalPrice.toLocaleString().replace(",", ".")} VNĐ
                         </p>
                       </div>
                     </div>

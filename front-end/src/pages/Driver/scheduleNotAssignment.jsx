@@ -75,7 +75,31 @@ function ScheduleNotAssignment() {
     try {
       const response = await root.get(url);
       if (response.data) {
-        setScheduleNotAssignment(response.data);
+        let tempScheduleArray = [];
+        const currentDate = new Date();
+        response.data.forEach((item) => {
+          const targetDate = new Date(item.startTime);
+          if (
+            ~~(targetDate.getTime() / 60000) >=
+            ~~(currentDate.getTime() / 60000)
+          ) {
+            tempScheduleArray.push(item);
+          }
+        });
+
+        for (let i = 0; i < tempScheduleArray.length; i++) {
+          for (let j = i + 1; j < tempScheduleArray.length; j++) {
+            const firstDate = new Date(tempScheduleArray[i].startTime);
+            const secondDate = new Date(tempScheduleArray[j].startTime);
+            if (firstDate > secondDate) {
+              let temp = tempScheduleArray[i];
+              tempScheduleArray[i] = tempScheduleArray[j];
+              tempScheduleArray[j] = temp;
+            }
+          }
+        }
+        // setScheduleNotAssignment(response.data);
+        setScheduleNotAssignment(tempScheduleArray);
       } else {
         console.log("Something went wrong with api getScheduleNotAssignment");
       }

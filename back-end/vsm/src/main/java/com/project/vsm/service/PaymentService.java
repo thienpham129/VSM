@@ -70,10 +70,9 @@ public class PaymentService {
         vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
         vnpParamsMap.put("vnp_IpAddr", VNPayUtil.getIpAddress(request));
         vnpParamsMap.put("vnp_OrderInfo", "Thanh toán vé ID: " + ticketId);
-//        vnpParamsMap.put("vnp_ReturnUrl", "http://localhost:8080/api/v1/payment/vn-pay-callback");
-//http://localhost:3000/paymentSuccess
-        vnpParamsMap.put("vnp_ReturnSuccess", "http://localhost:3000/paymentSuccess");
-        
+        vnpParamsMap.put("vnp_ReturnUrl", "http://localhost:8080/api/v1/payment/vn-pay-callback");
+
+
         String queryUrl = VNPayUtil.getPaymentURL(vnpParamsMap, true);
         String hashData = VNPayUtil.getPaymentURL(vnpParamsMap, false);
         String vnpSecureHash = VNPayUtil.hmacSHA512(vnPayConfig.getSecretKey(), hashData); // Tạo chữ ký

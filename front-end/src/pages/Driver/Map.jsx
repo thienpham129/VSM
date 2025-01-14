@@ -94,13 +94,13 @@ const RoutingControl = createControlComponent(
 //ROUTIMNG OSRM HERE
 
 const Map = () => {
-  const [viewport, setViewport] = useState({
-    latitude: 37.8,
-    longitude: -122.4,
-    zoom: 14,
-    bearing: 0,
-    pitch: 0,
-  });
+  // const [viewport, setViewport] = useState({
+  //   latitude: 37.8,
+  //   longitude: -122.4,
+  //   zoom: 14,
+  //   bearing: 0,
+  //   pitch: 0,
+  // });
 
   const [start] = useState([16.0544, 108.2022]); // 216 Duy Tân
   const [end] = useState([16.0754, 108.2355]); // Số 5 Sơn Trà
@@ -182,6 +182,16 @@ const Map = () => {
   const [areAllStatusPickUp, setareAllStatusPickUp] = useState(false);
   const [startDropPlace, setStartDropPlace] = useState("");
   const [areAllStatusDrop, setAreAllStatusDrop] = useState(false);
+  const [startMap, setStartMap] = useState(false);
+  const [endMapSchedule, setEndMapSchedule] = useState(true);
+
+  const [viewport, setViewport] = useState({
+    width: "100vw",
+    height: "100vh",
+    latitude: 16.047079,
+    longitude: 108.20623,
+    zoom: 12,
+  });
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -642,25 +652,43 @@ const Map = () => {
             `/public/ticket-with-schedule/${scheduleId}`
           );
           if (response.status === 200) {
-            let count = 0;
-            let countInCar = 0;
+            let countPickUp = 0;
+            let countDrop = 0;
+            let tempArrayTicket = [];
             response.data.forEach((item) => {
-              if (item.status.toLocaleUpperCase() === "CHƯA LÊN XE") {
-                count += 1;
+              if (
+                item.status.toLocaleUpperCase() !== "HỦY ĐẶT VÉ" &&
+                item.status.toLocaleUpperCase() !== "HỦY"
+              ) {
+                tempArrayTicket.push(item);
+              }
+            });
+
+            tempArrayTicket.forEach((item) => {
+              if (
+                item.status.toLocaleUpperCase() === "CHƯA LÊN XE" ||
+                item.status.toLocaleUpperCase() === "ĐÃ THANH TOÁN"
+              ) {
+                countPickUp += 1;
               }
 
               if (item.status.toLocaleUpperCase() === "ĐÃ LÊN XE") {
-                countInCar += 1;
+                countDrop += 1;
               }
             });
-            if (count > 0) {
+
+            if (countPickUp > 0) {
               setareAllStatusPickUp(false);
-            } else {
-              if (countInCar === 0) {
-                setAreAllStatusDrop(true);
-              } else {
-                setareAllStatusPickUp(true);
-              }
+              setEndMapSchedule(false);
+            }
+
+            if (countPickUp === 0) {
+              setareAllStatusPickUp(true);
+              setEndMapSchedule(false);
+            }
+
+            if (countPickUp === 0 && countDrop === 0) {
+              setEndMapSchedule(true);
             }
           }
         };
@@ -1357,16 +1385,8 @@ const Map = () => {
         ""
       )}
 
-      {!areAllStatusDrop ? (
-        areAllStatusPickUp ? (
-          <GoongMapWithDirections
-            origin={startDropPlace}
-            destination={dropOrder}
-            // userName={userName}
-            // userAddress={userAddress}
-            // userPhone={userPhone}
-          />
-        ) : (
+      {!endMapSchedule ? (
+        !areAllStatusPickUp ? (
           <GoongMapWithDirections
             origin={`${currentLat},${currentLong}`}
             destination={pickUpOrder}
@@ -1374,9 +1394,21 @@ const Map = () => {
             // userAddress={userAddress}
             // userPhone={userPhone}
           />
+        ) : (
+          <GoongMapWithDirections
+            origin={startDropPlace}
+            destination={dropOrder}
+            // userName={userName}
+            // userAddress={userAddress}
+            // userPhone={userPhone}
+          />
         )
       ) : (
-        ""
+        <ReactMapGL
+          {...viewport}
+          goongApiAccessToken="6l8CYCEzYU06Uv8lEOwOeU5FqxuKweaoyrsDu5xJ"
+          onViewportChange={(nextViewport) => setViewport(nextViewport)}
+        />
       )}
     </>
   );
