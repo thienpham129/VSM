@@ -1,6 +1,7 @@
 package com.project.vsm.service;
 
 import com.project.vsm.dto.AdminUpdateTicketDTO;
+import com.project.vsm.dto.TicketResponseAdminDTO;
 import com.project.vsm.dto.request.TicketRequest;
 import com.project.vsm.dto.response.ScheduleResponse;
 import com.project.vsm.dto.response.TicketResponse;
@@ -210,7 +211,7 @@ public class TicketService {
 		}
 		TicketResponseAdminDTO ticketDetail = TicketResponseAdminDTO.builder()
 				.ticketId(optionalTicket.get().getTicketId()).price(optionalTicket.get().getPrice())
-				.paymentMethod(optionalTicket.get().getPaymentMethod()).isPaid(optionalTicket.get().isPaid())
+				.isPaid(optionalTicket.get().isPaid())
 				.status(optionalTicket.get().getStatus()).QRPayment(optionalTicket.get().getQRPayment())
 				.selectedSeat(optionalTicket.get().getSelectedSeat()).note(optionalTicket.get().getNote())
 				.email(optionalTicket.get().getEmail()).fullName(optionalTicket.get().getFullName())
