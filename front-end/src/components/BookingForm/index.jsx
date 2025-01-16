@@ -19,6 +19,7 @@ import MethodPayment from "pages/methodPayment";
 import { jwtDecode } from "jwt-decode";
 
 function BookingForm({
+  car,
   selectedSeats,
   totalPriceTicket,
   startTime,
@@ -187,6 +188,8 @@ function BookingForm({
         console.log("Booking successful:", response.data);
         navigate("/methodPayment", {
           state: {
+            scheduleId,
+            car,
             fullName,
             phoneNumber,
             email,

@@ -8,6 +8,7 @@ const MethodPayment = () => {
   const location = useLocation();
   const { state } = location;
   const {
+    car,
     fullName,
     phoneNumber,
     email,
@@ -20,10 +21,10 @@ const MethodPayment = () => {
     startLocation,
     stopLocation,
     ticketId,
-      carDetail,
-      routeDetail
+    carDetail,
+    routeDetail,
+    scheduleId,
   } = state || {};
-  console.log("««««« state.totalPrice »»»»»", state.totalPrice);
   const [paymentUrl, setPaymentUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -35,6 +36,82 @@ const MethodPayment = () => {
   const [dropLat, setDropLat] = useState("");
   const [dropLon, setDropLon] = useState("");
   const [messagePayment, setMessagePayment] = useState(false);
+
+  //
+  const [seats, setSeats] = useState(car.type.seatList);
+  const [selectedSeats, setSelectedSeats] = useState([]);
+  const [tickets, setTickets] = useState([]);
+  const [successSeats, setSuccessSeats] = useState([]);
+  const [waitingSeats, setWaitingSeats] = useState([]);
+
+  //
+  useEffect(() => {
+    setSeats(car.type.seatList);
+  }, [car]);
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const response = await root.get(
+          `/public/ticket-with-schedule/${scheduleId}`
+        );
+
+        if (response.status === 200) {
+          const tickets = response.data;
+          setTickets(tickets);
+
+          // Lọc ghế có status là "Đã thanh toán"
+          const successSeats = tickets.filter(
+            (ticket) => ticket.status === "Đã thanh toán"
+          );
+          setSuccessSeats(successSeats);
+
+          // Lọc ghế có status là "Đang chờ xử lý"
+          const waitingSeats = tickets.filter(
+            (ticket) => ticket.status === "Đang chờ xử lý"
+          );
+          setWaitingSeats(waitingSeats);
+        } else {
+          console.error(
+            "Không thể lấy dữ liệu vé. Mã trạng thái:",
+            response.status
+          );
+        }
+      } catch (error) {
+        console.error("Có lỗi xảy ra khi gọi API: ", error);
+      }
+    };
+
+    fetchTickets();
+  }, [scheduleId]);
+
+  // Hàm kiểm tra ghế bị hủy
+  const checkSuccessTicket = (seatPosition) => {
+    return successSeats.some((ticket) =>
+      ticket.selectedSeat.includes(seatPosition)
+    );
+  };
+
+  // Hàm xử lý chọn ghế
+  const handleSeatClick = (seatPosition) => {
+    if (seatPosition === "A1") {
+      return;
+    }
+
+    // Tìm ghế dựa trên seatPosition
+    const selectedSeat = seats.find((seat) => seat.position === seatPosition);
+
+    // Kiểm tra nếu ghế này đã bị hủy hoặc đang chờ xử lý thì không thể chọn
+    const isSuccess = checkSuccessTicket(seatPosition);
+    const isWaiting = waitingSeats.some((ticket) =>
+      ticket.selectedSeat.includes(seatPosition)
+    );
+    if (isSuccess || isWaiting) {
+      return; // Không làm gì nếu ghế đã bị hủy hoặc đang chờ xử lý
+    }
+
+  };
+
+  // End
 
   useEffect(() => {
     console.log(ticketId);
@@ -164,91 +241,6 @@ const MethodPayment = () => {
   };
 
   // Check payment ticket
-
-  // const checkPayment = async () => {
-  //   if (!ticketId) {
-  //     alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra thanh toán.");
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await root.get(
-  //       `/api/v1/google-sheet/check-ticket/${ticketId}`
-  //     );
-
-  //     if (response.status === 200) {
-  //       console.log("««««« response.data »»»»»", response.data);
-  //       if (response.data.paid === true) {
-  //         console.log("««««« Vé đã được thanh toán »»»»»");
-  //         navigate("/paymentSuccess"),{
-  //           state: {
-  //             startTime,
-  //             carDetail,
-  //             routeDetail,
-  //           },
-  //         };
-  //         return true;
-  //       } else {
-  //         console.log("««««« Vé chưa được thanh toán` »»»»»");
-  //         return false;
-  //       }
-  //     } else {
-  //       setError("Không thể kiểm tra trạng thái thanh toán.");
-  //     }
-  //   } catch (err) {
-  //     console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
-  //     setError("Đã xảy ra lỗi trong quá trình kiểm tra thanh toán.");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-  // const checkPayment = async () => {
-  //   if (!ticketId) {
-  //     alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra thanh toán.");
-  //     return;
-  //   }
-  
-  //   try {
-  //     const response = await root.get(`/api/v1/google-sheet/check-ticket/${ticketId}`);
-  
-  //     if (response.status === 200) {
-  //       console.log("««««« response.data »»»»»", response.data);
-  //       if (response.data.paid === true) {
-  //         console.log("««««« Vé đã được thanh toán »»»»»");
-  //         // Điều hướng sang trang paymentSuccess với dữ liệu cần thiết
-  //         navigate("/paymentSuccess", {
-  //           state: {
-  //             startTime,
-  //             carDetail,
-  //             routeDetail,
-  //           },
-  //         });
-  //         // Thực hiện việc điều hướng thành công mà không cần trả về giá trị true
-  //       } else {
-  //         console.log("««««« Vé chưa được thanh toán »»»»»");
-  //         // Bạn có thể bỏ return false hoặc thực hiện hành động khác nếu cần
-  //       }
-  //     } else {
-  //       setError("Không thể kiểm tra trạng thái thanh toán.");
-  //     }
-  //   } catch (err) {
-  //     console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
-  //     setError("Đã xảy ra lỗi trong quá trình kiểm tra thanh toán.");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-  
-
-  // useEffect(() => {
-  //   if (!ticketId) return;
-
-  //   const interval = setInterval(() => {
-  //     checkPayment();
-  //   }, 10000); // Gọi hàm mỗi 5 giây
-
-  //   return () => clearInterval(interval); // Xóa interval khi component bị unmount
-  // }, [ticketId, navigate]);
 
   // Check cancle ticket
   const checkCancelTicket = async () => {
@@ -430,37 +422,145 @@ const MethodPayment = () => {
               <div className={styles.bookingPayment__wrap}>
                 <div className="row">
                   <div className="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-                    <div className={styles.bookingPayment__method}>
-                      {paymentUrl && (
-                        <div>
-                          <h3>Scan để thanh toán:</h3>
-                          <img
-                            src={paymentUrl}
-                            alt="Payment QR Code"
-                            style={{
-                              width: "500px",
-                              height: "500px",
-                              marginLeft: "80px",
-                            }}
-                          />
+                    <div
+                      className={styles.bookingPayment__method}
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <div
+                        className={
+                          styles.bookingPage__tickets__item__collapse__booking__seat_map
+                        }
+                      >
+                        <div
+                          className={
+                            styles.bookingPage__tickets__item__collapse__booking__seat_map__floor
+                          }
+                        >
+                          <table>
+                            <tbody>
+                              {[...Array(5)].map((_, rowIndex) => {
+                                return (
+                                  <tr key={rowIndex}>
+                                    {["A", "B", "C", "D", "E"].map(
+                                      (col, colIndex) => {
+                                        const position = `${col}${
+                                          rowIndex + 1
+                                        }`;
+                                        const seat = seats.find(
+                                          (seat) => seat.position === position
+                                        );
+
+                                        // Kiểm tra nếu ghế bị hủy, đang chờ xử lý hoặc không thể chọn
+                                        const isSuccess =
+                                          checkSuccessTicket(position);
+                                        const isWaiting = waitingSeats.some(
+                                          (ticket) =>
+                                            ticket.selectedSeat.includes(
+                                              position
+                                            )
+                                        );
+
+                                        let seatClass = "icon-seat-empty";
+                                        let cursorStyle = "pointer"; // Mặc định là pointer
+
+                                        if (position === "A1") {
+                                          seatClass = "icon-seat-not-sell";
+                                          cursorStyle = "not-allowed"; // Ghế A1 không thể chọn
+                                        } else if (isSuccess) {
+                                          seatClass = "icon-seat-sold"; // Ghế đã hủy
+                                          cursorStyle = "not-allowed"; // Không thể chọn ghế đã hủy
+                                        } else if (isWaiting) {
+                                          seatClass = "icon-seat-booked"; // Ghế đang chờ xử lý
+                                          cursorStyle = "not-allowed"; // Không thể chọn ghế đang chờ xử lý
+                                        } else if (
+                                          selectedSeats.includes(position)
+                                        ) {
+                                          seatClass = "icon-seat-selected"; // Ghế đang chọn
+                                        }
+
+                                        // Nếu không có ghế trong seatList thì hiển thị hidden
+                                        if (!seat) {
+                                          return (
+                                            <td
+                                              key={colIndex}
+                                              style={{ visibility: "hidden" }}
+                                            />
+                                          );
+                                        }
+
+                                        return (
+                                          <>
+                                            <td key={colIndex}>
+                                              {/* <div style={{ position: "relative", textAlign: "center", width: "80px" }}> */}
+                                              <div
+                                                style={{
+                                                  textAlign: "center",
+                                                  position: "relative",
+                                                }}
+                                              >
+                                                <input
+                                                  type="button"
+                                                  value={
+                                                    position === "A1"
+                                                      ? "Tài Xế"
+                                                      : seat.position
+                                                  }
+                                                  readOnly
+                                                  className={`avicon ${seatClass}`}
+                                                  onClick={
+                                                    position === "A1" ||
+                                                    isSuccess ||
+                                                    isWaiting
+                                                      ? undefined
+                                                      : () =>
+                                                          handleSeatClick(
+                                                            position
+                                                          )
+                                                  }
+                                                  style={{
+                                                    display: "inline-block",
+                                                    width: "80px",
+                                                    textAlign: "center",
+                                                    cursor: cursorStyle, // Cập nhật style con trỏ
+                                                  }}
+                                                />
+                                                {seat &&
+                                                  seat.surcharge !== 0 && (
+                                                    <div
+                                                      style={{
+                                                        position: "absolute",
+                                                        bottom: "-28px",
+                                                        left: "50%",
+                                                        transform:
+                                                          "translateX(-50%)",
+                                                        fontSize: "12px",
+                                                        color:
+                                                          seat.surcharge > 0
+                                                            ? "red"
+                                                            : "green",
+                                                        whiteSpace: "nowrap",
+                                                      }}
+                                                    ></div>
+                                                  )}
+                                              </div>
+                                            </td>
+                                          </>
+                                        );
+                                      }
+                                    )}
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
                         </div>
-                      )}
-                    </div>
-                    {messagePayment && (
-                      <div>
-                        <p>
-                          <span
-                            className="text-big"
-                            style={{ fontSize: "1.4em" }}
-                          >
-                            <strong>
-                              NẾU BẠN ĐÃ THANH TOÁN VUI LÒNG KHÔNG CHUYỂN TRANG.
-                              XIN CHỜ TRONG GIÂY LÁT
-                            </strong>
-                          </span>
-                        </p>
                       </div>
-                    )}
+                    </div>
+
                     <div>
                       <p>
                         <span
@@ -468,17 +568,30 @@ const MethodPayment = () => {
                           style={{ fontSize: "1.4em" }}
                         >
                           QUÝ KHÁCH VUI LÒNG THANH TOÁN TRONG VÒNG{" "}
-                          <strong>3 PHÚT</strong>, QUÁ THỜI HẠN MÃ VÉ SẼ BỊ HUỶ.
-                          CẦN HỖ TRỢ XIN LIÊN HỆ TỔNG ĐÀI:{" "}
+                          <strong>15 PHÚT</strong>, QUÁ THỜI HẠN MÃ VÉ SẼ BỊ
+                          HUỶ. CẦN HỖ TRỢ XIN LIÊN HỆ TỔNG ĐÀI:{" "}
                           <strong>1900969671</strong>.
                         </span>
                       </p>
                     </div>
-                    <div className="d-none check-big-size">
-                      <input type="checkbox" id="ckb1" />
-                      <label htmlFor="ckb1">
-                        Tôi đồng ý với quy định của nhà xe
-                      </label>
+
+                    <div className={styles.bookingSuccessPage__note}>
+                      <h4 style={{ fontSize: "30px" }}>Lưu ý</h4>
+                      <p>
+                        - Thông tin khách hàng phải chính xác, nếu không sẽ
+                        không thực hiện việc hủy/đổi.{" "}
+                      </p>
+                      <p>
+                        - Điểm đón/trả khách phải nằm trong quy định về điểm
+                        đón/trả của chúng tôi, nếu nằm ngoài quy định về điểm
+                        đón/trả, chúng tôi không đáp ứng.{" "}
+                      </p>
+                      <p>
+                        - Trước khi giao dịch thanh toán thành công, chúng tôi
+                        sẽ không đón quý khách hàng tại các điểm theo quy định
+                        về điểm đón của .{" "}
+                      </p>
+                      <p>- Mọi thắc mắc xin vui lòng liên hệ qua tổng đài: </p>
                     </div>
                   </div>
                   <div className="col-xs-12 col-sm-12 col-md-5 col-lg-5">

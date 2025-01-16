@@ -17,13 +17,12 @@ const SeatMap = ({
   routeDetail,
   carDetail,
 }) => {
-  const [seats, setSeats] = useState(car.type.seatList); 
-  const [selectedSeats, setSelectedSeats] = useState([]); 
-  const [tickets, setTickets] = useState([]); 
-  const [successSeats, setSuccessSeats] = useState([]); 
-  const [waitingSeats, setWaitingSeats] = useState([]); 
-  // const [successSeats, setSuccessSeats] = useState([]); 
-  
+  const [seats, setSeats] = useState(car.type.seatList);
+  const [selectedSeats, setSelectedSeats] = useState([]);
+  const [tickets, setTickets] = useState([]);
+  const [successSeats, setSuccessSeats] = useState([]);
+  const [waitingSeats, setWaitingSeats] = useState([]);
+  // const [successSeats, setSuccessSeats] = useState([]);
 
   useEffect(() => {
     setSeats(car.type.seatList);
@@ -34,33 +33,36 @@ const SeatMap = ({
         const response = await root.get(
           `/public/ticket-with-schedule/${scheduleId}`
         );
-  
+
         if (response.status === 200) {
           const tickets = response.data;
           setTickets(tickets);
-  
+
           // Lọc ghế có status là "Đã thanh toán"
           const successSeats = tickets.filter(
             (ticket) => ticket.status === "Đã thanh toán"
           );
           setSuccessSeats(successSeats);
-  
+
           // Lọc ghế có status là "Đang chờ xử lý"
           const waitingSeats = tickets.filter(
             (ticket) => ticket.status === "Đang chờ xử lý"
           );
           setWaitingSeats(waitingSeats);
         } else {
-          console.error("Không thể lấy dữ liệu vé. Mã trạng thái:", response.status);
+          console.error(
+            "Không thể lấy dữ liệu vé. Mã trạng thái:",
+            response.status
+          );
         }
       } catch (error) {
         console.error("Có lỗi xảy ra khi gọi API: ", error);
       }
     };
-  
+
     fetchTickets();
   }, [scheduleId]);
-  
+
   // Hàm kiểm tra ghế bị hủy
   const checkSuccessTicket = (seatPosition) => {
     return successSeats.some((ticket) =>
@@ -109,7 +111,7 @@ const SeatMap = ({
     return (
       new Intl.NumberFormat("vi-VN", {
         style: "decimal",
-        minimumFractionDigits: 0, 
+        minimumFractionDigits: 0,
       }).format(value) + " VND"
     );
   };
@@ -200,7 +202,12 @@ const SeatMap = ({
                               <>
                                 <td key={colIndex}>
                                   {/* <div style={{ position: "relative", textAlign: "center", width: "80px" }}> */}
-                                    <div style={{textAlign: "center",  position: "relative" }}>
+                                  <div
+                                    style={{
+                                      textAlign: "center",
+                                      position: "relative",
+                                    }}
+                                  >
                                     <input
                                       type="button"
                                       value={
@@ -228,7 +235,7 @@ const SeatMap = ({
                                       <div
                                         style={{
                                           position: "absolute",
-                                          bottom: "-28px", 
+                                          bottom: "-28px",
                                           left: "50%",
                                           transform: "translateX(-50%)",
                                           fontSize: "12px",
@@ -236,7 +243,7 @@ const SeatMap = ({
                                             seat.surcharge > 0
                                               ? "red"
                                               : "green",
-                                          whiteSpace: "nowrap", 
+                                          whiteSpace: "nowrap",
                                         }}
                                       >
                                         {seat.surcharge > 0
@@ -309,6 +316,7 @@ const SeatMap = ({
             </div>
 
             <BookingForm
+              car={car}
               selectedSeats={selectedSeats}
               totalPriceTicket={totalPriceTicket}
               carRouteId={carRouteId}

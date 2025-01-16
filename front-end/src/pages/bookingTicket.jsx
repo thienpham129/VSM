@@ -25,7 +25,10 @@ const BookingTicket = () => {
   const [dateBefore, setDateBefore] = useState("");
   const [dateAfter, setDateAfter] = useState("");
   const [startTimeRes, setStartTimeRes] = useState("");
+  const [tickets, setTickets] = useState([]);
+
   console.log("««««« schedule »»»»»", schedule);
+  console.log("««««« tickets »»»»»", tickets);
 
   const carRouteId = selectedRoute;
   // selectedRoute là routeId
@@ -47,18 +50,6 @@ const BookingTicket = () => {
     const userDate = new Date(userTime);
     const scheduleDate = new Date(scheduleTime);
 
-    // Tính chênh lệch thời gian (đơn vị: giờ)
-    const timeDifferenceInHours = (scheduleDate - userDate) / (1000 * 60 * 60);
-
-    // if (timeDifferenceInHours < 0) {
-    //   setErrorMessage("Lịch này đã được khởi hành.");
-    //   return false;
-    // }
-    // else if (timeDifferenceInHours > 1) {
-    //   setErrorMessage("Thời gian bạn chọn phải trong vòng 1 tiếng trước khi khởi hành.");
-    //   return false;
-    // }
-
     setErrorMessage(""); // Xóa lỗi nếu hợp lệ
     return true;
   };
@@ -76,9 +67,6 @@ const BookingTicket = () => {
       setErrorMessage("");
       setStartTime(userInputTime);
     }
-
-    // const userInputTime = e.target.value;
-    // setStartTime(userInputTime);
 
     // Chỉ kiểm tra khi schedule đã có giá trị
     if (schedule && schedule.startTime) {
@@ -163,61 +151,6 @@ const BookingTicket = () => {
 
   // End detail
 
-  // Hàm gọi API để tạo/lấy lịch trình
-  // useEffect(() => {
-  //   const handleScheduleUpdate = async () => {
-  //     if (!startTime || !selectedRoute || !selectedCar) {
-  //       return;
-  //     }
-
-  //     setLoading(true);
-  //     setError("");
-
-  //     let newSchedule = null;
-
-  //     try {
-  //       // Gọi API tạo/lấy lịch trình mới
-  //       const response = await fetch(
-  //         "http://localhost:9000/public/create-or-find",
-  //         {
-  //           method: "POST",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //           body: JSON.stringify({
-  //             startTime,
-  //             routeId: selectedRoute,
-  //             carId: selectedCar,
-  //           }),
-  //         }
-  //       );
-
-  //       if (!response.ok) {
-  //         throw new Error("Không thể tạo/lấy lịch trình!");
-  //       }
-
-  //       newSchedule = await response.json();
-
-  //       // Nếu lịch trình cũ tồn tại, gọi API DELETE
-  //       if (schedule && schedule.id) {
-  //         await fetch(`http://localhost:9000/public/schedule/${schedule.id}`, {
-  //           method: "DELETE",
-  //         });
-  //       }
-
-  //       // Cập nhật lịch trình mới
-  //       setSchedule(newSchedule);
-  //     } catch (error) {
-  //       console.error("Lỗi khi gọi API:", error);
-  //       setError("Không thể cập nhật lịch trình!");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   handleScheduleUpdate();
-  // }, [startTime, selectedRoute, selectedCar]);
-
   // Xóa lịch
   useEffect(() => {
     const findOrCreateSchedule = async () => {
@@ -276,8 +209,8 @@ const BookingTicket = () => {
       const response = await root.get(
         `/public/ticket-with-schedule/${scheduleId}`
       );
-
-      console.log("««««« response »»»»»", response);
+      const tickets = response.data;
+      setTickets(tickets);
     } catch (error) {
       if (error.status == 500) {
         setIsCreateSchedule(true);
@@ -294,7 +227,7 @@ const BookingTicket = () => {
       if (
         ~~(targetDate.getTime() / 60000 - currentDate.getTime() / 60000) >= 15
       ) {
-        alert("ok");
+        // alert("ok");
         setIsCreateSchedule(false);
         setGetSchedule(false);
         setIsDisableSeat(false);
@@ -311,20 +244,19 @@ const BookingTicket = () => {
     }
   }, [scheduleId]);
 
-  useEffect(()=>{
-   if(schedule && checkStartTime){
-    const sampleTime = new Date(checkStartTime)
-    const test1 = new Date(sampleTime)
-    const test2 = new Date(sampleTime)
-    const tempDateBefore = test1.getTime() - schedule.time * 60000;
-    const tempDateAfter = test2.getTime() + schedule.time * 60000;
-    const dateBefore = new Date(tempDateBefore);
-    const dateAfter = new Date(tempDateAfter);
-    setDateBefore(dateBefore.toLocaleString());
-    setDateAfter(dateAfter.toLocaleString());
-
-   }
-  },[schedule , checkStartTime])
+  useEffect(() => {
+    if (schedule && checkStartTime) {
+      const sampleTime = new Date(checkStartTime);
+      const test1 = new Date(sampleTime);
+      const test2 = new Date(sampleTime);
+      const tempDateBefore = test1.getTime() - schedule.time * 60000;
+      const tempDateAfter = test2.getTime() + schedule.time * 60000;
+      const dateBefore = new Date(tempDateBefore);
+      const dateAfter = new Date(tempDateAfter);
+      setDateBefore(dateBefore.toLocaleString());
+      setDateAfter(dateAfter.toLocaleString());
+    }
+  }, [schedule, checkStartTime]);
 
   return (
     <div className="no-bottom no-top zebra" id="content">
@@ -370,10 +302,14 @@ const BookingTicket = () => {
                       className={styles.ticket_date}
                       type="datetime-local"
                       value={startTime}
-                      onChange={handleUserTimeChange}
+                      onChange={(e)=>{
+                        handleUserTimeChange(e);
+                        setTickets([])
+                        setScheduleId("")
+
+                      }}
                       min={new Date().toISOString().slice(0, 16)}
                     />
-                    {/* {error && <p style={{ color: "red" }}>{error}</p>} */}
                     {errorMessage && (
                       <p style={{ color: "red" }}>{errorMessage}</p>
                     )}
@@ -404,7 +340,12 @@ const BookingTicket = () => {
                       className={styles.pointUp}
                       id="searchPointUp"
                       value={selectedRoute || ""}
-                      onChange={(e) => setSelectedRoute(Number(e.target.value))}
+                      onChange={(e) => {
+                        setSelectedRoute(Number(e.target.value));
+                        setTickets([]);
+                        setScheduleId("")
+
+                      }}
                     >
                       <option value="">Chọn tuyến đường</option>
                       {routes.map((route) => (
@@ -451,6 +392,9 @@ const BookingTicket = () => {
                         );
                         setSelectedCar(Number(e.target.value));
                         setSelectedCarSeatMap(car);
+                        setTickets([]);
+                        setScheduleId("")
+
                       }}
                     >
                       <option value="">Chọn loại xe</option>
@@ -463,16 +407,6 @@ const BookingTicket = () => {
                   </div>
                 </div>
               </div>
-              {/* <div className={styles.bookingPage__search__triggle}>
-                <a
-                  href="javascript:;"
-                  data-action="searchTrip"
-                  // onClick={handleSearch}
-                >
-                  <i className="fa fa-search" aria-hidden="true" /> Tìm chuyến
-                </a>
-                
-              </div> */}
             </div>
           </div>
         </div>
@@ -502,23 +436,65 @@ const BookingTicket = () => {
               {schedule ? (
                 <>
                   {isDisableSeat ? (
-                    <h4>Không tạo được lịch trình. Vui lòng chọn thời gian sau 15 phút so với giờ hiện tại!</h4>
+                    <h4 style={{ padding: "10px 0 ", color: "red", textAlign : 'center' }} >
+                      Không tạo được lịch trình. Vui lòng chọn thời gian sau 15
+                      phút so với giờ hiện tại!
+                    </h4>
                   ) : (
                     <>
-                      <h2>{dateBefore} - {dateAfter} </h2>
-                      <SeatMap
-                        priceOfSeat={schedule.price}
-                        car={selectedCarSeatMap}
-                        carRouteId={carRouteId}
-                        scheduleId={schedule.id}
-                        startTime={schedule.startTime}
-                        startLocation={schedule.startLocation}
-                        stopLocation={schedule.stopLocation}
-                        selectedRoute={selectedRoute}
-                        selectedCar={selectedCar}
-                        routeDetail={routeDetail}
-                        carDetail={carDetail}
-                      />
+                      {tickets.length > 0 ? (
+                        <>
+                          <h3 style={{ padding: "10px 0 ", color: "red" }}>
+                            Tất cả những lịch ở trong khoảng khung giờ (
+                            {dateBefore}) - ({dateAfter}) này thì sẽ được ghép
+                            vào lịch trong khung giờ (
+                            {schedule.startTime.toLocaleString().split("T")[1] +
+                              " " +
+                              schedule.startTime
+                                .toLocaleString()
+                                .split("T")[0]
+                                .split("-")[2] +
+                              "/" +
+                              schedule.startTime
+                                .toLocaleString()
+                                .split("T")[0]
+                                .split("-")[1] +
+                              "/" +
+                              schedule.startTime
+                                .toLocaleString()
+                                .split("T")[0]
+                                .split("-")[0]}
+                            )
+                          </h3>
+                          <SeatMap
+                            priceOfSeat={schedule.price}
+                            car={selectedCarSeatMap}
+                            carRouteId={carRouteId}
+                            scheduleId={scheduleId}
+                            startTime={schedule.startTime}
+                            startLocation={schedule.startLocation}
+                            stopLocation={schedule.stopLocation}
+                            selectedRoute={selectedRoute}
+                            selectedCar={selectedCar}
+                            routeDetail={routeDetail}
+                            carDetail={carDetail}
+                          />
+                        </>
+                      ) : (
+                        <SeatMap
+                          priceOfSeat={schedule.price}
+                          car={selectedCarSeatMap}
+                          carRouteId={carRouteId}
+                          scheduleId={scheduleId}
+                          startTime={schedule.startTime}
+                          startLocation={schedule.startLocation}
+                          stopLocation={schedule.stopLocation}
+                          selectedRoute={selectedRoute}
+                          selectedCar={selectedCar}
+                          routeDetail={routeDetail}
+                          carDetail={carDetail}
+                        />
+                      )}
                     </>
                   )}
                 </>
@@ -676,25 +652,77 @@ const BookingTicket = () => {
             <span>Thanh toán</span>
             <span>Hoàn thành</span>
           </div>
-          {/* <div className={styles.bookingPage__mobile__content}>
-            {schedule ? (
-              <SeatMapMobile
-                priceOfSeat={schedule.price}
-                car={selectedCarSeatMap}
-                carRouteId={carRouteId}
-                scheduleId={schedule.id}
-                startTime={schedule.startTime}
-                startLocation={schedule.startLocation}
-                stopLocation={schedule.stopLocation}
-                selectedRoute={selectedRoute}
-                selectedCar={selectedCar}
-                routeDetail={routeDetail}
-                carDetail={carDetail}
-              /> 
-            ) : (
-              ""
-            )}
-          </div> */}
+          <div className={styles.bookingPage__mobile__content}>
+          {schedule ? (
+                <>
+                  {isDisableSeat ? (
+                    <h4 style={{ padding: "10px 0 ", color: "red", textAlign : 'center' }} >
+                      Không tạo được lịch trình. Vui lòng chọn thời gian sau 15
+                      phút so với giờ hiện tại!
+                    </h4>
+                  ) : (
+                    <>
+                      {tickets.length > 0 ? (
+                        <>
+                          <h3 style={{ padding: "10px 0 ", color: "red" }}>
+                            Tất cả những lịch ở trong khoảng khung giờ (
+                            {dateBefore}) - ({dateAfter}) này thì sẽ được ghép
+                            vào lịch trong khung giờ (
+                            {schedule.startTime.toLocaleString().split("T")[1] +
+                              " " +
+                              schedule.startTime
+                                .toLocaleString()
+                                .split("T")[0]
+                                .split("-")[2] +
+                              "/" +
+                              schedule.startTime
+                                .toLocaleString()
+                                .split("T")[0]
+                                .split("-")[1] +
+                              "/" +
+                              schedule.startTime
+                                .toLocaleString()
+                                .split("T")[0]
+                                .split("-")[0]}
+                            )
+                          </h3>
+                          <SeatMap
+                            priceOfSeat={schedule.price}
+                            car={selectedCarSeatMap}
+                            carRouteId={carRouteId}
+                            scheduleId={scheduleId}
+                            startTime={schedule.startTime}
+                            startLocation={schedule.startLocation}
+                            stopLocation={schedule.stopLocation}
+                            selectedRoute={selectedRoute}
+                            selectedCar={selectedCar}
+                            routeDetail={routeDetail}
+                            carDetail={carDetail}
+                          />
+                        </>
+                      ) : (
+                        <SeatMap
+                          priceOfSeat={schedule.price}
+                          car={selectedCarSeatMap}
+                          carRouteId={carRouteId}
+                          scheduleId={scheduleId}
+                          startTime={schedule.startTime}
+                          startLocation={schedule.startLocation}
+                          stopLocation={schedule.stopLocation}
+                          selectedRoute={selectedRoute}
+                          selectedCar={selectedCar}
+                          routeDetail={routeDetail}
+                          carDetail={carDetail}
+                        />
+                      )}
+                    </>
+                  )}
+                </>
+              ) : (
+                // <p>Chưa có lịch trình.</p>
+                ""
+              )}
+          </div>
         </div>
       </div>
       {/*  */}
