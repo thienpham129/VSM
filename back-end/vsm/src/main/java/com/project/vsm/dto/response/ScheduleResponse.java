@@ -29,6 +29,7 @@ public class ScheduleResponse {
 	private String lastNameDriver;
 	private String phoneNumberDriver;
 	private long idCar;
+	private int time;
 	private String nameCar;
 	private String plateNumber;
 	private Long idType;
@@ -38,6 +39,7 @@ public class ScheduleResponse {
 	private String startLocation;
 	private String stopLocation;
 	private int emptySeat;
+	
 	public static ScheduleResponse convertFromEntity(ScheduleEntity entity) {
 		ScheduleResponse response = ScheduleResponse.builder().id(entity.getId()).startTime(entity.getStartTime())
 				.endTime(entity.getEndTime()).status(entity.getStatus()).price(entity.getCarRoute().getPrice())
@@ -45,6 +47,7 @@ public class ScheduleResponse {
 //				.firstNameDriver(entity.getAccount().getFirstName())
 //				.lastNameDriver(entity.getAccount().getLastName())
 //				.phoneNumberDriver(entity.getAccount().getPhoneNumber())
+				
 				.idCar(entity.getCarRoute().getCar().getCarId()).nameCar(entity.getCarRoute().getCar().getName())
 				.plateNumber(entity.getCarRoute().getCar().getPlateNumber())
 				.idType(entity.getCarRoute().getCar().getType().getId())

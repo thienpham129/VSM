@@ -219,15 +219,12 @@ const Profile = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("««««« response »»»»»", response.data);
       if (response.status === 200 && validate()) {
-        // alert("Lưu thông tin cá nhân thành công!");
         notifySuccessUpdate();
         setShowFullAddress(false);
       }
     } catch (error) {
       console.log("Lỗi khi lưu thông tin cá nhân:", error);
-      // alert("Có lỗi xảy ra khi lưu thông tin cá nhân.");
       notifyErrorUpdate();
     }
   };

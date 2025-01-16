@@ -202,53 +202,53 @@ const MethodPayment = () => {
   //     setIsLoading(false);
   //   }
   // };
-  const checkPayment = async () => {
-    if (!ticketId) {
-      alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra thanh toán.");
-      return;
-    }
+  // const checkPayment = async () => {
+  //   if (!ticketId) {
+  //     alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra thanh toán.");
+  //     return;
+  //   }
   
-    try {
-      const response = await root.get(`/api/v1/google-sheet/check-ticket/${ticketId}`);
+  //   try {
+  //     const response = await root.get(`/api/v1/google-sheet/check-ticket/${ticketId}`);
   
-      if (response.status === 200) {
-        console.log("««««« response.data »»»»»", response.data);
-        if (response.data.paid === true) {
-          console.log("««««« Vé đã được thanh toán »»»»»");
-          // Điều hướng sang trang paymentSuccess với dữ liệu cần thiết
-          navigate("/paymentSuccess", {
-            state: {
-              startTime,
-              carDetail,
-              routeDetail,
-            },
-          });
-          // Thực hiện việc điều hướng thành công mà không cần trả về giá trị true
-        } else {
-          console.log("««««« Vé chưa được thanh toán »»»»»");
-          // Bạn có thể bỏ return false hoặc thực hiện hành động khác nếu cần
-        }
-      } else {
-        setError("Không thể kiểm tra trạng thái thanh toán.");
-      }
-    } catch (err) {
-      console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
-      setError("Đã xảy ra lỗi trong quá trình kiểm tra thanh toán.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     if (response.status === 200) {
+  //       console.log("««««« response.data »»»»»", response.data);
+  //       if (response.data.paid === true) {
+  //         console.log("««««« Vé đã được thanh toán »»»»»");
+  //         // Điều hướng sang trang paymentSuccess với dữ liệu cần thiết
+  //         navigate("/paymentSuccess", {
+  //           state: {
+  //             startTime,
+  //             carDetail,
+  //             routeDetail,
+  //           },
+  //         });
+  //         // Thực hiện việc điều hướng thành công mà không cần trả về giá trị true
+  //       } else {
+  //         console.log("««««« Vé chưa được thanh toán »»»»»");
+  //         // Bạn có thể bỏ return false hoặc thực hiện hành động khác nếu cần
+  //       }
+  //     } else {
+  //       setError("Không thể kiểm tra trạng thái thanh toán.");
+  //     }
+  //   } catch (err) {
+  //     console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
+  //     setError("Đã xảy ra lỗi trong quá trình kiểm tra thanh toán.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
   
 
-  useEffect(() => {
-    if (!ticketId) return;
+  // useEffect(() => {
+  //   if (!ticketId) return;
 
-    const interval = setInterval(() => {
-      checkPayment();
-    }, 10000); // Gọi hàm mỗi 5 giây
+  //   const interval = setInterval(() => {
+  //     checkPayment();
+  //   }, 10000); // Gọi hàm mỗi 5 giây
 
-    return () => clearInterval(interval); // Xóa interval khi component bị unmount
-  }, [ticketId, navigate]);
+  //   return () => clearInterval(interval); // Xóa interval khi component bị unmount
+  // }, [ticketId, navigate]);
 
   // Check cancle ticket
   const checkCancelTicket = async () => {

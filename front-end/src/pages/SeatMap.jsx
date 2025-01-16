@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styles from "pages/bookingTicket.module.css";
 import BookingForm from "components/BookingForm";
+import { root } from "helper/axiosClient";
 
 const SeatMap = ({
   car,
@@ -16,42 +17,53 @@ const SeatMap = ({
   routeDetail,
   carDetail,
 }) => {
-  const [seats, setSeats] = useState(car.type.seatList); // Ghế từ car data
-  const [selectedSeats, setSelectedSeats] = useState([]); // Ghế đã chọn
-  const [tickets, setTickets] = useState([]); // Dữ liệu vé từ API
-  const [canceledSeats, setCanceledSeats] = useState([]); // Ghế hủy đặt vé
-  const [waitingSeats, setWaitingSeats] = useState([]); // Ghế đang chờ xử lý
+  const [seats, setSeats] = useState(car.type.seatList); 
+  const [selectedSeats, setSelectedSeats] = useState([]); 
+  const [tickets, setTickets] = useState([]); 
+  const [successSeats, setSuccessSeats] = useState([]); 
+  const [waitingSeats, setWaitingSeats] = useState([]); 
+  // const [successSeats, setSuccessSeats] = useState([]); 
+  
 
   useEffect(() => {
     setSeats(car.type.seatList);
   }, [car]);
   useEffect(() => {
-    axios
-      .get(`http://localhost:9000/public/ticket-with-schedule/${scheduleId}`)
-      .then((response) => {
-        setTickets(response.data);
-
-        // Lọc ghế có status là "Hủy thanh toán"
-        const canceledSeats = response.data.filter(
-          (ticket) => ticket.status === "Hủy thanh toán"
+    const fetchTickets = async () => {
+      try {
+        const response = await root.get(
+          `/public/ticket-with-schedule/${scheduleId}`
         );
-        setCanceledSeats(canceledSeats);
-
-        // Lọc ghế có status là "Đang chờ xử lý"
-        const waitingSeats = response.data.filter(
-          (ticket) => ticket.status === "Đang chờ xử lý"
-        );
-        console.log("««««« waitingSeats »»»»»", waitingSeats);
-        setWaitingSeats(waitingSeats);
-      })
-      .catch((error) => {
+  
+        if (response.status === 200) {
+          const tickets = response.data;
+          setTickets(tickets);
+  
+          // Lọc ghế có status là "Đã thanh toán"
+          const successSeats = tickets.filter(
+            (ticket) => ticket.status === "Đã thanh toán"
+          );
+          setSuccessSeats(successSeats);
+  
+          // Lọc ghế có status là "Đang chờ xử lý"
+          const waitingSeats = tickets.filter(
+            (ticket) => ticket.status === "Đang chờ xử lý"
+          );
+          setWaitingSeats(waitingSeats);
+        } else {
+          console.error("Không thể lấy dữ liệu vé. Mã trạng thái:", response.status);
+        }
+      } catch (error) {
         console.error("Có lỗi xảy ra khi gọi API: ", error);
-      });
-  }, []);
-
+      }
+    };
+  
+    fetchTickets();
+  }, [scheduleId]);
+  
   // Hàm kiểm tra ghế bị hủy
-  const checkCanceledTicket = (seatPosition) => {
-    return canceledSeats.some((ticket) =>
+  const checkSuccessTicket = (seatPosition) => {
+    return successSeats.some((ticket) =>
       ticket.selectedSeat.includes(seatPosition)
     );
   };
@@ -66,11 +78,11 @@ const SeatMap = ({
     const selectedSeat = seats.find((seat) => seat.position === seatPosition);
 
     // Kiểm tra nếu ghế này đã bị hủy hoặc đang chờ xử lý thì không thể chọn
-    const isCanceled = checkCanceledTicket(seatPosition);
+    const isSuccess = checkSuccessTicket(seatPosition);
     const isWaiting = waitingSeats.some((ticket) =>
       ticket.selectedSeat.includes(seatPosition)
     );
-    if (isCanceled || isWaiting) {
+    if (isSuccess || isWaiting) {
       return; // Không làm gì nếu ghế đã bị hủy hoặc đang chờ xử lý
     }
 
@@ -93,12 +105,11 @@ const SeatMap = ({
     });
   };
 
-  // Hàm định dạng tiền VND
   const formatCurrency = (value) => {
     return (
       new Intl.NumberFormat("vi-VN", {
         style: "decimal",
-        minimumFractionDigits: 0, // Không hiển thị phần thập phân
+        minimumFractionDigits: 0, 
       }).format(value) + " VND"
     );
   };
@@ -154,7 +165,7 @@ const SeatMap = ({
                             );
 
                             // Kiểm tra nếu ghế bị hủy, đang chờ xử lý hoặc không thể chọn
-                            const isCanceled = checkCanceledTicket(position);
+                            const isSuccess = checkSuccessTicket(position);
                             const isWaiting = waitingSeats.some((ticket) =>
                               ticket.selectedSeat.includes(position)
                             );
@@ -165,7 +176,7 @@ const SeatMap = ({
                             if (position === "A1") {
                               seatClass = "icon-seat-not-sell";
                               cursorStyle = "not-allowed"; // Ghế A1 không thể chọn
-                            } else if (isCanceled) {
+                            } else if (isSuccess) {
                               seatClass = "icon-seat-sold"; // Ghế đã hủy
                               cursorStyle = "not-allowed"; // Không thể chọn ghế đã hủy
                             } else if (isWaiting) {
@@ -201,7 +212,7 @@ const SeatMap = ({
                                       className={`avicon ${seatClass}`}
                                       onClick={
                                         position === "A1" ||
-                                        isCanceled ||
+                                        isSuccess ||
                                         isWaiting
                                           ? undefined
                                           : () => handleSeatClick(position)
@@ -288,7 +299,7 @@ const SeatMap = ({
                 </p>
                 <p>
                   <span className="avicon icon-seat-sold" />
-                  Ghế đã hủy
+                  Ghế đã bán
                 </p>
                 <p>
                   <span className="avicon icon-seat-not-sell" />

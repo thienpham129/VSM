@@ -108,7 +108,7 @@ public class ScheduleService {
 		CarRouteEntity carRoute = entity.getCarRoute();
 		if (carRoute != null) {
 			response.setPrice(carRoute.getPrice());
-
+			response.setTime(carRoute.getTime());
 			// Lấy thông tin RouteEntity
 			RouteEntity route = carRoute.getRoute();
 			if (route != null) {

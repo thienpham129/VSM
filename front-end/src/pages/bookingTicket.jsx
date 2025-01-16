@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "pages/bookingTicket.module.css";
 import SeatMap from "./SeatMap";
 import SeatMapMobile from "components/SeatMapMobile/SeatMapMobile";
+import { root } from "helper/axiosClient";
 
 const BookingTicket = () => {
   const [startTime, setStartTime] = useState("");
@@ -15,7 +16,17 @@ const BookingTicket = () => {
   const [schedule, setSchedule] = useState(null);
   const [routeDetail, setRouteDetail] = useState(null);
   const [carDetail, setCarDetail] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [scheduleId, setScheduleId] = useState("");
+  const [checkStartTime, setCheckStartTime] = useState("");
+  const [isCreateSchedule, setIsCreateSchedule] = useState(false);
+  const [getSchedule, setGetSchedule] = useState(false);
+  const [isDisableSeat, setIsDisableSeat] = useState(false);
+  const [dateBefore, setDateBefore] = useState("");
+  const [dateAfter, setDateAfter] = useState("");
+  const [startTimeRes, setStartTimeRes] = useState("");
   console.log("««««« schedule »»»»»", schedule);
+
   const carRouteId = selectedRoute;
   // selectedRoute là routeId
   // selectedCar là carId
@@ -29,6 +40,49 @@ const BookingTicket = () => {
     } else {
       setError("");
       setStartTime(e.target.value);
+    }
+  };
+
+  const isTimeValid = (userTime, scheduleTime) => {
+    const userDate = new Date(userTime);
+    const scheduleDate = new Date(scheduleTime);
+
+    // Tính chênh lệch thời gian (đơn vị: giờ)
+    const timeDifferenceInHours = (scheduleDate - userDate) / (1000 * 60 * 60);
+
+    // if (timeDifferenceInHours < 0) {
+    //   setErrorMessage("Lịch này đã được khởi hành.");
+    //   return false;
+    // }
+    // else if (timeDifferenceInHours > 1) {
+    //   setErrorMessage("Thời gian bạn chọn phải trong vòng 1 tiếng trước khi khởi hành.");
+    //   return false;
+    // }
+
+    setErrorMessage(""); // Xóa lỗi nếu hợp lệ
+    return true;
+  };
+
+  // Xử lý khi người dùng thay đổi thời gian
+  const handleUserTimeChange = (e) => {
+    const selectedTime = new Date(e.target.value);
+    const currentTime = new Date();
+    const userInputTime = e.target.value;
+
+    if (selectedTime < currentTime) {
+      setErrorMessage("Bạn không thể chọn ngày giờ trong quá khứ!");
+      setStartTime("");
+    } else {
+      setErrorMessage("");
+      setStartTime(userInputTime);
+    }
+
+    // const userInputTime = e.target.value;
+    // setStartTime(userInputTime);
+
+    // Chỉ kiểm tra khi schedule đã có giá trị
+    if (schedule && schedule.startTime) {
+      isTimeValid(userInputTime, schedule.startTime);
     }
   };
 
@@ -175,7 +229,6 @@ const BookingTicket = () => {
       setError("");
 
       try {
-        // Nếu đã có schedule trước đó, gọi API delete trước khi tạo mới
         if (schedule && schedule.id) {
           await fetch(`http://localhost:9000/public/schedule/${schedule.id}`, {
             method: "DELETE",
@@ -203,7 +256,10 @@ const BookingTicket = () => {
         }
 
         const data = await response.json();
-        setSchedule(data); // Cập nhật lịch trình mới
+        setScheduleId(data.id);
+        setCheckStartTime(data.startTime);
+        setGetSchedule(true);
+        setSchedule(data);
       } catch (error) {
         console.error("Lỗi khi gọi API:", error);
         setError("Không thể lấy thông tin lịch trình!");
@@ -214,6 +270,61 @@ const BookingTicket = () => {
 
     findOrCreateSchedule();
   }, [startTime, selectedRoute, selectedCar]);
+
+  const getTicketByIdScheduleId = async () => {
+    try {
+      const response = await root.get(
+        `/public/ticket-with-schedule/${scheduleId}`
+      );
+
+      console.log("««««« response »»»»»", response);
+    } catch (error) {
+      if (error.status == 500) {
+        setIsCreateSchedule(true);
+      }
+      console.log("««««« err »»»»»", error);
+    }
+  };
+
+  useEffect(() => {
+    if (isCreateSchedule && getSchedule) {
+      const currentDate = new Date();
+      const targetDate = new Date(checkStartTime);
+
+      if (
+        ~~(targetDate.getTime() / 60000 - currentDate.getTime() / 60000) >= 15
+      ) {
+        alert("ok");
+        setIsCreateSchedule(false);
+        setGetSchedule(false);
+        setIsDisableSeat(false);
+      } else {
+        // alert("Không tạo được lịch");
+        setIsDisableSeat(true);
+      }
+    }
+  }, [isCreateSchedule, getSchedule, checkStartTime]);
+
+  useEffect(() => {
+    if (scheduleId) {
+      getTicketByIdScheduleId();
+    }
+  }, [scheduleId]);
+
+  useEffect(()=>{
+   if(schedule && checkStartTime){
+    const sampleTime = new Date(checkStartTime)
+    const test1 = new Date(sampleTime)
+    const test2 = new Date(sampleTime)
+    const tempDateBefore = test1.getTime() - schedule.time * 60000;
+    const tempDateAfter = test2.getTime() + schedule.time * 60000;
+    const dateBefore = new Date(tempDateBefore);
+    const dateAfter = new Date(tempDateAfter);
+    setDateBefore(dateBefore.toLocaleString());
+    setDateAfter(dateAfter.toLocaleString());
+
+   }
+  },[schedule , checkStartTime])
 
   return (
     <div className="no-bottom no-top zebra" id="content">
@@ -259,10 +370,13 @@ const BookingTicket = () => {
                       className={styles.ticket_date}
                       type="datetime-local"
                       value={startTime}
-                      onChange={handleStartTimeChange}
+                      onChange={handleUserTimeChange}
                       min={new Date().toISOString().slice(0, 16)}
                     />
-                    {error && <p style={{ color: "red" }}>{error}</p>}
+                    {/* {error && <p style={{ color: "red" }}>{error}</p>} */}
+                    {errorMessage && (
+                      <p style={{ color: "red" }}>{errorMessage}</p>
+                    )}
                   </div>
                 </div>
                 <div className={styles.searchTicket__item}>
@@ -387,20 +501,26 @@ const BookingTicket = () => {
             <div className={styles.bookingPage__tickets__wrap}>
               {schedule ? (
                 <>
-                  <div>xin chào</div>
-                  <SeatMap
-                    priceOfSeat={schedule.price}
-                    car={selectedCarSeatMap}
-                    carRouteId={carRouteId}
-                    scheduleId={schedule.id}
-                    startTime={schedule.startTime}
-                    startLocation={schedule.startLocation}
-                    stopLocation={schedule.stopLocation}
-                    selectedRoute={selectedRoute}
-                    selectedCar={selectedCar}
-                    routeDetail={routeDetail}
-                    carDetail={carDetail}
-                  />
+                  {isDisableSeat ? (
+                    <h4>Không tạo được lịch trình. Vui lòng chọn thời gian sau 15 phút so với giờ hiện tại!</h4>
+                  ) : (
+                    <>
+                      <h2>{dateBefore} - {dateAfter} </h2>
+                      <SeatMap
+                        priceOfSeat={schedule.price}
+                        car={selectedCarSeatMap}
+                        carRouteId={carRouteId}
+                        scheduleId={schedule.id}
+                        startTime={schedule.startTime}
+                        startLocation={schedule.startLocation}
+                        stopLocation={schedule.stopLocation}
+                        selectedRoute={selectedRoute}
+                        selectedCar={selectedCar}
+                        routeDetail={routeDetail}
+                        carDetail={carDetail}
+                      />
+                    </>
+                  )}
                 </>
               ) : (
                 // <p>Chưa có lịch trình.</p>
@@ -556,7 +676,7 @@ const BookingTicket = () => {
             <span>Thanh toán</span>
             <span>Hoàn thành</span>
           </div>
-          <div className={styles.bookingPage__mobile__content}>
+          {/* <div className={styles.bookingPage__mobile__content}>
             {schedule ? (
               <SeatMapMobile
                 priceOfSeat={schedule.price}
@@ -570,12 +690,11 @@ const BookingTicket = () => {
                 selectedCar={selectedCar}
                 routeDetail={routeDetail}
                 carDetail={carDetail}
-              /> // Truyền giá tiền vào SeatMap
+              /> 
             ) : (
-              // <p>Chưa có lịch trình.</p>
               ""
             )}
-          </div>
+          </div> */}
         </div>
       </div>
       {/*  */}
