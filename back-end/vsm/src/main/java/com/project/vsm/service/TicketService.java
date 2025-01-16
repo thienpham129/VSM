@@ -1,21 +1,5 @@
 package com.project.vsm.service;
 
-import com.project.vsm.dto.AdminUpdateTicketDTO;
-import com.project.vsm.dto.TicketResponseAdminDTO;
-import com.project.vsm.dto.request.TicketRequest;
-import com.project.vsm.dto.response.ScheduleResponse;
-import com.project.vsm.dto.response.TicketResponse;
-import com.project.vsm.exception.NotFoundException;
-import com.project.vsm.model.*;
-import com.project.vsm.repository.*;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +9,37 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
+import com.project.vsm.dto.AdminUpdateTicketDTO;
+import com.project.vsm.dto.TicketResponseAdminDTO;
+import com.project.vsm.dto.TicketResponseDTO;
+import com.project.vsm.dto.request.TicketRequest;
+import com.project.vsm.dto.response.ScheduleResponse;
+import com.project.vsm.dto.response.TicketResponse;
+import com.project.vsm.exception.NotFoundException;
+import com.project.vsm.model.AccountEntity;
+import com.project.vsm.model.PaymentEntity;
+import com.project.vsm.model.RouteEntity;
+import com.project.vsm.model.ScheduleEntity;
+import com.project.vsm.model.TicketEntity;
+import com.project.vsm.model.VoucherEntity;
+import com.project.vsm.repository.AccountRepository;
+import com.project.vsm.repository.CarRouteRepository;
+import com.project.vsm.repository.PaymentRepository;
+import com.project.vsm.repository.RouteRepository;
+import com.project.vsm.repository.ScheduleRepository;
+import com.project.vsm.repository.TicketRepository;
+import com.project.vsm.repository.TypeRepository;
+import com.project.vsm.repository.VoucherRepository;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -221,6 +236,46 @@ public class TicketService {
 		return ticketDetail;
 	}
 
+	private TicketResponseDTO converEntity(TicketEntity ticketEntity) {
+		TicketResponseDTO responseDTO = TicketResponseDTO.builder().ticketId(ticketEntity.getTicketId())
+				.priceTicket(ticketEntity.getPrice()).isPaid(ticketEntity.isPaid())
+				.statusTicket(ticketEntity.getStatus()).selectSeat(ticketEntity.getSelectedSeat())
+				.note(ticketEntity.getNote()).email(ticketEntity.getEmail()).fullName(ticketEntity.getFullName())
+				.phoneNumber(ticketEntity.getPhoneNumber()).addressPickup(ticketEntity.getDetailAddressPickUp())
+				.addressDropOff(ticketEntity.getDetailAddressDropOff())
+				.idSchedule(ticketEntity.getScheduleEntity().getId())
+				.startTime(ticketEntity.getScheduleEntity().getStartTime())
+				.statusSchedule(ticketEntity.getScheduleEntity().getStatus())
+				.carId(ticketEntity.getScheduleEntity().getCarRoute().getCar().getCarId())
+				.carName(ticketEntity.getScheduleEntity().getCarRoute().getCar().getName())
+				.routeId(ticketEntity.getScheduleEntity().getCarRoute().getRoute().getId())
+				.startLocation(ticketEntity.getScheduleEntity().getCarRoute().getRoute().getStartLocation())
+				.stopLocation(ticketEntity.getScheduleEntity().getCarRoute().getRoute().getStopLocation()).build();
+
+		return responseDTO;
+	}
+
+	public List<TicketResponseDTO> adminGetAllticket() {
+		List<TicketEntity> ticketEntities = ticketRepository.findAll();
+		List<TicketResponseDTO> ticketResponses = new ArrayList<>();
+
+		TicketResponseDTO ticketResponseDTO = new TicketResponseDTO();
+
+		for (TicketEntity ticket : ticketEntities) {
+			ticketResponseDTO = converEntity(ticket);
+			ticketResponses.add(ticketResponseDTO);
+		}
+		return ticketResponses;
+	}
+
+	public TicketResponseDTO adminGetTicketById(String id) {
+		Optional<TicketEntity> optionalTicket = ticketRepository.findByTicketId(id);
+		if (!optionalTicket.isPresent()) {
+			throw new NotFoundException("Not found Ticket with id " + id);
+		}
+
+		return converEntity(optionalTicket.get());
+	}
 //	public Boolean checkTicketPaid(String id) {
 //		Optional<TicketEntity> optionalTicket = ticketRepository.findByTicketId(id);
 //		if (!optionalTicket.isPresent()) {
@@ -269,7 +324,7 @@ public class TicketService {
 		TicketEntity ticket = ticketRepository.findByTicketId(ticketId)
 				.orElseThrow(() -> new RuntimeException("Not found ticket with id : " + ticketId));
 
-		 ticket.setMapPickUp(request.getMapPickUp());
+		ticket.setMapPickUp(request.getMapPickUp());
 		ticket.setMapDrop(request.getMapDrop()); //
 		ticket.setMapStatus(request.getMapStatus());
 		if (request.getMapPickUp() != null) {

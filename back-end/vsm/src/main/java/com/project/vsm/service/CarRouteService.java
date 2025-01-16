@@ -28,6 +28,26 @@ public class CarRouteService {
 	@Autowired
 	private ScheduleService scheduleService;
 
+	public CarRouteEntity findCarRouteByCarAndRoute(Long idCar, Long idRoute) {
+		// Kiểm tra sự tồn tại của xe và tuyến đường
+		CarEntity car = carRepository.findById(idCar)
+				.orElseThrow(() -> new RuntimeException("Không tìm thấy xe với ID: " + idCar));
+
+		RouteEntity route = routeRepository.findById(idRoute)
+				.orElseThrow(() -> new RuntimeException("Không tìm thấy tuyến đường với ID: " + idRoute));
+
+		// Tìm CarRouteEntity theo car và route
+		CarRouteEntity carRoute = crrepository.findByCarAndRoute(car, route);
+
+		// Nếu không tìm thấy, ném exception
+		if (carRoute == null) {
+			throw new RuntimeException(
+					"Không tìm thấy chuyến xe với xe ID: " + idCar + " và tuyến đường ID: " + idRoute);
+		}
+
+		return carRoute;
+	}
+
 	public Iterable<CarRouteEntity> getAllCarRoute() {
 		Iterable<CarRouteEntity> listRoutes = crrepository.findAll();
 		return listRoutes;

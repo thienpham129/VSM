@@ -14,7 +14,6 @@ function SidebarDriver() {
   const [fullName, setFullName] = useState("");
   const [userId, setUserId] = useState("");
 
-
   useEffect(() => {
     const token = getTokenFromLocalStorage();
     if (token) {
@@ -91,7 +90,26 @@ function SidebarDriver() {
                 color="white"
                 title="Thông tin cá nhân"
               ></box-icon>
-              <span className="links_name">Thông tin cá nhân</span>
+              <span className="links_name" style={{ fontSize: "12px" }}>
+                Thông tin cá nhân
+              </span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              onClick={() => {
+                window.location.href = "/driver/scheduleNotAssignment";
+              }}
+            >
+              <box-icon
+                name="receipt"
+                color="white"
+                title="Lịch Trình Chưa Phân Công"
+              ></box-icon>
+              <span className="links_name" style={{ fontSize: "12px" }}>
+                Lịch Trình Chưa Phân Công
+              </span>
             </a>
           </li>
           <li>
@@ -106,7 +124,9 @@ function SidebarDriver() {
                 color="white"
                 title="Lịch Trình"
               ></box-icon>
-              <span className="links_name">Lịch Trình</span>
+              <span className="links_name" style={{ fontSize: "12px" }}>
+                Lịch Trình
+              </span>
             </a>
           </li>
           <li>
@@ -122,7 +142,9 @@ function SidebarDriver() {
                 color="white"
                 title="Bãi Đậu Xe"
               ></box-icon>
-              <span className="links_name">Bãi Đậu Xe</span>
+              <span className="links_name" style={{ fontSize: "12px" }}>
+                Bãi Đậu Xe
+              </span>
             </a>
           </li>
           <li>
@@ -133,7 +155,9 @@ function SidebarDriver() {
               }}
             >
               <box-icon name="map" color="white" title="Bản Đồ"></box-icon>
-              <span className="links_name">Bản Đồ</span>
+              <span className="links_name" style={{ fontSize: "12px" }}>
+                Bản Đồ
+              </span>
             </a>
           </li>
         </ul>

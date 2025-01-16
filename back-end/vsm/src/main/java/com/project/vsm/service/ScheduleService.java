@@ -235,6 +235,13 @@ public class ScheduleService {
 //		schedule.setCarRoute(carRoute);
 		schedule.setAccount(account);
 		schedule.setStatus(scheduleUpdateDTO.getStatus());
+
+		CarEntity carUpdate = carRepository.findById(scheduleUpdateDTO.getCarId()).get();
+		RouteEntity routeUpdate = routeRepository.findById(scheduleUpdateDTO.getRouteId()).get();
+		CarRouteEntity carRoute = carRouteRepository.findByCarAndRoute(carUpdate, routeUpdate);
+
+		schedule.setCarRoute(carRoute);
+
 		// Lưu thay đổi vào cơ sở dữ liệu
 		ScheduleEntity updatedSchedule = scheduleRepository.save(schedule);
 		// Chuyển đổi sang ScheduleResponse và trả về
@@ -250,21 +257,18 @@ public class ScheduleService {
 	}
 
 	public List<CarEntity> findCarsInScheduleWithinTimeRangeAndRoute(LocalDateTime time, Long routeId) {
-	    // Tính khoảng thời gian cần truy vấn
-	    LocalDateTime startTimeRange = time.minusHours(3);
-	    LocalDateTime endTimeRange = time.plusHours(3);
+		// Tính khoảng thời gian cần truy vấn
+		LocalDateTime startTimeRange = time.minusHours(3);
+		LocalDateTime endTimeRange = time.plusHours(3);
 
-	    // Lấy danh sách lịch trình trong khoảng thời gian và có routeId khớp
-	    List<ScheduleEntity> schedules = scheduleRepository.findSchedulesByTimeRangeAndRoute(
-	        startTimeRange, endTimeRange, routeId);
+		// Lấy danh sách lịch trình trong khoảng thời gian và có routeId khớp
+		List<ScheduleEntity> schedules = scheduleRepository.findSchedulesByTimeRangeAndRoute(startTimeRange,
+				endTimeRange, routeId);
 
-	    // Lọc các lịch trình có emptySeat = 0 và trả về danh sách xe
-	    return schedules.stream()
-	            .filter(schedule -> schedule.getEmptySeat() == 0)
-	            .map(schedule -> schedule.getCarRoute().getCar())
-	            .distinct() // Đảm bảo không trùng xe
-	            .collect(Collectors.toList());
+		// Lọc các lịch trình có emptySeat = 0 và trả về danh sách xe
+		return schedules.stream().filter(schedule -> schedule.getEmptySeat() == 0)
+				.map(schedule -> schedule.getCarRoute().getCar()).distinct() // Đảm bảo không trùng xe
+				.collect(Collectors.toList());
 	}
-	
-	
+
 }

@@ -10,10 +10,12 @@ import com.project.vsm.repository.ScheduleRepository;
 import com.project.vsm.repository.TicketRepository;
 import com.project.vsm.service.PaymentService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Enumeration;
 
 @RestController
@@ -46,11 +48,12 @@ public class PaymentController {
     }
 
     @GetMapping("/vn-pay-callback")
-    public ResponseObject<String> payCallbackHandler(HttpServletRequest request) {
+    public void payCallbackHandler(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String status = request.getParameter("vnp_ResponseCode");
         String ticketId = request.getParameter("vnp_TxnRef");
 
         if ("00".equals(status)) {
+            // Tìm và cập nhật trạng thái vé
             TicketEntity ticket = ticketRepository.findById(ticketId)
                     .orElseThrow(() -> new RuntimeException("Ticket not found"));
             ScheduleEntity scheduleEntity = ticket.getScheduleEntity();
@@ -65,9 +68,12 @@ public class PaymentController {
                     ticketRepository.save(ticket);
                 }
             }
-            return new ResponseObject<>(HttpStatus.OK.value(), "Payment successful", "Ticket ID: " + ticketId);
+
+            // Chuyển hướng đến trang paymentSuccess
+            response.sendRedirect("http://vsmcar.shop/paymentSuccess?ticketId=" + ticketId + "&status=success");
         } else {
-            return new ResponseObject<>(HttpStatus.BAD_REQUEST.value(), "Payment failed", null);
+            // Nếu thanh toán thất bại, chuyển hướng đến trang thất bại
+            response.sendRedirect("http://vsmcar.shop/paymentFailure?ticketId=" + ticketId + "&status=failure");
         }
     }
 

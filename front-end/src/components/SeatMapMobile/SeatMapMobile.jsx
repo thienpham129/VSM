@@ -125,7 +125,7 @@ const SeatMapMobile = ({
       ticket.selectedSeat.includes(seatPosition)
     );
     if (isCanceled || isWaiting) {
-      return; 
+      return;
     }
 
     // Cập nhật danh sách ghế đã chọn
@@ -215,7 +215,7 @@ const SeatMapMobile = ({
       ...(voucher && { voucher }),
     };
 
-    console.log('««««« ticketData »»»»»', ticketData);
+    console.log("««««« ticketData »»»»»", ticketData);
 
     // Gửi dữ liệu lên server (có thể dùng fetch hoặc axios)
     try {
@@ -360,10 +360,12 @@ const SeatMapMobile = ({
         const response = await root.get(
           `/public/check-voucher?voucher=${voucher}`
         );
-        if(response.data.data){
-          setDiscount(response.data.data.discount)
-          const newTotalPrice = totalPriceTicket - (totalPriceTicket * response.data.data.discount / 100); 
-          setTotalPrice(newTotalPrice); 
+        if (response.data.data) {
+          setDiscount(response.data.data.discount);
+          const newTotalPrice =
+            totalPriceTicket -
+            (totalPriceTicket * response.data.data.discount) / 100;
+          setTotalPrice(newTotalPrice);
         }
         if (response.data.data.message !== "Mã hợp lệ có thể sử dụng") {
           setMessageVoucher("Mã Đã Hết Hạn Hoặc Không Đúng !");
@@ -555,7 +557,7 @@ const SeatMapMobile = ({
                 <label htmlFor="">Tổng tiền</label>
                 <span className="total-monney">
                   <span data-content="totalPrice">
-                  {totalPriceTicket.toLocaleString().replace(",", ".")} VNĐ
+                    {totalPriceTicket.toLocaleString().replace(",", ".")} VNĐ
                   </span>{" "}
                 </span>
               </div>

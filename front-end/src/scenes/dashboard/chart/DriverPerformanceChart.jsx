@@ -110,7 +110,8 @@ const DriverPerformanceChart = () => {
 
   // Hiển thị biểu đồ nếu dữ liệu đã được tải
   return (
-    <div style={{ width: "100%", height: "400px", padding: "20px" }}>
+    // <div style={{ width: "100%", height: "400px", padding: "20px" }}>
+    <div style={{ width: "100%", padding: "20px" }}>
       {chartData ? (
         <Bar data={chartData} options={options} />
       ) : (

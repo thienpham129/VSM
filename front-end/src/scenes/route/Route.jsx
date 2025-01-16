@@ -132,7 +132,8 @@ const RouteAdmin = () => {
     }
 
     try {
-      await request("put", `/public/routes/${trimmedRoute.id}`, trimmedRoute);
+      // await request("put", `/public/routes/${trimmedRoute.id}`, trimmedRoute);
+      await request("put", `/admin/routes/${trimmedRoute.id}`, trimmedRoute);
       fetchRoutes();
       setSnackbarMessage("Cập nhật tuyến đường thành công!");
       setSnackbarColor("success");
@@ -149,7 +150,8 @@ const RouteAdmin = () => {
   // Handle deleting a route
   const handleDeleteRoute = async (id) => {
     try {
-      await request("delete", `/public/routes/${id}`);
+      // await request("delete", `/public/routes/${id}`);
+      await request("delete", `/admin/routes/${id}`);
       fetchRoutes();
       setSnackbarMessage("Xóa tuyến đường thành công!");
       setSnackbarColor("success");

@@ -33,7 +33,7 @@ public class EmailService {
 			helper.setSubject("Reset password");
 
 			// Tạo đường dẫn với email đã được thêm vào đúng cách
-			String resetLink = String.format("http://localhost:3000/reset_password?email=%s", email);
+			String resetLink = String.format("http://vsmcar.shop/reset_password?email=%s", email);
 
 			// Sử dụng link đã tạo trong nội dung email
 			helper.setText("<div><a href=\"" + resetLink + "\" target=\"_blank\">Click link to verify</a></div>", true);

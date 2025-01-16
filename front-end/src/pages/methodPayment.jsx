@@ -221,22 +221,43 @@ const MethodPayment = () => {
     }
   };
 
-  const handlePayment = async () => {
-    setMessagePayment(true);
-    setIsLoading(true);
-    setError(null);
+  const handlePayment = async (e) => {
+    // setMessagePayment(true);
+    // setIsLoading(true);
+    // setError(null);
+    e.preventDefault();
     try {
-      const response = await root.get(`/api/v1/payment/pay/${ticketId}`);
+      const response = await root.get(
+        `/api/v1/payment/vn-pay?bankCode=NCB&ticketId=${state.ticketId}`
+      );
 
       if (response.status === 200) {
-        setPaymentUrl(response.data.data.paymentUrl);
+        // setPaymentUrl(response.data.data.paymentUrl);
+        window.location.href = response.data.data.paymentUrl;
+        console.log(response);
       } else {
         setError("Failed to fetch payment URL");
       }
     } catch (err) {
       setError("An error occurred during payment.");
-    } finally {
-      setIsLoading(false);
+    }
+    // finally {
+    //   setIsLoading(false);
+    // }
+  };
+
+  const vnPayCallBack = async () => {
+    try {
+      const response = await root.get(
+        `http://localhost:9000/api/v1/payment/vn-pay-callback?vnp_ResponseCode=00&vnp_TxnRef=b5c02e9fd1`
+      );
+      if (response.code === 200) {
+        window.location.href = "/paymentSuccess";
+      } else {
+        alert("Error");
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -701,7 +722,7 @@ const MethodPayment = () => {
           </div>
         </form>
       </section>
-      <MethodPaymentMobile
+      {/* <MethodPaymentMobile
         fullName={fullName}
         phoneNumber={phoneNumber}
         email={email}
@@ -714,7 +735,7 @@ const MethodPayment = () => {
         startLocation={startLocation}
         stopLocation={stopLocation}
         ticketId={ticketId}
-      />
+      /> */}
     </div>
   );
 };

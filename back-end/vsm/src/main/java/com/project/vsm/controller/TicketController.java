@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.vsm.dto.AdminUpdateTicketDTO;
+import com.project.vsm.dto.TicketResponseDTO;
 import com.project.vsm.dto.request.TicketRequest;
 import com.project.vsm.dto.response.TicketResponse;
 import com.project.vsm.service.TicketService;
@@ -30,9 +31,14 @@ import lombok.experimental.FieldDefaults;
 public class TicketController {
 	TicketService ticketService;
 
-	@GetMapping("/admin/tickets")
-	public ResponseEntity<List<TicketResponse>> getAllTickets() {
-		return new ResponseEntity<>(ticketService.getAllTicket(), HttpStatus.OK);
+	@GetMapping("/driver/tickets")
+	public ResponseEntity<List<TicketResponseDTO>> getAllTickets() {
+		return new ResponseEntity<>(ticketService.adminGetAllticket(), HttpStatus.OK);
+	}
+
+	@GetMapping("/driver/tickets/{id}")
+	public ResponseEntity<TicketResponseDTO> getTicketByID(@PathVariable String id) {
+		return new ResponseEntity<>(ticketService.adminGetTicketById(id), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/admin/ticket/{ticketId}")
@@ -51,12 +57,11 @@ public class TicketController {
 		return new ResponseEntity<>(ticketService.getTicketByScheduleId(scheduleId), HttpStatus.OK);
 	}
 
-	// @PutMapping("/admin/update/ticket/{ticketId}")
-	// public ResponseEntity<TicketResponse> updateTicketById (@PathVariable String
-	// ticketId ,@RequestBody TicketRequest request){
-	// return new ResponseEntity<>(ticketService.updateTicketById(ticketId ,
-	// request),HttpStatus.OK);
-	// }
+	@PutMapping("/admin/update/ticket/{ticketId}")
+	public ResponseEntity<TicketResponse> updateTicketById(@PathVariable String ticketId,
+			@RequestBody TicketRequest request) {
+		return new ResponseEntity<>(ticketService.updateTicketById(ticketId, request), HttpStatus.OK);
+	}
 
 	// @PutMapping("/driver/update-status/ticket/{ticketId}")
 	// public ResponseEntity<TicketResponse> updateStatusTicketById (@PathVariable
@@ -64,6 +69,13 @@ public class TicketController {
 	// return new ResponseEntity<>(ticketService.updateStatusTicketById(ticketId ,
 	// request) , HttpStatus.OK);
 	// }
+
+	@PutMapping("/driver/update-status/ticket/{ticketId}")
+	public ResponseEntity<TicketResponse> updateStatusTicketById(@PathVariable String ticketId,
+
+			@RequestBody TicketRequest request) {
+		return new ResponseEntity<>(ticketService.updateStatusTicketById(ticketId, request), HttpStatus.OK);
+	}
 
 	/*
 	 * @PutMapping("/driver/update-status/ticket/{ticketId}") public

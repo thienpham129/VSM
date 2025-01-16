@@ -349,29 +349,29 @@ function BookingForm({
   // };
   //
 
-  // useEffect(() => {
-  //   const checkVoucher = async () => {
-  //     try {
-  //       const response = await root.get(
-  //         `/public/check-voucher?voucher=${voucher}`
-  //       );
-  //       if(response.data.data){
-  //         setDiscount(response.data.data.discount)
-  //         const newTotalPrice = totalPriceTicket - (totalPriceTicket * response.data.data.discount / 100); 
-  //         setTotalPrice(newTotalPrice); 
-  //       }
-  //       if (response.data.data.message !== "Mã hợp lệ có thể sử dụng") {
-  //         setMessageVoucher("Mã Đã Hết Hạn Hoặc Không Đúng !");
-  //       } else {
-  //         setMessageVoucher("");
-  //       }
-  //     } catch (error) {
-  //       setMessageVoucher("Mã Đã Hết Hạn Hoặc Không Đúng !");
-  //       console.log(error);
-  //     }
-  //   };
-  //   checkVoucher();
-  // }, [voucher]);
+  useEffect(() => {
+    const checkVoucher = async () => {
+      try {
+        const response = await root.get(
+          `/public/check-voucher?voucher=${voucher}`
+        );
+        if(response.data.data){
+          setDiscount(response.data.data.discount)
+          const newTotalPrice = totalPriceTicket - (totalPriceTicket * response.data.data.discount / 100); 
+          setTotalPrice(newTotalPrice); 
+        }
+        if (response.data.data.message !== "Mã hợp lệ có thể sử dụng") {
+          setMessageVoucher("Mã Đã Hết Hạn Hoặc Không Đúng !");
+        } else {
+          setMessageVoucher("");
+        }
+      } catch (error) {
+        setMessageVoucher("Mã Đã Hết Hạn Hoặc Không Đúng !");
+        console.log(error);
+      }
+    };
+    checkVoucher();
+  }, [voucher]);
 
   return (
     <div className={styles.bookingPage__tickets__item__collapse__booking__user}>
