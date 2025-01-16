@@ -18,7 +18,6 @@ const Header = () => {
   const [fullName, setFullName] = useState("");
   const [urlImage, setUrlImage] = useState();
 
-
   useEffect(() => {
     const token = getTokenFromLocalStorage();
     if (token) {
@@ -69,12 +68,12 @@ const Header = () => {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = (e) => {
+    e.preventDefault();
     removeTokenFromLocalStorage();
     localStorage.removeItem("role");
     window.location.href = "/login";
   };
-
 
   return (
     <header className="transparent scroll-light has-topbar">

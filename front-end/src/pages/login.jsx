@@ -290,9 +290,8 @@ const Login = () => {
                             className="title-forgot-account"
                             style={{ cursor: "pointer" }}
                             onClick={() => {
-                              window.location.href = "/reset_password";
+                              window.location.href = "/identify";
                             }}
-                            style={{ cursor: "pointer" }}
                           >
                             Forgotten account?
                           </p>

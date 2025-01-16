@@ -463,40 +463,40 @@ function Schedule() {
     }
   };
 
-  useEffect(() => {
-    if (isSuccessUpdateUser) {
-      console.log(statusUser);
-      try {
-        const updateStatusMap = async (status) => {
-          const responseMap = await root.put(
-            `/public/update-status-map/ticket/${ticketId}`,
-            {
-              mapStatus: status,
-            }
-          );
-          if (!responseMap.data) {
-            console.log(
-              "Something went wrong with call api of updateStatusMap"
-            );
-          } else {
-            setIsDoneUpdateMapStatus(true);
-            setIsSuccessUpdateUser(false);
-          }
-        };
-        if (statusUser.toLocaleUpperCase() === "ĐÃ LÊN XE") {
-          updateStatusMap("1");
-        } else if (statusUser.toLocaleUpperCase() === "CHƯA LÊN XE") {
-          updateStatusMap("0");
-        } else if (statusUser.toLocaleUpperCase() === "ĐÃ XUỐNG XE") {
-          updateStatusMap("2");
-        } else {
-          updateStatusMap("3");
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }, [isSuccessUpdateUser]);
+  // useEffect(() => {
+  //   if (isSuccessUpdateUser) {
+  //     console.log(statusUser);
+  //     try {
+  //       const updateStatusMap = async (status) => {
+  //         const responseMap = await root.put(
+  //           `/public/update-status-map/ticket/${ticketId}`,
+  //           {
+  //             mapStatus: status,
+  //           }
+  //         );
+  //         if (!responseMap.data) {
+  //           console.log(
+  //             "Something went wrong with call api of updateStatusMap"
+  //           );
+  //         } else {
+  //           setIsDoneUpdateMapStatus(true);
+  //           setIsSuccessUpdateUser(false);
+  //         }
+  //       };
+  //       if (statusUser.toLocaleUpperCase() === "ĐÃ LÊN XE") {
+  //         updateStatusMap("1");
+  //       } else if (statusUser.toLocaleUpperCase() === "CHƯA LÊN XE") {
+  //         updateStatusMap("0");
+  //       } else if (statusUser.toLocaleUpperCase() === "ĐÃ XUỐNG XE") {
+  //         updateStatusMap("2");
+  //       } else {
+  //         updateStatusMap("3");
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   }
+  // }, [isSuccessUpdateUser]);
 
   // useEffect(() => {
   //   if (dataScheduleDetail.length > 0 && isDoneUpdateMapStatus) {
