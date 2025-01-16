@@ -238,8 +238,16 @@ function Parking() {
         const getCarById = async () => {
           const response = await root.get(`public/car/${carId}`);
           if (response.status === 200) {
-            setAddressParkingRes(response.data.parking.location);
-            setNameParkingRes(response.data.parking.name);
+            console.log(response);
+            if (response.data.parking) {
+              if (
+                response.data.parking.location &&
+                response.data.parking.name
+              ) {
+                setAddressParkingRes(response.data.parking.location);
+                setNameParkingRes(response.data.parking.name);
+              }
+            }
           } else {
             console.log("Something went wrong with api getCarById !");
           }

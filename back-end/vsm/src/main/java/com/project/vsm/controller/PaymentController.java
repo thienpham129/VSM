@@ -70,10 +70,10 @@ public class PaymentController {
             }
 
             // Chuyển hướng đến trang paymentSuccess
-            response.sendRedirect("http://localhost:3000/paymentSuccess?ticketId=" + ticketId + "&status=success");
+            response.sendRedirect("http://vsmcar.shop/paymentSuccess?ticketId=" + ticketId + "&status=success");
         } else {
             // Nếu thanh toán thất bại, chuyển hướng đến trang thất bại
-            response.sendRedirect("http://localhost:3000/paymentFailure?ticketId=" + ticketId + "&status=failure");
+            response.sendRedirect("http://vsmcar.shop/paymentFailure?ticketId=" + ticketId + "&status=failure");
         }
     }
 
