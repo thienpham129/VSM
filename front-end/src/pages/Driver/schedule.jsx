@@ -236,7 +236,7 @@ function Schedule() {
   }, [isClickDetail]);
 
   const fetchDataSchedule = async () => {
-    //http://localhost:9000/driver/driver-schedule?accountId=3
+    //http://localhost:8080/driver/driver-schedule?accountId=3
     // const url = `driver/schedules/${localStorage.getItem("userId")}`;
     // const date = new Date();
     // let day = date.getFullYear() + "-" + (+date.getMonth() + 1) + "-";

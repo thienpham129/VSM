@@ -9,6 +9,7 @@ import {
   Paper,
   Button,
   TextField,
+  Snackbar,
 } from "@mui/material";
 import Header from "components/Header";
 import { Link, useParams } from "react-router-dom";
@@ -26,6 +27,8 @@ const DetailTemplateSeat = () => {
   const rows = Array.from({ length: 10 }, (_, rowIndex) => rowIndex + 1);
   const columns = ["A", "B", "C", "D", "E"];
   const { id } = useParams();
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   // Fetch seat details based on type ID
   useEffect(() => {
@@ -152,8 +155,12 @@ const DetailTemplateSeat = () => {
           seatDetails
         );
         console.log("Seat details updated successfully:", detailResponse);
+        setSnackbarMessage("Mẫu đã được cập nhật thành công!");
+        setSnackbarOpen(true);
       } catch (error) {
         console.error("Error while saving seat data:", error);
+        setSnackbarMessage("Cập nhật mẫu thất bại. Vui lòng thử lại!");
+        setSnackbarOpen(true);
       }
     }
   };
@@ -161,17 +168,17 @@ const DetailTemplateSeat = () => {
   return (
     <Box m="20px">
       <Header
-        title="Add New Seat Template"
+        title="Cập Nhật Mẫu Chỗ Ngồi"
         subtitle={
           <span>
             <Link
               to="/admin/template-seat"
               style={{ textDecoration: "none", color: "white" }}
             >
-              Manage Seat Templates
+              Quản Lý Mẫu Chỗ Ngồi
             </Link>
             <span style={{ textDecoration: "none", color: "inherit" }}>
-              {" > Add New"}
+              {" > Cập Nhật"}
             </span>
           </span>
         }
@@ -189,10 +196,10 @@ const DetailTemplateSeat = () => {
           borderRadius="10px"
           boxShadow="0 4px 10px rgba(0, 0, 0, 0.1)"
         >
-          <h2 style={{ color: "#141b2d" }}>Add New Seat Template</h2>
+          <h2 style={{ color: "#141b2d" }}>Cập Nhật Mẫu Chỗ Ngồi</h2>
           <Box mb="20px">
             <TextField
-              label="Bus Name"
+              label="Tên Xe"
               variant="outlined"
               fullWidth
               value={busName}
@@ -213,7 +220,7 @@ const DetailTemplateSeat = () => {
               }}
             />
             <TextField
-              label="Number of Seats"
+              label="Số Lượng Ghế"
               variant="outlined"
               fullWidth
               value={seatCount}
@@ -303,7 +310,7 @@ const DetailTemplateSeat = () => {
 
           {seatSelectionError && (
             <Box color="red" textAlign="center" mb="10px">
-              You need to select the correct number of seats as per the input.
+              Vui Lòng Nhập Đúng Số Lượng Ghế.
             </Box>
           )}
 
@@ -314,11 +321,26 @@ const DetailTemplateSeat = () => {
             alignItems="center"
           >
             <Button variant="contained" color="primary" onClick={handleSave}>
-              Save Template
+              Cập Nhật Mẫu
             </Button>
           </Box>
         </Box>
       </Box>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        message={snackbarMessage}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        ContentProps={{
+          style: {
+            backgroundColor: snackbarMessage.includes("thành công")
+              ? "green"
+              : "red", // Màu sắc theo trạng thái
+            color: "white",
+          },
+        }}
+      />
     </Box>
   );
 };

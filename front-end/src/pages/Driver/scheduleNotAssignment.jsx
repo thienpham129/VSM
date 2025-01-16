@@ -167,7 +167,7 @@ function ScheduleNotAssignment() {
   }, [scheduleNotAssignment]);
 
   const handleUpdate = () => {
-    //http://localhost:9000/driver/update-schedule-account?scheduleId=9&accountId=1
+    //http://localhost:8080/driver/update-schedule-account?scheduleId=9&accountId=1
     const driverId = localStorage.getItem("userId");
     const updateScheduleAccount = async () => {
       try {

@@ -11,7 +11,7 @@ import {
   TextField,
 } from "@mui/material";
 import Header from "components/Header";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { request } from "admin/helpers/axios_helper";
 
 const AddTemplateSeat = () => {
@@ -25,6 +25,7 @@ const AddTemplateSeat = () => {
   const [idType, setIdType] = useState(null);
   const rows = Array.from({ length: 10 }, (_, rowIndex) => rowIndex + 1);
   const columns = ["A", "B", "C", "D", "E"];
+  const navigate = useNavigate();
 
   const handleSeatClick = (seat) => {
     const isSelected = seats.some((s) => s.seat === seat);
@@ -120,6 +121,7 @@ const AddTemplateSeat = () => {
             "Cập nhật thông tin chỗ ngồi thành công:",
             detailResponse
           );
+          navigate("/admin/template-seat");
         } catch (detailError) {
           console.error("Lỗi khi cập nhật thông tin chỗ ngồi:", detailError);
         }

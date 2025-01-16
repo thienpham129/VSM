@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, Snackbar } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
@@ -12,6 +12,8 @@ const TemplateSeat = () => {
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
   const [types, setTypes] = useState([]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   // Fetch types data
   const fetchTypes = async () => {
@@ -28,16 +30,29 @@ const TemplateSeat = () => {
   }, []);
 
   // Delete type method
+  // const deleteType = async (id) => {
+  //   if (window.confirm("Bạn có chắc chắn muốn xóa mẫu này không?")) {
+  //     try {
+  //       await request("DELETE", `/admin/type/${id}`);
+  //       setTypes((prevTypes) => prevTypes.filter((type) => type.id !== id));
+  //       alert("Mẫu đã được xóa thành công!");
+  //     } catch (error) {
+  //       console.error("Error deleting type:", error);
+  //       alert("Xóa mẫu thất bại. Vui lòng thử lại!");
+  //     }
+  //   }
+  // };
+
   const deleteType = async (id) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa mẫu này không?")) {
-      try {
-        await request("DELETE", `/admin/type/${id}`);
-        setTypes((prevTypes) => prevTypes.filter((type) => type.id !== id));
-        alert("Mẫu đã được xóa thành công!");
-      } catch (error) {
-        console.error("Error deleting type:", error);
-        alert("Xóa mẫu thất bại. Vui lòng thử lại!");
-      }
+    try {
+      await request("DELETE", `/admin/type/${id}`);
+      setTypes((prevTypes) => prevTypes.filter((type) => type.id !== id));
+      setSnackbarMessage("Mẫu đã được xóa thành công!");
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error("Error deleting type:", error);
+      setSnackbarMessage("Xóa mẫu thất bại. Vui lòng thử lại!");
+      setSnackbarOpen(true);
     }
   };
 
@@ -133,6 +148,21 @@ const TemplateSeat = () => {
           components={{ Toolbar: GridToolbar }}
         />
       </Box>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        message={snackbarMessage}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        ContentProps={{
+          style: {
+            backgroundColor: snackbarMessage.includes("thành công")
+              ? "green"
+              : "red", // Màu sắc theo trạng thái
+            color: "white",
+          },
+        }}
+      />
     </Box>
   );
 };

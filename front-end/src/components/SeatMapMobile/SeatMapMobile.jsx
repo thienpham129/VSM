@@ -81,7 +81,7 @@ const SeatMapMobile = ({
   }, [car]);
   useEffect(() => {
     axios
-      .get(`http://localhost:9000/public/ticket-with-schedule/${scheduleId}`)
+      .get(`http://localhost:8080/public/ticket-with-schedule/${scheduleId}`)
       .then((response) => {
         setTickets(response.data);
 

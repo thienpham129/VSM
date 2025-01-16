@@ -64,13 +64,13 @@ public class PaymentController {
 			}
 
 			// URL thành công, kèm theo tham số ticketId và status
-			String successUrl = "http://localhost:3000/paymentSuccess?ticketId=" + ticketId + "&status=success";
+			String successUrl = "http://vsmcar.shop/paymentSuccess?ticketId=" + ticketId + "&status=success";
 
 			// Redirect đến trang thành công
 			response.sendRedirect(successUrl);
 		} else {
 			// Trường hợp thanh toán thất bại
-			String failureUrl = "http://localhost:3000/paymentFailure?ticketId=" + ticketId + "&status=failure";
+			String failureUrl = "http://vsmcar.shop/paymentFailure?ticketId=" + ticketId + "&status=failure";
 
 			// Redirect đến trang thất bại
 			response.sendRedirect(failureUrl);

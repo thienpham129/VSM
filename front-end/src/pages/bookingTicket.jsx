@@ -77,7 +77,7 @@ const BookingTicket = () => {
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const response = await fetch("http://localhost:9000/public/routes");
+        const response = await fetch("http://localhost:8080/public/routes");
         const data = await response.json();
         setRoutes(data);
       } catch (error) {
@@ -97,7 +97,7 @@ const BookingTicket = () => {
       try {
         setLoading(true);
         const response = await fetch(
-          `http://localhost:9000/public/find-car?idRoute=${selectedRoute}&time=${startTime}`
+          `http://localhost:8080/public/find-car?idRoute=${selectedRoute}&time=${startTime}`
         );
         if (!response.ok) {
           throw new Error("Không thể lấy danh sách xe khả dụng");
@@ -163,14 +163,14 @@ const BookingTicket = () => {
 
       try {
         if (schedule && schedule.id) {
-          await fetch(`http://localhost:9000/public/schedule/${schedule.id}`, {
+          await fetch(`http://localhost:8080/public/schedule/${schedule.id}`, {
             method: "DELETE",
           });
         }
 
         // Gọi API tạo/lấy lịch trình mới
         const response = await fetch(
-          "http://localhost:9000/public/create-or-find",
+          "http://localhost:8080/public/create-or-find",
           {
             method: "POST",
             headers: {
@@ -302,11 +302,10 @@ const BookingTicket = () => {
                       className={styles.ticket_date}
                       type="datetime-local"
                       value={startTime}
-                      onChange={(e)=>{
+                      onChange={(e) => {
                         handleUserTimeChange(e);
-                        setTickets([])
-                        setScheduleId("")
-
+                        setTickets([]);
+                        setScheduleId("");
                       }}
                       min={new Date().toISOString().slice(0, 16)}
                     />
@@ -343,8 +342,7 @@ const BookingTicket = () => {
                       onChange={(e) => {
                         setSelectedRoute(Number(e.target.value));
                         setTickets([]);
-                        setScheduleId("")
-
+                        setScheduleId("");
                       }}
                     >
                       <option value="">Chọn tuyến đường</option>
@@ -393,8 +391,7 @@ const BookingTicket = () => {
                         setSelectedCar(Number(e.target.value));
                         setSelectedCarSeatMap(car);
                         setTickets([]);
-                        setScheduleId("")
-
+                        setScheduleId("");
                       }}
                     >
                       <option value="">Chọn loại xe</option>
@@ -436,7 +433,13 @@ const BookingTicket = () => {
               {schedule ? (
                 <>
                   {isDisableSeat ? (
-                    <h4 style={{ padding: "10px 0 ", color: "red", textAlign : 'center' }} >
+                    <h4
+                      style={{
+                        padding: "10px 0 ",
+                        color: "red",
+                        textAlign: "center",
+                      }}
+                    >
                       Không tạo được lịch trình. Vui lòng chọn thời gian sau 15
                       phút so với giờ hiện tại!
                     </h4>
@@ -653,54 +656,45 @@ const BookingTicket = () => {
             <span>Hoàn thành</span>
           </div>
           <div className={styles.bookingPage__mobile__content}>
-          {schedule ? (
-                <>
-                  {isDisableSeat ? (
-                    <h4 style={{ padding: "10px 0 ", color: "red", textAlign : 'center' }} >
-                      Không tạo được lịch trình. Vui lòng chọn thời gian sau 15
-                      phút so với giờ hiện tại!
-                    </h4>
-                  ) : (
-                    <>
-                      {tickets.length > 0 ? (
-                        <>
-                          <h3 style={{ padding: "10px 0 ", color: "red" }}>
-                            Tất cả những lịch ở trong khoảng khung giờ (
-                            {dateBefore}) - ({dateAfter}) này thì sẽ được ghép
-                            vào lịch trong khung giờ (
-                            {schedule.startTime.toLocaleString().split("T")[1] +
-                              " " +
-                              schedule.startTime
-                                .toLocaleString()
-                                .split("T")[0]
-                                .split("-")[2] +
-                              "/" +
-                              schedule.startTime
-                                .toLocaleString()
-                                .split("T")[0]
-                                .split("-")[1] +
-                              "/" +
-                              schedule.startTime
-                                .toLocaleString()
-                                .split("T")[0]
-                                .split("-")[0]}
-                            )
-                          </h3>
-                          <SeatMap
-                            priceOfSeat={schedule.price}
-                            car={selectedCarSeatMap}
-                            carRouteId={carRouteId}
-                            scheduleId={scheduleId}
-                            startTime={schedule.startTime}
-                            startLocation={schedule.startLocation}
-                            stopLocation={schedule.stopLocation}
-                            selectedRoute={selectedRoute}
-                            selectedCar={selectedCar}
-                            routeDetail={routeDetail}
-                            carDetail={carDetail}
-                          />
-                        </>
-                      ) : (
+            {schedule ? (
+              <>
+                {isDisableSeat ? (
+                  <h4
+                    style={{
+                      padding: "10px 0 ",
+                      color: "red",
+                      textAlign: "center",
+                    }}
+                  >
+                    Không tạo được lịch trình. Vui lòng chọn thời gian sau 15
+                    phút so với giờ hiện tại!
+                  </h4>
+                ) : (
+                  <>
+                    {tickets.length > 0 ? (
+                      <>
+                        <h3 style={{ padding: "10px 0 ", color: "red" }}>
+                          Tất cả những lịch ở trong khoảng khung giờ (
+                          {dateBefore}) - ({dateAfter}) này thì sẽ được ghép vào
+                          lịch trong khung giờ (
+                          {schedule.startTime.toLocaleString().split("T")[1] +
+                            " " +
+                            schedule.startTime
+                              .toLocaleString()
+                              .split("T")[0]
+                              .split("-")[2] +
+                            "/" +
+                            schedule.startTime
+                              .toLocaleString()
+                              .split("T")[0]
+                              .split("-")[1] +
+                            "/" +
+                            schedule.startTime
+                              .toLocaleString()
+                              .split("T")[0]
+                              .split("-")[0]}
+                          )
+                        </h3>
                         <SeatMap
                           priceOfSeat={schedule.price}
                           car={selectedCarSeatMap}
@@ -714,14 +708,29 @@ const BookingTicket = () => {
                           routeDetail={routeDetail}
                           carDetail={carDetail}
                         />
-                      )}
-                    </>
-                  )}
-                </>
-              ) : (
-                // <p>Chưa có lịch trình.</p>
-                ""
-              )}
+                      </>
+                    ) : (
+                      <SeatMap
+                        priceOfSeat={schedule.price}
+                        car={selectedCarSeatMap}
+                        carRouteId={carRouteId}
+                        scheduleId={scheduleId}
+                        startTime={schedule.startTime}
+                        startLocation={schedule.startLocation}
+                        stopLocation={schedule.stopLocation}
+                        selectedRoute={selectedRoute}
+                        selectedCar={selectedCar}
+                        routeDetail={routeDetail}
+                        carDetail={carDetail}
+                      />
+                    )}
+                  </>
+                )}
+              </>
+            ) : (
+              // <p>Chưa có lịch trình.</p>
+              ""
+            )}
           </div>
         </div>
       </div>

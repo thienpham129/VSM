@@ -70,7 +70,7 @@ public class PaymentService {
         vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
         vnpParamsMap.put("vnp_IpAddr", VNPayUtil.getIpAddress(request));
         vnpParamsMap.put("vnp_OrderInfo", "Thanh toán vé ID: " + ticketId);
-        vnpParamsMap.put("vnp_ReturnUrl", "http://localhost:8080/api/v1/payment/vn-pay-callback");
+        vnpParamsMap.put("vnp_ReturnUrl", "http://148.135.138.57:8080/api/v1/payment/vn-pay-callback");
 
 
         String queryUrl = VNPayUtil.getPaymentURL(vnpParamsMap, true);

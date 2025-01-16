@@ -89,7 +89,7 @@ public class ScheduleService {
 		// Lấy số ghế từ TypeEntity
 		TypeEntity type = carRoute.getCar().getType();
 		if (type != null) {
-			newSchedule.setEmptySeat(type.getNumSeats());
+			newSchedule.setEmptySeat(type.getNumSeats() - 1);
 		} else {
 			throw new IllegalArgumentException("Không tìm thấy thông tin loại xe.");
 		}

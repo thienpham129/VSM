@@ -108,7 +108,6 @@ const MethodPayment = () => {
     if (isSuccess || isWaiting) {
       return; // Không làm gì nếu ghế đã bị hủy hoặc đang chờ xử lý
     }
-
   };
 
   // End
@@ -249,7 +248,7 @@ const MethodPayment = () => {
   const vnPayCallBack = async () => {
     try {
       const response = await root.get(
-        `http://localhost:9000/api/v1/payment/vn-pay-callback?vnp_ResponseCode=00&vnp_TxnRef=b5c02e9fd1`
+        `http://localhost:8080/api/v1/payment/vn-pay-callback?vnp_ResponseCode=00&vnp_TxnRef=b5c02e9fd1`
       );
       if (response.code === 200) {
         window.location.href = "/paymentSuccess";

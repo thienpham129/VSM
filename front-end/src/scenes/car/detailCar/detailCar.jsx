@@ -141,7 +141,7 @@ const DetailCar = () => {
     try {
       const token = getAuthToken();
       await axios.put(
-        `http://localhost:9000/admin/car/${id}`, // Cập nhật xe với ID cụ thể
+        `http://localhost:8080/admin/car/${id}`, // Cập nhật xe với ID cụ thể
         formData,
         {
           headers: {
