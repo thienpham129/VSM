@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -51,10 +52,11 @@ public class PaymentController {
         String ticketId = request.getParameter("vnp_TxnRef");
 
         if ("00".equals(status)) {
-            // Tìm và cập nhật trạng thái vé
+            // Trường hợp thanh toán thành công
             TicketEntity ticket = ticketRepository.findById(ticketId)
                     .orElseThrow(() -> new RuntimeException("Ticket not found"));
             ScheduleEntity scheduleEntity = ticket.getScheduleEntity();
+
             if (scheduleEntity != null) {
                 int emptySeat = scheduleEntity.getEmptySeat();
                 int seatsBooked = ticket.getSelectedSeat().split(",").length;
@@ -67,13 +69,18 @@ public class PaymentController {
                 }
             }
 
-            // Chuyển hướng đến trang paymentSuccess
-            response.sendRedirect("http://localhost:3000/paymentSuccess?ticketId=" + ticketId + "&status=success");
+            // URL thành công, kèm theo tham số ticketId và status
+            String successUrl = "http://vsmcar.shop/paymentSuccess?ticketId=" + ticketId + "&status=success";
+
+            // Redirect đến trang thành công
+            response.sendRedirect(successUrl);
         } else {
-            // Nếu thanh toán thất bại, chuyển hướng đến trang thất bại
-            response.sendRedirect("http://localhost:3000/paymentFailure?ticketId=" + ticketId + "&status=failure");
+            // Trường hợp thanh toán thất bại
+            String failureUrl = "http://vsmcar.shop/paymentFailure?ticketId=" + ticketId + "&status=failure";
+
+            // Redirect đến trang thất bại
+            response.sendRedirect(failureUrl);
         }
     }
-
 
 }

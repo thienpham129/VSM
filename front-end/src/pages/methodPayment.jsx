@@ -20,10 +20,9 @@ const MethodPayment = () => {
     startLocation,
     stopLocation,
     ticketId,
-      carDetail,
-      routeDetail
+    carDetail,
+    routeDetail,
   } = state || {};
-  console.log("««««« state.totalPrice »»»»»", state.totalPrice);
   const [paymentUrl, setPaymentUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -35,6 +34,8 @@ const MethodPayment = () => {
   const [dropLat, setDropLat] = useState("");
   const [dropLon, setDropLon] = useState("");
   const [messagePayment, setMessagePayment] = useState(false);
+
+  const [isClickPayment, setIsClickPayment] = useState(false);
 
   useEffect(() => {
     console.log(ticketId);
@@ -112,24 +113,6 @@ const MethodPayment = () => {
     }
   }, [pickUpLat, pickUpLon, dropLat, dropLon]);
 
-  // const fetchGeocode = async (address) => {
-  //   const apiKey = "4D4kbtoB1PV8gjRJMqgB";
-  //   const url = `https://api.maptiler.com/geocoding/${encodeURIComponent(
-  //     address
-  //   )}.json?key=${apiKey}`;
-
-  //   try {
-  //     const response = await fetch(url);
-  //     if (!response.ok) {
-  //       throw new Error("Failed to fetch geocoding data");
-  //     }
-  //     const data = await response.json();
-  //     return data;
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   }
-  // };
-
   const fetchGeocode = async (address) => {
     try {
       const response = await fetch(
@@ -144,107 +127,52 @@ const MethodPayment = () => {
     }
   };
 
-  const handlePayment = async () => {
-    setMessagePayment(true);
-    setIsLoading(true);
-    setError(null);
+  const handlePayment = async (e) => {
+    // setMessagePayment(true);
+    // setIsLoading(true);
+    // setError(null);
+    e.preventDefault();
     try {
-      const response = await root.get(`/api/v1/payment/pay/${ticketId}`);
+      const response = await root.get(
+        `/api/v1/payment/vn-pay?bankCode=NCB&ticketId=${state.ticketId}`
+      );
 
       if (response.status === 200) {
-        setPaymentUrl(response.data.data.paymentUrl);
+        // setPaymentUrl(response.data.data.paymentUrl);
+        window.location.href = response.data.data.paymentUrl;
+        console.log(response);
       } else {
         setError("Failed to fetch payment URL");
       }
     } catch (err) {
       setError("An error occurred during payment.");
-    } finally {
-      setIsLoading(false);
     }
+    // finally {
+    //   setIsLoading(false);
+    // }
   };
 
-  // Check payment ticket
 
-  // const checkPayment = async () => {
-  //   if (!ticketId) {
-  //     alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra thanh toán.");
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await root.get(
-  //       `/api/v1/google-sheet/check-ticket/${ticketId}`
-  //     );
-
-  //     if (response.status === 200) {
-  //       console.log("««««« response.data »»»»»", response.data);
-  //       if (response.data.paid === true) {
-  //         console.log("««««« Vé đã được thanh toán »»»»»");
-  //         navigate("/paymentSuccess"),{
-  //           state: {
-  //             startTime,
-  //             carDetail,
-  //             routeDetail,
-  //           },
-  //         };
-  //         return true;
-  //       } else {
-  //         console.log("««««« Vé chưa được thanh toán` »»»»»");
-  //         return false;
-  //       }
-  //     } else {
-  //       setError("Không thể kiểm tra trạng thái thanh toán.");
-  //     }
-  //   } catch (err) {
-  //     console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
-  //     setError("Đã xảy ra lỗi trong quá trình kiểm tra thanh toán.");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-  const checkPayment = async () => {
-    if (!ticketId) {
-      alert("Vui lòng cung cấp mã vé (ticketId) để kiểm tra thanh toán.");
-      return;
-    }
-  
+  const vnPayCallBack = async () => {
     try {
-      const response = await root.get(`/api/v1/google-sheet/check-ticket/${ticketId}`);
-  
-      if (response.status === 200) {
-        console.log("««««« response.data »»»»»", response.data);
-        if (response.data.paid === true) {
-          console.log("««««« Vé đã được thanh toán »»»»»");
-          // Điều hướng sang trang paymentSuccess với dữ liệu cần thiết
-          navigate("/paymentSuccess", {
-            state: {
-              startTime,
-              carDetail,
-              routeDetail,
-            },
-          });
-          // Thực hiện việc điều hướng thành công mà không cần trả về giá trị true
-        } else {
-          console.log("««««« Vé chưa được thanh toán »»»»»");
-          // Bạn có thể bỏ return false hoặc thực hiện hành động khác nếu cần
-        }
+      const response = await root.get(
+        `http://localhost:8080/api/v1/payment/vn-pay-callback?vnp_ResponseCode=00&vnp_TxnRef=b5c02e9fd1`
+      );
+      if (response.code === 200) {
+        window.location.href = "/paymentSuccess";
       } else {
-        setError("Không thể kiểm tra trạng thái thanh toán.");
+        alert("Error");
       }
-    } catch (err) {
-      console.error("Lỗi khi gọi API kiểm tra thanh toán:", err);
-      setError("Đã xảy ra lỗi trong quá trình kiểm tra thanh toán.");
-    } finally {
-      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
     }
   };
-  
 
   useEffect(() => {
     if (!ticketId) return;
 
     const interval = setInterval(() => {
-      checkPayment();
+      // checkPayment();
     }, 10000); // Gọi hàm mỗi 5 giây
 
     return () => clearInterval(interval); // Xóa interval khi component bị unmount
@@ -552,11 +480,6 @@ const MethodPayment = () => {
                           </span>
                         </p>
                       </div>
-                      {/* <div className={styles.bookingPayment__info__item}>
-                        <label htmlFor="">Mã khuyến mãi</label>
-                        <p>{voucher}</p>
-                      </div> */}
-
                       <div className={styles.bookingPayment__submit}>
                         <button onClick={handlePayment} disabled={isLoading}>
                           {isLoading ? "Processing..." : "Thanh toán"}
@@ -588,20 +511,6 @@ const MethodPayment = () => {
           </div>
         </form>
       </section>
-      {/* <MethodPaymentMobile
-        fullName={fullName}
-        phoneNumber={phoneNumber}
-        email={email}
-        note={note}
-        detailAddressToPickUp={detailAddressToPickUp}
-        selectedSeat={selectedSeat}
-        detailAddressDropOff={detailAddressDropOff}
-        totalPrice={totalPrice}
-        startTime={startTime}
-        startLocation={startLocation}
-        stopLocation={stopLocation}
-        ticketId={ticketId}
-      /> */}
     </div>
   );
 };

@@ -153,7 +153,6 @@ const Map = () => {
   // const [userPickUpLon, setUserPickUpLon] = useState("");
   // const [userDropLat, setUserDropLat] = useState("");
   // const [userDropLon, setUserDropLon] = useState("");
-  const [schduleId, setSchduleId] = useState("");
   const [userLat, setUserLat] = useState("");
   const [userLon, setUserLon] = useState("");
   const [userName, setUserName] = useState("");
@@ -177,343 +176,362 @@ const Map = () => {
 
   const [currentCity, setCurrentCity] = useState("");
 
-  const fetchCurrentSchedule = async () => {
+  const [scheduleId, setScheduleId] = useState("");
+  const [pickUpOrder, setPickUpOrder] = useState("");
+  const [dropOrder, setDropOder] = useState("");
+  const [areAllStatusPickUp, setareAllStatusPickUp] = useState(false);
+  const [startDropPlace, setStartDropPlace] = useState("");
+  const [areAllStatusDrop, setAreAllStatusDrop] = useState(false);
+
+  useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
       setCurrentLat(position.coords.latitude);
       setCurrentLong(position.coords.longitude);
     });
-    const url = "/driver/find-schedule";
-
-    try {
-      const response = await root.get(
-        `${url}/${localStorage.getItem("userId")}`
-      );
-
-      if (response.data) {
-        setCurrentScheduleId(response.data.id);
-        setSchduleId(response.data.id);
-      } else {
-        console.log(
-          "Something went wrong when call api for fetchCurrentSchedule function"
-        );
-      }
-    } catch (error) {
-      console.log(error);
-      fetchAllDataScheduleCurrentDay();
-    }
-  };
-
-  useEffect(() => {
-    fetchCurrentSchedule();
   }, []);
 
-  const fetchTicketsInCurrentShedule = async (scheduleId) => {
-    const url = "/public/ticket-with-schedule";
-    try {
-      const response = await root.get(`${url}/${scheduleId}`);
-      if (response.data) {
-        console.log("Hakdfkjahfahdfjhadjfhjadhfjadhfkjahdfjah");
-        console.log(response.data);
-        let countInitial = 0;
-        let countNextDes = 0;
-        let arrayTicket = [];
-        response.data.forEach((item, index) => {
-          if (
-            // item.mapStatus === "0" &&
-            item.status.toLocaleUpperCase().trim() === "ĐÃ THANH TOÁN" ||
-            item.status.toLocaleUpperCase().trim() === "CHƯA LÊN XE" ||
-            item.status.toLocaleUpperCase().trim() === "ĐÃ XUỐNG XE" ||
-            item.status.toLocaleUpperCase().trim() === "HỦY" ||
-            item.status.toLocaleUpperCase().trim() === "ĐÃ LÊN XE"
-          ) {
-            arrayTicket.push(item);
-          }
-        });
+  // const fetchCurrentSchedule = async () => {
+  //   navigator.geolocation.getCurrentPosition((position) => {
+  //     setCurrentLat(position.coords.latitude);
+  //     setCurrentLong(position.coords.longitude);
+  //   });
+  //   const url = "/driver/find-schedule";
 
-        console.log(arrayTicket);
-        let arrayDuplicateMapStatus_5 = [];
-        let checkIsPickingUp = 0;
-        arrayTicket.forEach((item, index) => {
-          if (item.mapStatus === "0") {
-            countInitial += 1;
-          }
-          if (item.mapStatus === "5") {
-            arrayDuplicateMapStatus_5.push(item);
-            countNextDes += 1;
-          }
-          if (
-            item.status.toLocaleUpperCase().trim() === "CHƯA LÊN XE" ||
-            item.status.toLocaleUpperCase().trim() === "ĐÃ THANH TOÁN"
-          ) {
-            checkIsPickingUp += 1;
-          }
-        });
+  //   try {
+  //     const response = await root.get(
+  //       `${url}/${localStorage.getItem("userId")}`
+  //     );
 
-        if (checkIsPickingUp > 0 && currentLat && currentLong) {
-          if (countNextDes > 1) {
-            let oldPositionOfShortestDistance = 0;
-            let destination = "";
-            arrayDuplicateMapStatus_5.forEach((item, index) => {
-              if (index === arrayDuplicateMapStatus_5.length - 1) {
-                destination += item.mapPickUp;
-              } else {
-                destination += item.mapPickUp + "%7C";
-              }
-            });
-            console.log(currentLat + "    " + currentLong);
-            console.log(destination + "   des");
-            let elementsArray = [];
-            if (currentLat && currentLong) {
-              const responseMap = await fetch(
-                `https://rsapi.goong.io/DistanceMatrix?origins=${currentLat},${currentLong}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
-              );
-              const data = await responseMap.json();
-              elementsArray = data.rows[0].elements;
-            }
-            console.log(elementsArray);
-            let testArray = [];
-            elementsArray.forEach((item, index) => {
-              testArray.push(item.distance.value);
-            });
-            for (let i = 0; i < 1; i++) {
-              for (let j = i + 1; j < testArray.length; j++) {
-                if (testArray[i] > testArray[j]) {
-                  oldPositionOfShortestDistance = j;
-                  let temp = testArray[i];
-                  testArray[i] = testArray[j];
-                  testArray[j] = temp;
-                }
-              }
-            }
-            console.log(oldPositionOfShortestDistance + "   old");
-            arrayDuplicateMapStatus_5.forEach((item, index) => {
-              if (index === oldPositionOfShortestDistance) {
-                navigator.geolocation.getCurrentPosition((position) => {
-                  setCurrentLat(position.coords.latitude);
-                  setCurrentLong(position.coords.longitude);
-                });
-                setUserName(item.fullName);
-                setUserAddress(item.detailAddressToPickUp);
-                setUserPhone(item.phoneNumber);
-                setUserLat(item.mapPickUp.split(",")[0]);
-                setUserLon(item.mapPickUp.split(",")[1]);
-              }
-            });
-          }
+  //     if (response.data) {
+  //       setCurrentScheduleId(response.data.id);
+  //       setSchduleId(response.data.id);
+  //     } else {
+  //       console.log(
+  //         "Something went wrong when call api for fetchCurrentSchedule function"
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     fetchAllDataScheduleCurrentDay();
+  //   }
+  // };
 
-          if (countNextDes === 1) {
-            const nextDesInfor = arrayTicket.find(
-              (item) => item.mapStatus === "5"
-            );
-            setUserLat(nextDesInfor.mapPickUp.split(",")[0]);
-            setUserLon(nextDesInfor.mapPickUp.split(",")[1]);
-            setUserName(nextDesInfor.fullName);
-            setUserAddress(nextDesInfor.detailAddressToPickUp);
-            setUserPhone(nextDesInfor.phoneNumber);
-          }
+  // useEffect(() => {
+  //   fetchCurrentSchedule();
+  // }, []);
 
-          if (countInitial === arrayTicket.length) {
-            // alert("Yes");
-            let oldPositionOfShortestDistance = 0;
-            let destination = "";
-            console.log(arrayTicket);
-            arrayTicket.forEach((item, index) => {
-              if (index === arrayTicket.length - 1) {
-                destination += item.mapPickUp;
-              } else {
-                destination += item.mapPickUp + "%7C";
-              }
-            });
-            console.log(currentLat + "    " + currentLong);
-            console.log(destination + "   des");
-            let elementsArray = [];
-            if (currentLat && currentLong) {
-              // alert("Ok");
-              console.log(currentLat + "    " + currentLong);
-              // alert(currentLat + "      " + currentLong);
-              const responseMap = await fetch(
-                `https://rsapi.goong.io/DistanceMatrix?origins=${currentLat},${currentLong}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
-              );
-              const data = await responseMap.json();
-              console.log(data);
-              elementsArray = data.rows[0].elements;
-            }
-            console.log(elementsArray);
-            let testArray = [];
-            elementsArray.forEach((item, index) => {
-              testArray.push(item.distance.value);
-            });
-            for (let i = 0; i < 1; i++) {
-              for (let j = i + 1; j < testArray.length; j++) {
-                if (testArray[i] > testArray[j]) {
-                  oldPositionOfShortestDistance = j;
-                  let temp = testArray[i];
-                  testArray[i] = testArray[j];
-                  testArray[j] = temp;
-                }
-              }
-            }
-            console.log(oldPositionOfShortestDistance + "   old");
-            arrayTicket.forEach((item, index) => {
-              if (index === oldPositionOfShortestDistance) {
-                navigator.geolocation.getCurrentPosition((position) => {
-                  setCurrentLat(position.coords.latitude);
-                  setCurrentLong(position.coords.longitude);
-                });
-                setUserName(item.fullName);
-                setUserAddress(item.detailAddressToPickUp);
-                setUserPhone(item.phoneNumber);
-                setUserLat(item.mapPickUp.split(",")[0]);
-                setUserLon(item.mapPickUp.split(",")[1]);
-              }
-            });
-          }
-        }
-        if (checkIsPickingUp === 0 && currentLat && currentLong) {
-          if (countNextDes > 1) {
-            let oldPositionOfShortestDistance = 0;
-            let destination = "";
-            arrayDuplicateMapStatus_5.forEach((item, index) => {
-              if (index === arrayDuplicateMapStatus_5.length - 1) {
-                destination += item.mapDrop;
-              } else {
-                destination += item.mapDrop + "%7C";
-              }
-            });
-            console.log(currentLat + "    " + currentLong);
-            console.log(destination + "   des");
-            let elementsArray = [];
-            if (currentLat && currentLong) {
-              const responseMap = await fetch(
-                `https://rsapi.goong.io/DistanceMatrix?origins=${currentLat},${currentLong}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
-              );
-              const data = await responseMap.json();
-              elementsArray = data.rows[0].elements;
-            }
-            console.log(elementsArray);
-            let testArray = [];
-            elementsArray.forEach((item, index) => {
-              testArray.push(item.distance.value);
-            });
-            for (let i = 0; i < 1; i++) {
-              for (let j = i + 1; j < testArray.length; j++) {
-                if (testArray[i] > testArray[j]) {
-                  oldPositionOfShortestDistance = j;
-                  let temp = testArray[i];
-                  testArray[i] = testArray[j];
-                  testArray[j] = temp;
-                }
-              }
-            }
-            console.log(oldPositionOfShortestDistance + "   old");
-            arrayDuplicateMapStatus_5.forEach((item, index) => {
-              if (index === oldPositionOfShortestDistance) {
-                navigator.geolocation.getCurrentPosition((position) => {
-                  setCurrentLat(position.coords.latitude);
-                  setCurrentLong(position.coords.longitude);
-                });
-                setUserName(item.fullName);
-                setUserAddress(item.detailAddressDropOff);
-                setUserPhone(item.phoneNumber);
-                setUserLat(item.mapDrop.split(",")[0]);
-                setUserLon(item.mapDrop.split(",")[1]);
-              }
-            });
-          }
+  // const fetchTicketsInCurrentShedule = async (scheduleId) => {
+  //   const url = "/public/ticket-with-schedule";
+  //   try {
+  //     const response = await root.get(`${url}/${scheduleId}`);
+  //     if (response.data) {
+  //       console.log("Hakdfkjahfahdfjhadjfhjadhfjadhfkjahdfjah");
+  //       console.log(response.data);
+  //       let countInitial = 0;
+  //       let countNextDes = 0;
+  //       let arrayTicket = [];
+  //       response.data.forEach((item, index) => {
+  //         if (
+  //           // item.mapStatus === "0" &&
+  //           item.status.toLocaleUpperCase().trim() === "ĐÃ THANH TOÁN" ||
+  //           item.status.toLocaleUpperCase().trim() === "CHƯA LÊN XE" ||
+  //           item.status.toLocaleUpperCase().trim() === "ĐÃ XUỐNG XE" ||
+  //           item.status.toLocaleUpperCase().trim() === "HỦY" ||
+  //           item.status.toLocaleUpperCase().trim() === "ĐÃ LÊN XE"
+  //         ) {
+  //           arrayTicket.push(item);
+  //         }
+  //       });
 
-          if (countNextDes === 1) {
-            const nextDesInfor = arrayTicket.find(
-              (item) => item.mapStatus === "5"
-            );
-            setUserName(nextDesInfor.fullName);
-            setUserAddress(nextDesInfor.detailAddressDropOff);
-            setUserPhone(nextDesInfor.phoneNumber);
-            setUserLat(nextDesInfor.mapDrop.split(",")[0]);
-            setUserLon(nextDesInfor.mapDrop.split(",")[1]);
-          }
-        }
-      } else {
-        console.log(
-          "Something went wrong when call api for fetchTicketsInCurrentShedule function"
-        );
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //       console.log(arrayTicket);
+  //       let arrayDuplicateMapStatus_5 = [];
+  //       let checkIsPickingUp = 0;
+  //       arrayTicket.forEach((item, index) => {
+  //         if (item.mapStatus === "0") {
+  //           countInitial += 1;
+  //         }
+  //         if (item.mapStatus === "5") {
+  //           arrayDuplicateMapStatus_5.push(item);
+  //           countNextDes += 1;
+  //         }
+  //         if (
+  //           item.status.toLocaleUpperCase().trim() === "CHƯA LÊN XE" ||
+  //           item.status.toLocaleUpperCase().trim() === "ĐÃ THANH TOÁN"
+  //         ) {
+  //           checkIsPickingUp += 1;
+  //         }
+  //       });
 
-  useEffect(() => {
-    // alert(currScheduleId);
-    if (currScheduleId !== "" && currentLat && currentLong) {
-      // alert("ok 2");
-      fetchTicketsInCurrentShedule(currScheduleId);
-    }
-  }, [currScheduleId, currentLat, currentLong]);
+  //       if (checkIsPickingUp > 0 && currentLat && currentLong) {
+  //         if (countNextDes > 1) {
+  //           let oldPositionOfShortestDistance = 0;
+  //           let destination = "";
+  //           arrayDuplicateMapStatus_5.forEach((item, index) => {
+  //             if (index === arrayDuplicateMapStatus_5.length - 1) {
+  //               destination += item.mapPickUp;
+  //             } else {
+  //               destination += item.mapPickUp + "%7C";
+  //             }
+  //           });
+  //           console.log(currentLat + "    " + currentLong);
+  //           console.log(destination + "   des");
+  //           let elementsArray = [];
+  //           if (currentLat && currentLong) {
+  //             const responseMap = await fetch(
+  //               `https://rsapi.goong.io/DistanceMatrix?origins=${currentLat},${currentLong}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+  //             );
+  //             const data = await responseMap.json();
+  //             elementsArray = data.rows[0].elements;
+  //           }
+  //           console.log(elementsArray);
+  //           let testArray = [];
+  //           elementsArray.forEach((item, index) => {
+  //             testArray.push(item.distance.value);
+  //           });
+  //           for (let i = 0; i < 1; i++) {
+  //             for (let j = i + 1; j < testArray.length; j++) {
+  //               if (testArray[i] > testArray[j]) {
+  //                 oldPositionOfShortestDistance = j;
+  //                 let temp = testArray[i];
+  //                 testArray[i] = testArray[j];
+  //                 testArray[j] = temp;
+  //               }
+  //             }
+  //           }
+  //           console.log(oldPositionOfShortestDistance + "   old");
+  //           arrayDuplicateMapStatus_5.forEach((item, index) => {
+  //             if (index === oldPositionOfShortestDistance) {
+  //               navigator.geolocation.getCurrentPosition((position) => {
+  //                 setCurrentLat(position.coords.latitude);
+  //                 setCurrentLong(position.coords.longitude);
+  //               });
+  //               setUserName(item.fullName);
+  //               setUserAddress(item.detailAddressToPickUp);
+  //               setUserPhone(item.phoneNumber);
+  //               setUserLat(item.mapPickUp.split(",")[0]);
+  //               setUserLon(item.mapPickUp.split(",")[1]);
+  //             }
+  //           });
+  //         }
 
-  const fetchAllDataScheduleCurrentDay = async () => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      setCurrentLat(position.coords.latitude);
-      setCurrentLong(position.coords.longitude);
-    });
-    const date = new Date();
-    let day = date.getFullYear() + "-" + (+date.getMonth() + 1) + "-";
-    let dateTime = "";
-    if (date.getDate() < 10) {
-      dateTime = "0" + date.getDate();
-    } else {
-      dateTime = date.getDate();
-    }
-    day = day + dateTime;
-    const url = "driver/driver-schedule";
-    try {
-      const response = await root.post(url, {
-        accountId: localStorage.getItem("userId"),
-        day: day,
-      });
-      if (response.data) {
-        setAllDataCurrentDay(response.data);
-      } else {
-        console.log(
-          "Something went wrong when call api for fetchAllDataScheduleCurrentDay function"
-        );
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //         if (countNextDes === 1) {
+  //           const nextDesInfor = arrayTicket.find(
+  //             (item) => item.mapStatus === "5"
+  //           );
+  //           setUserLat(nextDesInfor.mapPickUp.split(",")[0]);
+  //           setUserLon(nextDesInfor.mapPickUp.split(",")[1]);
+  //           setUserName(nextDesInfor.fullName);
+  //           setUserAddress(nextDesInfor.detailAddressToPickUp);
+  //           setUserPhone(nextDesInfor.phoneNumber);
+  //         }
 
-  useEffect(() => {
-    if (allDataCurrentDay.length > 0) {
-      let tempArrayCurrentDay = [];
-      allDataCurrentDay.forEach((item, index) => {
-        if (item.status === "Đã lên lịch") {
-          tempArrayCurrentDay.push(item);
-        }
-      });
-      for (let i = 0; i < tempArrayCurrentDay.length; i++) {
-        for (let j = i + 1; j < tempArrayCurrentDay.length; j++) {
-          if (
-            +tempArrayCurrentDay[i].startTime.split("T")[1].split(":")[0] >
-            +tempArrayCurrentDay[j].startTime.split("T")[1].split(":")[0]
-          ) {
-            let tempt = tempArrayCurrentDay[i];
-            tempArrayCurrentDay[i] = tempArrayCurrentDay[j];
-            tempArrayCurrentDay[j] = tempt;
-          }
-        }
-      }
-      if (tempArrayCurrentDay.length > 0) {
-        setPreparedScheduleId(tempArrayCurrentDay[0].id);
-        setSchduleId(tempArrayCurrentDay[0].id);
-      }
-    }
-  }, [allDataCurrentDay]);
+  //         if (countInitial === arrayTicket.length) {
+  //           // alert("Yes");
+  //           let oldPositionOfShortestDistance = 0;
+  //           let destination = "";
+  //           console.log(arrayTicket);
+  //           arrayTicket.forEach((item, index) => {
+  //             if (index === arrayTicket.length - 1) {
+  //               destination += item.mapPickUp;
+  //             } else {
+  //               destination += item.mapPickUp + "%7C";
+  //             }
+  //           });
+  //           console.log(currentLat + "    " + currentLong);
+  //           console.log(destination + "   des");
+  //           let elementsArray = [];
+  //           if (currentLat && currentLong) {
+  //             // alert("Ok");
+  //             console.log(currentLat + "    " + currentLong);
+  //             // alert(currentLat + "      " + currentLong);
+  //             const responseMap = await fetch(
+  //               `https://rsapi.goong.io/DistanceMatrix?origins=${currentLat},${currentLong}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+  //             );
+  //             const data = await responseMap.json();
+  //             console.log(data);
+  //             elementsArray = data.rows[0].elements;
+  //           }
+  //           console.log(elementsArray);
+  //           let testArray = [];
+  //           elementsArray.forEach((item, index) => {
+  //             testArray.push(item.distance.value);
+  //           });
+  //           for (let i = 0; i < 1; i++) {
+  //             for (let j = i + 1; j < testArray.length; j++) {
+  //               if (testArray[i] > testArray[j]) {
+  //                 oldPositionOfShortestDistance = j;
+  //                 let temp = testArray[i];
+  //                 testArray[i] = testArray[j];
+  //                 testArray[j] = temp;
+  //               }
+  //             }
+  //           }
+  //           console.log(oldPositionOfShortestDistance + "   old");
+  //           arrayTicket.forEach((item, index) => {
+  //             if (index === oldPositionOfShortestDistance) {
+  //               navigator.geolocation.getCurrentPosition((position) => {
+  //                 setCurrentLat(position.coords.latitude);
+  //                 setCurrentLong(position.coords.longitude);
+  //               });
+  //               setUserName(item.fullName);
+  //               setUserAddress(item.detailAddressToPickUp);
+  //               setUserPhone(item.phoneNumber);
+  //               setUserLat(item.mapPickUp.split(",")[0]);
+  //               setUserLon(item.mapPickUp.split(",")[1]);
+  //             }
+  //           });
+  //         }
+  //       }
+  //       if (checkIsPickingUp === 0 && currentLat && currentLong) {
+  //         if (countNextDes > 1) {
+  //           let oldPositionOfShortestDistance = 0;
+  //           let destination = "";
+  //           arrayDuplicateMapStatus_5.forEach((item, index) => {
+  //             if (index === arrayDuplicateMapStatus_5.length - 1) {
+  //               destination += item.mapDrop;
+  //             } else {
+  //               destination += item.mapDrop + "%7C";
+  //             }
+  //           });
+  //           console.log(currentLat + "    " + currentLong);
+  //           console.log(destination + "   des");
+  //           let elementsArray = [];
+  //           if (currentLat && currentLong) {
+  //             const responseMap = await fetch(
+  //               `https://rsapi.goong.io/DistanceMatrix?origins=${currentLat},${currentLong}&destinations=${destination}&vehicle=car&api_key=zdjnB8wI1elnVtepLuHTro4II956dXuMpw8MHGPo`
+  //             );
+  //             const data = await responseMap.json();
+  //             elementsArray = data.rows[0].elements;
+  //           }
+  //           console.log(elementsArray);
+  //           let testArray = [];
+  //           elementsArray.forEach((item, index) => {
+  //             testArray.push(item.distance.value);
+  //           });
+  //           for (let i = 0; i < 1; i++) {
+  //             for (let j = i + 1; j < testArray.length; j++) {
+  //               if (testArray[i] > testArray[j]) {
+  //                 oldPositionOfShortestDistance = j;
+  //                 let temp = testArray[i];
+  //                 testArray[i] = testArray[j];
+  //                 testArray[j] = temp;
+  //               }
+  //             }
+  //           }
+  //           console.log(oldPositionOfShortestDistance + "   old");
+  //           arrayDuplicateMapStatus_5.forEach((item, index) => {
+  //             if (index === oldPositionOfShortestDistance) {
+  //               navigator.geolocation.getCurrentPosition((position) => {
+  //                 setCurrentLat(position.coords.latitude);
+  //                 setCurrentLong(position.coords.longitude);
+  //               });
+  //               setUserName(item.fullName);
+  //               setUserAddress(item.detailAddressDropOff);
+  //               setUserPhone(item.phoneNumber);
+  //               setUserLat(item.mapDrop.split(",")[0]);
+  //               setUserLon(item.mapDrop.split(",")[1]);
+  //             }
+  //           });
+  //         }
 
-  useEffect(() => {
-    if (preparedScheduleId !== "" && currentLat && currentLong) {
-      fetchTicketsInCurrentShedule(preparedScheduleId);
-    }
-  }, [preparedScheduleId, currentLat, currentLong]);
+  //         if (countNextDes === 1) {
+  //           const nextDesInfor = arrayTicket.find(
+  //             (item) => item.mapStatus === "5"
+  //           );
+  //           setUserName(nextDesInfor.fullName);
+  //           setUserAddress(nextDesInfor.detailAddressDropOff);
+  //           setUserPhone(nextDesInfor.phoneNumber);
+  //           setUserLat(nextDesInfor.mapDrop.split(",")[0]);
+  //           setUserLon(nextDesInfor.mapDrop.split(",")[1]);
+  //         }
+  //       }
+  //     } else {
+  //       console.log(
+  //         "Something went wrong when call api for fetchTicketsInCurrentShedule function"
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   // alert(currScheduleId);
+  //   if (currScheduleId !== "" && currentLat && currentLong) {
+  //     // alert("ok 2");
+  //     fetchTicketsInCurrentShedule(currScheduleId);
+  //   }
+  // }, [currScheduleId, currentLat, currentLong]);
+
+  // const fetchAllDataScheduleCurrentDay = async () => {
+  //   navigator.geolocation.getCurrentPosition((position) => {
+  //     setCurrentLat(position.coords.latitude);
+  //     setCurrentLong(position.coords.longitude);
+  //   });
+  //   const date = new Date();
+  //   let day = date.getFullYear() + "-" + (+date.getMonth() + 1) + "-";
+  //   let dateTime = "";
+  //   if (date.getDate() < 10) {
+  //     dateTime = "0" + date.getDate();
+  //   } else {
+  //     dateTime = date.getDate();
+  //   }
+  //   day = day + dateTime;
+  //   const url = "driver/driver-schedule";
+  //   try {
+  //     const response = await root.post(url, {
+  //       accountId: localStorage.getItem("userId"),
+  //       day: day,
+  //     });
+  //     if (response.data) {
+  //       setAllDataCurrentDay(response.data);
+  //     } else {
+  //       console.log(
+  //         "Something went wrong when call api for fetchAllDataScheduleCurrentDay function"
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (allDataCurrentDay.length > 0) {
+  //     let tempArrayCurrentDay = [];
+  //     allDataCurrentDay.forEach((item, index) => {
+  //       if (item.status === "Đã lên lịch") {
+  //         tempArrayCurrentDay.push(item);
+  //       }
+  //     });
+  //     for (let i = 0; i < tempArrayCurrentDay.length; i++) {
+  //       for (let j = i + 1; j < tempArrayCurrentDay.length; j++) {
+  //         if (
+  //           +tempArrayCurrentDay[i].startTime.split("T")[1].split(":")[0] >
+  //           +tempArrayCurrentDay[j].startTime.split("T")[1].split(":")[0]
+  //         ) {
+  //           let tempt = tempArrayCurrentDay[i];
+  //           tempArrayCurrentDay[i] = tempArrayCurrentDay[j];
+  //           tempArrayCurrentDay[j] = tempt;
+  //         }
+  //       }
+  //     }
+  //     if (tempArrayCurrentDay.length > 0) {
+  //       setPreparedScheduleId(tempArrayCurrentDay[0].id);
+  //       setSchduleId(tempArrayCurrentDay[0].id);
+  //     }
+  //   }
+  // }, [allDataCurrentDay]);
+
+  // useEffect(() => {
+  //   if (preparedScheduleId !== "" && currentLat && currentLong) {
+  //     fetchTicketsInCurrentShedule(preparedScheduleId);
+  //   }
+  // }, [preparedScheduleId, currentLat, currentLong]);
+
+  // useEffect(() => {
+  //   alert(currentLat);
+  //   alert(currentLong);
+  // }, [currentLat, currentLong]);
 
   const getDistance = async (startLat, startLon, endLat, endLon) => {
     const url = `https://api.maptiler.com/routes/directions/v2/${startLon},${startLat};${endLon},${endLat}?key=4D4kbtoB1PV8gjRJMqgB&steps=false&geometries=geojson`;
@@ -577,6 +595,86 @@ const Map = () => {
       });
     }
   }, [arrayPickUpAddress]);
+
+  const getAllDataschedule = async () => {
+    const driverId = localStorage.getItem("userId");
+    try {
+      const response = await root.get(
+        `/driver/driver-schedule?accountId=${driverId}`
+      );
+      if (response.status === 200) {
+        response.data.forEach((item) => {
+          if (item.status.toLocaleUpperCase() === "ĐANG CHẠY") {
+            setScheduleId(item.id);
+            return;
+          }
+        });
+      } else {
+        console.log("Something went wrong with api getAllDataschedule !");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (scheduleId) {
+      try {
+        const getMoveOrDerByScheduleId = async () => {
+          const response = await root.get(
+            `/driver/move-order-schedule/${scheduleId}`
+          );
+          if (response.status === 200) {
+            setPickUpOrder(response.data.pickupOrder);
+            const dropOrder = response.data.dropoffOrder.split("/")[1];
+            setStartDropPlace(response.data.dropoffOrder.split("/")[0]);
+            setDropOder(dropOrder);
+          }
+        };
+        getMoveOrDerByScheduleId();
+      } catch (error) {
+        console.log(error);
+      }
+
+      try {
+        const getTicketByScheduleId = async () => {
+          const response = await root.get(
+            `/public/ticket-with-schedule/${scheduleId}`
+          );
+          if (response.status === 200) {
+            let count = 0;
+            let countInCar = 0;
+            response.data.forEach((item) => {
+              if (item.status.toLocaleUpperCase() === "CHƯA LÊN XE") {
+                count += 1;
+              }
+
+              if (item.status.toLocaleUpperCase() === "ĐÃ LÊN XE") {
+                countInCar += 1;
+              }
+            });
+            if (count > 0) {
+              setareAllStatusPickUp(false);
+            } else {
+              if (countInCar === 0) {
+                setAreAllStatusDrop(true);
+              } else {
+                setareAllStatusPickUp(true);
+              }
+            }
+          }
+        };
+
+        getTicketByScheduleId();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [scheduleId]);
+
+  useEffect(() => {
+    getAllDataschedule();
+  }, []);
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -798,7 +896,7 @@ const Map = () => {
 
   const getAddressSearchVoice = async () => {
     const genAI = new GoogleGenerativeAI(
-      "AIzaSyBg4x4lMwU59_atcwAU-h0TuuGfwVQq51Y"
+      "AIzaSyD1QBez4ONdArmQuDpCksYxHN_3vckyBj4"
     );
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
@@ -902,6 +1000,11 @@ const Map = () => {
     voiceSearchAddress2Lon,
   ]);
 
+  // const check = () => {
+  //   alert(startDropPlace);
+  //   alert(dropOrder);
+  // };
+
   return (
     <>
       {/* ///////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
@@ -913,6 +1016,7 @@ const Map = () => {
       >
         test
       </button> */}
+      {/* <button onClick={check}>check</button> */}
 
       <div style={{ display: "flex" }}>
         {isRecording ? (
@@ -1034,7 +1138,7 @@ const Map = () => {
                     setAddressOnceVoice("");
                     setCurrentCity("");
                     setInforVoice("");
-                    fetchTicketsInCurrentShedule(schduleId);
+                    // fetchTicketsInCurrentShedule(schduleId);
                   }}
                 >
                   Xem Theo Lịch Trình
@@ -1177,7 +1281,7 @@ const Map = () => {
                     setAddressOnceVoice("");
                     setCurrentCity("");
                     setInforVoice("");
-                    fetchTicketsInCurrentShedule(schduleId);
+                    // fetchTicketsInCurrentShedule(schduleId);
                   }}
                 >
                   Xem Theo Lịch Trình
@@ -1253,14 +1357,24 @@ const Map = () => {
         ""
       )}
 
-      {userLat && userLon ? (
-        <GoongMapWithDirections
-          origin={`${currentLat},${currentLong}`}
-          destination={`${userLat},${userLon}`}
-          userName={userName}
-          userAddress={userAddress}
-          userPhone={userPhone}
-        />
+      {!areAllStatusDrop ? (
+        areAllStatusPickUp ? (
+          <GoongMapWithDirections
+            origin={startDropPlace}
+            destination={dropOrder}
+            // userName={userName}
+            // userAddress={userAddress}
+            // userPhone={userPhone}
+          />
+        ) : (
+          <GoongMapWithDirections
+            origin={`${currentLat},${currentLong}`}
+            destination={pickUpOrder}
+            // userName={userName}
+            // userAddress={userAddress}
+            // userPhone={userPhone}
+          />
+        )
       ) : (
         ""
       )}

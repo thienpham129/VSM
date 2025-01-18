@@ -44,7 +44,7 @@ function ForgetPassword() {
     setIsSubmitting(true); // Vô hiệu hóa nút gửi khi đang xử lý
 
     try {
-      const response = await request("GET", `/auth/forgot-password?email=${email}`);
+      const response = await request("GET", `http://localhost:8080/auth/forgot-password?email=${email}`);
       if (response.data) {
         notifySuccess("Yêu cầu quên mật khẩu đã được gửi thành công!");
       } else {

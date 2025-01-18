@@ -288,6 +288,7 @@ const Login = () => {
                           </button>
                           <p
                             className="title-forgot-account"
+                            style={{ cursor: "pointer" }}
                             onClick={() => {
                               window.location.href = "/identify";
                             }}

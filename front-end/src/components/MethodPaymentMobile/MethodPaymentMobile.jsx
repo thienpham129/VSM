@@ -19,6 +19,8 @@ const MethodPaymentMobile = () => {
     startLocation,
     stopLocation,
     ticketId,
+    carDetail,
+    routeDetail,
   } = state || {};
   const [paymentUrl, setPaymentUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
